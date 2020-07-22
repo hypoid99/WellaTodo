@@ -1,4 +1,4 @@
-﻿// copyright honeysoft v0.11
+﻿// copyright honeysoft v0.12
 
 using System;
 using System.Collections.Generic;

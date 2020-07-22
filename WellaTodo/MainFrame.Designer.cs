@@ -33,21 +33,23 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(590, 350);
+            this.button1.Location = new System.Drawing.Point(516, 280);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 51);
+            this.button1.Size = new System.Drawing.Size(131, 41);
             this.button1.TabIndex = 0;
             this.button1.Text = "확인";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // MainFrame
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(700, 360);
             this.Controls.Add(this.button1);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "MainFrame";
-            this.Text = "Form1";
+            this.Text = "WellaTodo v0.12";
             this.ResumeLayout(false);
 
         }
