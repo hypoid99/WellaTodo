@@ -1,4 +1,7 @@
-﻿using System;
+﻿// copyright honeysoft 20200722 v0.1
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
