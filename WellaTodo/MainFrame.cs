@@ -12,11 +12,20 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public partial class MainFrame : Form
+    public partial class MainFrame : Form, IView
     {
+        IController m_Controller;
+
         public MainFrame()
         {
+            Console.WriteLine(">MainFrame Construction");
             InitializeComponent();
+        }
+
+        public void setController(IController controller)
+        {
+            Console.WriteLine(">MainFrame::setController");
+            m_Controller = controller;
         }
     }
 }

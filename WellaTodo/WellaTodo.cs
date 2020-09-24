@@ -19,7 +19,14 @@ namespace WellaTodo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainFrame());
+            //Application.Run(new MainFrame());
+
+            Console.WriteLine(">WellaTodo Program");
+            MainFrame m_MainFrame = new MainFrame();
+            IModel m_MainModel = new MainModel();
+            IController m_MainController = new MainController(m_MainFrame, m_MainModel);
+            Console.WriteLine(">MVC created");
+            Application.Run(m_MainFrame);
         }
     }
 }
