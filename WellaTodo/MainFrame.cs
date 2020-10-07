@@ -28,6 +28,21 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
+        private void MainFrame_Load(object sender, EventArgs e)
+        {
+            Console.WriteLine(">MainFrame::Loaded");
+
+            label1.Width = splitContainer1.SplitterDistance;
+            label2.Width = splitContainer1.SplitterDistance;
+            label3.Width = splitContainer1.SplitterDistance;
+            label4.Width = splitContainer1.SplitterDistance;
+            label5.Width = splitContainer1.SplitterDistance;
+            label6.Width = splitContainer1.SplitterDistance;
+
+            tabControl1.Width = splitContainer1.Panel2.Width;
+            tabControl1.Height = splitContainer1.Panel2.Height;
+        }
+
         private void splitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
         {
 
@@ -41,12 +56,16 @@ namespace WellaTodo
         private void splitContainer1_Resize(object sender, EventArgs e)
         {
             Console.WriteLine(">SplitContainer::Resized");
+
             label1.Width = splitContainer1.SplitterDistance;
             label2.Width = splitContainer1.SplitterDistance;
             label3.Width = splitContainer1.SplitterDistance;
             label4.Width = splitContainer1.SplitterDistance;
             label5.Width = splitContainer1.SplitterDistance;
             label6.Width = splitContainer1.SplitterDistance;
+
+            tabControl1.Width = splitContainer1.Panel2.Width;
+            tabControl1.Height = splitContainer1.Panel2.Height;
 
             splitContainer1.Refresh();
         }
@@ -80,6 +99,9 @@ namespace WellaTodo
                             label5.Width = splitContainer1.SplitterDistance;
                             label6.Width = splitContainer1.SplitterDistance;
 
+                            tabControl1.Width = splitContainer1.Panel2.Width;
+                            tabControl1.Height = splitContainer1.Panel2.Height;
+
                             splitContainer1.Refresh();
                         }
                     }
@@ -93,88 +115,114 @@ namespace WellaTodo
         private void label1_MouseEnter(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Underline);
-            label1.BackColor = Color.FromArgb(235, 170, 170);
+            label1.BackColor = System.Drawing.SystemColors.ControlDark;
         }
 
         private void label1_MouseLeave(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Regular);
-            label1.BackColor = Color.FromArgb(255, 190, 190);
+            label1.BackColor = System.Drawing.SystemColors.Control;
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_1::clicked");
+            tabControl1.SelectedIndex = 0;
+        }
+
+        private void label2_MouseEnter(object sender, EventArgs e)
+        {
+            label2.Font = new Font(label2.Font, FontStyle.Underline);
+            label2.BackColor = System.Drawing.SystemColors.ControlDark;
+        }
+
+        private void label2_MouseLeave(object sender, EventArgs e)
+        {
+            label2.Font = new Font(label2.Font, FontStyle.Regular);
+            label2.BackColor = System.Drawing.SystemColors.Control;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">Label_2::clicked");
+            tabControl1.SelectedIndex = 1;
+        }
+
+        private void label3_MouseEnter(object sender, EventArgs e)
+        {
+            label3.Font = new Font(label3.Font, FontStyle.Underline);
+            label3.BackColor = System.Drawing.SystemColors.ControlDark;
+        }
+
+        private void label3_MouseLeave(object sender, EventArgs e)
+        {
+            label3.Font = new Font(label3.Font, FontStyle.Regular);
+            label3.BackColor = System.Drawing.SystemColors.Control;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">Label_3::clicked");
+            tabControl1.SelectedIndex = 2;
+        }
+
+        private void label4_MouseEnter(object sender, EventArgs e)
+        {
+            label4.Font = new Font(label4.Font, FontStyle.Underline);
+            label4.BackColor = System.Drawing.SystemColors.ControlDark;
+        }
+
+        private void label4_MouseLeave(object sender, EventArgs e)
+        {
+            label4.Font = new Font(label4.Font, FontStyle.Regular);
+            label4.BackColor = System.Drawing.SystemColors.Control;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">Label_4::clicked");
+            tabControl1.SelectedIndex = 3;
+        }
+
+        private void label5_MouseEnter(object sender, EventArgs e)
+        {
+            label5.Font = new Font(label5.Font, FontStyle.Underline);
+            label5.BackColor = System.Drawing.SystemColors.ControlDark;
+        }
+
+        private void label5_MouseLeave(object sender, EventArgs e)
+        {
+            label5.Font = new Font(label5.Font, FontStyle.Regular);
+            label5.BackColor = System.Drawing.SystemColors.Control;
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">Label_5::clicked");
+            tabControl1.SelectedIndex = 4;
+        }
+
+        private void label6_MouseEnter(object sender, EventArgs e)
+        {
+            label6.Font = new Font(label6.Font, FontStyle.Underline);
+            label6.BackColor = System.Drawing.SystemColors.ControlDark;
+        }
+
+        private void label6_MouseLeave(object sender, EventArgs e)
+        {
+            label6.Font = new Font(label6.Font, FontStyle.Regular);
+            label6.BackColor = System.Drawing.SystemColors.Control;
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">Label_6::clicked");
+            tabControl1.SelectedIndex = 5;
+        }
+
+        private void dataGridView1_Resize(object sender, EventArgs e)
+        {
+
         }
     }
 }
-
-// int yourLabelNameWidth = TextRenderer.MeasureText(yourLabelName.Text, yourLabelName.Font).Width;
-// yourSplitContainerName.SplitterDistance = yourLabelName.Left + yourLabelNameWidth;
-// yourLabelName.Width = yourLabelName.Left + yourLabelNameWidth;
-
-
-/*
- * //assign this to the SplitContainer's MouseDown event
-    private void splitCont_MouseDown(object sender, MouseEventArgs e)
-    {
-        // This disables the normal move behavior
-        ((SplitContainer)sender).IsSplitterFixed = true;
-    }
-
-    //assign this to the SplitContainer's MouseUp event
-    private void splitCont_MouseUp(object sender, MouseEventArgs e)
-    {
-        // This allows the splitter to be moved normally again
-        ((SplitContainer)sender).IsSplitterFixed = false;
-    }
-
-    //assign this to the SplitContainer's MouseMove event
-    private void splitCont_MouseMove(object sender, MouseEventArgs e)
-    {
-        // Check to make sure the splitter won't be updated by the
-        // normal move behavior also
-        if (((SplitContainer)sender).IsSplitterFixed)
-        {
-            // Make sure that the button used to move the splitter
-            // is the left mouse button
-            if (e.Button.Equals(MouseButtons.Left))
-            {
-                // Checks to see if the splitter is aligned Vertically
-                if (((SplitContainer)sender).Orientation.Equals(Orientation.Vertical))
-                {
-                    // Only move the splitter if the mouse is within
-                    // the appropriate bounds
-                    if (e.X > 0 && e.X < ((SplitContainer)sender).Width)
-                    {
-                        // Move the splitter & force a visual refresh
-                        ((SplitContainer)sender).SplitterDistance = e.X;
-                        ((SplitContainer)sender).Refresh();
-                    }
-                }
-                // If it isn't aligned vertically then it must be
-                // horizontal
-                else
-                {
-                    // Only move the splitter if the mouse is within
-                    // the appropriate bounds
-                    if (e.Y > 0 && e.Y < ((SplitContainer)sender).Height)
-                    {
-                        // Move the splitter & force a visual refresh
-                        ((SplitContainer)sender).SplitterDistance = e.Y;
-                        ((SplitContainer)sender).Refresh();
-                    }
-                }
-            }
-            // If a button other than left is pressed or no button
-            // at all
-            else
-            {
-                // This allows the splitter to be moved normally again
-                ((SplitContainer)sender).IsSplitterFixed = false;
-            }
-        }
-    }
- * 
- * 
- */
