@@ -27,6 +27,8 @@ namespace WellaTodo
             IController m_MainController = new MainController(m_MainFrame, m_MainModel);
             Console.WriteLine(">MVC created");
             Application.Run(m_MainFrame);
+            //MainModel model = new MainModel();
+            //model.ID = 10;
         }
     }
 }

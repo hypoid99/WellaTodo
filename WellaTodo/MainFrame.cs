@@ -16,6 +16,8 @@ namespace WellaTodo
     {
         IController m_Controller;
 
+        public int nSplitDistance;
+
         public MainFrame()
         {
             Console.WriteLine(">MainFrame Construction");
@@ -41,6 +43,8 @@ namespace WellaTodo
 
             tabControl1.Width = splitContainer1.Panel2.Width;
             tabControl1.Height = splitContainer1.Panel2.Height;
+
+            splitContainer1.Refresh();
         }
 
         private void splitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
