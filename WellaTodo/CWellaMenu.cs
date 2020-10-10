@@ -10,6 +10,8 @@ namespace WellaTodo
     {
         IController m_Controller;
 
+        public event ViewHandler<IView> Changed_View_Event;
+
         public CWellaMenu()
         {
             Console.WriteLine(">CWellaMenu Construction");

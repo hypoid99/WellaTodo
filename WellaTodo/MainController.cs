@@ -16,12 +16,22 @@ namespace WellaTodo
 			Console.WriteLine(">MainController Construction");
 			m_View = view;
 			m_Model = model;
+			m_View.setController(this);
 			Console.WriteLine(">IView & IModel assigned to Controller");
+			m_Model.Attach_Model_Event((IModelObserver)view);
+			m_View.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
 		}
 
-		public void IncValue()
+		public void Changed_View_Event_method(IView v, ViewEventArgs e)
+		{
+			Console.WriteLine(">MainController::Changed_View_Event_method");
+			m_Model.setValue(e.value);
+		}
+
+		public void Changed_View()
         {
-			
+			Console.WriteLine(">MainController::Changed_View");
+			m_Model.Update_Model();
         }
 	}
 }

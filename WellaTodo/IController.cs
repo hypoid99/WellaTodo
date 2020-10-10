@@ -8,6 +8,6 @@ namespace WellaTodo
 {
     public interface IController
     {
-        void IncValue();
+        void Changed_View();
     }
 }

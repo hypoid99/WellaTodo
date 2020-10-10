@@ -8,6 +8,7 @@ namespace WellaTodo
 {
     class CDataCell
     {
+        private int _id_no;
         private string _date;
         private string _title;
         private bool _complete;
@@ -23,9 +24,23 @@ namespace WellaTodo
         private string _attachfile;
         private string _memo;
 
+        public string P_date { get; set; }
+        public string P_title { get; set; }
+
         public CDataCell()
         {
+            _title = "입력하세요";
+        }
 
+        public CDataCell(int id_no, string title)
+        {
+            _id_no = id_no;
+            _title = title;
+        }
+
+        public override String ToString()
+        {
+            return String.Format("ID[{0}] Title[{1}]", _id_no, _title);
         }
     }
 }

@@ -12,9 +12,11 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public partial class MainFrame : Form, IView
+    public partial class MainFrame : Form, IView, IModelObserver
     {
         IController m_Controller;
+
+        public event ViewHandler<IView> Changed_View_Event;
 
         public int nSplitDistance;
 
@@ -28,6 +30,25 @@ namespace WellaTodo
         {
             Console.WriteLine(">MainFrame::setController");
             m_Controller = controller;
+        }
+
+        public void Changed_Model_Event_method(IModel m, ModelEventArgs e)
+        {
+            Console.WriteLine(">MainFrame::Changed_Model_Event_method");
+            // Update View below
+        }
+
+        private void Invoke_View_Event()
+        {
+            Console.WriteLine(">MainFrame::Invoke_View_Event");
+            try
+            {
+                Changed_View_Event.Invoke(this, new ViewEventArgs(1));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please enter a valid number");
+            }
         }
 
         private void MainFrame_Load(object sender, EventArgs e)
@@ -132,6 +153,9 @@ namespace WellaTodo
         {
             Console.WriteLine(">Label_1::clicked");
             tabControl1.SelectedIndex = 0;
+
+            Invoke_View_Event();
+            m_Controller.Changed_View();
         }
 
         private void label2_MouseEnter(object sender, EventArgs e)
