@@ -26,11 +26,43 @@ namespace WellaTodo
             InitializeComponent();
         }
 
-        public void setController(IController controller)
+        public void SetController(IController controller)
         {
-            Console.WriteLine(">MainFrame::setController");
+            Console.WriteLine(">MainFrame::SetController");
             m_Controller = controller;
         }
+
+        public void Initiate_View()
+        {
+            textBox1.Text = "Hi World, Welcome!";
+        }
+
+        public void Clear_View()
+        {
+
+        }
+
+        public void Add_Model_To_View(CDataCell dc)
+        {
+            
+        }
+
+        public void Update_View_With_Changed_Model(CDataCell dc)
+        {
+
+        }
+
+        public void Remove_Model_From_View(CDataCell dc)
+        {
+
+        }
+
+        /*
+        public void SetDataCell(List<CDataCell> dc)
+        {
+            dataGridView1.DataSource = dc;
+        }
+        */
 
         public void Changed_Model_Event_method(IModel m, ModelEventArgs e)
         {
@@ -53,7 +85,9 @@ namespace WellaTodo
 
         private void MainFrame_Load(object sender, EventArgs e)
         {
-            Console.WriteLine(">MainFrame::Loaded");
+            Console.WriteLine(">MainFrame::Loaded & Initate_View");
+
+            m_Controller.Initiate_View();
 
             label1.Width = splitContainer1.SplitterDistance;
             label2.Width = splitContainer1.SplitterDistance;

@@ -16,10 +16,10 @@ namespace WellaTodo
 		{
 			Console.WriteLine(">MainModel Construction");
 
-			myData.Add(new CDataCell(0, "할일 1번째"));
-			myData.Add(new CDataCell(1, "할일 2번째"));
-			myData.Add(new CDataCell(2, "할일 3번째"));
-			CDataCell newdata = new CDataCell(3,"할일 4번째");
+			myData.Add(new CDataCell(false, "할일 1번째", false, "홍길동"));
+			myData.Add(new CDataCell(false, "할일 2번째", false, "홍길동"));
+			myData.Add(new CDataCell(false, "할일 3번째", false, "홍길동"));
+			CDataCell newdata = new CDataCell(false, "할일 4번째", false, "홍길동");
 			myData.Insert(1, newdata);
 			displayDataCell(myData);
 		}
@@ -36,6 +36,11 @@ namespace WellaTodo
 			Changed_Model_Event.Invoke(this, new ModelEventArgs(1));
 		}
 		public void setValue(int value)
+        {
+
+        }
+
+		public void getModel_Data()
         {
 
         }

@@ -9,5 +9,7 @@ namespace WellaTodo
     public interface IController
     {
         void Changed_View();
+
+        void Initiate_View();
     }
 }
