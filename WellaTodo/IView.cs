@@ -19,7 +19,6 @@ namespace WellaTodo
         event ViewHandler<IView> Changed_View_Event;
 
         void SetController(IController controller);
-        void SetModel(IModel model);
 
         void Initiate_View();
         void Clear_View();

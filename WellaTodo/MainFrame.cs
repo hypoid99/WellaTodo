@@ -15,12 +15,9 @@ namespace WellaTodo
     public partial class MainFrame : Form, IView, IModelObserver
     {
         IController m_Controller;
-        IModel m_Model;
         List<CDataCell> m_Data;
 
         public event ViewHandler<IView> Changed_View_Event;
-
-        public int nSplitDistance;
 
         public MainFrame()
         {
@@ -32,14 +29,9 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
-        public void SetModel(IModel model)
-        {
-            m_Model = model;
-        }
-
         public void Initiate_View()
         {
-            m_Data = m_Model.GetDataCollection();
+            m_Data = m_Controller.Get_Model().GetDataCollection();
 
             textBox1.Text = "Hi World, Welcome!";
 
@@ -79,7 +71,6 @@ namespace WellaTodo
                 listView1.Items.Add(item);
             }
             listView1.EndUpdate();
-
         }
 
         public void Clear_View()
@@ -102,13 +93,6 @@ namespace WellaTodo
 
         }
 
-        /*
-        public void SetDataCell(List<CDataCell> dc)
-        {
-            dataGridView1.DataSource = dc;
-        }
-        */
-
         public void Changed_Model_Event_method(IModel m, ModelEventArgs e)
         {
             Console.WriteLine(">MainFrame::Changed_Model_Event_method");
@@ -130,10 +114,13 @@ namespace WellaTodo
 
         private void MainFrame_Load(object sender, EventArgs e)
         {
-            Console.WriteLine(">MainFrame::Loaded & Initate_View");
+            //m_Controller.Initiate_View();
+            Initiate_View();
+            Repaint();
+        }
 
-            m_Controller.Initiate_View();
-
+        private void Repaint()
+        {
             label1.Width = splitContainer1.SplitterDistance;
             label2.Width = splitContainer1.SplitterDistance;
             label3.Width = splitContainer1.SplitterDistance;
@@ -145,31 +132,11 @@ namespace WellaTodo
             tabControl1.Height = splitContainer1.Panel2.Height;
 
             splitContainer1.Refresh();
-        }
-
-        private void splitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-
         }
 
         private void splitContainer1_Resize(object sender, EventArgs e)
         {
-            label1.Width = splitContainer1.SplitterDistance;
-            label2.Width = splitContainer1.SplitterDistance;
-            label3.Width = splitContainer1.SplitterDistance;
-            label4.Width = splitContainer1.SplitterDistance;
-            label5.Width = splitContainer1.SplitterDistance;
-            label6.Width = splitContainer1.SplitterDistance;
-
-            tabControl1.Width = splitContainer1.Panel2.Width;
-            tabControl1.Height = splitContainer1.Panel2.Height;
-
-            splitContainer1.Refresh();
+            Repaint();
         }
 
         private void splitContainer1_MouseDown(object sender, MouseEventArgs e)
@@ -194,17 +161,7 @@ namespace WellaTodo
                         {
                             splitContainer1.SplitterDistance = e.X;
 
-                            label1.Width = splitContainer1.SplitterDistance;
-                            label2.Width = splitContainer1.SplitterDistance;
-                            label3.Width = splitContainer1.SplitterDistance;
-                            label4.Width = splitContainer1.SplitterDistance;
-                            label5.Width = splitContainer1.SplitterDistance;
-                            label6.Width = splitContainer1.SplitterDistance;
-
-                            tabControl1.Width = splitContainer1.Panel2.Width;
-                            tabControl1.Height = splitContainer1.Panel2.Height;
-
-                            splitContainer1.Refresh();
+                            Repaint();
                         }
                     }
                 } else
@@ -323,11 +280,6 @@ namespace WellaTodo
         {
             Console.WriteLine(">Label_6::clicked");
             tabControl1.SelectedIndex = 5;
-        }
-
-        private void dataGridView1_Resize(object sender, EventArgs e)
-        {
-
         }
     }
 }

@@ -16,7 +16,6 @@ namespace WellaTodo
 			m_View = view;
 			m_Model = model;
 			m_View.SetController(this);
-			m_View.SetModel(m_Model);
 			m_Model.Attach_Model_Event((IModelObserver)view);
 			m_View.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
 		}
@@ -26,6 +25,11 @@ namespace WellaTodo
 			Console.WriteLine(">MainController::Changed_View_Event_method");
 			m_Model.SetValue(e.value);
 		}
+
+		public IModel Get_Model()
+        {
+			return m_Model;
+        }
 
 		public void Changed_View()
         {

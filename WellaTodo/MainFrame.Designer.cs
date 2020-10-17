@@ -44,15 +44,18 @@
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabPage3.SuspendLayout();
@@ -74,11 +77,9 @@
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Size = new System.Drawing.Size(800, 450);
-            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.Size = new System.Drawing.Size(908, 563);
+            this.splitContainer1.SplitterDistance = 227;
             this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.splitContainer1_SplitterMoving);
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
             this.splitContainer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseMove);
             this.splitContainer1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseUp);
@@ -98,7 +99,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(200, 450);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(227, 563);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // label1
@@ -192,17 +193,19 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(560, 420);
+            this.tabControl1.Size = new System.Drawing.Size(610, 450);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.textBox2);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(552, 392);
+            this.tabPage1.Size = new System.Drawing.Size(602, 422);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "로그인";
             // 
@@ -213,21 +216,21 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(552, 392);
+            this.tabPage2.Size = new System.Drawing.Size(602, 422);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "오늘할일";
             // 
             // dataGridView1
             // 
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 27;
-            this.dataGridView1.Size = new System.Drawing.Size(546, 386);
+            this.dataGridView1.Size = new System.Drawing.Size(596, 416);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.Resize += new System.EventHandler(this.dataGridView1_Resize);
             // 
             // tabPage3
             // 
@@ -268,6 +271,16 @@
             this.tabPage4.Text = "계획된 일정";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // listView1
+            // 
+            this.listView1.GridLines = true;
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(21, 29);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(505, 256);
+            this.listView1.TabIndex = 0;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            // 
             // tabPage5
             // 
             this.tabPage5.Location = new System.Drawing.Point(4, 24);
@@ -288,21 +301,27 @@
             this.tabPage6.Text = "할일";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
-            // listView1
+            // textBox2
             // 
-            this.listView1.GridLines = true;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(21, 29);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(505, 256);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.textBox2.Location = new System.Drawing.Point(42, 50);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(174, 25);
+            this.textBox2.TabIndex = 0;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(227, 50);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(83, 25);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "제출";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // MainFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(908, 563);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "MainFrame";
@@ -314,6 +333,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabPage3.ResumeLayout(false);
@@ -344,6 +365,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }
 
