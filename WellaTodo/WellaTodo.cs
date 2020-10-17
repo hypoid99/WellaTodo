@@ -22,8 +22,8 @@ namespace WellaTodo
             //Application.Run(new MainFrame());
 
             Console.WriteLine(">WellaTodo Program");
-            MainFrame m_MainFrame = new MainFrame();
             IModel m_MainModel = new MainModel();
+            MainFrame m_MainFrame = new MainFrame();
             IController m_MainController = new MainController(m_MainFrame, m_MainModel);
             Console.WriteLine(">MVC created");
             Application.Run(m_MainFrame);

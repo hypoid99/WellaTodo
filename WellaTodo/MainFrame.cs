@@ -15,6 +15,8 @@ namespace WellaTodo
     public partial class MainFrame : Form, IView, IModelObserver
     {
         IController m_Controller;
+        IModel m_Model;
+        List<CDataCell> m_Data;
 
         public event ViewHandler<IView> Changed_View_Event;
 
@@ -22,19 +24,62 @@ namespace WellaTodo
 
         public MainFrame()
         {
-            Console.WriteLine(">MainFrame Construction");
             InitializeComponent();
         }
 
         public void SetController(IController controller)
         {
-            Console.WriteLine(">MainFrame::SetController");
             m_Controller = controller;
+        }
+
+        public void SetModel(IModel model)
+        {
+            m_Model = model;
         }
 
         public void Initiate_View()
         {
+            m_Data = m_Model.GetDataCollection();
+
             textBox1.Text = "Hi World, Welcome!";
+
+            dataGridView1.ColumnCount = 4;
+            dataGridView1.Columns[0].Name = "완료";
+            dataGridView1.Columns[1].Name = "내용";
+            dataGridView1.Columns[2].Name = "중요";
+            dataGridView1.Columns[3].Name = "대상";
+            foreach (CDataCell data in m_Data)
+            {
+                string _complete = data.DC_complete;
+                string _title = data.DC_title;
+                string _important = data.DC_important;
+                string _person = data.DC_person;
+
+                dataGridView1.Rows.Add(_complete, _title, _important, _person);
+            }
+            //dataGridView1.DataSource = m_Data;
+
+            listView1.View = View.Details;
+            listView1.BeginUpdate();
+            listView1.Columns.Add("완료");
+            listView1.Columns.Add("내용");
+            listView1.Columns.Add("중요");
+            listView1.Columns.Add("대상");
+            foreach (CDataCell data in m_Data)
+            {
+                string _complete = data.DC_complete;
+                string _title = data.DC_title;
+                string _important = data.DC_important;
+                string _person = data.DC_person;
+
+                ListViewItem item = new ListViewItem(_complete);
+                item.SubItems.Add(_title);
+                item.SubItems.Add(_important);
+                item.SubItems.Add(_person);
+                listView1.Items.Add(item);
+            }
+            listView1.EndUpdate();
+
         }
 
         public void Clear_View()
@@ -114,8 +159,6 @@ namespace WellaTodo
 
         private void splitContainer1_Resize(object sender, EventArgs e)
         {
-            Console.WriteLine(">SplitContainer::Resized");
-
             label1.Width = splitContainer1.SplitterDistance;
             label2.Width = splitContainer1.SplitterDistance;
             label3.Width = splitContainer1.SplitterDistance;

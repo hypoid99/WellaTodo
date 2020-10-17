@@ -22,6 +22,8 @@ namespace WellaTodo
 	{
         void Attach_Model_Event(IModelObserver imo);
         void Update_Model();
-		void setValue(int value);
+		void SetValue(int value);
+
+        List<CDataCell> GetDataCollection();
 	}
 }

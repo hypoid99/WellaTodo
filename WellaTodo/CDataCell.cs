@@ -8,23 +8,22 @@ namespace WellaTodo
 {
     public class CDataCell
     {
-        private string _date;
         private string _title;
-        private bool _complete;
-        private bool _important;
+        private string _complete;
+        private string _important;
         private string _person;
 
-        private string _detailstep;
+        //private string _detailstep;
 
-        private string _myday;
-        private string _alarm;
-        private string _duerate;
-        private string _repeat;
+        //private string _myday;
+        //private string _alarm;
+        //private string _duerate;
+        //private string _repeat;
 
-        private string _attachfile;
-        private string _memo;
+        //private string _attachfile;
+        //private string _memo;
 
-        public bool DC_complete {
+        public string DC_complete {
             get { return _complete; }
             set { _complete = value; }
         }
@@ -34,7 +33,7 @@ namespace WellaTodo
             set { _title = value; }
         }
 
-        public bool DC_important {
+        public string DC_important {
             get { return _important; }
             set { _important = value; }
         }
@@ -46,13 +45,13 @@ namespace WellaTodo
 
         public CDataCell()
         {
-            _complete = false;
+            _complete = "입력하세요";
             _title = "입력하세요";
-            _important = false;
+            _important = "입력하세요";
             _person = "입력하세요";
         }
 
-        public CDataCell(bool complete, string title, bool important, string person)
+        public CDataCell(string complete, string title, string important, string person)
         {
             _complete = complete;
             _title = title;
