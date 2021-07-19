@@ -24,14 +24,9 @@ namespace WellaTodo
 
 		public void Update_Model()
 		{
-			// Update_Model;
 			Console.WriteLine(">MainModel::Invoke Changed_Model_Event");
 			Changed_Model_Event.Invoke(this, new ModelEventArgs(1));
 		}
-		public void SetValue(int value)
-        {
-
-        }
 
 		public List<CDataCell> GetDataCollection()
         {

@@ -8,10 +8,11 @@ namespace WellaTodo
 {
     public interface IController
     {
+        // Model Interface
         IModel Get_Model();
 
+        // View Interface
         void Changed_View();
-
         void Initiate_View();
     }
 }

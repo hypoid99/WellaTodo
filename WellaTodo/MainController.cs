@@ -23,7 +23,7 @@ namespace WellaTodo
 		public void Changed_View_Event_method(IView v, ViewEventArgs e)
 		{
 			Console.WriteLine(">MainController::Changed_View_Event_method");
-			m_Model.SetValue(e.value);
+			//m_Model.SetValue(e.value);
 		}
 
 		public IModel Get_Model()

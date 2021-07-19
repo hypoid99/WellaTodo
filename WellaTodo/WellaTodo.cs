@@ -1,4 +1,5 @@
 ﻿// copyright honeysoft 20200924 v0.1
+// 수정작업 2021.7.19
 
 
 using System;

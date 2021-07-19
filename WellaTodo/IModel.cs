@@ -18,11 +18,11 @@ namespace WellaTodo
     {
         void Changed_Model_Event_method(IModel model, ModelEventArgs e);
     }
+
     public interface IModel
 	{
         void Attach_Model_Event(IModelObserver imo);
         void Update_Model();
-		void SetValue(int value);
 
         List<CDataCell> GetDataCollection();
 	}
