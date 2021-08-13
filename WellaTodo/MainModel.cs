@@ -35,6 +35,7 @@ namespace WellaTodo
 
 		public void Initialize()
         {
+			Console.WriteLine("Initialize MainModel");
 			myData.Add(new CDataCell("완료", "할일 1번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "홍길동"));
@@ -45,11 +46,12 @@ namespace WellaTodo
 
 		public void DisplayDataCell(List<CDataCell> data_collection)
         {
+			Console.WriteLine("---- start display datacell");
 			foreach (CDataCell data in data_collection)
             {
 				Console.WriteLine(data);
             }
-			Console.WriteLine("--------End");
+			Console.WriteLine("------ end display datacell");
 		}
 		/*
 		private string _name;

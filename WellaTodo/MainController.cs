@@ -8,38 +8,38 @@ namespace WellaTodo
 {
 	public class MainController : IController
 	{
-		IView m_View;
-		IModel m_Model;
+		IView _view;
+		IModel _model;
 
-		public MainController(IView view, IModel model)
+		public MainController(IView v, IModel m)
 		{
-			m_View = view;
-			m_Model = model;
-			m_View.SetController(this);
-			m_Model.Attach_Model_Event((IModelObserver)view);
-			m_View.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
+			_view = v;
+			_model = m;
+			_view.SetController(this);
+			_model.Attach_Model_Event((IModelObserver)_view);
+			_view.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
 		}
 
 		public void Changed_View_Event_method(IView v, ViewEventArgs e)
 		{
 			Console.WriteLine(">MainController::Changed_View_Event_method");
-			//m_Model.SetValue(e.value);
+			//_model.SetValue(e.value);
 		}
 
 		public IModel Get_Model()
         {
-			return m_Model;
+			return _model;
         }
 
 		public void Changed_View()
         {
 			Console.WriteLine(">MainController::Changed_View");
-			m_Model.Update_Model();
+			_model.Update_Model();
         }
 
 		public void Initiate_View()
         {
-			m_View.Initiate_View();
+			_view.Initiate_View();
         }
 	}
 }

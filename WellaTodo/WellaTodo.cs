@@ -20,16 +20,13 @@ namespace WellaTodo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainFrame());
 
-            Console.WriteLine(">WellaTodo Program");
-            IModel m_MainModel = new MainModel();
-            MainFrame m_MainFrame = new MainFrame();
-            IController m_MainController = new MainController(m_MainFrame, m_MainModel);
-            Console.WriteLine(">MVC created");
-            Application.Run(m_MainFrame);
-            //MainModel model = new MainModel();
-            //model.ID = 10;
+            Console.WriteLine(">WellaTodo start");
+            IModel mainModel = new MainModel();
+            MainFrame mainFrame = new MainFrame();
+            IController mainController = new MainController(mainFrame, mainModel);
+            Console.WriteLine(">WellaTodo running");
+            Application.Run(mainFrame);
         }
     }
 }

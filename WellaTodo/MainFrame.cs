@@ -42,12 +42,12 @@ namespace WellaTodo
             dataGridView1.Columns[3].Name = "대상";
             foreach (CDataCell data in m_Data)
             {
-                string _complete = data.DC_complete;
-                string _title = data.DC_title;
-                string _important = data.DC_important;
-                string _person = data.DC_person;
+                string complete = data.DC_complete;
+                string title = data.DC_title;
+                string important = data.DC_important;
+                string person = data.DC_person;
 
-                dataGridView1.Rows.Add(_complete, _title, _important, _person);
+                dataGridView1.Rows.Add(complete, title, important, person);
             }
             //dataGridView1.DataSource = m_Data;
 
@@ -59,15 +59,15 @@ namespace WellaTodo
             listView1.Columns.Add("대상");
             foreach (CDataCell data in m_Data)
             {
-                string _complete = data.DC_complete;
-                string _title = data.DC_title;
-                string _important = data.DC_important;
-                string _person = data.DC_person;
+                string complete = data.DC_complete;
+                string title = data.DC_title;
+                string important = data.DC_important;
+                string person = data.DC_person;
 
-                ListViewItem item = new ListViewItem(_complete);
-                item.SubItems.Add(_title);
-                item.SubItems.Add(_important);
-                item.SubItems.Add(_person);
+                ListViewItem item = new ListViewItem(complete);
+                item.SubItems.Add(title);
+                item.SubItems.Add(important);
+                item.SubItems.Add(person);
                 listView1.Items.Add(item);
             }
             listView1.EndUpdate();
