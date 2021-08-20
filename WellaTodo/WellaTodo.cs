@@ -22,8 +22,8 @@ namespace WellaTodo
             Application.SetCompatibleTextRenderingDefault(false);
 
             Console.WriteLine(">WellaTodo start");
-            IModel mainModel = new MainModel();
             MainFrame mainFrame = new MainFrame();
+            IModel mainModel = new MainModel();
             IController mainController = new MainController(mainFrame, mainModel);
             Console.WriteLine(">WellaTodo running");
             Application.Run(mainFrame);

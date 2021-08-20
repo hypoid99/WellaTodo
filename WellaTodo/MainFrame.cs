@@ -93,10 +93,10 @@ namespace WellaTodo
 
         }
 
-        public void Changed_Model_Event_method(IModel m, ModelEventArgs e)
+        public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
         {
-            Console.WriteLine(">MainFrame::Changed_Model_Event_method");
-            // Update View below
+            Console.WriteLine(">MainFrame::ModelObserver_Event_method");
+            // Model에서 온 데이타로 View를 업데이트
         }
 
         private void Invoke_View_Event()

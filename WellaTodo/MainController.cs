@@ -26,6 +26,11 @@ namespace WellaTodo
 			//_model.SetValue(e.value);
 		}
 
+		public void Update_Model()
+        {
+			_model.Update_Model();
+        }
+	/*
 		public IModel Get_Model()
         {
 			return _model;
@@ -41,6 +46,7 @@ namespace WellaTodo
         {
 			_view.Initiate_View();
         }
+	*/
 	}
 }
 

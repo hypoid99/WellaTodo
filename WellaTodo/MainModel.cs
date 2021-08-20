@@ -10,7 +10,7 @@ namespace WellaTodo
 	{
 		public event ModelHandler<MainModel> Changed_Model_Event;
 
-        List<CDataCell> myData = new List<CDataCell>();
+		List<CDataCell> myData = new List<CDataCell>();
 
 		public MainModel()
 		{
@@ -19,14 +19,20 @@ namespace WellaTodo
 
 		public void Attach_Model_Event(IModelObserver imo)
         {
-			Changed_Model_Event += new ModelHandler<MainModel>(imo.Changed_Model_Event_method);
+			Changed_Model_Event += new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
         }
 
 		public void Update_Model()
 		{
+			// Model 데이타를 변경한다
 			Console.WriteLine(">MainModel::Invoke Changed_Model_Event");
 			Changed_Model_Event.Invoke(this, new ModelEventArgs(1));
 		}
+
+		public void Set_Model_Value(int i)
+        {
+
+        }
 
 		public List<CDataCell> GetDataCollection()
         {
