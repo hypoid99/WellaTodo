@@ -15,6 +15,7 @@ namespace WellaTodo
 
 		public MainModel()
 		{
+			m_Value = 999;
 			Initialize();
 		}
 
@@ -22,7 +23,7 @@ namespace WellaTodo
         {
 			Changed_Model_Event += new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
         }
-
+		
 		public void Update_Model()
 		{
 			// Model 데이타를 변경한다
@@ -42,7 +43,7 @@ namespace WellaTodo
 
 		public void Initialize()
         {
-			Console.WriteLine("Initialize MainModel");
+			Console.WriteLine("Initialize MainModel {0}", m_Value);
 			myData.Add(new CDataCell("완료", "할일 1번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "홍길동"));
