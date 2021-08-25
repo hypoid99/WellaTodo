@@ -31,6 +31,7 @@ namespace WellaTodo
 
         public void Initiate_View()
         {
+        /*
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
             textBox1.Text = "Hi World, Welcome!";
@@ -71,6 +72,7 @@ namespace WellaTodo
                 listView1.Items.Add(item);
             }
             listView1.EndUpdate();
+        */
         }
 
         public void Clear_View()
@@ -189,7 +191,6 @@ namespace WellaTodo
             tabControl1.SelectedIndex = 0;
 
             Invoke_View_Event();
-            m_Controller.Changed_View();
         }
 
         private void label2_MouseEnter(object sender, EventArgs e)

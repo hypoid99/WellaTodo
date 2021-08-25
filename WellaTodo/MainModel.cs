@@ -11,6 +11,7 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Changed_Model_Event;
 
 		List<CDataCell> myData = new List<CDataCell>();
+		public int m_Value;
 
 		public MainModel()
 		{

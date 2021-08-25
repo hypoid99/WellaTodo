@@ -8,43 +8,39 @@ namespace WellaTodo
 {
 	public class MainController : IController
 	{
-		IView _view;
-		IModel _model;
+		IView m_view;
+		IModel m_model;
 
 		public MainController(IView v, IModel m)
 		{
-			_view = v;
-			_model = m;
-			_view.SetController(this);
-			_model.Attach_Model_Event((IModelObserver)_view);
-			_view.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
+			m_view = v;
+			m_model = m;
+			m_view.SetController(this);
+			m_model.Attach_Model_Event((IModelObserver)m_view);
+			m_view.Changed_View_Event += new ViewHandler<IView>(this.Changedm_view_Event_method);
 		}
 
-		public void Changed_View_Event_method(IView v, ViewEventArgs e)
+		public void Changedm_view_Event_method(IView v, ViewEventArgs e)
 		{
-			Console.WriteLine(">MainController::Changed_View_Event_method");
-			//_model.SetValue(e.value);
+			Console.WriteLine(">MainController::Changedm_view_Event_method");
+			//m_model.SetValue(e.value);
 		}
 
 		public void Update_Model()
         {
-			_model.Update_Model();
+			m_model.Update_Model();
         }
+	
 	/*
-		public IModel Get_Model()
+		public void Changedm_view()
         {
-			return _model;
+			Console.WriteLine(">MainController::Changedm_view");
+			m_model.Update_model();
         }
 
-		public void Changed_View()
+		public void Initiate_view()
         {
-			Console.WriteLine(">MainController::Changed_View");
-			_model.Update_Model();
-        }
-
-		public void Initiate_View()
-        {
-			_view.Initiate_View();
+			m_view.Initiate_view();
         }
 	*/
 	}
