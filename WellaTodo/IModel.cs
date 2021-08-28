@@ -22,7 +22,5 @@ namespace WellaTodo
     public interface IModel
 	{
         void Attach_Model_Event(IModelObserver imo);
-        void Update_Model();
-        void Set_Model_Value(int i);
 	}
 }

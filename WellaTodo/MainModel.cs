@@ -15,7 +15,6 @@ namespace WellaTodo
 
 		public MainModel()
 		{
-			m_Value = 999;
 			Initialize();
 		}
 
@@ -31,11 +30,6 @@ namespace WellaTodo
 			Changed_Model_Event.Invoke(this, new ModelEventArgs(1));
 		}
 
-		public void Set_Model_Value(int i)
-        {
-
-        }
-
 		public List<CDataCell> GetDataCollection()
         {
 			return myData;
@@ -43,7 +37,7 @@ namespace WellaTodo
 
 		public void Initialize()
         {
-			Console.WriteLine("Initialize MainModel {0}", m_Value);
+			Console.WriteLine(">MainModel:Initialize MainModel {0}", m_Value);
 			myData.Add(new CDataCell("완료", "할일 1번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "홍길동"));
 			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "홍길동"));
@@ -54,12 +48,12 @@ namespace WellaTodo
 
 		public void DisplayDataCell(List<CDataCell> data_collection)
         {
-			Console.WriteLine("---- start display datacell");
+			Console.WriteLine(">MainModel-- start display datacell");
 			foreach (CDataCell data in data_collection)
             {
 				Console.WriteLine(data);
             }
-			Console.WriteLine("------ end display datacell");
+			Console.WriteLine(">MainModel---- end display datacell");
 		}
 		/*
 		private string _name;

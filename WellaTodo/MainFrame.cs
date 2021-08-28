@@ -14,8 +14,9 @@ namespace WellaTodo
 {
     public partial class MainFrame : Form, IView, IModelObserver
     {
-        IController m_Controller;
-        List<CDataCell> m_Data;
+        MainController m_Controller;
+
+        List<CDataCell> m_Data = new List<CDataCell>();
 
         public event ViewHandler<IView> Changed_View_Event;
 
@@ -24,16 +25,15 @@ namespace WellaTodo
             InitializeComponent();
         }
 
-        public void SetController(IController controller)
+        public void SetController(MainController controller)
         {
             m_Controller = controller;
         }
 
         public void Initiate_View()
         {
-        /*
             m_Data = m_Controller.Get_Model().GetDataCollection();
-
+        
             textBox1.Text = "Hi World, Welcome!";
 
             dataGridView1.ColumnCount = 4;
@@ -72,27 +72,6 @@ namespace WellaTodo
                 listView1.Items.Add(item);
             }
             listView1.EndUpdate();
-        */
-        }
-
-        public void Clear_View()
-        {
-
-        }
-
-        public void Add_Model_To_View(CDataCell dc)
-        {
-            
-        }
-
-        public void Update_View_With_Changed_Model(CDataCell dc)
-        {
-
-        }
-
-        public void Remove_Model_From_View(CDataCell dc)
-        {
-
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -116,7 +95,6 @@ namespace WellaTodo
 
         private void MainFrame_Load(object sender, EventArgs e)
         {
-            //m_Controller.Initiate_View();
             Initiate_View();
             Repaint();
         }
@@ -281,6 +259,13 @@ namespace WellaTodo
         {
             Console.WriteLine(">Label_6::clicked");
             tabControl1.SelectedIndex = 5;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(">MainFrame::button2_Click");
+            textBox2.Text = "hi";
+            m_Controller.Update_Model();
         }
     }
 }

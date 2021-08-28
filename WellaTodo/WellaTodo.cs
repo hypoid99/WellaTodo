@@ -1,7 +1,6 @@
 ﻿// copyright honeysoft 20200924 v0.1
 // 수정작업 2021.7.19
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +11,17 @@ namespace WellaTodo
 {
     static class WellaTodo
     {
-        /// <summary>
-        /// 해당 애플리케이션의 주 진입점입니다.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Console.WriteLine(">WellaTodo start");
+            Console.WriteLine(">WellaTodo::Start");
             MainFrame mainFrame = new MainFrame();
-            IModel mainModel = new MainModel();
-            IController mainController = new MainController(mainFrame, mainModel);
-            Console.WriteLine(">WellaTodo running");
+            MainModel mainModel = new MainModel();
+            new MainController(mainFrame, mainModel);
+            Console.WriteLine(">WellaTodo::Running");
             Application.Run(mainFrame);
         }
     }

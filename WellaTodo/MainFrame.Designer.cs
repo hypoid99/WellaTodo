@@ -38,6 +38,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -47,8 +49,6 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -209,6 +209,23 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "로그인";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(227, 50);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(83, 25);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "제출";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(42, 50);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(174, 25);
+            this.textBox2.TabIndex = 0;
+            // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -239,7 +256,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(552, 392);
+            this.tabPage3.Size = new System.Drawing.Size(602, 422);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "중요";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -266,7 +283,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 24);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(552, 392);
+            this.tabPage4.Size = new System.Drawing.Size(602, 422);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "계획된 일정";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -286,7 +303,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 24);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(552, 392);
+            this.tabPage5.Size = new System.Drawing.Size(602, 422);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "나에게 할당됨";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -296,26 +313,10 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 24);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(552, 392);
+            this.tabPage6.Size = new System.Drawing.Size(602, 422);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "할일";
             this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(42, 50);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(174, 25);
-            this.textBox2.TabIndex = 0;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(227, 50);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(83, 25);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "제출";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // MainFrame
             // 
