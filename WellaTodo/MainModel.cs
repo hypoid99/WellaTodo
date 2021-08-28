@@ -11,7 +11,6 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Changed_Model_Event;
 
 		List<CDataCell> myData = new List<CDataCell>();
-		public int m_Value;
 
 		public MainModel()
 		{
@@ -37,11 +36,11 @@ namespace WellaTodo
 
 		public void Initialize()
         {
-			Console.WriteLine(">MainModel:Initialize MainModel {0}", m_Value);
+			Console.WriteLine(">MainModel:Initialize MainModel");
 			myData.Add(new CDataCell("완료", "할일 1번째", "중요", "홍길동"));
-			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "홍길동"));
-			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "홍길동"));
-			CDataCell newdata = new CDataCell("완료", "할일 4번째", "중요", "홍길동");
+			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "고길동"));
+			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "김순애"));
+			CDataCell newdata = new CDataCell("완료", "할일 4번째", "중요", "인서트");
 			myData.Insert(1, newdata);
 			DisplayDataCell(myData);
 		}
