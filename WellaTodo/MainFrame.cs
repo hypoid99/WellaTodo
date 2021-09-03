@@ -12,6 +12,8 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
+    public delegate void UserControl_Event();
+
     public partial class MainFrame : Form, IView, IModelObserver
     {
         MainController m_Controller;
@@ -72,6 +74,9 @@ namespace WellaTodo
                 listView1.Items.Add(item);
             }
             listView1.EndUpdate();
+
+            splitContainer2.SplitterDistance = splitContainer2.Width - 25;
+            splitContainer2.IsSplitterFixed = true;
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -93,10 +98,33 @@ namespace WellaTodo
             }
         }
 
-        private void MainFrame_Load(object sender, EventArgs e)
+        int pos = 1;
+
+        private void Add_Item(string text, bool chk)
         {
-            Initiate_View();
-            Repaint();
+            Todo_Item item = new Todo_Item(text, chk);
+            splitContainer2.Panel1.Controls.Add(item);
+            item.Top = pos;
+            item.Width = splitContainer2.Panel1.Width;
+            pos = item.Top + item.Height + 1;
+
+            item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+        }
+
+        bool todo_detail = false;
+
+        private void Click_Todo_Item()
+        {
+            Console.WriteLine("Clicked todo item");
+            if (todo_detail)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width - 25;
+                todo_detail = false;
+            } else
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width - 125;
+                todo_detail = true;
+            }
         }
 
         private void Repaint()
@@ -112,6 +140,26 @@ namespace WellaTodo
             tabControl1.Height = splitContainer1.Panel2.Height;
 
             splitContainer1.Refresh();
+
+            foreach (Control contr in splitContainer2.Panel1.Controls)
+            {
+                if (contr is Todo_Item)
+                {
+                    contr.Width = splitContainer2.Panel1.Width;
+                }
+            }
+
+            splitContainer2.Refresh();
+        }
+
+        //
+        // Control Event 
+        //
+
+        private void MainFrame_Load(object sender, EventArgs e)
+        {
+            Initiate_View();
+            Repaint();
         }
 
         private void splitContainer1_Resize(object sender, EventArgs e)
@@ -140,7 +188,6 @@ namespace WellaTodo
                         if (e.X > 0 && e.X < (splitContainer1.Width))
                         {
                             splitContainer1.SplitterDistance = e.X;
-
                             Repaint();
                         }
                     }
@@ -264,8 +311,39 @@ namespace WellaTodo
         private void button2_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">MainFrame::button2_Click");
-            textBox2.Text = "hi";
+            if (textBox2.Text .Trim ().Length == 0)
+            {
+                MessageBox.Show("Invalid Text");
+                return;
+            }
+            Add_Item(textBox2.Text, false);
+            textBox2.Text = "";
+
             m_Controller.Update_Model();
+        }
+
+        private void splitContainer2_Resize(object sender, EventArgs e)
+        {
+            Repaint();
+        }
+
+        private void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            Repaint();
+        }
+
+        private void textBox2_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (textBox2.Text.Trim().Length == 0)
+                {
+                    MessageBox.Show("Invalid Text");
+                    return;
+                }
+                Add_Item(textBox2.Text, false);
+                textBox2.Text = "";
+            }
         }
     }
 }
