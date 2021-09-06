@@ -35,48 +35,21 @@ namespace WellaTodo
         public void Initiate_View()
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
-        
-            textBox1.Text = "Hi World, Welcome!";
 
-            dataGridView1.ColumnCount = 4;
-            dataGridView1.Columns[0].Name = "완료";
-            dataGridView1.Columns[1].Name = "내용";
-            dataGridView1.Columns[2].Name = "중요";
-            dataGridView1.Columns[3].Name = "대상";
-            foreach (CDataCell data in m_Data)
-            {
-                string complete = data.DC_complete;
-                string title = data.DC_title;
-                string important = data.DC_important;
-                string person = data.DC_person;
-
-                dataGridView1.Rows.Add(complete, title, important, person);
-            }
-            //dataGridView1.DataSource = m_Data;
-
-            listView1.View = View.Details;
-            listView1.BeginUpdate();
-            listView1.Columns.Add("완료");
-            listView1.Columns.Add("내용");
-            listView1.Columns.Add("중요");
-            listView1.Columns.Add("대상");
-            foreach (CDataCell data in m_Data)
-            {
-                string complete = data.DC_complete;
-                string title = data.DC_title;
-                string important = data.DC_important;
-                string person = data.DC_person;
-
-                ListViewItem item = new ListViewItem(complete);
-                item.SubItems.Add(title);
-                item.SubItems.Add(important);
-                item.SubItems.Add(person);
-                listView1.Items.Add(item);
-            }
-            listView1.EndUpdate();
+            label1.Size = new Size(splitContainer1.SplitterDistance, 40);
+            label2.Width = splitContainer1.SplitterDistance;
+            label3.Width = splitContainer1.SplitterDistance;
+            label4.Width = splitContainer1.SplitterDistance;
+            label5.Width = splitContainer1.SplitterDistance;
+            label6.Width = splitContainer1.SplitterDistance;
 
             splitContainer2.SplitterDistance = splitContainer2.Width - 25;
             splitContainer2.IsSplitterFixed = true;
+            splitContainer2.Location = new Point(10, 10);
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+
+            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
+            textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -122,24 +95,27 @@ namespace WellaTodo
                 todo_detail = false;
             } else
             {
-                splitContainer2.SplitterDistance = splitContainer2.Width - 125;
+                splitContainer2.SplitterDistance = splitContainer2.Width / 2;
                 todo_detail = true;
             }
         }
 
         private void Repaint()
         {
-            label1.Width = splitContainer1.SplitterDistance;
+            label1.Size = new Size(splitContainer1.SplitterDistance, 40);
             label2.Width = splitContainer1.SplitterDistance;
             label3.Width = splitContainer1.SplitterDistance;
             label4.Width = splitContainer1.SplitterDistance;
             label5.Width = splitContainer1.SplitterDistance;
             label6.Width = splitContainer1.SplitterDistance;
 
-            tabControl1.Width = splitContainer1.Panel2.Width;
-            tabControl1.Height = splitContainer1.Panel2.Height;
-
             splitContainer1.Refresh();
+
+            splitContainer2.Location = new Point(10, 10);
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+
+            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
+            textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
             foreach (Control contr in splitContainer2.Panel1.Controls)
             {
@@ -148,18 +124,22 @@ namespace WellaTodo
                     contr.Width = splitContainer2.Panel1.Width;
                 }
             }
-
             splitContainer2.Refresh();
         }
 
         //
-        // Control Event 
+        // Control Event --------------------------------------------------------------------
         //
 
         private void MainFrame_Load(object sender, EventArgs e)
         {
             Initiate_View();
             Repaint();
+        }
+
+        private void MainFrame_Resize(object sender, EventArgs e)
+        {
+
         }
 
         private void splitContainer1_Resize(object sender, EventArgs e)
@@ -213,7 +193,6 @@ namespace WellaTodo
         private void label1_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_1::clicked");
-            tabControl1.SelectedIndex = 0;
 
             Invoke_View_Event();
         }
@@ -233,7 +212,6 @@ namespace WellaTodo
         private void label2_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_2::clicked");
-            tabControl1.SelectedIndex = 1;
         }
 
         private void label3_MouseEnter(object sender, EventArgs e)
@@ -251,7 +229,6 @@ namespace WellaTodo
         private void label3_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_3::clicked");
-            tabControl1.SelectedIndex = 2;
         }
 
         private void label4_MouseEnter(object sender, EventArgs e)
@@ -269,7 +246,6 @@ namespace WellaTodo
         private void label4_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_4::clicked");
-            tabControl1.SelectedIndex = 3;
         }
 
         private void label5_MouseEnter(object sender, EventArgs e)
@@ -287,7 +263,6 @@ namespace WellaTodo
         private void label5_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_5::clicked");
-            tabControl1.SelectedIndex = 4;
         }
 
         private void label6_MouseEnter(object sender, EventArgs e)
@@ -305,7 +280,6 @@ namespace WellaTodo
         private void label6_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_6::clicked");
-            tabControl1.SelectedIndex = 5;
         }
 
         private void button2_Click(object sender, EventArgs e)
