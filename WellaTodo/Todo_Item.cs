@@ -40,6 +40,20 @@ namespace WellaTodo
             checkBox2.Location = new Point(this.Width - 50, checkBox2.Location.Y);
         }
 
+        public string Get_Todo_Title()
+        {
+            return label1.Text;
+        }
+
+        public bool isCompleted()
+        {
+            return checkBox1.Checked;
+        }
+
+        //
+        // event
+        //
+
         private void Todo_Item_Load(object sender, EventArgs e)
         {
             Repaint();
@@ -72,27 +86,37 @@ namespace WellaTodo
             }
         }
 
-        private void Todo_Item_Click(object sender, EventArgs e)
+        private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
             if (UserControl_Event_method != null)
             {
-                UserControl_Event_method();
+                switch (e.Button)
+                {
+                    case MouseButtons.Left:
+                        UserControl_Event_method();
+                        break;
+                    case MouseButtons.Right:
+                        MessageBox.Show("Right Button");
+                        break;
+                }
             }
         }
-        /*
-        private void checkBox2_Paint(object sender, PaintEventArgs e)
-        {
-            Console.WriteLine("checkbox repaint");
-            CheckState cs = checkBox2.CheckState;
-            if (cs == CheckState.Checked)
-            {
-                using (SolidBrush brush = new SolidBrush(checkBox2.BackColor))
-                    e.Graphics.FillRectangle(brush, 0, 1, 14, 14);
-                e.Graphics.FillRectangle(Brushes.Green, 3, 4, 8, 8);
-                e.Graphics.DrawRectangle(Pens.Black, 0, 1, 13, 13);
-                Console.WriteLine("checkbox repaint-----------------------");
-            }
-        }
-        */
     }
 }
+
+
+/*
+private void checkBox2_Paint(object sender, PaintEventArgs e)
+{
+Console.WriteLine("checkbox repaint");
+CheckState cs = checkBox2.CheckState;
+if (cs == CheckState.Checked)
+{
+using (SolidBrush brush = new SolidBrush(checkBox2.BackColor))
+   e.Graphics.FillRectangle(brush, 0, 1, 14, 14);
+e.Graphics.FillRectangle(Brushes.Green, 3, 4, 8, 8);
+e.Graphics.DrawRectangle(Pens.Black, 0, 1, 13, 13);
+Console.WriteLine("checkbox repaint-----------------------");
+}
+}
+*/

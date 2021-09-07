@@ -37,10 +37,10 @@ namespace WellaTodo
 		public void Initialize()
         {
 			Console.WriteLine(">MainModel:Initialize MainModel");
-			myData.Add(new CDataCell("완료", "할일 1번째", "중요", "홍길동"));
-			myData.Add(new CDataCell("완료", "할일 2번째", "중요", "고길동"));
-			myData.Add(new CDataCell("완료", "할일 3번째", "중요", "김순애"));
-			CDataCell newdata = new CDataCell("완료", "할일 4번째", "중요", "인서트");
+			myData.Add(new CDataCell(false, "할일 1번째", false));
+			myData.Add(new CDataCell(false, "할일 2번째", false));
+			myData.Add(new CDataCell(false, "할일 3번째", false));
+			CDataCell newdata = new CDataCell(false, "할일 4번째", false);
 			myData.Insert(1, newdata);
 			DisplayDataCell(myData);
 		}

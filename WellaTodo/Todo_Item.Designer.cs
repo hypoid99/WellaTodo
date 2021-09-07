@@ -62,7 +62,6 @@ namespace WellaTodo
             this.checkBox2.Size = new System.Drawing.Size(18, 17);
             this.checkBox2.TabIndex = 2;
             this.checkBox2.UseVisualStyleBackColor = true;
-            //this.checkBox2.Paint += new System.Windows.Forms.PaintEventHandler(this.checkBox2_Paint);
             // 
             // Todo_Item
             // 
@@ -75,8 +74,8 @@ namespace WellaTodo
             this.Name = "Todo_Item";
             this.Size = new System.Drawing.Size(381, 35);
             this.Load += new System.EventHandler(this.Todo_Item_Load);
-            this.Click += new System.EventHandler(this.Todo_Item_Click);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Todo_Item_Paint);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseClick);
             this.MouseEnter += new System.EventHandler(this.Todo_Item_MouseEnter);
             this.MouseLeave += new System.EventHandler(this.Todo_Item_MouseLeave);
             this.ResumeLayout(false);

@@ -22,6 +22,9 @@ namespace WellaTodo
 
         public event ViewHandler<IView> Changed_View_Event;
 
+        bool isTodoDetail = false;
+
+
         public MainFrame()
         {
             InitializeComponent();
@@ -71,24 +74,47 @@ namespace WellaTodo
             }
         }
 
-        int pos = 1;
+        private void Load_Item()
+        {
+            string text;
+            bool chk;
+
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+
+            foreach (CDataCell data in m_Data)
+            {
+                text = data.DC_title;
+                chk = false;
+
+                Todo_Item item = new Todo_Item(text, chk);
+
+                splitContainer2.Panel1.Controls.Add(item);
+                //item.Top = pos;
+                //item.Width = splitContainer2.Panel1.Width;
+                //pos = item.Top + item.Height + 1;
+
+                item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+            }
+            Display_Todo_Item();
+        }
 
         private void Add_Item(string text, bool chk)
         {
             Todo_Item item = new Todo_Item(text, chk);
             splitContainer2.Panel1.Controls.Add(item);
-            item.Top = pos;
-            item.Width = splitContainer2.Panel1.Width;
-            pos = item.Top + item.Height + 1;
+            //item.Top = pos;
+            //item.Width = splitContainer2.Panel1.Width;
+            //pos = item.Top + item.Height + 1;
 
             item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+
+            Display_Todo_Item();
         }
 
         bool todo_detail = false;
 
         private void Click_Todo_Item()
         {
-            Console.WriteLine("Clicked todo item");
             if (todo_detail)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width - 25;
@@ -98,6 +124,43 @@ namespace WellaTodo
                 splitContainer2.SplitterDistance = splitContainer2.Width / 2;
                 todo_detail = true;
             }
+        }
+
+        private void Display_Todo_Item()
+        {
+            int pos = 1;
+            int hgt = 1;
+            bool hasCompleted = false;
+
+            //Display Todo data
+            foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+            {
+                hgt = item.Height;
+                if (item.isCompleted() == false)
+                {
+                    item.Top = pos;
+                    item.Width = splitContainer2.Panel1.Width;
+                    pos = item.Top + item.Height + 1;
+                } else
+                {
+                    hasCompleted = true;
+                }
+            }
+            //Display Completed Todo data
+            if (hasCompleted)
+            {
+                pos = pos + hgt + 10;
+                foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+                {
+                    if (item.isCompleted() == true)
+                    {
+                        item.Top = pos;
+                        item.Width = splitContainer2.Panel1.Width;
+                        pos = item.Top + item.Height + 1;
+                    }
+                }
+            }
+            splitContainer2.Refresh();
         }
 
         private void Repaint()
@@ -134,6 +197,7 @@ namespace WellaTodo
         private void MainFrame_Load(object sender, EventArgs e)
         {
             Initiate_View();
+            Load_Item();
             Repaint();
         }
 
@@ -263,6 +327,7 @@ namespace WellaTodo
         private void label5_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_5::clicked");
+            Display_Todo_Item();
         }
 
         private void label6_MouseEnter(object sender, EventArgs e)
