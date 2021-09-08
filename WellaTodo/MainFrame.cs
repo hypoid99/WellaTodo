@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public delegate void UserControl_Event();
+    public delegate void UserControl_Event(int val);
 
     public partial class MainFrame : Form, IView, IModelObserver
     {
@@ -21,9 +21,6 @@ namespace WellaTodo
         List<CDataCell> m_Data = new List<CDataCell>();
 
         public event ViewHandler<IView> Changed_View_Event;
-
-        bool isTodoDetail = false;
-
 
         public MainFrame()
         {
@@ -76,6 +73,7 @@ namespace WellaTodo
 
         private void Load_Item()
         {
+            int num;
             string text;
             bool chk;
 
@@ -85,14 +83,10 @@ namespace WellaTodo
             {
                 text = data.DC_title;
                 chk = false;
-
-                Todo_Item item = new Todo_Item(text, chk);
-
+                num = data.DC_idNum;
+                Todo_Item item = new Todo_Item(num, text, chk);
+                Console.WriteLine(">MainFrame::Load_Item [{0}]", num);
                 splitContainer2.Panel1.Controls.Add(item);
-                //item.Top = pos;
-                //item.Width = splitContainer2.Panel1.Width;
-                //pos = item.Top + item.Height + 1;
-
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
             }
             Display_Todo_Item();
@@ -100,11 +94,18 @@ namespace WellaTodo
 
         private void Add_Item(string text, bool chk)
         {
-            Todo_Item item = new Todo_Item(text, chk);
+            int num;
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+            num = m_Data.Count;
+            num++;
+
+            //inclease num to m_Data
+
+            Todo_Item item = new Todo_Item(num, text, chk);
+
+            //m_Controller.performAddItem();
+
             splitContainer2.Panel1.Controls.Add(item);
-            //item.Top = pos;
-            //item.Width = splitContainer2.Panel1.Width;
-            //pos = item.Top + item.Height + 1;
 
             item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
 
@@ -113,17 +114,39 @@ namespace WellaTodo
 
         bool todo_detail = false;
 
-        private void Click_Todo_Item()
+        private void Click_Todo_Item(int val)
         {
-            if (todo_detail)
+            switch (val)
             {
-                splitContainer2.SplitterDistance = splitContainer2.Width - 25;
-                todo_detail = false;
-            } else
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width / 2;
-                todo_detail = true;
+                case 1:
+                    //m_Controller.PerformCheckedComplete();
+                    break;
+                case 2:
+                    //m_Controller.PerformUncheckedComplete();
+                    break;
+                case 3:
+                    //m_Controller.PerformClickedTodoItem();
+                    if (todo_detail)
+                    {
+                        splitContainer2.SplitterDistance = splitContainer2.Width - 25;
+                        todo_detail = false;
+                    }
+                    else
+                    {
+                        splitContainer2.SplitterDistance = splitContainer2.Width / 2;
+                        todo_detail = true;
+                    }
+                    break;
+                case 4:
+                    //m_Controller.PerformCheckedImportant();
+                    break;
+                case 5:
+                    //m_Controller.PerformUncheckedImportant();
+                    break;
             }
+            Display_Todo_Item();
+
+            //m_Controller.Update_Model();
         }
 
         private void Display_Todo_Item()
@@ -131,6 +154,8 @@ namespace WellaTodo
             int pos = 1;
             int hgt = 1;
             bool hasCompleted = false;
+
+            m_Data = m_Controller.Get_Model().GetDataCollection();
 
             //Display Todo data
             foreach (Todo_Item item in splitContainer2.Panel1.Controls)
@@ -141,6 +166,7 @@ namespace WellaTodo
                     item.Top = pos;
                     item.Width = splitContainer2.Panel1.Width;
                     pos = item.Top + item.Height + 1;
+                    Console.WriteLine(">MainFrame::Display_Todo_Item [{0}]",item.IdNum);
                 } else
                 {
                     hasCompleted = true;
@@ -157,6 +183,7 @@ namespace WellaTodo
                         item.Top = pos;
                         item.Width = splitContainer2.Panel1.Width;
                         pos = item.Top + item.Height + 1;
+                        Console.WriteLine(">MainFrame::Display_Complete_Todo_Item [{0}]", item.IdNum);
                     }
                 }
             }

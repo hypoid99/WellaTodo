@@ -8,9 +8,11 @@ namespace WellaTodo
 {
     public class CDataCell
     {
+        private int _idNum;
         private string _title;
         private bool _complete;
         private bool _important;
+        private string _memo;
 
         //private string _person;
         //private string _detailstep;
@@ -21,6 +23,11 @@ namespace WellaTodo
 
         //private string _attachfile;
         //private string _memo;
+
+        public int DC_idNum {
+            get { return _idNum; }
+            set { _idNum = value; }
+        }
 
         public bool DC_complete {
             get { return _complete; }
@@ -37,18 +44,28 @@ namespace WellaTodo
             set { _important = value; }
         }
 
+        public string DC_memo
+        {
+            get { return _memo; }
+            set { _memo = value; }
+        }
+
         public CDataCell()
         {
+            _idNum = 0;
             _complete = false;
             _title = "입력하세요";
             _important = false;
+            _memo = "메모추가";
         }
 
-        public CDataCell(bool complete, string title, bool important)
+        public CDataCell(int idnum, bool complete, string title, bool important, string memo)
         {
+            _idNum = idnum;
             _complete = complete;
             _title = title;
             _important = important;
+            _memo = memo;
         }
 
         public override String ToString()
