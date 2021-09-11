@@ -38,13 +38,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.labelTitleDetail = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -65,19 +67,20 @@
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.Menu;
             this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel1);
+            this.splitContainer1.Panel1MinSize = 100;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel2.Controls.Add(this.textBox2);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel2MinSize = 200;
             this.splitContainer1.Size = new System.Drawing.Size(951, 477);
-            this.splitContainer1.SplitterDistance = 237;
+            this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
             this.splitContainer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseMove);
             this.splitContainer1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseUp);
-            this.splitContainer1.Resize += new System.EventHandler(this.splitContainer1_Resize);
             // 
             // flowLayoutPanel1
             // 
@@ -93,7 +96,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(237, 477);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(200, 477);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // label1
@@ -191,27 +194,58 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.AutoScroll = true;
+            this.splitContainer2.Panel1MinSize = 200;
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.AutoScroll = true;
             this.splitContainer2.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.splitContainer2.Panel2.Controls.Add(this.button2);
+            this.splitContainer2.Panel2.Controls.Add(this.button1);
+            this.splitContainer2.Panel2.Controls.Add(this.textBox3);
             this.splitContainer2.Panel2.Controls.Add(this.textBox1);
             this.splitContainer2.Panel2.Controls.Add(this.label10);
             this.splitContainer2.Panel2.Controls.Add(this.label9);
             this.splitContainer2.Panel2.Controls.Add(this.label8);
             this.splitContainer2.Panel2.Controls.Add(this.checkBox2);
             this.splitContainer2.Panel2.Controls.Add(this.checkBox1);
-            this.splitContainer2.Panel2.Controls.Add(this.labelTitleDetail);
+            this.splitContainer2.Panel2MinSize = 1;
             this.splitContainer2.Size = new System.Drawing.Size(600, 300);
             this.splitContainer2.SplitterDistance = 307;
             this.splitContainer2.TabIndex = 3;
-            this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
-            this.splitContainer2.Resize += new System.EventHandler(this.splitContainer2_Resize);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(199, 265);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 30);
+            this.button2.TabIndex = 9;
+            this.button2.Text = "삭제";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(13, 265);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 30);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "닫기";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(40, 11);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(211, 25);
+            this.textBox3.TabIndex = 7;
+            this.textBox3.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox3_KeyUp);
+            this.textBox3.Leave += new System.EventHandler(this.textBox3_Leave);
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(26, 160);
+            this.textBox1.Location = new System.Drawing.Point(26, 142);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -221,7 +255,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(37, 123);
+            this.label10.Location = new System.Drawing.Point(37, 105);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(37, 15);
             this.label10.TabIndex = 5;
@@ -230,7 +264,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(37, 95);
+            this.label9.Location = new System.Drawing.Point(37, 77);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(72, 15);
             this.label9.TabIndex = 4;
@@ -239,7 +273,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(37, 70);
+            this.label8.Location = new System.Drawing.Point(37, 52);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(122, 15);
             this.label8.TabIndex = 3;
@@ -263,15 +297,6 @@
             this.checkBox1.TabIndex = 1;
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // labelTitleDetail
-            // 
-            this.labelTitleDetail.AutoSize = true;
-            this.labelTitleDetail.Location = new System.Drawing.Point(50, 15);
-            this.labelTitleDetail.Name = "labelTitleDetail";
-            this.labelTitleDetail.Size = new System.Drawing.Size(52, 15);
-            this.labelTitleDetail.TabIndex = 0;
-            this.labelTitleDetail.Text = "작업명";
-            // 
             // MainFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -279,6 +304,7 @@
             this.ClientSize = new System.Drawing.Size(951, 477);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MinimumSize = new System.Drawing.Size(400, 47);
             this.Name = "MainFrame";
             this.Text = "WellaTodo v0.15";
             this.Load += new System.EventHandler(this.MainFrame_Load);
@@ -309,13 +335,15 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label labelTitleDetail;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }
 

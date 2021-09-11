@@ -15,11 +15,18 @@ namespace WellaTodo
         public event UserControl_Event UserControl_Event_method;
 
         private int _idNum;
+        private string _title;
 
         public int IdNum
         {
             get { return _idNum; }
             set { _idNum = value; }
+        }
+
+        public string TD_title
+        {
+            get { return _title; }
+            set { _title = value; label1.Text = value; }
         }
 
         public Todo_Item()
@@ -31,6 +38,7 @@ namespace WellaTodo
         {
             InitializeComponent();
             _idNum = idnum;
+            _title = text;
             label1.Text = text;
             checkBox1.Checked = chk;
         }
@@ -47,11 +55,6 @@ namespace WellaTodo
             }
 
             checkBox2.Location = new Point(this.Width - 50, checkBox2.Location.Y);
-        }
-
-        public string Get_Todo_Title()
-        {
-            return label1.Text;
         }
 
         public bool isCompleted()
@@ -89,13 +92,13 @@ namespace WellaTodo
             if (checkBox1.Checked)
             {
                 val = 1;
-                UserControl_Event_method?.Invoke(val);
+                UserControl_Event_method?.Invoke(val, IdNum);
                 this.BackColor = Color.FromArgb(100, 100, 100);
             }
             else
             {
                 val = 2;
-                UserControl_Event_method?.Invoke(val);
+                UserControl_Event_method?.Invoke(val, IdNum);
                 this.BackColor = Color.FromArgb(255, 126, 0);
             }
         }
@@ -108,7 +111,7 @@ namespace WellaTodo
                 {
                     case MouseButtons.Left:
                         int val = 3;
-                        UserControl_Event_method(val);
+                        UserControl_Event_method(val, IdNum);
                         break;
                     case MouseButtons.Right:
                         MessageBox.Show("Right Button");

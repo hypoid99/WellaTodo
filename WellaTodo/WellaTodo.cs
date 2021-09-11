@@ -1,5 +1,5 @@
-﻿// copyright honeysoft 20200924 v0.2
-// 수정작업 2021.7.19 -> 2021.9.4
+﻿// copyright honeysoft 20200924 v0.5
+// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11
 
 using System;
 using System.Collections.Generic;
@@ -17,11 +17,9 @@ namespace WellaTodo
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Console.WriteLine(">WellaTodo::Start");
             MainFrame mainFrame = new MainFrame();
             MainModel mainModel = new MainModel();
             new MainController(mainFrame, mainModel);
-            Console.WriteLine(">WellaTodo::Running");
             Application.Run(mainFrame);
         }
     }
