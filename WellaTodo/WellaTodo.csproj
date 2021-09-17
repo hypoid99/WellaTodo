@@ -59,6 +59,12 @@
       <DependentUpon>MainFrame.cs</DependentUpon>
     </Compile>
     <Compile Include="MainModel.cs" />
+    <Compile Include="StarCheckbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StarCheckbox.Designer.cs">
+      <DependentUpon>StarCheckbox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Todo_Item.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -94,9 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Star.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
