@@ -12,18 +12,19 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public delegate void UserControl_Event(int val, int idx);
+    public delegate void UserControl_Event(object sender, EventArgs e);
 
     public partial class MainFrame : Form, IView, IModelObserver
     {
-        MainController m_Controller;
-
-        List<CDataCell> m_Data = new List<CDataCell>();
-
         public event ViewHandler<IView> Changed_View_Event;
 
+        MainController m_Controller;
+        List<CDataCell> m_Data = new List<CDataCell>();
+
+        int m_Todo_Item_Counter = 1;
         bool isTodo_detail = false;
         int m_data_position;
+        int m_before_data_position;
 
         public MainFrame()
         {
@@ -39,6 +40,12 @@ namespace WellaTodo
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
+            flowLayoutPanel1.Controls.Add(label1);
+            flowLayoutPanel1.Controls.Add(label2);
+            flowLayoutPanel1.Controls.Add(label3);
+            flowLayoutPanel1.Controls.Add(label4);
+            flowLayoutPanel1.Controls.Add(label5);
+            flowLayoutPanel1.Controls.Add(label6);
             label1.Width = splitContainer1.SplitterDistance;
             label2.Width = splitContainer1.SplitterDistance;
             label3.Width = splitContainer1.SplitterDistance;
@@ -50,6 +57,12 @@ namespace WellaTodo
             splitContainer2.IsSplitterFixed = true;
             splitContainer2.Location = new Point(10, 10);
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+
+            flowLayoutPanel2.AutoScroll = false;
+            flowLayoutPanel2.HorizontalScroll.Maximum = 0;
+            flowLayoutPanel2.HorizontalScroll.Enabled = false;
+            flowLayoutPanel2.HorizontalScroll.Visible = false;
+            flowLayoutPanel2.AutoScroll = true;
 
             textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
@@ -77,6 +90,9 @@ namespace WellaTodo
             }
         }
 
+        //--------------------------------------------------------------
+        // 할일 항목 초기 데이타 로딩
+        //--------------------------------------------------------------
         private void Load_Item()
         {
             int idx;
@@ -84,63 +100,111 @@ namespace WellaTodo
             bool chk;
 
             m_Data = m_Controller.Get_Model().GetDataCollection();
-
+            
             foreach (CDataCell data in m_Data)
             {
+                idx = data.DC_idNum;
                 text = data.DC_title;
                 chk = false;
-                idx = data.DC_idNum;
                 Todo_Item item = new Todo_Item(idx, text, chk);
-                splitContainer2.Panel1.Controls.Add(item);
+                flowLayoutPanel2.Controls.Add(item);
+                m_Todo_Item_Counter++;
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
             }
             Display_Todo_Item();
         }
 
+        //--------------------------------------------------------------
+        // 할일 항목 추가
+        //--------------------------------------------------------------
         private void Add_Item(string text, bool chk)
         {
-            int idx;
             m_Data = m_Controller.Get_Model().GetDataCollection();
-            idx = m_Data.Count;
-            idx++;
-
-            Todo_Item item = new Todo_Item(idx, text, chk);
-            splitContainer2.Panel1.Controls.Add(item);
-            item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
 
             //m_Controller.performAddItem();
-            m_Data.Add(new CDataCell(idx, chk, text, false, "메모추가"));
+            Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
+            //m_Data.Add(new CDataCell(m_Todo_Item_Counter, chk, text, false, "메모추가"));
+            m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, chk, text, false, "메모추가"));
+
+            Todo_Item item = new Todo_Item(m_Todo_Item_Counter, text, chk);
+            flowLayoutPanel2.Controls.Add(item);
+            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+            m_Todo_Item_Counter++;
+            item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+            item.Width = flowLayoutPanel2.Width;
 
             Display_Todo_Item();
         }
 
-        private void Click_Todo_Item(int val, int idx)
+        //--------------------------------------------------------------
+        // 할일 항목을 클릭했을때 처리
+        //--------------------------------------------------------------
+        private void Click_Todo_Item(object sender, EventArgs e)
         {
-            switch (val)
+            int pos = 0;
+            Todo_Item sd = (Todo_Item)sender;
+
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                case 1:
-                    //m_Controller.PerformCheckedComplete();
-                    break;
-                case 2:
-                    //m_Controller.PerformUncheckedComplete();
-                    break;
-                case 3:
-                    //m_Controller.PerformClickedTodoItem();
-                    int pos = 0;
-                    int before_data_position;
-
-                    before_data_position = m_data_position;
-
-                    foreach (Todo_Item item in splitContainer2.Panel1.Controls)
-                    {
-                        pos++;
-                        if (idx == item.IdNum) m_data_position = pos;
-                    }
-
-                    if (isTodo_detail && (before_data_position == m_data_position))
+                if (item.Equals(sd))
+                {
+                    //완료됨 체크시
+                    if (item.IsCompleteClicked)
                     {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isTodo_detail = false;
+
+                        textBox1.Text = "Complete Clicked";
+                        if (item.isCompleted())
+                        {
+                            int cnt = flowLayoutPanel2.Controls.Count;
+                            flowLayoutPanel2.Controls.SetChildIndex(item, cnt);
+
+                            m_Data = m_Controller.Get_Model().GetDataCollection();
+                            CDataCell dc = m_Data[pos]; //추출
+                            m_Data.RemoveAt(pos); //삭제
+                            m_Data.Insert(m_Data.Count, dc); //삽입
+                        }
+                        else
+                        {
+                            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+
+                            m_Data = m_Controller.Get_Model().GetDataCollection();
+                            CDataCell dc = m_Data[pos]; //추출
+                            m_Data.RemoveAt(pos); //삭제
+                            m_Data.Insert(0, dc); //삽입
+                        }
+                        break;
+                    }
+
+                    // 중요항목 체크시
+                    if (item.IsImportantClicked)
+                    {
+                        splitContainer2.SplitterDistance = splitContainer2.Width;
+                        isTodo_detail = false;
+
+                        textBox1.Text = "Important Clicked";
+                        if (item.isImportant() && !item.isCompleted())
+                        {
+                            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+
+                            m_Data = m_Controller.Get_Model().GetDataCollection();
+                            CDataCell dc = m_Data[pos]; //추출
+                            m_Data.RemoveAt(pos); //삭제
+                            m_Data.Insert(0, dc); //삽입
+
+                            flowLayoutPanel2.VerticalScroll.Value = 0;
+                        }
+                        break;
+                    }
+
+                    //Todo 아이템 클릭시
+                    m_data_position = pos;
+                    if (isTodo_detail && (m_before_data_position == pos))
+                    {
+                        splitContainer2.SplitterDistance = splitContainer2.Width;
+                        isTodo_detail = false;
+                        break;
                     }
                     else
                     {
@@ -148,86 +212,52 @@ namespace WellaTodo
                         isTodo_detail = true;
 
                         m_Data = m_Controller.Get_Model().GetDataCollection();
-                        textBox3.Text = m_Data[m_data_position - 1].DC_title;
-                        textBox1.Text = "Data Position :" + m_data_position.ToString();
+                        textBox3.Text = item.TD_title;
+                        textBox1.Text = "Data Position : " + m_data_position.ToString();
+                        m_before_data_position = m_data_position;
+                        break;
                     }
-                    break;
-                case 4:
-                    //m_Controller.PerformCheckedImportant();
-                    break;
-                case 5:
-                    //m_Controller.PerformUncheckedImportant();
-                    break;
+                }
+                pos = pos + 1;
             }
             Display_Todo_Item();
-
-            //m_Controller.Update_Model();
         }
 
+        //--------------------------------------------------------------
+        //화면에 할일 출력
+        //--------------------------------------------------------------
         private void Display_Todo_Item()
         {
-            int pos = 1;
-            int hgt = 1;
-            bool hasCompleted = false;
-
-            m_Data = m_Controller.Get_Model().GetDataCollection();
-
-            //Display Todo data
-            foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                hgt = item.Height;
-                if (item.isCompleted() == false)
-                {
-                    item.Top = pos;
-                    item.Width = splitContainer2.Panel1.Width;
-                    pos = item.Top + item.Height + 1;
-                }
-                else
-                {
-                    hasCompleted = true;
-                }
+                item.Width = flowLayoutPanel2.Width;
             }
-            //Display Completed Todo data
-            if (hasCompleted)
-            {
-                //label7.Visible = true;
-                //label7.Top = pos;
-                //pos = label7.Top + label7.Height + 1;
-                //label7.Text = "완료됨";
-                pos = pos + hgt + 10;
-                foreach (Todo_Item item in splitContainer2.Panel1.Controls)
-                {
-                    if (item.isCompleted() == true)
-                    {
-                        item.Top = pos;
-                        item.Width = splitContainer2.Panel1.Width;
-                        pos = item.Top + item.Height + 1;
-                    }
-                }
-            }
-            else
-            {
-                //label7.Visible = false;
-                //label7.Text = "완료없음";
-            }
+            Display_Data();
         }
 
         private void Display_Data()
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
-            Console.WriteLine(">Detail Data Position : [{0}]", m_data_position);
-            foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+            Console.WriteLine(">Todo Item Count : [{0}]", m_Todo_Item_Counter);
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {         
-                Console.WriteLine(">Data TD:[{0}]-[{1}]", item.IdNum, item.TD_title);
+                Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
+                pos++;
             }
 
+            pos = 0;
             foreach (CDataCell data in m_Data)
             {
-                Console.WriteLine(">Data DC:[{0}]-[{1}]", data.DC_idNum, data.DC_title);
+                Console.WriteLine(">Data DC:[{0}]-[{1}]", pos, data.DC_title);
+                pos++;
             }
-            Console.WriteLine(">------------------"); 
+            Console.WriteLine(">------------------");
         }
 
+        //--------------------------------------------------------------
+        //Repaint
+        //--------------------------------------------------------------
         private void Repaint()
         {
             label1.Width = splitContainer1.SplitterDistance;
@@ -237,28 +267,25 @@ namespace WellaTodo
             label5.Width = splitContainer1.SplitterDistance;
             label6.Width = splitContainer1.SplitterDistance;
 
-            splitContainer1.Refresh();
-
             splitContainer2.Location = new Point(10, 10);
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
 
             textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
-            foreach (Control contr in splitContainer2.Panel1.Controls)
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                if (contr is Todo_Item)
-                {
-                    contr.Width = splitContainer2.Panel1.Width;
-                }
+                item.Width = flowLayoutPanel2.Width;
             }
-            splitContainer2.Refresh();
+
+            this.Refresh();
         }
 
-        //
-        // Control Event --------------------------------------------------------------------
-        //
+        //--------------------------------------------------------------
+        // Control Event 
+        //--------------------------------------------------------------
 
+        //메인프레임 이벤트
         private void MainFrame_Load(object sender, EventArgs e)
         {
             Initiate_View();
@@ -270,6 +297,7 @@ namespace WellaTodo
             Repaint();
         }
 
+        //스프릿컨테이너-1 이벤트
         private void splitContainer1_MouseDown(object sender, MouseEventArgs e)
         {
             splitContainer1.IsSplitterFixed = true;
@@ -301,6 +329,7 @@ namespace WellaTodo
             }
         }
 
+        //메뉴 이벤트
         private void label1_MouseEnter(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Underline);
@@ -406,20 +435,7 @@ namespace WellaTodo
             Console.WriteLine(">Label_6::clicked");
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine(">MainFrame::button2_Click");
-            if (textBox2.Text .Trim ().Length == 0)
-            {
-                MessageBox.Show("Invalid Text");
-                return;
-            }
-            Add_Item(textBox2.Text, false);
-            textBox2.Text = "";
-
-            m_Controller.Update_Model();
-        }
-
+        //할일 입력창
         private void textBox2_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -430,43 +446,54 @@ namespace WellaTodo
             }
         }
 
+        //상세창 제목 키 입력
         private void textBox3_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 if (textBox3.Text.Trim().Length == 0)
                 {
-                    textBox3.Text = m_Data[m_data_position - 1].DC_title;
+                    textBox3.Text = m_Data[m_data_position].DC_title;
                     return;
                 }
-
+                
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+                m_Data[m_data_position].DC_title = textBox3.Text;
+
+                int pos = 0;
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (item.IdNum == m_data_position)
+                    if (pos == m_data_position)
                     {
                         item.TD_title = textBox3.Text;
-                        m_Data[m_data_position - 1].DC_title = textBox3.Text;
+                        break;
                     }
-                }
+                    pos++;
+                }  
             }
         }
 
+        //상세창 제목 커서 벗어남
         private void textBox3_Leave(object sender, EventArgs e)
         {
-            m_Data = m_Controller.Get_Model().GetDataCollection();
-            foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+            if (textBox3.Text.Trim().Length == 0)
             {
-                if (item.IdNum == m_data_position)
+                textBox3.Text = m_Data[m_data_position].DC_title;
+                return;
+            }
+
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+            m_Data[m_data_position].DC_title = textBox3.Text;
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (pos == m_data_position)
                 {
-                    if (textBox3.Text.Trim().Length == 0)
-                    {
-                        textBox3.Text = m_Data[m_data_position - 1].DC_title;
-                        return;
-                    }
                     item.TD_title = textBox3.Text;
-                    m_Data[m_data_position - 1].DC_title = textBox3.Text;
+                    break;
                 }
+                pos++;
             }
         }
 
@@ -488,18 +515,18 @@ namespace WellaTodo
             if (isTodo_detail)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                foreach (Todo_Item item in splitContainer2.Panel1.Controls)
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    pos++;
                     if (pos == m_data_position)
                     {
                         item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
                         splitContainer2.Panel1.Controls.Remove(item);
                         item.Dispose();
 
-                        m_Data.Remove(m_Data[pos-1]);
+                        m_Data.Remove(m_Data[pos]);
                         break;
                     }
+                    pos++;
                 }
 
                 splitContainer2.SplitterDistance = splitContainer2.Width;
@@ -509,3 +536,17 @@ namespace WellaTodo
         }
     }
 }
+
+/*
+for (int i = collection.Count - 1; i >= 0; i--)
+{
+    var current = collection[i];
+    //Do things
+}
+*/
+
+/*
+Control c = pnlBarContainer.Controls[2];
+pnlBarContainer.Controls.SetChildIndex(c, 1);
+pnlBarContainer.Invalidate();
+*/

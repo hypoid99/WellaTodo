@@ -14,20 +14,21 @@ namespace WellaTodo
     {
         public event UserControl_Event UserControl_Event_method;
 
-        private int _idNum;
         private string _title;
 
-        public int IdNum
-        {
-            get { return _idNum; }
-            set { _idNum = value; }
-        }
+        public int IdNum { get; set; }
 
         public string TD_title
         {
             get { return _title; }
             set { _title = value; label1.Text = value; }
         }
+
+        public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
+        public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
+
+        private bool isCompleteClicked = false;
+        private bool isImportantClicked = false;
 
         public Todo_Item()
         {
@@ -37,7 +38,7 @@ namespace WellaTodo
         public Todo_Item(int idnum, string text, bool chk)
         {
             InitializeComponent();
-            _idNum = idnum;
+            IdNum = idnum;
             _title = text;
             label1.Text = text;
             checkBox1.Checked = chk;
@@ -60,6 +61,11 @@ namespace WellaTodo
         public bool isCompleted()
         {
             return checkBox1.Checked;
+        }
+
+        public bool isImportant()
+        {
+            return checkBox2.Checked;
         }
 
         //
@@ -88,18 +94,36 @@ namespace WellaTodo
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            int val;
             if (checkBox1.Checked)
             {
-                val = 1;
-                UserControl_Event_method?.Invoke(val, IdNum);
-                this.BackColor = Color.FromArgb(100, 100, 100);
+                IsCompleteClicked = true;
+                UserControl_Event_method?.Invoke(this, e);
+                BackColor = Color.FromArgb(100, 100, 100);
+                IsCompleteClicked = false;
             }
             else
             {
-                val = 2;
-                UserControl_Event_method?.Invoke(val, IdNum);
-                this.BackColor = Color.FromArgb(255, 126, 0);
+                IsCompleteClicked = true;
+                UserControl_Event_method?.Invoke(this, e);
+                BackColor = Color.FromArgb(255, 126, 0);
+                IsCompleteClicked = false;
+            }
+            Repaint();
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                IsImportantClicked = true;
+                UserControl_Event_method?.Invoke(this, e);
+                IsImportantClicked = false;
+            }
+            else
+            {
+                IsImportantClicked = true;
+                UserControl_Event_method?.Invoke(this, e);
+                IsImportantClicked = false;
             }
         }
 
@@ -110,8 +134,7 @@ namespace WellaTodo
                 switch (e.Button)
                 {
                     case MouseButtons.Left:
-                        int val = 3;
-                        UserControl_Event_method(val, IdNum);
+                        UserControl_Event_method?.Invoke(this, e);
                         break;
                     case MouseButtons.Right:
                         MessageBox.Show("Right Button");

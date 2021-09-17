@@ -11,6 +11,7 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Changed_Model_Event;
 
 		List<CDataCell> myData = new List<CDataCell>();
+		List<CDataCell> myData_Completed = new List<CDataCell>();
 
 		public MainModel()
 		{
@@ -34,13 +35,18 @@ namespace WellaTodo
 			return myData;
         }
 
+		public List<CDataCell> GetDataCompletedCollection()
+		{
+			return myData_Completed;
+		}
+
 		public void Initialize()
         {
-			myData.Add(new CDataCell(1, false, "할일 1번째", false, "메모추가"));
-			myData.Add(new CDataCell(2, false, "할일 2번째", false, "메모추가"));
-			myData.Add(new CDataCell(3, false, "할일 3번째", false, "메모추가"));
-			myData.Add(new CDataCell(4, false, "할일 4번째", false, "메모추가"));
-			myData.Add(new CDataCell(5, false, "할일 5번째", false, "메모추가"));
+			//myData.Insert(0, new CDataCell(1, false, "할일 1번째", false, "메모추가"));
+			//myData.Insert(0, new CDataCell(2, false, "할일 2번째", false, "메모추가"));
+			//myData.Insert(0, new CDataCell(3, false, "할일 3번째", false, "메모추가"));
+			//myData.Insert(0, new CDataCell(4, false, "할일 4번째", false, "메모추가"));
+			//myData.Insert(0, new CDataCell(5, false, "할일 5번째", false, "메모추가"));
 			//DisplayDataCell(myData);
 		}
 
