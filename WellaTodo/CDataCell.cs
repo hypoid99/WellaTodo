@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WellaTodo
 {
+    [Serializable]
     public class CDataCell
     {
         private int _idNum;

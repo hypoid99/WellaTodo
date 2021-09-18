@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace WellaTodo
 {
     public delegate void UserControl_Event(object sender, EventArgs e);
@@ -99,8 +102,9 @@ namespace WellaTodo
             string text;
             bool chk;
 
+            LoadFile();
+
             m_Data = m_Controller.Get_Model().GetDataCollection();
-            
             foreach (CDataCell data in m_Data)
             {
                 idx = data.DC_idNum;
@@ -123,7 +127,6 @@ namespace WellaTodo
 
             //m_Controller.performAddItem();
             Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
-            //m_Data.Add(new CDataCell(m_Todo_Item_Counter, chk, text, false, "메모추가"));
             m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, chk, text, false, "메모추가"));
 
             Todo_Item item = new Todo_Item(m_Todo_Item_Counter, text, chk);
@@ -134,6 +137,37 @@ namespace WellaTodo
             item.Width = flowLayoutPanel2.Width;
 
             Display_Todo_Item();
+        }
+
+        //--------------------------------------------------------------
+        // 할일 파일 로딩
+        //--------------------------------------------------------------
+        private void LoadFile()
+        {
+            Stream rs = new FileStream("a.dat", FileMode.Open);
+            BinaryFormatter deserializer = new BinaryFormatter();
+
+            List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+            rs.Close();
+
+            foreach (CDataCell dt in todo_data)
+            {
+                Console.WriteLine(">Loading Data:[{0}]]", dt.DC_title);
+                m_Data.Insert(m_Data.Count, dt);
+            }
+        }
+
+        //--------------------------------------------------------------
+        // 할일 파일 세이브
+        //--------------------------------------------------------------
+        private void SaveFile()
+        {
+            Stream ws = new FileStream("a.dat", FileMode.Create);
+            BinaryFormatter serializer = new BinaryFormatter();
+
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+            serializer.Serialize(ws, m_Data);
+            ws.Close();
         }
 
         //--------------------------------------------------------------
@@ -148,13 +182,12 @@ namespace WellaTodo
             {
                 if (item.Equals(sd))
                 {
-                    //완료됨 체크시
+                    //완료됨 클릭시
                     if (item.IsCompleteClicked)
                     {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isTodo_detail = false;
 
-                        textBox1.Text = "Complete Clicked";
                         if (item.isCompleted())
                         {
                             int cnt = flowLayoutPanel2.Controls.Count;
@@ -177,13 +210,12 @@ namespace WellaTodo
                         break;
                     }
 
-                    // 중요항목 체크시
+                    // 중요항목 클릭시
                     if (item.IsImportantClicked)
                     {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isTodo_detail = false;
 
-                        textBox1.Text = "Important Clicked";
                         if (item.isImportant() && !item.isCompleted())
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
@@ -195,6 +227,20 @@ namespace WellaTodo
 
                             flowLayoutPanel2.VerticalScroll.Value = 0;
                         }
+                        break;
+                    }
+
+                    // 컨텍스트 메뉴 삭제 클릭시
+                    if (item.IsDeleteClicked)
+                    {
+                        splitContainer2.SplitterDistance = splitContainer2.Width;
+                        isTodo_detail = false;
+
+                        item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
+                        splitContainer2.Panel1.Controls.Remove(item);
+                        item.Dispose();
+
+                        m_Data.Remove(m_Data[pos]);
                         break;
                     }
 
@@ -218,7 +264,7 @@ namespace WellaTodo
                         break;
                     }
                 }
-                pos = pos + 1;
+                pos++;
             }
             Display_Todo_Item();
         }
@@ -241,7 +287,7 @@ namespace WellaTodo
             Console.WriteLine(">Todo Item Count : [{0}]", m_Todo_Item_Counter);
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {         
+            {
                 Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
                 pos++;
             }
@@ -310,7 +356,7 @@ namespace WellaTodo
 
         private void splitContainer1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (splitContainer1.IsSplitterFixed )
+            if (splitContainer1.IsSplitterFixed)
             {
                 if (e.Button.Equals(MouseButtons.Left))
                 {
@@ -322,7 +368,8 @@ namespace WellaTodo
                             Repaint();
                         }
                     }
-                } else
+                }
+                else
                 {
                     splitContainer1.IsSplitterFixed = false;
                 }
@@ -363,6 +410,7 @@ namespace WellaTodo
 
         private void label2_Click(object sender, EventArgs e)
         {
+            SaveFile();
             Console.WriteLine(">Label_2::clicked");
         }
 
@@ -456,7 +504,7 @@ namespace WellaTodo
                     textBox3.Text = m_Data[m_data_position].DC_title;
                     return;
                 }
-                
+
                 m_Data = m_Controller.Get_Model().GetDataCollection();
                 m_Data[m_data_position].DC_title = textBox3.Text;
 
@@ -469,7 +517,7 @@ namespace WellaTodo
                         break;
                     }
                     pos++;
-                }  
+                }
             }
         }
 
@@ -528,25 +576,11 @@ namespace WellaTodo
                     }
                     pos++;
                 }
-
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isTodo_detail = false;
             }
             Display_Todo_Item();
         }
+
     }
 }
-
-/*
-for (int i = collection.Count - 1; i >= 0; i--)
-{
-    var current = collection[i];
-    //Do things
-}
-*/
-
-/*
-Control c = pnlBarContainer.Controls[2];
-pnlBarContainer.Controls.SetChildIndex(c, 1);
-pnlBarContainer.Invalidate();
-*/

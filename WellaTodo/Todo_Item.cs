@@ -26,9 +26,11 @@ namespace WellaTodo
 
         public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
         public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
+        public bool IsDeleteClicked { get => isDeleteClicked; set => isDeleteClicked = value; }
 
         private bool isCompleteClicked = false;
         private bool isImportantClicked = false;
+        private bool isDeleteClicked = false;
 
         public Todo_Item()
         {
@@ -137,10 +139,20 @@ namespace WellaTodo
                         UserControl_Event_method?.Invoke(this, e);
                         break;
                     case MouseButtons.Right:
-                        MessageBox.Show("Right Button");
+                        ContextMenu deleteMenu = new ContextMenu();
+                        MenuItem deleteItem = new MenuItem("Delete", new System.EventHandler(this.OnDeleteMenuItem_Click));
+                        deleteMenu.MenuItems.Add(deleteItem);
+                        deleteMenu.Show(this, new Point(e.X, e.Y));
                         break;
                 }
             }
+        }
+
+        private void OnDeleteMenuItem_Click(object sender, EventArgs e)
+        {
+            IsDeleteClicked = true;
+            UserControl_Event_method?.Invoke(this, e);
+            IsDeleteClicked = false;
         }
     }
 }
