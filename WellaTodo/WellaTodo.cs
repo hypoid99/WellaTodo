@@ -1,5 +1,5 @@
 ﻿// copyright honeysoft 20200924 v0.5
-// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11
+// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11 -> 2021.9.18
 
 using System;
 using System.Collections.Generic;
