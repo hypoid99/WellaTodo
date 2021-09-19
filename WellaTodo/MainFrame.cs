@@ -100,7 +100,8 @@ namespace WellaTodo
         {
             int idx;
             string text;
-            bool chk;
+            bool chk_complete;
+            bool chk_important;
 
             LoadFile();
 
@@ -109,8 +110,9 @@ namespace WellaTodo
             {
                 idx = data.DC_idNum;
                 text = data.DC_title;
-                chk = false;
-                Todo_Item item = new Todo_Item(idx, text, chk);
+                chk_complete = data.DC_complete;
+                chk_important = data.DC_important;
+                Todo_Item item = new Todo_Item(idx, text, chk_complete, chk_important);
                 flowLayoutPanel2.Controls.Add(item);
                 m_Todo_Item_Counter++;
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
@@ -121,15 +123,15 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 항목 추가
         //--------------------------------------------------------------
-        private void Add_Item(string text, bool chk)
+        private void Add_Item(string text)
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
             //m_Controller.performAddItem();
             Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
-            m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, chk, text, false, "메모추가"));
+            m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, false, text, false, "메모추가"));
 
-            Todo_Item item = new Todo_Item(m_Todo_Item_Counter, text, chk);
+            Todo_Item item = new Todo_Item(m_Todo_Item_Counter, text, false, false);
             flowLayoutPanel2.Controls.Add(item);
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
             m_Todo_Item_Counter++;
@@ -194,18 +196,24 @@ namespace WellaTodo
                             flowLayoutPanel2.Controls.SetChildIndex(item, cnt);
 
                             m_Data = m_Controller.Get_Model().GetDataCollection();
+                            m_Data[pos].DC_complete = true;
                             CDataCell dc = m_Data[pos]; //추출
                             m_Data.RemoveAt(pos); //삭제
-                            m_Data.Insert(m_Data.Count, dc); //삽입
+                            m_Data.Insert(m_Data.Count, dc); //삽입         
+
+                            Console.WriteLine(">complete : [{0}]", dc.DC_important);
                         }
                         else
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
 
                             m_Data = m_Controller.Get_Model().GetDataCollection();
+                            m_Data[pos].DC_complete = false;
                             CDataCell dc = m_Data[pos]; //추출
                             m_Data.RemoveAt(pos); //삭제
                             m_Data.Insert(0, dc); //삽입
+
+                            Console.WriteLine(">complete : [{0}]", dc.DC_important);
                         }
                         break;
                     }
@@ -221,11 +229,17 @@ namespace WellaTodo
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
 
                             m_Data = m_Controller.Get_Model().GetDataCollection();
+                            m_Data[pos].DC_important = true;
                             CDataCell dc = m_Data[pos]; //추출
                             m_Data.RemoveAt(pos); //삭제
                             m_Data.Insert(0, dc); //삽입
 
                             flowLayoutPanel2.VerticalScroll.Value = 0;
+                        }
+                        else
+                        {
+                            m_Data = m_Controller.Get_Model().GetDataCollection();
+                            m_Data[pos].DC_important = false;
                         }
                         break;
                     }
@@ -259,6 +273,8 @@ namespace WellaTodo
 
                         m_Data = m_Controller.Get_Model().GetDataCollection();
                         textBox3.Text = item.TD_title;
+                        checkBox1.Checked = item.TD_complete;
+                        checkBox2.Checked = item.TD_important;
                         textBox1.Text = "Data Position : " + m_data_position.ToString();
                         m_before_data_position = m_data_position;
                         break;
@@ -488,9 +504,20 @@ namespace WellaTodo
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.Handled = false;
+                e.SuppressKeyPress = false;
                 if (textBox2.Text.Trim().Length == 0) return;
-                Add_Item(textBox2.Text, false);
+                Add_Item(textBox2.Text);
                 textBox2.Text = "";
+            }
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
@@ -499,6 +526,9 @@ namespace WellaTodo
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.Handled = false;
+                e.SuppressKeyPress = false;
+
                 if (textBox3.Text.Trim().Length == 0)
                 {
                     textBox3.Text = m_Data[m_data_position].DC_title;
@@ -518,6 +548,15 @@ namespace WellaTodo
                     }
                     pos++;
                 }
+            }
+        }
+
+        private void textBox3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
@@ -582,5 +621,27 @@ namespace WellaTodo
             Display_Todo_Item();
         }
 
+        //상세창 완료 체크시
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isTodo_detail)
+            {
+                m_Data = m_Controller.Get_Model().GetDataCollection();
+                //m_Data[m_data_position].DC_complete = 
+
+                int pos = 0;
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
+                {
+                    if (pos == m_data_position)
+                    {
+                        item.TD_title = textBox3.Text;
+                        break;
+                    }
+                    pos++;
+                }
+            }
+            splitContainer2.SplitterDistance = splitContainer2.Width;
+            isTodo_detail = false;
+        }
     }
 }

@@ -14,15 +14,18 @@ namespace WellaTodo
     {
         public event UserControl_Event UserControl_Event_method;
 
-        private string _title;
-
         public int IdNum { get; set; }
 
+        private string _title;
         public string TD_title
         {
             get { return _title; }
             set { _title = value; label1.Text = value; }
         }
+
+        public bool TD_complete { get; set; }
+
+        public bool TD_important { get; set; }
 
         public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
         public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
@@ -37,13 +40,14 @@ namespace WellaTodo
             InitializeComponent();
         }
 
-        public Todo_Item(int idnum, string text, bool chk)
+        public Todo_Item(int idnum, string text, bool chk_complete, bool chk_important)
         {
             InitializeComponent();
             IdNum = idnum;
             _title = text;
             label1.Text = text;
-            checkBox1.Checked = chk;
+            checkBox1.Checked = chk_complete;
+            checkBox2.Checked = chk_important;
         }
 
         private void Repaint()
@@ -98,6 +102,7 @@ namespace WellaTodo
         {
             if (checkBox1.Checked)
             {
+                TD_complete = true;
                 IsCompleteClicked = true;
                 UserControl_Event_method?.Invoke(this, e);
                 BackColor = Color.FromArgb(100, 100, 100);
@@ -105,6 +110,7 @@ namespace WellaTodo
             }
             else
             {
+                TD_complete = false;
                 IsCompleteClicked = true;
                 UserControl_Event_method?.Invoke(this, e);
                 BackColor = Color.FromArgb(255, 126, 0);
@@ -117,12 +123,14 @@ namespace WellaTodo
         {
             if (checkBox2.Checked)
             {
+                TD_important = true;
                 IsImportantClicked = true;
                 UserControl_Event_method?.Invoke(this, e);
                 IsImportantClicked = false;
             }
             else
             {
+                TD_important = false;
                 IsImportantClicked = true;
                 UserControl_Event_method?.Invoke(this, e);
                 IsImportantClicked = false;
