@@ -200,8 +200,6 @@ namespace WellaTodo
                             CDataCell dc = m_Data[pos]; //추출
                             m_Data.RemoveAt(pos); //삭제
                             m_Data.Insert(m_Data.Count, dc); //삽입         
-
-                            Console.WriteLine(">complete : [{0}]", dc.DC_important);
                         }
                         else
                         {
@@ -212,8 +210,6 @@ namespace WellaTodo
                             CDataCell dc = m_Data[pos]; //추출
                             m_Data.RemoveAt(pos); //삭제
                             m_Data.Insert(0, dc); //삽입
-
-                            Console.WriteLine(">complete : [{0}]", dc.DC_important);
                         }
                         break;
                     }
@@ -300,7 +296,6 @@ namespace WellaTodo
         private void Display_Data()
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
-            Console.WriteLine(">Todo Item Count : [{0}]", m_Todo_Item_Counter);
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
@@ -627,14 +622,14 @@ namespace WellaTodo
             if (isTodo_detail)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                //m_Data[m_data_position].DC_complete = 
+                m_Data[m_data_position].DC_complete = checkBox1.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
                     if (pos == m_data_position)
                     {
-                        item.TD_title = textBox3.Text;
+                        item.TD_complete = checkBox1.Checked;
                         break;
                     }
                     pos++;
@@ -642,6 +637,33 @@ namespace WellaTodo
             }
             splitContainer2.SplitterDistance = splitContainer2.Width;
             isTodo_detail = false;
+
+            Display_Todo_Item();
+        }
+
+        //상세창 중요 체크시
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isTodo_detail)
+            {
+                m_Data = m_Controller.Get_Model().GetDataCollection();
+                m_Data[m_data_position].DC_important = checkBox2.Checked;
+
+                int pos = 0;
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
+                {
+                    if (pos == m_data_position)
+                    {
+                        item.TD_important = checkBox2.Checked;
+                        break;
+                    }
+                    pos++;
+                }
+            }
+            splitContainer2.SplitterDistance = splitContainer2.Width;
+            isTodo_detail = false;
+
+            Display_Todo_Item();
         }
     }
 }

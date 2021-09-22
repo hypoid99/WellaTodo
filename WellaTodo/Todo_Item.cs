@@ -23,17 +23,26 @@ namespace WellaTodo
             set { _title = value; label1.Text = value; }
         }
 
-        public bool TD_complete { get; set; }
+        private bool _complete;
+        public bool TD_complete 
+        {
+            get { return _complete; }
+            set { _complete = value; checkBox1.Checked = value; }
+        }
 
-        public bool TD_important { get; set; }
-
-        public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
-        public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
-        public bool IsDeleteClicked { get => isDeleteClicked; set => isDeleteClicked = value; }
+        private bool _important;
+        public bool TD_important
+        {
+            get { return _important; }
+            set { _important = value; checkBox2.Checked = value; }
+        }
 
         private bool isCompleteClicked = false;
         private bool isImportantClicked = false;
         private bool isDeleteClicked = false;
+        public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
+        public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
+        public bool IsDeleteClicked { get => isDeleteClicked; set => isDeleteClicked = value; }
 
         public Todo_Item()
         {
