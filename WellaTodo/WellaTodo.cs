@@ -1,5 +1,5 @@
 ﻿// copyright honeysoft 20200924 v0.5
-// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11 -> 2021.9.18
+// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11 -> 2021.9.18 -> 2021.9.23
 
 using System;
 using System.Collections.Generic;
@@ -24,6 +24,23 @@ namespace WellaTodo
         }
     }
 }
+
+
+/*
+//체크박스 커스텀페인트
+private void checkBox2_Paint(object sender, PaintEventArgs e)
+{
+Console.WriteLine("checkbox repaint");
+CheckState cs = checkBox2.CheckState;
+if (cs == CheckState.Checked)
+{
+using (SolidBrush brush = new SolidBrush(checkBox2.BackColor))
+   e.Graphics.FillRectangle(brush, 0, 1, 14, 14);
+e.Graphics.FillRectangle(Brushes.Green, 3, 4, 8, 8);
+e.Graphics.DrawRectangle(Pens.Black, 0, 1, 13, 13);
+Console.WriteLine("checkbox repaint-----------------------");
+}
+*/
 
 /* 직렬화 예제
 using System;
@@ -77,7 +94,7 @@ namespace SerializingCollection
 }
 */
 
-/* circular checkbox
+/* 원형 체크박스
  * class CircularCheckbox : Control
 {
     private Color borderColor;

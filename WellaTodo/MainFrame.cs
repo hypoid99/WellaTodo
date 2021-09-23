@@ -112,7 +112,7 @@ namespace WellaTodo
                 text = data.DC_title;
                 chk_complete = data.DC_complete;
                 chk_important = data.DC_important;
-                Todo_Item item = new Todo_Item(idx, text, chk_complete, chk_important);
+                Todo_Item item = new Todo_Item(text, chk_complete, chk_important);
                 flowLayoutPanel2.Controls.Add(item);
                 m_Todo_Item_Counter++;
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
@@ -131,7 +131,7 @@ namespace WellaTodo
             Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
             m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, false, text, false, "메모추가"));
 
-            Todo_Item item = new Todo_Item(m_Todo_Item_Counter, text, false, false);
+            Todo_Item item = new Todo_Item(text, false, false);
             flowLayoutPanel2.Controls.Add(item);
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
             m_Todo_Item_Counter++;
