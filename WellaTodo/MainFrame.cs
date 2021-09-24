@@ -98,7 +98,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Load_Item()
         {
-            int idx;
+            //int idx;
             string text;
             bool chk_complete;
             bool chk_important;
@@ -108,7 +108,7 @@ namespace WellaTodo
             m_Data = m_Controller.Get_Model().GetDataCollection();
             foreach (CDataCell data in m_Data)
             {
-                idx = data.DC_idNum;
+                //idx = data.DC_idNum;
                 text = data.DC_title;
                 chk_complete = data.DC_complete;
                 chk_important = data.DC_important;
@@ -129,7 +129,7 @@ namespace WellaTodo
 
             //m_Controller.performAddItem();
             Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
-            m_Data.Insert(0, new CDataCell(m_Todo_Item_Counter, false, text, false, "메모추가"));
+            m_Data.Insert(0, new CDataCell(text, false, false, "메모추가"));
 
             Todo_Item item = new Todo_Item(text, false, false);
             flowLayoutPanel2.Controls.Add(item);
@@ -268,10 +268,11 @@ namespace WellaTodo
                         isTodo_detail = true;
 
                         m_Data = m_Controller.Get_Model().GetDataCollection();
-                        textBox3.Text = item.TD_title;
-                        checkBox1.Checked = item.TD_complete;
-                        checkBox2.Checked = item.TD_important;
-                        textBox1.Text = "Data Position : " + m_data_position.ToString();
+                        textBox3.Text = m_Data[pos].DC_title;
+                        checkBox1.Checked = m_Data[pos].DC_complete;
+                        checkBox2.Checked = m_Data[pos].DC_important;
+                        textBox1.Text = m_Data[pos].DC_memo;
+                        //textBox1.Text = textBox1.Text + "\r\n"+"Data Pos : " + m_data_position.ToString();
                         m_before_data_position = m_data_position;
                         break;
                     }
@@ -336,6 +337,57 @@ namespace WellaTodo
             }
 
             this.Refresh();
+        }
+
+        private void Read_Text_File()
+        {
+            string file_Path = "";
+            Console.WriteLine(">Read Text File");
+
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                file_Path = openFileDialog1.FileName;
+                Console.WriteLine(">File Name [{0}]", file_Path);
+            }
+
+            if (file_Path.Length == 0) return;
+
+            if (File.Exists(file_Path))
+            { 
+                using(StreamReader sr = new StreamReader(file_Path, Encoding.Default)) 
+                {
+                    textBox1.Text = sr.ReadToEnd(); 
+                    Console.WriteLine("Reading File [{0}]", file_Path);
+                } 
+            } 
+            else
+            { 
+                MessageBox.Show("읽을 파일이 없습니다.", "에러", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+            }
+        }
+
+        private void Save_Text_File()
+        {
+            string file_Path = "";
+            Console.WriteLine(">Save Text File");
+
+            if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                file_Path = saveFileDialog1.FileName;
+                Console.WriteLine(">File Name [{0}]", file_Path);
+            }
+
+            try 
+            { 
+                File.AppendAllText(file_Path, textBox1.Text, Encoding.Default); 
+            } 
+            catch 
+            { 
+                MessageBox.Show("저장경로를 지정해주세요", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                return; 
+            }
+            MessageBox.Show("파일이 정상적으로 저장되었습니다.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information); 
+            //ResetText();
         }
 
         //--------------------------------------------------------------
@@ -421,7 +473,6 @@ namespace WellaTodo
 
         private void label2_Click(object sender, EventArgs e)
         {
-            SaveFile();
             Console.WriteLine(">Label_2::clicked");
         }
 
@@ -440,6 +491,8 @@ namespace WellaTodo
         private void label3_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_3::clicked");
+
+            Read_Text_File();
         }
 
         private void label4_MouseEnter(object sender, EventArgs e)
@@ -457,6 +510,8 @@ namespace WellaTodo
         private void label4_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_4::clicked");
+
+            Save_Text_File();
         }
 
         private void label5_MouseEnter(object sender, EventArgs e)
@@ -579,6 +634,14 @@ namespace WellaTodo
             }
         }
 
+        // 상세창 메모 커서 벗어남
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+            //메모 내용에 변경이 있는지 확인(?)
+            m_Data[m_data_position].DC_memo = textBox1.Text;
+        }
+
         // 상세창 닫기 버튼
         private void button1_Click(object sender, EventArgs e)
         {
@@ -664,6 +727,15 @@ namespace WellaTodo
             isTodo_detail = false;
 
             Display_Todo_Item();
+        }
+
+        // 끝낼때 저장 여부 묻기
+        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (MessageBox.Show("저장?", "WellaTodo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                SaveFile();
+            }
         }
     }
 }

@@ -14,8 +14,8 @@ namespace WellaTodo
     {
         public event UserControl_Event UserControl_Event_method;
 
-        static readonly Color PSEUDO_BACK_COLOR = Color.Silver;
-        static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.DarkGray;
+        static readonly Color PSEUDO_BACK_COLOR = Color.White;
+        static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.Gray;
 
         private string _title;
         public string TD_title

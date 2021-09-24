@@ -9,7 +9,6 @@ namespace WellaTodo
     [Serializable]
     public class CDataCell
     {
-        private int _idNum;
         private string _title;
         private bool _complete;
         private bool _important;
@@ -24,11 +23,6 @@ namespace WellaTodo
 
         //private string _attachfile;
         //private string _memo;
-
-        public int DC_idNum {
-            get { return _idNum; }
-            set { _idNum = value; }
-        }
 
         public bool DC_complete {
             get { return _complete; }
@@ -53,16 +47,14 @@ namespace WellaTodo
 
         public CDataCell()
         {
-            _idNum = 0;
-            _complete = false;
             _title = "입력하세요";
+            _complete = false;
             _important = false;
             _memo = "메모추가";
         }
 
-        public CDataCell(int idnum, bool complete, string title, bool important, string memo)
+        public CDataCell(string title, bool complete, bool important, string memo)
         {
-            _idNum = idnum;
             _complete = complete;
             _title = title;
             _important = important;
