@@ -21,12 +21,25 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> Changed_View_Event;
 
+        static readonly string WINDOW_CAPTION = "Wella Todo v0.7";
+        static readonly int WINDOW_WIDTH = 900;
+        static readonly int WINDOW_HEIGHT = 500;
+
+        static readonly Color PSEUDO_BACK_COLOR = Color.White;
+        static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
+        static readonly Color PSEUDO_TEXTBOX_BACK_COLOR = Color.LightCyan;
+        static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
+
+        static readonly int DETAIL_WINDOW_WIDTH = 260;
+        static readonly int MENU_WINDOW_WIDTH = 150;
+
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
 
-        int m_Todo_Item_Counter = 1;
-        bool isTodo_detail = false;
-        int m_data_position;
+        bool isDetailWindowOpen = false;
+        bool isTextboxClicked = false;
+
+        int m_present_data_position = -1;
         int m_before_data_position;
 
         public MainFrame()
@@ -39,27 +52,48 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
+        private void MainFrame_Load(object sender, EventArgs e)
+        {
+            this.Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
+            this.Text = WINDOW_CAPTION;
+
+            Initiate_View();
+            Load_Item();
+        }
+
+        private void MainFrame_Resize(object sender, EventArgs e)
+        {
+            Repaint();
+        }
+
         public void Initiate_View()
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
+            splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
+            splitContainer1.Panel1MinSize = 100;
+            splitContainer1.Panel2MinSize = 200;
+
+            flowLayoutPanel1.BackColor = PSEUDO_BACK_COLOR;
             flowLayoutPanel1.Controls.Add(label1);
             flowLayoutPanel1.Controls.Add(label2);
             flowLayoutPanel1.Controls.Add(label3);
             flowLayoutPanel1.Controls.Add(label4);
             flowLayoutPanel1.Controls.Add(label5);
             flowLayoutPanel1.Controls.Add(label6);
-            label1.Width = splitContainer1.SplitterDistance;
-            label2.Width = splitContainer1.SplitterDistance;
-            label3.Width = splitContainer1.SplitterDistance;
-            label4.Width = splitContainer1.SplitterDistance;
-            label5.Width = splitContainer1.SplitterDistance;
-            label6.Width = splitContainer1.SplitterDistance;
+
+            foreach (Label ctr in flowLayoutPanel1.Controls)
+            {
+                ctr.Width = splitContainer1.SplitterDistance;
+                ctr.BackColor = PSEUDO_BACK_COLOR;
+            }
 
             splitContainer2.SplitterDistance = splitContainer2.Width;
             splitContainer2.IsSplitterFixed = true;
-            splitContainer2.Location = new Point(10, 10);
+            splitContainer2.Location = new Point(0, 0);
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+
+            splitContainer2.Panel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
 
             flowLayoutPanel2.AutoScroll = false;
             flowLayoutPanel2.HorizontalScroll.Maximum = 0;
@@ -69,9 +103,71 @@ namespace WellaTodo
 
             textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
+            textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
+            textBox2.Text = "+ 작업 추가";
 
             splitContainer1.Refresh();
             splitContainer2.Refresh();
+        }
+
+        //--------------------------------------------------------------
+        //Repaint
+        //--------------------------------------------------------------
+        private void Repaint()
+        {
+            foreach (Label ctr in flowLayoutPanel1.Controls)
+            {
+                ctr.Width = splitContainer1.SplitterDistance;
+            }
+
+            splitContainer2.Location = new Point(0, 0);
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+
+            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
+            textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
+
+            if (isDetailWindowOpen)
+            {
+                int width = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
+                splitContainer2.SplitterDistance = width < 0 ? 1 : width;
+            }
+
+            Display_Todo_Item();
+        }
+
+        //--------------------------------------------------------------
+        //화면에 할일 출력
+        //--------------------------------------------------------------
+        private void Display_Todo_Item()
+        {
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                item.Width = flowLayoutPanel2.VerticalScroll.Visible
+                    ? flowLayoutPanel2.Width - SystemInformation.VerticalScrollBarWidth - 5
+                    : flowLayoutPanel2.Width - 5;
+                item.IsItemSelected = m_present_data_position == pos;
+                pos++;
+            }
+        }
+
+        private void Display_Data()
+        {
+            m_Data = m_Controller.Get_Model().GetDataCollection();
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
+                pos++;
+            }
+
+            pos = 0;
+            foreach (CDataCell data in m_Data)
+            {
+                Console.WriteLine(">Data DC:[{0}]-[{1}]", pos, data.DC_title);
+                pos++;
+            }
+            Console.WriteLine(">Data Present : [{0}]", m_present_data_position);
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -89,7 +185,7 @@ namespace WellaTodo
             }
             catch (Exception)
             {
-                MessageBox.Show("Please enter a valid number");
+                MessageBox.Show("Please enter a valid number", WINDOW_CAPTION);
             }
         }
 
@@ -108,13 +204,11 @@ namespace WellaTodo
             m_Data = m_Controller.Get_Model().GetDataCollection();
             foreach (CDataCell data in m_Data)
             {
-                //idx = data.DC_idNum;
                 text = data.DC_title;
                 chk_complete = data.DC_complete;
                 chk_important = data.DC_important;
                 Todo_Item item = new Todo_Item(text, chk_complete, chk_important);
                 flowLayoutPanel2.Controls.Add(item);
-                m_Todo_Item_Counter++;
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
             }
             Display_Todo_Item();
@@ -128,15 +222,13 @@ namespace WellaTodo
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
             //m_Controller.performAddItem();
-            Console.WriteLine(">Add Item Count : [{0}]", m_Todo_Item_Counter);
             m_Data.Insert(0, new CDataCell(text, false, false, "메모추가"));
 
             Todo_Item item = new Todo_Item(text, false, false);
             flowLayoutPanel2.Controls.Add(item);
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-            m_Todo_Item_Counter++;
+
             item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
-            item.Width = flowLayoutPanel2.Width;
 
             Display_Todo_Item();
         }
@@ -186,9 +278,9 @@ namespace WellaTodo
                 {
                     //완료됨 클릭시
                     if (item.IsCompleteClicked)
-                    {
+                    {           
                         splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isTodo_detail = false;
+                        isDetailWindowOpen = false;
 
                         if (item.isCompleted())
                         {
@@ -218,7 +310,7 @@ namespace WellaTodo
                     if (item.IsImportantClicked)
                     {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isTodo_detail = false;
+                        isDetailWindowOpen = false;
 
                         if (item.isImportant() && !item.isCompleted())
                         {
@@ -243,8 +335,12 @@ namespace WellaTodo
                     // 컨텍스트 메뉴 삭제 클릭시
                     if (item.IsDeleteClicked)
                     {
+                        if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+                        {
+                            break;
+                        }
                         splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isTodo_detail = false;
+                        isDetailWindowOpen = false;
 
                         item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
                         splitContainer2.Panel1.Controls.Remove(item);
@@ -255,25 +351,25 @@ namespace WellaTodo
                     }
 
                     //Todo 아이템 클릭시
-                    m_data_position = pos;
-                    if (isTodo_detail && (m_before_data_position == pos))
+                    m_present_data_position = pos;
+                    if (isDetailWindowOpen && (m_before_data_position == pos))
                     {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isTodo_detail = false;
+                        isDetailWindowOpen = false;
                         break;
                     }
                     else
                     {
-                        splitContainer2.SplitterDistance = splitContainer2.Width / 2;
-                        isTodo_detail = true;
-
                         m_Data = m_Controller.Get_Model().GetDataCollection();
                         textBox3.Text = m_Data[pos].DC_title;
                         checkBox1.Checked = m_Data[pos].DC_complete;
                         checkBox2.Checked = m_Data[pos].DC_important;
                         textBox1.Text = m_Data[pos].DC_memo;
-                        //textBox1.Text = textBox1.Text + "\r\n"+"Data Pos : " + m_data_position.ToString();
-                        m_before_data_position = m_data_position;
+
+                        m_before_data_position = m_present_data_position;
+
+                        splitContainer2.SplitterDistance = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
+                        isDetailWindowOpen = true;
                         break;
                     }
                 }
@@ -283,128 +379,8 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        //화면에 할일 출력
-        //--------------------------------------------------------------
-        private void Display_Todo_Item()
-        {
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                item.Width = flowLayoutPanel2.Width;
-            }
-            Display_Data();
-        }
-
-        private void Display_Data()
-        {
-            m_Data = m_Controller.Get_Model().GetDataCollection();
-            int pos = 0;
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
-                pos++;
-            }
-
-            pos = 0;
-            foreach (CDataCell data in m_Data)
-            {
-                Console.WriteLine(">Data DC:[{0}]-[{1}]", pos, data.DC_title);
-                pos++;
-            }
-            Console.WriteLine(">------------------");
-        }
-
-        //--------------------------------------------------------------
-        //Repaint
-        //--------------------------------------------------------------
-        private void Repaint()
-        {
-            label1.Width = splitContainer1.SplitterDistance;
-            label2.Width = splitContainer1.SplitterDistance;
-            label3.Width = splitContainer1.SplitterDistance;
-            label4.Width = splitContainer1.SplitterDistance;
-            label5.Width = splitContainer1.SplitterDistance;
-            label6.Width = splitContainer1.SplitterDistance;
-
-            splitContainer2.Location = new Point(10, 10);
-            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
-
-            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
-            textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
-
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                item.Width = flowLayoutPanel2.Width;
-            }
-
-            this.Refresh();
-        }
-
-        private void Read_Text_File()
-        {
-            string file_Path = "";
-            Console.WriteLine(">Read Text File");
-
-            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                file_Path = openFileDialog1.FileName;
-                Console.WriteLine(">File Name [{0}]", file_Path);
-            }
-
-            if (file_Path.Length == 0) return;
-
-            if (File.Exists(file_Path))
-            { 
-                using(StreamReader sr = new StreamReader(file_Path, Encoding.Default)) 
-                {
-                    textBox1.Text = sr.ReadToEnd(); 
-                    Console.WriteLine("Reading File [{0}]", file_Path);
-                } 
-            } 
-            else
-            { 
-                MessageBox.Show("읽을 파일이 없습니다.", "에러", MessageBoxButtons.OK, MessageBoxIcon.Error); 
-            }
-        }
-
-        private void Save_Text_File()
-        {
-            string file_Path = "";
-            Console.WriteLine(">Save Text File");
-
-            if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                file_Path = saveFileDialog1.FileName;
-                Console.WriteLine(">File Name [{0}]", file_Path);
-            }
-
-            try 
-            { 
-                File.AppendAllText(file_Path, textBox1.Text, Encoding.Default); 
-            } 
-            catch 
-            { 
-                MessageBox.Show("저장경로를 지정해주세요", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); 
-                return; 
-            }
-            MessageBox.Show("파일이 정상적으로 저장되었습니다.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information); 
-            //ResetText();
-        }
-
-        //--------------------------------------------------------------
         // Control Event 
         //--------------------------------------------------------------
-
-        //메인프레임 이벤트
-        private void MainFrame_Load(object sender, EventArgs e)
-        {
-            Initiate_View();
-            Load_Item();
-        }
-
-        private void MainFrame_Resize(object sender, EventArgs e)
-        {
-            Repaint();
-        }
 
         //스프릿컨테이너-1 이벤트
         private void splitContainer1_MouseDown(object sender, MouseEventArgs e)
@@ -443,32 +419,31 @@ namespace WellaTodo
         private void label1_MouseEnter(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Underline);
-            label1.BackColor = System.Drawing.SystemColors.ControlDark;
+            label1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label1_MouseLeave(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Regular);
-            label1.BackColor = System.Drawing.SystemColors.Control;
+            label1.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_1::clicked");
-
             Invoke_View_Event();
         }
 
         private void label2_MouseEnter(object sender, EventArgs e)
         {
             label2.Font = new Font(label2.Font, FontStyle.Underline);
-            label2.BackColor = System.Drawing.SystemColors.ControlDark;
+            label2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label2_MouseLeave(object sender, EventArgs e)
         {
             label2.Font = new Font(label2.Font, FontStyle.Regular);
-            label2.BackColor = System.Drawing.SystemColors.Control;
+            label2.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -479,69 +454,64 @@ namespace WellaTodo
         private void label3_MouseEnter(object sender, EventArgs e)
         {
             label3.Font = new Font(label3.Font, FontStyle.Underline);
-            label3.BackColor = System.Drawing.SystemColors.ControlDark;
+            label3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label3_MouseLeave(object sender, EventArgs e)
         {
             label3.Font = new Font(label3.Font, FontStyle.Regular);
-            label3.BackColor = System.Drawing.SystemColors.Control;
+            label3.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label3_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_3::clicked");
-
-            Read_Text_File();
         }
 
         private void label4_MouseEnter(object sender, EventArgs e)
         {
             label4.Font = new Font(label4.Font, FontStyle.Underline);
-            label4.BackColor = System.Drawing.SystemColors.ControlDark;
+            label4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label4_MouseLeave(object sender, EventArgs e)
         {
             label4.Font = new Font(label4.Font, FontStyle.Regular);
-            label4.BackColor = System.Drawing.SystemColors.Control;
+            label4.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label4_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_4::clicked");
-
-            Save_Text_File();
         }
 
         private void label5_MouseEnter(object sender, EventArgs e)
         {
             label5.Font = new Font(label5.Font, FontStyle.Underline);
-            label5.BackColor = System.Drawing.SystemColors.ControlDark;
+            label5.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label5_MouseLeave(object sender, EventArgs e)
         {
             label5.Font = new Font(label5.Font, FontStyle.Regular);
-            label5.BackColor = System.Drawing.SystemColors.Control;
+            label5.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label5_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_5::clicked");
-            Display_Todo_Item();
         }
 
         private void label6_MouseEnter(object sender, EventArgs e)
         {
             label6.Font = new Font(label6.Font, FontStyle.Underline);
-            label6.BackColor = System.Drawing.SystemColors.ControlDark;
+            label6.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void label6_MouseLeave(object sender, EventArgs e)
         {
             label6.Font = new Font(label6.Font, FontStyle.Regular);
-            label6.BackColor = System.Drawing.SystemColors.Control;
+            label6.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label6_Click(object sender, EventArgs e)
@@ -550,6 +520,29 @@ namespace WellaTodo
         }
 
         //할일 입력창
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            if (!isTextboxClicked) textBox2.Text = "";
+            isTextboxClicked = true;
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            if (isTextboxClicked)
+            {
+                if (textBox2.Text.Trim().Length == 0)
+                {
+                    textBox2.Text = "+ 작업 추가";
+                    isTextboxClicked = false;
+                }
+            }
+            else
+            {
+                textBox2.Text = "+ 작업 추가";
+                isTextboxClicked = false;
+            }
+        }
+
         private void textBox2_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -581,17 +574,17 @@ namespace WellaTodo
 
                 if (textBox3.Text.Trim().Length == 0)
                 {
-                    textBox3.Text = m_Data[m_data_position].DC_title;
+                    textBox3.Text = m_Data[m_present_data_position].DC_title;
                     return;
                 }
 
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_data_position].DC_title = textBox3.Text;
+                m_Data[m_present_data_position].DC_title = textBox3.Text;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_data_position)
+                    if (pos == m_present_data_position)
                     {
                         item.TD_title = textBox3.Text;
                         break;
@@ -615,17 +608,17 @@ namespace WellaTodo
         {
             if (textBox3.Text.Trim().Length == 0)
             {
-                textBox3.Text = m_Data[m_data_position].DC_title;
+                textBox3.Text = m_Data[m_present_data_position].DC_title;
                 return;
             }
 
             m_Data = m_Controller.Get_Model().GetDataCollection();
-            m_Data[m_data_position].DC_title = textBox3.Text;
+            m_Data[m_present_data_position].DC_title = textBox3.Text;
 
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                if (pos == m_data_position)
+                if (pos == m_present_data_position)
                 {
                     item.TD_title = textBox3.Text;
                     break;
@@ -639,16 +632,16 @@ namespace WellaTodo
         {
             m_Data = m_Controller.Get_Model().GetDataCollection();
             //메모 내용에 변경이 있는지 확인(?)
-            m_Data[m_data_position].DC_memo = textBox1.Text;
+            m_Data[m_present_data_position].DC_memo = textBox1.Text;
         }
 
         // 상세창 닫기 버튼
         private void button1_Click(object sender, EventArgs e)
         {
-            if (isTodo_detail)
+            if (isDetailWindowOpen)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
-                isTodo_detail = false;
+                isDetailWindowOpen = false;
             }
             Display_Todo_Item();
         }
@@ -656,13 +649,18 @@ namespace WellaTodo
         //상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
+            if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
+
             int pos = 0;
-            if (isTodo_detail)
+            if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_data_position)
+                    if (pos == m_present_data_position)
                     {
                         item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
                         splitContainer2.Panel1.Controls.Remove(item);
@@ -674,7 +672,7 @@ namespace WellaTodo
                     pos++;
                 }
                 splitContainer2.SplitterDistance = splitContainer2.Width;
-                isTodo_detail = false;
+                isDetailWindowOpen = false;
             }
             Display_Todo_Item();
         }
@@ -682,15 +680,15 @@ namespace WellaTodo
         //상세창 완료 체크시
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (isTodo_detail)
+            if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_data_position].DC_complete = checkBox1.Checked;
+                m_Data[m_present_data_position].DC_complete = checkBox1.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_data_position)
+                    if (pos == m_present_data_position)
                     {
                         item.TD_complete = checkBox1.Checked;
                         break;
@@ -698,24 +696,20 @@ namespace WellaTodo
                     pos++;
                 }
             }
-            splitContainer2.SplitterDistance = splitContainer2.Width;
-            isTodo_detail = false;
-
-            Display_Todo_Item();
         }
 
         //상세창 중요 체크시
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            if (isTodo_detail)
+            if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_data_position].DC_important = checkBox2.Checked;
+                m_Data[m_present_data_position].DC_important = checkBox2.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_data_position)
+                    if (pos == m_present_data_position)
                     {
                         item.TD_important = checkBox2.Checked;
                         break;
@@ -723,16 +717,12 @@ namespace WellaTodo
                     pos++;
                 }
             }
-            splitContainer2.SplitterDistance = splitContainer2.Width;
-            isTodo_detail = false;
-
-            Display_Todo_Item();
         }
 
         // 끝낼때 저장 여부 묻기
         private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("저장?", "WellaTodo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 SaveFile();
             }

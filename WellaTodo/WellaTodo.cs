@@ -1,5 +1,8 @@
-﻿// copyright honeysoft 20200924 v0.5
-// 수정작업 2021.7.19 -> 2021.9.4 -> 2021.9.11 -> 2021.9.18 -> 2021.9.23
+﻿//============================================================================
+// Wella Todo
+// Copyright Honeysoft 20200924 v0.5
+// modified 2021.7.19 -> 2021.9.4 -> 2021.9.11 -> 2021.9.18 -> 2021.9.23 -> 2021.9.27
+//============================================================================
 
 using System;
 using System.Collections.Generic;
@@ -341,4 +344,58 @@ namespace WindowsForms
         #endregion
     }
 }
+*/
+
+
+/*
+        private void Read_Text_File()
+        {
+            string file_Path = "";
+            Console.WriteLine(">Read Text File");
+
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                file_Path = openFileDialog1.FileName;
+                Console.WriteLine(">File Name [{0}]", file_Path);
+            }
+
+            if (file_Path.Length == 0) return;
+
+            if (File.Exists(file_Path))
+            { 
+                using(StreamReader sr = new StreamReader(file_Path, Encoding.Default)) 
+                {
+                    textBox1.Text = sr.ReadToEnd(); 
+                    Console.WriteLine("Reading File [{0}]", file_Path);
+                } 
+            } 
+            else
+            { 
+                MessageBox.Show("읽을 파일이 없습니다.", WINDOW_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error); 
+            }
+        }
+
+        private void Save_Text_File()
+        {
+            string file_Path = "";
+            Console.WriteLine(">Save Text File");
+
+            if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                file_Path = saveFileDialog1.FileName;
+                Console.WriteLine(">File Name [{0}]", file_Path);
+            }
+
+            try 
+            { 
+                File.AppendAllText(file_Path, textBox1.Text, Encoding.Default); 
+            } 
+            catch 
+            { 
+                MessageBox.Show("저장경로를 지정해주세요", WINDOW_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                return; 
+            }
+            MessageBox.Show("파일이 정상적으로 저장되었습니다.", WINDOW_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information); 
+            //ResetText();
+        }
 */

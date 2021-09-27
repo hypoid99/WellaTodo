@@ -37,7 +37,7 @@ namespace WellaTodo
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(21, 9);
+            this.checkBox1.Location = new System.Drawing.Point(20, 9);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(18, 17);
@@ -51,7 +51,7 @@ namespace WellaTodo
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(45, 11);
+            this.label1.Location = new System.Drawing.Point(45, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 15);
             this.label1.TabIndex = 1;
@@ -63,7 +63,7 @@ namespace WellaTodo
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(347, 11);
+            this.checkBox2.Location = new System.Drawing.Point(347, 9);
             this.checkBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(18, 17);

@@ -80,8 +80,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.textBox2);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2MinSize = 200;
-            this.splitContainer1.Size = new System.Drawing.Size(951, 409);
-            this.splitContainer1.SplitterDistance = 198;
+            this.splitContainer1.Size = new System.Drawing.Size(982, 403);
+            this.splitContainer1.SplitterDistance = 204;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
@@ -102,7 +102,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(198, 409);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(204, 403);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // label1
@@ -190,8 +190,10 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(329, 25);
             this.textBox2.TabIndex = 0;
+            this.textBox2.Enter += new System.EventHandler(this.textBox2_Enter);
             this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
             this.textBox2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyUp);
+            this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
             // 
             // splitContainer2
             // 
@@ -237,7 +239,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(199, 265);
+            this.button2.Location = new System.Drawing.Point(200, 264);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 30);
@@ -248,7 +250,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(13, 265);
+            this.button1.Location = new System.Drawing.Point(15, 264);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 30);
@@ -270,12 +272,12 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(26, 142);
+            this.textBox1.Location = new System.Drawing.Point(15, 142);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(249, 118);
+            this.textBox1.Size = new System.Drawing.Size(260, 118);
             this.textBox1.TabIndex = 6;
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
             // 
@@ -336,7 +338,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(951, 409);
+            this.ClientSize = new System.Drawing.Size(982, 403);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(400, 47);
