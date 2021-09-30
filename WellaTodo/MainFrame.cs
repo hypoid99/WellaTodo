@@ -35,7 +35,7 @@ namespace WellaTodo
 
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
-
+        Form outputForm = new OutputForm();
         StarCheckbox starCheckbox1 = new StarCheckbox();
         StarCheckbox starCheckbox2 = new StarCheckbox();
         RoundLabel roundLabel1 = new RoundLabel();
@@ -178,25 +178,34 @@ namespace WellaTodo
                 item.IsItemSelected = m_present_data_position == pos;
                 pos++;
             }
+            Display_Data();
         }
 
         private void Display_Data()
         {
-            m_Data = m_Controller.Get_Model().GetDataCollection();
+            //m_Data = m_Controller.Get_Model().GetDataCollection();
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
+                //Console.WriteLine(">Data TD:[{0}]-[{1}]", pos, item.TD_title);
+                if (outputForm.Visible)
+                {
+                    Console.WriteLine("OUTPUT FORM OPEN");
+                }
+                else
+                {
+                    Console.WriteLine("OUTPUT FORM CLOSE");
+                }
                 pos++;
             }
 
             pos = 0;
             foreach (CDataCell data in m_Data)
             {
-                Console.WriteLine(">Data DC:[{0}]-[{1}]", pos, data.DC_title);
+                //Console.WriteLine(">Data DC:[{0}]-[{1}]", pos, data.DC_title);
                 pos++;
             }
-            Console.WriteLine(">Data Present : [{0}]", m_present_data_position);
+            //Console.WriteLine(">Data Present : [{0}]", m_present_data_position);
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -352,7 +361,12 @@ namespace WellaTodo
 
                             flowLayoutPanel2.VerticalScroll.Value = 0;
                         }
-                        else
+                        else if (item.isImportant() && item.isCompleted())
+                        {
+                            m_Data = m_Controller.Get_Model().GetDataCollection();
+                            m_Data[pos].DC_important = true;
+                        }
+                        else if (!item.isImportant())
                         {
                             m_Data = m_Controller.Get_Model().GetDataCollection();
                             m_Data[pos].DC_important = false;
@@ -545,6 +559,15 @@ namespace WellaTodo
         private void label6_Click(object sender, EventArgs e)
         {
             Console.WriteLine(">Label_6::clicked");
+
+            if (outputForm.Visible)
+            {
+                outputForm.Hide();
+            }
+            else
+            {
+                outputForm.Show();
+            }
         }
 
         //할일 입력창
