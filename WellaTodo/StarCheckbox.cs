@@ -35,13 +35,6 @@ namespace WellaTodo
             set { tickColor = value; }
         }
 
-        private bool isChecked;
-        public bool IsChecked
-        {
-            get { return isChecked; }
-            set { isChecked = value; }
-        }
-
         public StarCheckbox()
         {
             InitializeComponent();
@@ -49,59 +42,43 @@ namespace WellaTodo
             DoubleBuffered = true;
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             this.BackColor = Color.Transparent;
-
-            this.IsChecked = false;
             Background = Color.White;
             BorderColor = Color.Black;
             TickColor = Color.Green;
         }
-
+        /*
         public StarCheckbox(IContainer container)
         {
             container.Add(this);
 
             InitializeComponent();
         }
-
-        private bool _check = false;
-
-        public bool Check
-        {
-            get { return _check; }
-            set { _check = value; Invalidate(); }
-        }
-
+        */
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            base.OnPaint(pevent);
+            //base.OnPaint(pevent);
 
-            pevent.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            Rectangle rc = this.ClientRectangle;
             Graphics g = pevent.Graphics;
-            StringFormat sf = new StringFormat();
-            Font f = new Font("Arial", (float)rc.Height * 0.5f, FontStyle.Bold, GraphicsUnit.Pixel);
+            pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            pevent.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Rectangle rc = this.ClientRectangle;
 
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-
-            g.FillEllipse(new SolidBrush(Background), rc.Left + 1.5f, rc.Top + 1.5f, rc.Width - 4.0f, rc.Height - 4.0f);
-            g.DrawEllipse(new Pen(new SolidBrush(BorderColor), 3.0f), rc.Left + 1.5f, rc.Top + 1.5f, rc.Width - 4.0f, rc.Height - 4.0f);
-
-            if (IsChecked)
-                g.DrawString("\u2713", f, new SolidBrush(tickColor), rc, sf);
+            // 라운드 체크박스
+            g.FillRectangle(new SolidBrush(this.BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
+            g.FillEllipse(new SolidBrush(Background), rc.Left + 3, rc.Top + 3 , rc.Width - 5, rc.Height - 5);
+            g.DrawEllipse(new Pen(new SolidBrush(BorderColor), 1.0f), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
+            if (Checked)
+            {
+                g.DrawLine(new Pen(new SolidBrush(BorderColor), 2.0f), rc.Left + 7, rc.Top + 10, rc.Left + 13, rc.Top + 17);
+                g.DrawLine(new Pen(new SolidBrush(BorderColor), 2.0f), rc.Left + 13, rc.Top + 17, rc.Left + 20, rc.Top + 10);
+            }
         }
-
-        private void StarCheckbox_Click(object sender, EventArgs e)
-        {
-            _check = !_check;
-            Invalidate();
-        }
-
+                
         protected override void OnClick(EventArgs e)
         {
             base.OnClick(e);
 
-            IsChecked = IsChecked ? false : true;
+            Checked = !Checked;
             Invalidate();
         }
     }

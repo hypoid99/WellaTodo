@@ -25,6 +25,10 @@ namespace WellaTodo
             new MainController(mainFrame, mainModel);
             Application.Run(mainFrame);
         }
+
+        internal class StarCheckbox
+        {
+        }
     }
 }
 

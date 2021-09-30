@@ -31,7 +31,7 @@ namespace WellaTodo
         {
             components = new System.ComponentModel.Container();
 
-            this.Click += new System.EventHandler(this.StarCheckbox_Click);
+            //this.Click += new System.EventHandler(this.StarCheckbox_Click);
         }
 
         #endregion

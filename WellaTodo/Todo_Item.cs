@@ -106,6 +106,15 @@ namespace WellaTodo
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
+            //Rectangle rectangle = ClientRectangle;
+            //rectangle.X -= 1;
+            //rectangle.Y -= 1;
+            //rectangle.Width += 2;
+            //rectangle.Height += 2;
+
+            Rectangle rc = this.ClientRectangle;
+            e.Graphics.FillRectangle(new SolidBrush(this.BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
+
             DrawOuterBorder(e.Graphics);
             //DrawBackgroundImage(e.Graphics); 
             //DrawHighlight(e.Graphics); 

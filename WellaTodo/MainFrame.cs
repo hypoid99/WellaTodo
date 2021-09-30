@@ -36,6 +36,10 @@ namespace WellaTodo
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
 
+        StarCheckbox starCheckbox1 = new StarCheckbox();
+        StarCheckbox starCheckbox2 = new StarCheckbox();
+        RoundLabel roundLabel1 = new RoundLabel();
+
         bool isDetailWindowOpen = false;
         bool isTextboxClicked = false;
 
@@ -58,6 +62,7 @@ namespace WellaTodo
             this.Text = WINDOW_CAPTION;
 
             Initiate_View();
+
             Load_Item();
         }
 
@@ -91,7 +96,7 @@ namespace WellaTodo
             splitContainer2.SplitterDistance = splitContainer2.Width;
             splitContainer2.IsSplitterFixed = true;
             splitContainer2.Location = new Point(0, 0);
-            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
 
             splitContainer2.Panel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
 
@@ -105,6 +110,30 @@ namespace WellaTodo
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
             textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
             textBox2.Text = "+ 작업 추가";
+
+            textBox3.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
+
+            starCheckbox1.CheckedChanged += new System.EventHandler(this.starCheckbox1_CheckedChanged);
+            starCheckbox1.Location = new Point(7, 5);
+            starCheckbox1.Size = new Size(25, 25);
+            starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(starCheckbox1);
+
+            starCheckbox2.CheckedChanged += new System.EventHandler(this.starCheckbox2_CheckedChanged);
+            starCheckbox2.Location = new Point(220, 5);
+            starCheckbox2.Size = new Size(25, 25);
+            starCheckbox2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(starCheckbox2);
+
+            roundLabel1.Click += new System.EventHandler(this.roundLabel1_Click);
+            roundLabel1.MouseEnter += new System.EventHandler(this.roundLabel1_MouseEnter);
+            roundLabel1.MouseLeave += new System.EventHandler(this.roundLabel1_MouseLeave);
+            roundLabel1.Text = "Wella Todo";
+            roundLabel1.Location = new Point(50, 320);
+            roundLabel1.Size = new Size(150, 35);
+            roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel1.borderColor = Color.DarkCyan;
+            splitContainer2.Panel2.Controls.Add(roundLabel1);
 
             splitContainer1.Refresh();
             splitContainer2.Refresh();
@@ -121,7 +150,7 @@ namespace WellaTodo
             }
 
             splitContainer2.Location = new Point(0, 0);
-            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 20, splitContainer1.Panel2.Height - 50);
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
 
             textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
@@ -246,7 +275,6 @@ namespace WellaTodo
 
             foreach (CDataCell dt in todo_data)
             {
-                Console.WriteLine(">Loading Data:[{0}]]", dt.DC_title);
                 m_Data.Insert(m_Data.Count, dt);
             }
         }
@@ -278,7 +306,7 @@ namespace WellaTodo
                 {
                     //완료됨 클릭시
                     if (item.IsCompleteClicked)
-                    {           
+                    {
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isDetailWindowOpen = false;
 
@@ -362,8 +390,8 @@ namespace WellaTodo
                     {
                         m_Data = m_Controller.Get_Model().GetDataCollection();
                         textBox3.Text = m_Data[pos].DC_title;
-                        checkBox1.Checked = m_Data[pos].DC_complete;
-                        checkBox2.Checked = m_Data[pos].DC_important;
+                        starCheckbox1.Checked = m_Data[pos].DC_complete;
+                        starCheckbox2.Checked = m_Data[pos].DC_important;
                         textBox1.Text = m_Data[pos].DC_memo;
 
                         m_before_data_position = m_present_data_position;
@@ -678,19 +706,19 @@ namespace WellaTodo
         }
 
         //상세창 완료 체크시
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_present_data_position].DC_complete = checkBox1.Checked;
+                m_Data[m_present_data_position].DC_complete = starCheckbox1.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
                     if (pos == m_present_data_position)
                     {
-                        item.TD_complete = checkBox1.Checked;
+                        item.TD_complete = starCheckbox1.Checked;
                         break;
                     }
                     pos++;
@@ -699,19 +727,19 @@ namespace WellaTodo
         }
 
         //상세창 중요 체크시
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void starCheckbox2_CheckedChanged(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_present_data_position].DC_important = checkBox2.Checked;
+                m_Data[m_present_data_position].DC_important = starCheckbox2.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
                     if (pos == m_present_data_position)
                     {
-                        item.TD_important = checkBox2.Checked;
+                        item.TD_important = starCheckbox2.Checked;
                         break;
                     }
                     pos++;
@@ -726,6 +754,58 @@ namespace WellaTodo
             {
                 SaveFile();
             }
+        }
+
+        // 상세창 오늘 할일 메뉴
+        private void label7_MouseEnter(object sender, EventArgs e)
+        {
+            label7.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void label7_MouseLeave(object sender, EventArgs e)
+        {
+            label7.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // 상세창 미리 알림 메뉴
+        private void label8_MouseEnter(object sender, EventArgs e)
+        {
+            label8.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void label8_MouseLeave(object sender, EventArgs e)
+        {
+            label8.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            ReminderForm reminder = new ReminderForm
+            {
+                StartPosition = FormStartPosition.CenterParent
+            };
+
+            reminder.ShowDialog();
+        }
+
+        private void roundLabel1_MouseEnter(object sender, EventArgs e)
+        {
+            roundLabel1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void roundLabel1_MouseLeave(object sender, EventArgs e)
+        {
+            roundLabel1.BackColor = PSEUDO_BACK_COLOR;
+        }
+
+        private void roundLabel1_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("roundlabel click");
         }
     }
 }
