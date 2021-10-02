@@ -34,21 +34,24 @@ namespace WellaTodo
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(16, 21);
+            this.textBox1.Location = new System.Drawing.Point(18, 26);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(764, 320);
+            this.textBox1.Size = new System.Drawing.Size(873, 399);
             this.textBox1.TabIndex = 0;
             // 
             // OutputForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(914, 562);
             this.Controls.Add(this.textBox1);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "OutputForm";
             this.Text = "OutputForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OutputForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

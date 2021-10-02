@@ -39,14 +39,10 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label7 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -209,14 +205,10 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.AutoScroll = true;
-            this.splitContainer2.Panel2.Controls.Add(this.label7);
             this.splitContainer2.Panel2.Controls.Add(this.button2);
             this.splitContainer2.Panel2.Controls.Add(this.button1);
             this.splitContainer2.Panel2.Controls.Add(this.textBox3);
             this.splitContainer2.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer2.Panel2.Controls.Add(this.label10);
-            this.splitContainer2.Panel2.Controls.Add(this.label9);
-            this.splitContainer2.Panel2.Controls.Add(this.label8);
             this.splitContainer2.Panel2MinSize = 1;
             this.splitContainer2.Size = new System.Drawing.Size(600, 340);
             this.splitContainer2.SplitterDistance = 306;
@@ -234,19 +226,6 @@
             this.flowLayoutPanel2.Size = new System.Drawing.Size(306, 340);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label7.Location = new System.Drawing.Point(37, 55);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(124, 17);
-            this.label7.TabIndex = 10;
-            this.label7.Text = "나의 하루에 추가";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
-            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
-            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
             // 
             // button2
             // 
@@ -291,36 +270,6 @@
             this.textBox1.Size = new System.Drawing.Size(260, 118);
             this.textBox1.TabIndex = 6;
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(37, 132);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(37, 15);
-            this.label10.TabIndex = 5;
-            this.label10.Text = "반복";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(37, 105);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(72, 15);
-            this.label9.TabIndex = 4;
-            this.label9.Text = "기한 설정";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(37, 79);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(72, 15);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "미리 알림";
-            this.label8.Click += new System.EventHandler(this.label8_Click);
-            this.label8.MouseEnter += new System.EventHandler(this.label8_MouseEnter);
-            this.label8.MouseLeave += new System.EventHandler(this.label8_MouseLeave);
             // 
             // openFileDialog1
             // 
@@ -367,16 +316,12 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.Label label7;
     }
 }
 

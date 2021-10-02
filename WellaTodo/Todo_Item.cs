@@ -16,6 +16,9 @@ namespace WellaTodo
     {
         public event UserControl_Event UserControl_Event_method;
 
+        static readonly int TODO_ITEM_WIDTH = 180;
+        static readonly int TODO_ITEM_HEIGHT = 35;
+
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
@@ -90,39 +93,51 @@ namespace WellaTodo
 
         private void Todo_Item_Load(object sender, EventArgs e)
         {
-            this.BackColor = PSEUDO_BACK_COLOR;
-            label1.BackColor = PSEUDO_BACK_COLOR;
+            Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
+            BackColor = PSEUDO_BACK_COLOR;
 
-            SetControlLocation();
+            /*
+            checkBox1.Appearance = Appearance.Button;
+            checkBox1.BackgroundImage = Properties.Resources.uncheck_Round;
+            checkBox1.BackgroundImageLayout = ImageLayout.None;
+            checkBox1.FlatAppearance.BorderSize = 0;
+            checkBox1.FlatAppearance.CheckedBackColor = Color.Transparent;
+            checkBox1.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            checkBox1.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            checkBox1.FlatStyle = FlatStyle.Flat;
+            checkBox1.AutoSize = false;
+            checkBox1.Size = new Size(24, 24);
+            */
+
+            label1.BackColor = PSEUDO_BACK_COLOR;
 
             SetOuterBorderPath(ClientRectangle, this.cornerRadius);
             SetHighlightPath(ClientRectangle, this.cornerRadius);
+
+            SetControlLocation();
         }
 
         private void Todo_Item_Paint(object sender, PaintEventArgs e)
         {
+            /*
+            if (checkBox1.Checked)
+            {
+                checkBox1.BackgroundImage = Properties.Resources.check_Round;
+            }
+            else
+            {
+                checkBox1.BackgroundImage = Properties.Resources.uncheck_Round;
+            }
+            */
             SetControlLocation();
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            //Rectangle rectangle = ClientRectangle;
-            //rectangle.X -= 1;
-            //rectangle.Y -= 1;
-            //rectangle.Width += 2;
-            //rectangle.Height += 2;
-
             Rectangle rc = this.ClientRectangle;
             e.Graphics.FillRectangle(new SolidBrush(this.BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
 
             DrawOuterBorder(e.Graphics);
-            //DrawBackgroundImage(e.Graphics); 
-            //DrawHighlight(e.Graphics); 
-            //DrawImage(e.Graphics); 
-            //DrawTitle(e.Graphics); 
-            //DrawGlow(e.Graphics); 
-            //DrawInnerBorder(e.Graphics); 
-            //DrawCheckBox(e.Graphics);
         }
 
         private void Todo_Item_Resize(object sender, EventArgs e)
@@ -141,16 +156,14 @@ namespace WellaTodo
             }
 
             SetOuterBorderPath(ClientRectangle, this.cornerRadius);
-            //SetInnerBorderPath(ClientRectangle, this.cornerRadius);
             SetHighlightPath(ClientRectangle, this.cornerRadius);
-            //SetTitleRectangle(ClientRectangle);
         }
 
         private void SetControlLocation()
         {
-            checkBox1.Location = new Point(20, checkBox2.Location.Y);
-            label1.Location = new Point(45, checkBox2.Location.Y);
-            checkBox2.Location = new Point(this.Width - 30, checkBox2.Location.Y);
+            checkBox1.Location = new Point(20, 10);
+            label1.Location = new Point(45, 10);
+            checkBox2.Location = new Point(Width - 30, 10);
         }
 
         public bool isCompleted()
@@ -163,17 +176,11 @@ namespace WellaTodo
             return checkBox2.Checked;
         }
 
-        /// <summary>
-        /// 라운드 테두리 그리기
-        /// </summary>
         private void DrawOuterBorder(Graphics g)
         {
             g.DrawPath(this.outerBorderColorPen, this.outerBorderPath);
         }
 
-        /// <summary>
-        /// 하이라이트 그리기
-        /// </summary>
         private void DrawHighlight(Graphics graphics)
         {
             if (!Enabled) return;
@@ -193,9 +200,6 @@ namespace WellaTodo
             graphics.FillPath(highlightColorBrush, this.highlightPath);
         }
 
-        /// <summary>
-        /// 라운드 테두리 경로 지정
-        /// </summary>
         private void SetOuterBorderPath(Rectangle clientRectangle, float cornerRadius)
         {
             Rectangle rectangle = clientRectangle;
@@ -219,9 +223,6 @@ namespace WellaTodo
             this.highlightPath = highlightPath;
         }
 
-        /// <summary>
-        /// 라운드 테두리 경로 계산
-        /// </summary>
         private GraphicsPath GetShapePath(RectangleF rectangle, float r1, float r2, float r3, float r4)
         {
             float x = rectangle.X;
@@ -243,29 +244,6 @@ namespace WellaTodo
             return graphicsPath;
         }
 
-        /*
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (this.container != null)
-                {
-                    this.container.Dispose();
-                    this.outerBorderPath?.Dispose();
-                    this.innerBorderPath?.Dispose();
-                    this.highlightPath?.Dispose();
-                    this.buttonColorPen2?.Dispose();
-                    this.highlightColorPen?.Dispose();
-                    this.buttonColorBrush1?.Dispose();
-                }
-            }
-            base.Dispose(disposing);
-        }
-        */
-
-        /// <summary>
-        /// 항목 클릭 이벤트 처리
-        /// </summary>
         private void Todo_Item_Click(object sender, MouseEventArgs e)
         {
             SetControlLocation();
@@ -278,7 +256,7 @@ namespace WellaTodo
                         break;
                     case MouseButtons.Right:
                         ContextMenu deleteMenu = new ContextMenu();
-                        MenuItem deleteItem = new MenuItem("항목 삭제", new System.EventHandler(this.OnDeleteMenuItem_Click));
+                        MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(this.OnDeleteMenuItem_Click));
                         deleteMenu.MenuItems.Add(deleteItem);
                         deleteMenu.Show(this, new Point(e.X, e.Y));
                         break;
@@ -313,10 +291,12 @@ namespace WellaTodo
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 
+        /*
         private void checkBox1_MouseEnter(object sender, EventArgs e)
         {
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            Console.WriteLine("mouse enter");
         }
 
         private void checkBox1_MouseLeave(object sender, EventArgs e)
@@ -336,12 +316,21 @@ namespace WellaTodo
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
+        */
 
-        /// <summary>
-        /// 완료 체크시
-        /// </summary>
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+            /*
+            if (checkBox1.Checked)
+            {
+                checkBox1.BackgroundImage = Properties.Resources.check_Round;
+            }
+            else
+            {
+                checkBox1.BackgroundImage = Properties.Resources.uncheck_Round;
+            }
+            */
+
             TD_complete = checkBox1.Checked;
             if (TD_complete)
             {
@@ -355,9 +344,7 @@ namespace WellaTodo
             UserControl_Event_method?.Invoke(this, e);
             IsCompleteClicked = false;
         }
-        /// <summary>
-        /// 중요 체크시
-        /// </summary>
+
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             TD_important = checkBox2.Checked;
@@ -366,9 +353,6 @@ namespace WellaTodo
             IsImportantClicked = false;
         }
 
-        /// <summary>
-        /// 할일 클릭시
-        /// </summary>
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
             Todo_Item_Click(sender, e);
@@ -379,9 +363,6 @@ namespace WellaTodo
             Todo_Item_Click(sender, e);
         }
 
-        /// <summary>
-        /// 할일 삭제시
-        /// </summary>
         private void OnDeleteMenuItem_Click(object sender, EventArgs e)
         {
             IsDeleteClicked = true;

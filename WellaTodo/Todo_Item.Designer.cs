@@ -44,8 +44,8 @@ namespace WellaTodo
             this.checkBox1.TabIndex = 0;
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            this.checkBox1.MouseEnter += new System.EventHandler(this.checkBox1_MouseEnter);
-            this.checkBox1.MouseLeave += new System.EventHandler(this.checkBox1_MouseLeave);
+            //this.checkBox1.MouseEnter += new System.EventHandler(this.checkBox1_MouseEnter);
+            //this.checkBox1.MouseLeave += new System.EventHandler(this.checkBox1_MouseLeave);
             // 
             // label1
             // 
@@ -70,8 +70,8 @@ namespace WellaTodo
             this.checkBox2.TabIndex = 2;
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
-            this.checkBox2.MouseEnter += new System.EventHandler(this.checkBox2_MouseEnter);
-            this.checkBox2.MouseLeave += new System.EventHandler(this.checkBox2_MouseLeave);
+            //this.checkBox2.MouseEnter += new System.EventHandler(this.checkBox2_MouseEnter);
+            //this.checkBox2.MouseLeave += new System.EventHandler(this.checkBox2_MouseLeave);
             // 
             // Todo_Item
             // 
