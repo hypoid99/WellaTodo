@@ -14,92 +14,76 @@ namespace WellaTodo
 {
     public partial class RoundLabel : Label
     {
-        public int cornerRadius = 10;
-        public int borderWidth = 1;
-        public Color borderColor = Color.DarkGray;
-        public Color backColor = Color.LightGray;
+        static readonly Color PSEUDO_BACK_COLOR = Color.PapayaWhip;
+        static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
+        static readonly Color PSEUDO_BORDER_COLOR = Color.DarkCyan;
+        static readonly Color PSEUDO_FILL_COLOR = Color.Gold;
+        static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
-        public bool isFillLeftTop = false;
-        public bool isFillRightTop = false;
-        public bool isFillLeftBtm = false;
-        public bool isFillRightBtm = false;
+        GraphicsPath roundRectanglePath = null;
+
+        private int cornerRadius = 10;
 
         public RoundLabel()
         {
             InitializeComponent();
 
-            this.DoubleBuffered = true;
+            DoubleBuffered = true;
+            SetPathRoundRectangle();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            SetPathRoundRectangle();
         }
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            base.OnPaint(pevent);
+            //base.OnPaint(pevent);
 
             Graphics g = pevent.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Rectangle rc = ClientRectangle;
 
-            using (var graphicsPath = GetRoundRectangle(this.ClientRectangle))
-            {
-                Rectangle rc = this.ClientRectangle;
-                g.FillRectangle(new SolidBrush(this.BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
-                g.FillPath(new SolidBrush(this.BackColor), graphicsPath);
-                g.DrawPath(new Pen(borderColor, borderWidth), graphicsPath);
-                TextRenderer.DrawText(g, Text, this.Font, this.ClientRectangle, this.ForeColor);
-            }
+            g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
+            //g.FillPath(new SolidBrush(PSEUDO_FILL_COLOR), roundRectanglePath);
+            g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), roundRectanglePath);
+            TextRenderer.DrawText(g, Text, Font, ClientRectangle, PSEUDO_BORDER_COLOR);
         }
 
-        private GraphicsPath GetRoundRectangle(Rectangle rectangle)
+        private void SetPathRoundRectangle()
         {
+            Rectangle rc = this.ClientRectangle;
+            float x = rc.X;
+            float y = rc.Y;
+            float width = rc.Width - 1;
+            float height = rc.Height - 1;
+            float cr = cornerRadius;
+
             GraphicsPath path = new GraphicsPath();
 
-            //path.AddArc(rectangle.X, rectangle.Y, cornerRadius, cornerRadius, 180, 90);
+            path.AddBezier(x, y + cr, x, y, x + cr, y, x + cr, y);
+            path.AddLine(x + cr, y, x + width - cr, y);
+            path.AddBezier(x + width - cr, y, x + width, y, x + width, y + cr, x + width, y + cr);
+            path.AddLine(x + width, y + cr, x + width, y + height - cr);
+            path.AddBezier(x + width, y + height - cr, x + width, y + height, x + width - cr, y + height, x + width - cr, y + height);
+            path.AddLine(x + width - cr, y + height, x + cr, y + height);
+            path.AddBezier(x + cr, y + height, x, y + height, x, y + height - cr, x, y + height - cr);
+            path.AddLine(x, y + height - cr, x, y + cr);
 
-            int left = rectangle.X;
-            int top = rectangle.Y;
-            int right = rectangle.X + rectangle.Width - borderWidth;
-            int bottom = rectangle.Y + rectangle.Height - borderWidth;
+            roundRectanglePath?.Dispose();
+            roundRectanglePath = path;
+        }
 
-            if (isFillLeftTop)
-            {//좌상
-                path.AddLine(left, top + cornerRadius, left, top);
-                path.AddLine(left, top, left + cornerRadius, top);
-            }
-            else
-            {
-                path.AddArc(rectangle.X, rectangle.Y, cornerRadius, cornerRadius, 180, 90);
-            }
-            if (isFillRightTop)
-            {//우상
-                path.AddLine(right - cornerRadius, top, right, top);
-                path.AddLine(right, top, right, top + cornerRadius);
-            }
-            else
-            {
-                path.AddArc(rectangle.X + rectangle.Width - cornerRadius - borderWidth, rectangle.Y, cornerRadius, cornerRadius, 270, 90);
-            }
-            if (isFillRightBtm)
-            {//우하
-                path.AddLine(right, bottom - cornerRadius, right, bottom);
-                path.AddLine(right, bottom, right - cornerRadius, bottom);
-            }
-            else
-            {
-                path.AddArc(rectangle.X + rectangle.Width - cornerRadius - borderWidth, rectangle.Y + rectangle.Height - cornerRadius - borderWidth, cornerRadius, cornerRadius, 0, 90);
-            }
-            if (isFillLeftBtm)
-            {//좌하
-                path.AddLine(left + cornerRadius, bottom, left, bottom);
-                path.AddLine(left, bottom, left, bottom - cornerRadius);
-            }
-            else
-            {
-                path.AddArc(rectangle.X, rectangle.Y + rectangle.Height - cornerRadius - borderWidth, cornerRadius, cornerRadius, 90, 90);
-            }
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
 
-            path.CloseAllFigures();
-
-            return path;
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            BackColor = PSEUDO_BACK_COLOR;
         }
     }
 }

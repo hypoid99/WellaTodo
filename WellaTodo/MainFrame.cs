@@ -38,8 +38,8 @@ namespace WellaTodo
         List<CDataCell> m_Data = new List<CDataCell>();
         OutputForm outputForm = new OutputForm();
 
-        StarCheckbox starCheckbox1 = new StarCheckbox(2);
-        StarCheckbox starCheckbox2 = new StarCheckbox(2);
+        RoundCheckbox roundCheckbox1 = new RoundCheckbox();
+        StarCheckbox starCheckbox1 = new StarCheckbox();
 
         RoundLabel roundLabel1 = new RoundLabel();
         RoundLabel roundLabel2 = new RoundLabel();
@@ -116,6 +116,14 @@ namespace WellaTodo
             textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
             textBox2.Text = "+ 작업 추가";
 
+            roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
+            roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
+            roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
+            roundCheckbox1.Location = new Point(DETAIL_WINDOW_X1 + 2, 5);
+            roundCheckbox1.Size = new Size(25, 25);
+            roundCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(roundCheckbox1);
+            /*
             starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
             starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
@@ -123,7 +131,7 @@ namespace WellaTodo
             starCheckbox1.Size = new Size(25, 25);
             starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(starCheckbox1);
-
+            */
             textBox3.Location = new Point(DETAIL_WINDOW_X1 + 30, 8);
             textBox3.Size = new Size(DETAIL_WINDOW_WIDTH - 78, 25);
             textBox3.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
@@ -141,13 +149,13 @@ namespace WellaTodo
             checkBox2.Size = new Size(48, 48);
             */
 
-            starCheckbox2.CheckedChanged += new EventHandler(starCheckbox2_CheckedChanged);
-            starCheckbox2.MouseEnter += new EventHandler(starCheckbox2_MouseEnter);
-            starCheckbox2.MouseLeave += new EventHandler(starCheckbox2_MouseLeave);
-            starCheckbox2.Location = new Point(DETAIL_WINDOW_X1 + 215, 5);
-            starCheckbox2.Size = new Size(25, 25);
-            starCheckbox2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            splitContainer2.Panel2.Controls.Add(starCheckbox2);
+            starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
+            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
+            starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
+            starCheckbox1.Location = new Point(DETAIL_WINDOW_X1 + 215, 5);
+            starCheckbox1.Size = new Size(25, 25);
+            starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(starCheckbox1);
 
             roundLabel1.Click += new EventHandler(roundLabel1_Click);
             roundLabel1.MouseEnter += new EventHandler(roundLabel1_MouseEnter);
@@ -156,7 +164,6 @@ namespace WellaTodo
             roundLabel1.Location = new Point(DETAIL_WINDOW_X1 + 15, 40);
             roundLabel1.Size = new Size(DETAIL_WINDOW_WIDTH - 45, 30);
             roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            roundLabel1.borderColor = Color.DarkCyan;
             splitContainer2.Panel2.Controls.Add(roundLabel1);
 
             roundLabel2.Click += new EventHandler(roundLabel2_Click);
@@ -166,7 +173,6 @@ namespace WellaTodo
             roundLabel2.Location = new Point(DETAIL_WINDOW_X1 + 15, 75);
             roundLabel2.Size = new Size(DETAIL_WINDOW_WIDTH - 45, 30);
             roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            roundLabel2.borderColor = Color.DarkCyan;
             splitContainer2.Panel2.Controls.Add(roundLabel2);
 
             roundLabel3.Click += new EventHandler(roundLabel3_Click);
@@ -176,7 +182,6 @@ namespace WellaTodo
             roundLabel3.Location = new Point(DETAIL_WINDOW_X1 + 15, 110);
             roundLabel3.Size = new Size(DETAIL_WINDOW_WIDTH - 45, 30);
             roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            roundLabel3.borderColor = Color.DarkCyan;
             splitContainer2.Panel2.Controls.Add(roundLabel3);
 
             roundLabel4.Click += new EventHandler(roundLabel4_Click);
@@ -186,7 +191,6 @@ namespace WellaTodo
             roundLabel4.Location = new Point(DETAIL_WINDOW_X1 + 15, 145);
             roundLabel4.Size = new Size(DETAIL_WINDOW_WIDTH - 45, 30);
             roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            roundLabel4.borderColor = Color.DarkCyan;
             splitContainer2.Panel2.Controls.Add(roundLabel4);
 
             textBox1.Multiline = true;
@@ -391,7 +395,7 @@ namespace WellaTodo
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isDetailWindowOpen = false;
 
-                        if (item.isCompleted())
+                        if (item.TD_complete)
                         {
                             int cnt = flowLayoutPanel2.Controls.Count;
                             flowLayoutPanel2.Controls.SetChildIndex(item, cnt);
@@ -421,7 +425,7 @@ namespace WellaTodo
                         splitContainer2.SplitterDistance = splitContainer2.Width;
                         isDetailWindowOpen = false;
 
-                        if (item.isImportant() && !item.isCompleted())
+                        if (item.TD_important && !item.TD_complete)
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
 
@@ -433,12 +437,12 @@ namespace WellaTodo
 
                             flowLayoutPanel2.VerticalScroll.Value = 0;
                         }
-                        else if (item.isImportant() && item.isCompleted())
+                        else if (item.TD_important && item.TD_complete)
                         {
                             m_Data = m_Controller.Get_Model().GetDataCollection();
                             m_Data[pos].DC_important = true;
                         }
-                        else if (!item.isImportant())
+                        else if (!item.TD_important)
                         {
                             m_Data = m_Controller.Get_Model().GetDataCollection();
                             m_Data[pos].DC_important = false;
@@ -476,8 +480,8 @@ namespace WellaTodo
                     {
                         m_Data = m_Controller.Get_Model().GetDataCollection();
                         textBox3.Text = m_Data[pos].DC_title;
-                        starCheckbox1.Checked = m_Data[pos].DC_complete;
-                        starCheckbox2.Checked = m_Data[pos].DC_important;
+                        roundCheckbox1.Checked = m_Data[pos].DC_complete;
+                        starCheckbox1.Checked = m_Data[pos].DC_important;
                         textBox1.Text = m_Data[pos].DC_memo;
 
                         m_before_data_position = m_present_data_position;
@@ -801,19 +805,50 @@ namespace WellaTodo
         }
 
         //상세창 완료 체크시
-        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
+        private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
             {
                 m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_present_data_position].DC_complete = starCheckbox1.Checked;
+                m_Data[m_present_data_position].DC_complete = roundCheckbox1.Checked;
 
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
                     if (pos == m_present_data_position)
                     {
-                        item.TD_complete = starCheckbox1.Checked;
+                        item.TD_complete = roundCheckbox1.Checked;
+                        break;
+                    }
+                    pos++;
+                }
+            }
+        }
+
+        private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void roundCheckbox1_MouseLeave(object sender, EventArgs e)
+        {
+            roundCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+        }
+
+        //상세창 중요 체크시
+        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isDetailWindowOpen)
+            {
+                m_Data = m_Controller.Get_Model().GetDataCollection();
+                m_Data[m_present_data_position].DC_important = starCheckbox1.Checked;
+
+                int pos = 0;
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
+                {
+                    if (pos == m_present_data_position)
+                    {
+                        item.TD_important = starCheckbox1.Checked;
                         break;
                     }
                     pos++;
@@ -829,37 +864,6 @@ namespace WellaTodo
         private void starCheckbox1_MouseLeave(object sender, EventArgs e)
         {
             starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-        }
-
-        //상세창 중요 체크시
-        private void starCheckbox2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (isDetailWindowOpen)
-            {
-                m_Data = m_Controller.Get_Model().GetDataCollection();
-                m_Data[m_present_data_position].DC_important = starCheckbox2.Checked;
-
-                int pos = 0;
-                foreach (Todo_Item item in flowLayoutPanel2.Controls)
-                {
-                    if (pos == m_present_data_position)
-                    {
-                        item.TD_important = starCheckbox2.Checked;
-                        break;
-                    }
-                    pos++;
-                }
-            }
-        }
-
-        private void starCheckbox2_MouseEnter(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void starCheckbox2_MouseLeave(object sender, EventArgs e)
-        {
-            starCheckbox2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
         // 끝낼때 저장 여부 묻기

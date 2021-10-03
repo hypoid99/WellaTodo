@@ -82,6 +82,12 @@
     <Compile Include="ReminderForm.Designer.cs">
       <DependentUpon>ReminderForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="RoundCheckbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RoundCheckbox.Designer.cs">
+      <DependentUpon>RoundCheckbox.cs</DependentUpon>
+    </Compile>
     <Compile Include="RoundLabel.cs">
       <SubType>Component</SubType>
     </Compile>
