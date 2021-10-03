@@ -15,7 +15,7 @@ namespace WellaTodo
     public partial class StarCheckbox : CheckBox
     {
         static readonly Color PSEUDO_BORDER_COLOR = Color.Black;
-        static readonly Color PSEUDO_FILL_COLOR = Color.Gold;
+        static readonly Color PSEUDO_FILL_COLOR = Color.Blue;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
         private int checkboxType;

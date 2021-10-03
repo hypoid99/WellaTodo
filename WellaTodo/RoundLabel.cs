@@ -49,7 +49,7 @@ namespace WellaTodo
             g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
             //g.FillPath(new SolidBrush(PSEUDO_FILL_COLOR), roundRectanglePath);
             g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), roundRectanglePath);
-            TextRenderer.DrawText(g, Text, Font, ClientRectangle, PSEUDO_BORDER_COLOR);
+            TextRenderer.DrawText(g, Text, Font, ClientRectangle, Color.Black);
         }
 
         private void SetPathRoundRectangle()

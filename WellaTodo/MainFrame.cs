@@ -123,31 +123,10 @@ namespace WellaTodo
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(roundCheckbox1);
-            /*
-            starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
-            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
-            starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
-            starCheckbox1.Location = new Point(DETAIL_WINDOW_X1 + 2, 5);
-            starCheckbox1.Size = new Size(25, 25);
-            starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
-            splitContainer2.Panel2.Controls.Add(starCheckbox1);
-            */
+
             textBox3.Location = new Point(DETAIL_WINDOW_X1 + 30, 8);
             textBox3.Size = new Size(DETAIL_WINDOW_WIDTH - 78, 25);
             textBox3.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
-
-            /*
-            checkBox2.Appearance = System.Windows.Forms.Appearance.Button;
-            checkBox2.BackgroundImage = global::WellaTodo.Properties.Resources.uncheckStar;
-            checkBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            checkBox2.FlatAppearance.BorderSize = 0;
-            checkBox2.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            checkBox2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            checkBox2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            checkBox2.AutoSize = false;
-            checkBox2.Size = new Size(48, 48);
-            */
 
             starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
             starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);

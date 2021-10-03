@@ -15,7 +15,8 @@ namespace WellaTodo
     public partial class RoundCheckbox : CheckBox
     {
         static readonly Color PSEUDO_BORDER_COLOR = Color.Black;
-        static readonly Color PSEUDO_FILL_COLOR = Color.Gold;
+        static readonly Color PSEUDO_CHECK_COLOR = Color.Black;
+        static readonly Color PSEUDO_TICK_COLOR = Color.Yellow;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
         private int checkboxType;
@@ -46,11 +47,16 @@ namespace WellaTodo
                     g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
                     if (Checked)
                     {
-                        g.FillEllipse(new SolidBrush(PSEUDO_FILL_COLOR), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
-                        g.DrawLine(new Pen(new SolidBrush(PSEUDO_BORDER_COLOR), PSEUDO_PEN_THICKNESS + 1.0f), rc.Left + 7, rc.Top + 10, rc.Left + 13, rc.Top + 17);
-                        g.DrawLine(new Pen(new SolidBrush(PSEUDO_BORDER_COLOR), PSEUDO_PEN_THICKNESS + 1.0f), rc.Left + 13, rc.Top + 17, rc.Left + 20, rc.Top + 10);
+                        g.FillEllipse(new SolidBrush(PSEUDO_CHECK_COLOR), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
+                        g.DrawLine(new Pen(new SolidBrush(PSEUDO_TICK_COLOR), PSEUDO_PEN_THICKNESS + 1.0f), rc.Left + 7, rc.Top + 10, rc.Left + 13, rc.Top + 17);
+                        g.DrawLine(new Pen(new SolidBrush(PSEUDO_TICK_COLOR), PSEUDO_PEN_THICKNESS + 1.0f), rc.Left + 13, rc.Top + 17, rc.Left + 20, rc.Top + 10);
+                        g.DrawEllipse(new Pen(new SolidBrush(PSEUDO_CHECK_COLOR), PSEUDO_PEN_THICKNESS), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
                     }
-                    g.DrawEllipse(new Pen(new SolidBrush(PSEUDO_BORDER_COLOR), PSEUDO_PEN_THICKNESS), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
+                    else
+                    {
+                        g.DrawEllipse(new Pen(new SolidBrush(PSEUDO_BORDER_COLOR), PSEUDO_PEN_THICKNESS), rc.Left + 3, rc.Top + 3, rc.Width - 5, rc.Height - 5);
+                    }
+                    
                     break;
                 default:
                     break;
