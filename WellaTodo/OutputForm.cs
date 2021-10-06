@@ -38,5 +38,10 @@ namespace WellaTodo
                 e.Cancel = true;
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+        }
     }
 }

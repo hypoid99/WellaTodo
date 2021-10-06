@@ -22,8 +22,7 @@ namespace WellaTodo
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
-        static readonly Color PSEUDO_BORDER_COLOR = Color.Black;
-        static readonly Color PSEUDO_FILL_COLOR = Color.Gold;
+        static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
         private string _title;
@@ -46,6 +45,9 @@ namespace WellaTodo
             get { return _important; }
             set { _important = value; starCheckbox1.Checked = value; }
         }
+
+        private string _infomation;
+        public string TD_infomation { get => _infomation; set => _infomation = value; }
 
         private bool isCompleteClicked = false;
         public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
@@ -79,6 +81,7 @@ namespace WellaTodo
 
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
         StarCheckbox starCheckbox1 = new StarCheckbox();
+        Label label2 = new Label();
 
         GraphicsPath outerBorderPath = null;
         int cornerRadius = 10;
@@ -95,6 +98,8 @@ namespace WellaTodo
             TD_title = text;
             TD_complete = chk_complete;
             TD_important = chk_important;
+
+            TD_infomation = "";
         }
 
         private void Todo_Item_Load(object sender, EventArgs e)
@@ -114,12 +119,18 @@ namespace WellaTodo
             starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(starCheckbox1);
 
-            label1.Location = new Point(45, 12);
+            label1.Location = new Point(45, 13);
             label1.BackColor = PSEUDO_BACK_COLOR;
             if (TD_complete)
                 label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Strikeout);
             else
                 label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Regular);
+
+            label2.Location = new Point(245, 20);
+            label2.BackColor = PSEUDO_BACK_COLOR;
+            label2.Size = new Size(0, 13);
+            label2.Text = "";
+            Controls.Add(label2);
         }
 
         private void Todo_Item_Resize(object sender, EventArgs e)
@@ -130,6 +141,24 @@ namespace WellaTodo
 
         private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
         {
+            if (_infomation.Length == 0)
+            {
+                label1.Location = new Point(45, 13);
+
+                label2.Location = new Point(245, 20);
+                label2.Size = new Size(0, 13);
+                label2.Text = "";
+                label2.AutoSize = false;
+            }
+            else
+            {
+                label1.Location = new Point(45, 5);
+
+                label2.Location = new Point(45, 20);
+                label2.Text = TD_infomation;
+                label2.AutoSize = true;
+            }
+
             starCheckbox1.Location = new Point(Width - 40, 5);
 
             Graphics g = pevent.Graphics;
@@ -138,7 +167,8 @@ namespace WellaTodo
             Rectangle rc = ClientRectangle;
 
             g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
-            g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), outerBorderPath);
+            g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width-1, rc.Height-1);
+            //g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), outerBorderPath);
         }
 
         private void SetPathOuterBorder()
@@ -192,6 +222,7 @@ namespace WellaTodo
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
         }
 
@@ -200,6 +231,7 @@ namespace WellaTodo
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 
@@ -208,6 +240,7 @@ namespace WellaTodo
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
         }
 
@@ -216,6 +249,7 @@ namespace WellaTodo
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 

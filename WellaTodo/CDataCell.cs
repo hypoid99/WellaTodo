@@ -13,37 +13,22 @@ namespace WellaTodo
         private bool _complete;
         private bool _important;
         private string _memo;
+        private DateTime _dateCreated;
+        private bool _myToday;
+        private DateTime _remindTime;
+        private DateTime _deadlineTime;
+        private int _repeatPeriod;
 
-        //private string _person;
-        //private string _detailstep;
-        //private string _myday;
-        //private string _alarm;
-        //private string _duerate;
-        //private string _repeat;
+        public string DC_title { get => _title; set => _title = value; }
+        public bool DC_complete { get => _complete; set => _complete = value; }
+        public bool DC_important { get => _important; set => _important = value; }
+        public string DC_memo { get => _memo; set => _memo = value; }
+        public DateTime DC_dateCreated { get => _dateCreated; set => _dateCreated = value; }
+        public bool DC_myToday { get => _myToday; set => _myToday = value; }
+        public DateTime DC_deadlineTime { get => _deadlineTime; set => _deadlineTime = value; }
+        public int DC_repeatPeriod { get => _repeatPeriod; set => _repeatPeriod = value; }
+        public DateTime DC_remindTime { get => _remindTime; set => _remindTime = value; }
 
-        //private string _attachfile;
-        //private string _memo;
-
-        public bool DC_complete {
-            get { return _complete; }
-            set { _complete = value; }
-        }
-
-        public string DC_title {
-            get { return _title; }
-            set { _title = value; }
-        }
-
-        public bool DC_important {
-            get { return _important; }
-            set { _important = value; }
-        }
-
-        public string DC_memo
-        {
-            get { return _memo; }
-            set { _memo = value; }
-        }
 
         public CDataCell()
         {
@@ -51,14 +36,24 @@ namespace WellaTodo
             _complete = false;
             _important = false;
             _memo = "메모추가";
+            _dateCreated = DateTime.Now;
+            _myToday = false;
+            _remindTime = default(DateTime);   // 1/1/0001 12:00:00 AM.
+            _deadlineTime = DateTime.MinValue; // 1/1/0001 12:00:00 AM.
+            _repeatPeriod = 0;
         }
 
-        public CDataCell(string title, bool complete, bool important, string memo)
+        public CDataCell(string title)
         {
-            _complete = complete;
             _title = title;
-            _important = important;
-            _memo = memo;
+            _complete = false;
+            _important = false;
+            _memo = "메모추가";
+            _dateCreated = DateTime.Now;
+            _myToday = false;
+            _remindTime = default(DateTime);   // 1/1/0001 12:00:00 AM.
+            _deadlineTime = DateTime.MinValue; // 1/1/0001 12:00:00 AM.
+            _repeatPeriod = 0;
         }
 
         public override String ToString()
