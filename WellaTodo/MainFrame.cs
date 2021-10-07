@@ -21,7 +21,7 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> Changed_View_Event;
 
-        static readonly string WINDOW_CAPTION = "Wella Todo v0.7";
+        static readonly string WINDOW_CAPTION = "Wella Todo v0.8";
         static readonly int WINDOW_WIDTH = 900;
         static readonly int WINDOW_HEIGHT = 500;
 
@@ -84,8 +84,6 @@ namespace WellaTodo
 
         public void Initiate_View()
         {
-            
-
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
             splitContainer1.Panel1MinSize = 100;
             splitContainer1.Panel2MinSize = 200;
@@ -488,6 +486,24 @@ namespace WellaTodo
             starCheckbox1.Checked = m_Data[m_present_data_position].DC_important;
             textBox1.Text = m_Data[m_present_data_position].DC_memo;
 
+            if (m_Data[m_present_data_position].DC_myToday)
+            {
+                roundLabel1.Text = "나의하루에 추가됨";
+
+            } else
+            {
+                roundLabel1.Text = "나의하루에 추가";
+            }
+
+            if (m_Data[m_present_data_position].DC_remindType > 0)
+            {
+                roundLabel2.Text = "알림 설정됨";
+            }
+            else
+            {
+                roundLabel2.Text = "미리 알림";
+            }
+
             m_before_data_position = m_present_data_position;
         }
 
@@ -865,30 +881,18 @@ namespace WellaTodo
         // 상세창 - 나의 하루에 추가 메뉴
         private void roundLabel1_Click(object sender, EventArgs e)
         {
-            string infoText;
             bool isMyToday = m_Data[m_present_data_position].DC_myToday;
-
             if (isMyToday)
             {
                 m_Data[m_present_data_position].DC_myToday = false;
-                infoText = "";
+                roundLabel1.Text = "나의 하루에 추가";
             }
             else
             {
                 m_Data[m_present_data_position].DC_myToday = true;
-                infoText = "오늘할일";
+                roundLabel1.Text = "나의 하루에 추가됨";
             }
-            int pos = 0;
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                if (m_present_data_position == pos)
-                {
-                    item.TD_infomation = infoText;
-                    item.Refresh();
-                    break;
-                }
-                pos++;
-            }
+            SetInformationText();
         }
 
         private void roundLabel1_MouseEnter(object sender, EventArgs e)
@@ -935,22 +939,78 @@ namespace WellaTodo
 
         private void OnTodayRemind_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("today remind");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_remindType == 1)
+            {
+                m_Data[m_present_data_position].DC_remindType = 0;
+                m_Data[m_present_data_position].DC_remindTime = default;
+                roundLabel2.Text = "미리 알림";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_remindType = 1;
+                m_Data[m_present_data_position].DC_remindTime = now.AddHours(1);
+                roundLabel2.Text = "알림 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("tomorrow remind");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_remindType == 2)
+            {
+                m_Data[m_present_data_position].DC_remindType = 0;
+                m_Data[m_present_data_position].DC_remindTime = default;
+                roundLabel2.Text = "미리 알림";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_remindType = 2;
+                m_Data[m_present_data_position].DC_remindTime = now.AddDays(1);
+                roundLabel2.Text = "알림 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("next week remind");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_remindType == 3)
+            {
+                m_Data[m_present_data_position].DC_remindType = 0;
+                m_Data[m_present_data_position].DC_remindTime = default;
+                roundLabel2.Text = "미리 알림";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_remindType = 3;
+                m_Data[m_present_data_position].DC_remindTime = now.AddDays(7);
+                roundLabel2.Text = "알림 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("select remind");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_remindType == 4)
+            {
+                m_Data[m_present_data_position].DC_remindType = 0;
+                m_Data[m_present_data_position].DC_remindTime = default;
+                roundLabel2.Text = "미리 알림";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_remindType = 4;
+                m_Data[m_present_data_position].DC_remindTime = now.AddDays(7);
+                roundLabel2.Text = "알림 설정됨";
+            }
+            SetInformationText();
         }
 
         // 상세창 - 기한 설정 메뉴
@@ -1070,6 +1130,46 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
 
             Text = WINDOW_CAPTION + " [" + dt.ToString() + "]";
+        }
+
+        private void SetInformationText()
+        {
+            string infoText = "";
+
+            if (m_Data[m_present_data_position].DC_myToday)
+            {
+                infoText = infoText + "[오늘 할일]";
+            }
+
+            switch (m_Data[m_present_data_position].DC_remindType)
+            {
+                case 1:
+                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
+                    break;
+                case 2:
+                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
+                    break;
+                case 3:
+                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
+                    break;
+                case 4:
+                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
+                    break;
+                default:
+                    break;
+            }
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (m_present_data_position == pos)
+                {
+                    item.TD_infomation = infoText;
+                    item.Refresh();
+                    break;
+                }
+                pos++;
+            }
         }
     }
 }

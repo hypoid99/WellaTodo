@@ -67,6 +67,7 @@ namespace WellaTodo
                     BackColor = PSEUDO_SELECTED_COLOR;
                     roundCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
                     label1.BackColor = PSEUDO_SELECTED_COLOR;
+                    label2.BackColor = PSEUDO_SELECTED_COLOR;
                     starCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
                 } 
                 else
@@ -74,6 +75,7 @@ namespace WellaTodo
                     BackColor = PSEUDO_BACK_COLOR;
                     roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
                     label1.BackColor = PSEUDO_BACK_COLOR;
+                    label2.BackColor = PSEUDO_BACK_COLOR;
                     starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
                 }
             } 
@@ -98,7 +100,6 @@ namespace WellaTodo
             TD_title = text;
             TD_complete = chk_complete;
             TD_important = chk_important;
-
             TD_infomation = "";
         }
 
@@ -126,6 +127,7 @@ namespace WellaTodo
             else
                 label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Regular);
 
+            label2.MouseClick += new MouseEventHandler(label2_MouseClick);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.Size = new Size(0, 13);
@@ -259,6 +261,11 @@ namespace WellaTodo
         }
 
         private void label1_MouseClick(object sender, MouseEventArgs e)
+        {
+            Todo_Item_Click(sender, e);
+        }
+
+        private void label2_MouseClick(object sender, MouseEventArgs e)
         {
             Todo_Item_Click(sender, e);
         }
