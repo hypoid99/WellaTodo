@@ -1,4 +1,4 @@
-﻿// copyright honeysoft v0.14
+﻿// copyright honeysoft v0.14 -> v0.7
 
 using System;
 using System.Collections.Generic;
@@ -306,6 +306,14 @@ namespace WellaTodo
                 flowLayoutPanel2.Controls.Add(item);
                 item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
             }
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                item.TD_infomation = MakeInformationText(pos);
+                pos++;
+            }
+
             Set_TodoItem_Width();
         }
 
@@ -489,19 +497,45 @@ namespace WellaTodo
             if (m_Data[m_present_data_position].DC_myToday)
             {
                 roundLabel1.Text = "나의하루에 추가됨";
+                roundLabel1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
 
             } else
             {
                 roundLabel1.Text = "나의하루에 추가";
+                roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
 
             if (m_Data[m_present_data_position].DC_remindType > 0)
             {
                 roundLabel2.Text = "알림 설정됨";
+                roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
             }
             else
             {
                 roundLabel2.Text = "미리 알림";
+                roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            }
+
+            if (m_Data[m_present_data_position].DC_deadlineType > 0)
+            {
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            }
+            else
+            {
+                roundLabel3.Text = "기한 설정";
+                roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            }
+
+            if (m_Data[m_present_data_position].DC_repeatType > 0)
+            {
+                roundLabel4.Text = "반복 설정됨";
+                roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            }
+            else
+            {
+                roundLabel4.Text = "반복";
+                roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
 
             m_before_data_position = m_present_data_position;
@@ -881,15 +915,18 @@ namespace WellaTodo
         // 상세창 - 나의 하루에 추가 메뉴
         private void roundLabel1_Click(object sender, EventArgs e)
         {
-            bool isMyToday = m_Data[m_present_data_position].DC_myToday;
-            if (isMyToday)
+            DateTime now = DateTime.Now;
+            if (m_Data[m_present_data_position].DC_myToday)
             {
                 m_Data[m_present_data_position].DC_myToday = false;
+                m_Data[m_present_data_position].DC_myTodayTime = default;
                 roundLabel1.Text = "나의 하루에 추가";
             }
             else
             {
                 m_Data[m_present_data_position].DC_myToday = true;
+                DateTime dt = DateTime.Now;
+                m_Data[m_present_data_position].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
                 roundLabel1.Text = "나의 하루에 추가됨";
             }
             SetInformationText();
@@ -902,7 +939,10 @@ namespace WellaTodo
 
         private void roundLabel1_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            if (m_Data[m_present_data_position].DC_myToday)
+                roundLabel1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            else
+                roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
         // 상세창 - 미리 알림 메뉴
@@ -913,7 +953,10 @@ namespace WellaTodo
 
         private void roundLabel2_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            if (m_Data[m_present_data_position].DC_remindType > 0)
+                roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            else
+                roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel2_Click(object sender, EventArgs e)
@@ -923,10 +966,12 @@ namespace WellaTodo
             MenuItem tomorrowRemind = new MenuItem("내일", new EventHandler(this.OnTomorrowRemind_Click));
             MenuItem nextWeekRemind = new MenuItem("다음 주", new EventHandler(this.OnNextWeekRemind_Click));
             MenuItem selectRemind = new MenuItem("날짜 및 시간 선택", new EventHandler(this.OnSelectRemind_Click));
+            MenuItem deleteRemind = new MenuItem("미리 알림 제거", new EventHandler(this.OnDeleteRemind_Click));
             remindMenu.MenuItems.Add(todayRemind);
             remindMenu.MenuItems.Add(tomorrowRemind);
             remindMenu.MenuItems.Add(nextWeekRemind);
             remindMenu.MenuItems.Add(selectRemind);
+            remindMenu.MenuItems.Add(deleteRemind);
 
             var mouseEventArgs = e as MouseEventArgs;
             if (mouseEventArgs != null)
@@ -939,77 +984,89 @@ namespace WellaTodo
 
         private void OnTodayRemind_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
+            m_Data[m_present_data_position].DC_remindType = 1;
 
-            if (m_Data[m_present_data_position].DC_remindType == 1)
-            {
-                m_Data[m_present_data_position].DC_remindType = 0;
-                m_Data[m_present_data_position].DC_remindTime = default;
-                roundLabel2.Text = "미리 알림";
-            }
+            DateTime dt = DateTime.Now;
+            if (dt.Minute < 30)
+                dt = dt.AddHours(3);
             else
-            {
-                m_Data[m_present_data_position].DC_remindType = 1;
-                m_Data[m_present_data_position].DC_remindTime = now.AddHours(1);
-                roundLabel2.Text = "알림 설정됨";
-            }
+                dt = dt.AddHours(4);
+            m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0);
+            roundLabel2.Text = "알림 설정됨";
             SetInformationText();
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
+            m_Data[m_present_data_position].DC_remindType = 2;
 
-            if (m_Data[m_present_data_position].DC_remindType == 2)
-            {
-                m_Data[m_present_data_position].DC_remindType = 0;
-                m_Data[m_present_data_position].DC_remindTime = default;
-                roundLabel2.Text = "미리 알림";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_remindType = 2;
-                m_Data[m_present_data_position].DC_remindTime = now.AddDays(1);
-                roundLabel2.Text = "알림 설정됨";
-            }
+            DateTime dt = DateTime.Now;
+            dt = dt.AddDays(1);
+            m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 08, 00, 00);
+            roundLabel2.Text = "알림 설정됨";
             SetInformationText();
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
+            m_Data[m_present_data_position].DC_remindType = 3;
 
-            if (m_Data[m_present_data_position].DC_remindType == 3)
+            DateTime dt = DateTime.Now;
+            DayOfWeek dw = dt.DayOfWeek;
+            switch (dw)
             {
-                m_Data[m_present_data_position].DC_remindType = 0;
-                m_Data[m_present_data_position].DC_remindTime = default;
-                roundLabel2.Text = "미리 알림";
+                case DayOfWeek.Monday:
+                    dt = dt.AddDays(7);
+                    break;
+                case DayOfWeek.Tuesday:
+                    dt = dt.AddDays(6);
+                    break;
+                case DayOfWeek.Wednesday:
+                    dt = dt.AddDays(5);
+                    break;
+                case DayOfWeek.Thursday:
+                    dt = dt.AddDays(4);
+                    break;
+                case DayOfWeek.Friday:
+                    dt = dt.AddDays(3);
+                    break;
+                case DayOfWeek.Saturday:
+                    dt = dt.AddDays(2);
+                    break;
+                case DayOfWeek.Sunday:
+                    dt = dt.AddDays(1);
+                    break;
             }
-            else
-            {
-                m_Data[m_present_data_position].DC_remindType = 3;
-                m_Data[m_present_data_position].DC_remindTime = now.AddDays(7);
-                roundLabel2.Text = "알림 설정됨";
-            }
+            m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 08, 00, 00);
+            roundLabel2.Text = "알림 설정됨";
             SetInformationText();
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_remindType == 4)
+            CarendarForm carendar = new CarendarForm();
+            carendar.ShowDialog();
+            if (carendar.IsSelected && (carendar.SelectedDateTime != default))
+            {
+                m_Data[m_present_data_position].DC_remindType = 4;
+                m_Data[m_present_data_position].DC_remindTime = carendar.SelectedDateTime;
+                roundLabel2.Text = "알림 설정됨";
+                carendar.IsSelected = false;
+            }
+            else
             {
                 m_Data[m_present_data_position].DC_remindType = 0;
                 m_Data[m_present_data_position].DC_remindTime = default;
                 roundLabel2.Text = "미리 알림";
             }
-            else
-            {
-                m_Data[m_present_data_position].DC_remindType = 4;
-                m_Data[m_present_data_position].DC_remindTime = now.AddDays(7);
-                roundLabel2.Text = "알림 설정됨";
-            }
+            SetInformationText();
+        }
+
+        private void OnDeleteRemind_Click(object sender, EventArgs e)
+        {
+            m_Data[m_present_data_position].DC_remindType = 0;
+            m_Data[m_present_data_position].DC_remindTime = default;
+            roundLabel2.Text = "미리 알림";
             SetInformationText();
         }
 
@@ -1021,7 +1078,10 @@ namespace WellaTodo
 
         private void roundLabel3_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType > 0)
+                roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            else
+                roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel3_Click(object sender, EventArgs e)
@@ -1030,9 +1090,11 @@ namespace WellaTodo
             MenuItem todayDeadline = new MenuItem("오늘", new EventHandler(this.OnTodayDeadline_Click));
             MenuItem tomorrowDeadline = new MenuItem("내일", new EventHandler(this.OnTomorrowDeadline_Click));
             MenuItem selectDeadline = new MenuItem("날짜 선택", new EventHandler(this.OnSelectDeadline_Click));
+            MenuItem deleteDeadline = new MenuItem("기한 설정 제거", new EventHandler(this.OnDeleteDeadline_Click));
             deadlineMenu.MenuItems.Add(todayDeadline);
             deadlineMenu.MenuItems.Add(tomorrowDeadline);
             deadlineMenu.MenuItems.Add(selectDeadline);
+            deadlineMenu.MenuItems.Add(deleteDeadline);
 
             var mouseEventArgs = e as MouseEventArgs;
             if (mouseEventArgs != null)
@@ -1045,17 +1107,51 @@ namespace WellaTodo
 
         private void OnTodayDeadline_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("today deadline");
+            m_Data[m_present_data_position].DC_deadlineType = 1;
+
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+            roundLabel3.Text = "기한 설정됨";
+            SetInformationText();
         }
 
         private void OnTomorrowDeadline_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("tomorrow deadline");
+            m_Data[m_present_data_position].DC_deadlineType = 2;
+
+            DateTime dt = DateTime.Now;
+            dt = dt.AddDays(1);
+            m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+            roundLabel3.Text = "기한 설정됨";
+            SetInformationText();
         }
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("select deadline");
+            CarendarForm carendar = new CarendarForm();
+            carendar.ShowDialog();
+            if (carendar.IsSelected && (carendar.SelectedDateTime != default))
+            {
+                m_Data[m_present_data_position].DC_deadlineType = 3;
+                m_Data[m_present_data_position].DC_deadlineTime = carendar.SelectedDateTime;
+                roundLabel3.Text = "기한 설정됨";
+                carendar.IsSelected = false;
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_remindType = 0;
+                m_Data[m_present_data_position].DC_remindTime = default;
+                roundLabel2.Text = "기한 설정";
+            }
+            SetInformationText();
+        }
+
+        private void OnDeleteDeadline_Click(object sender, EventArgs e)
+        {
+            m_Data[m_present_data_position].DC_deadlineType = 0;
+            m_Data[m_present_data_position].DC_deadlineTime = default;
+            roundLabel3.Text = "기한 설정";
+            SetInformationText();
         }
 
         // 상세창 - 반복 메뉴
@@ -1066,7 +1162,10 @@ namespace WellaTodo
 
         private void roundLabel4_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            if (m_Data[m_present_data_position].DC_repeatType > 0)
+                roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            else
+                roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel4_Click(object sender, EventArgs e)
@@ -1078,12 +1177,14 @@ namespace WellaTodo
             MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(this.OnEveryMonthRepeat_Click));
             MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(this.OnEveryYearRepeat_Click));
             MenuItem userDefineRepeat = new MenuItem("사용자 정의", new EventHandler(this.OnUserDefineRepeat_Click));
+            MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(this.OnDeleteRepeat_Click));
             repeatMenu.MenuItems.Add(everyDayRepeat);
             repeatMenu.MenuItems.Add(workingDayRepeat);
             repeatMenu.MenuItems.Add(everyWeekRepeat);
             repeatMenu.MenuItems.Add(everyMonthRepeat);
             repeatMenu.MenuItems.Add(everyYearRepeat);
             repeatMenu.MenuItems.Add(userDefineRepeat);
+            repeatMenu.MenuItems.Add(deleteRepeat);
 
             var mouseEventArgs = e as MouseEventArgs;
             if (mouseEventArgs != null)
@@ -1097,32 +1198,124 @@ namespace WellaTodo
 
         private void OnEveryDayRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("every day repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 1)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 1;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(1);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("working day repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 2)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 2;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(2);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("every week repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 3)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 3;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(3);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("every month repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 4)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 4;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(4);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnEveryYearRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("every year repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 5)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 5;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(5);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
         }
 
         private void OnUserDefineRepeat_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("user define repeat");
+            DateTime now = DateTime.Now;
+
+            if (m_Data[m_present_data_position].DC_repeatType == 6)
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+            }
+            else
+            {
+                m_Data[m_present_data_position].DC_repeatType = 6;
+                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(6);
+                roundLabel4.Text = "반복 설정됨";
+            }
+            SetInformationText();
+        }
+
+        private void OnDeleteRepeat_Click(object sender, EventArgs e)
+        {
+            m_Data[m_present_data_position].DC_repeatType = 0;
+            m_Data[m_present_data_position].DC_repeatTime = default;
+            roundLabel4.Text = "반복";
+            SetInformationText();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -1134,30 +1327,7 @@ namespace WellaTodo
 
         private void SetInformationText()
         {
-            string infoText = "";
-
-            if (m_Data[m_present_data_position].DC_myToday)
-            {
-                infoText = infoText + "[오늘 할일]";
-            }
-
-            switch (m_Data[m_present_data_position].DC_remindType)
-            {
-                case 1:
-                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
-                    break;
-                case 2:
-                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
-                    break;
-                case 3:
-                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
-                    break;
-                case 4:
-                    infoText = infoText + "-알람:" + m_Data[m_present_data_position].DC_remindTime.ToString("MM-dd dddd hh:mm");
-                    break;
-                default:
-                    break;
-            }
+            string infoText = MakeInformationText(m_present_data_position);
 
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
@@ -1171,5 +1341,106 @@ namespace WellaTodo
                 pos++;
             }
         }
+
+        private string MakeInformationText(int pos)
+        {
+            string infoText = "";
+
+            if (m_Data[pos].DC_myToday)
+            {
+                infoText = infoText + "[오늘 할일]";
+            }
+
+            switch (m_Data[pos].DC_remindType)
+            {
+                case 1:
+                    infoText = infoText + "[알람]" + m_Data[pos].DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                case 2:
+                    infoText = infoText + "[알람]" + m_Data[pos].DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                case 3:
+                    infoText = infoText + "[알람]" + m_Data[pos].DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                case 4:
+                    infoText = infoText + "[알람]" + m_Data[pos].DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                default:
+                    break;
+            }
+
+            switch (m_Data[pos].DC_deadlineType)
+            {
+                case 1:
+                    infoText = infoText + "[기한]" + m_Data[pos].DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                case 2:
+                    infoText = infoText + "[기한]" + m_Data[pos].DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                case 3:
+                    infoText = infoText + "[기한]" + m_Data[pos].DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
+                    break;
+                default:
+                    break;
+            }
+
+            switch (m_Data[pos].DC_repeatType)
+            {
+                case 1:
+                    infoText = infoText + "[매일]";
+                    break;
+                case 2:
+                    infoText = infoText + "[평일]";
+                    break;
+                case 3:
+                    infoText = infoText + "[매주]";
+                    break;
+                case 4:
+                    infoText = infoText + "[매월]:";
+                    break;
+                case 5:
+                    infoText = infoText + "[매년]";
+                    break;
+                case 6:
+                    infoText = infoText + "[반복]";
+                    break;
+                default:
+                    break;
+            }
+            return infoText;
+        }
     }
 }
+
+/*
+ M   : 월. 10 이하는 한자리
+MM  : 2자리 월
+MMM : 축약형 월 이름 (예: APR)
+d   : 일. 10 이하는 한자리
+dd  : 2자리 일자
+ddd : 축약형 요일 이름 (예: Mon)
+yy  : 2자리 연도 
+yyyy: 4자리 연도 
+h   : 시간 (12시간, 10 이하 한자리)
+hh  : 2자리 시간 (12시간)
+H   : 시간 (24시간, 10 이하 한자리)
+HH  : 2자리 시간 (24시간)
+m   : 분 (10 이하 한자리)
+mm  : 2자리 분
+s   : 초 (10 이하 한자리)
+ss  : 2자리 초
+tt  : AM / PM
+*/
+
+/*
+public enum DayOfWeek
+{
+    Sunday = 0,
+    Monday = 1,
+    Tuesday = 2,
+    Wednesday = 3,
+    Thursday = 4,
+    Friday = 5,
+    Saturday = 6
+}
+*/

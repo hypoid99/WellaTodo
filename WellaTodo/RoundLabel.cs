@@ -75,7 +75,7 @@ namespace WellaTodo
             roundRectanglePath?.Dispose();
             roundRectanglePath = path;
         }
-
+        /*
         protected override void OnMouseEnter(EventArgs e)
         {
             BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -85,5 +85,6 @@ namespace WellaTodo
         {
             BackColor = PSEUDO_BACK_COLOR;
         }
+        */
     }
 }

@@ -25,6 +25,9 @@ namespace WellaTodo
         static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
+        static readonly float FONT_SIZE_TITLE = 9.0f;
+        static readonly float FONT_SIZE_INFORMATION = 8.0f;
+
         private string _title;
         public string TD_title
         {
@@ -123,11 +126,12 @@ namespace WellaTodo
             label1.Location = new Point(45, 13);
             label1.BackColor = PSEUDO_BACK_COLOR;
             if (TD_complete)
-                label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Strikeout);
+                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Strikeout);
             else
-                label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Regular);
+                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
 
             label2.MouseClick += new MouseEventHandler(label2_MouseClick);
+            label2.Font = new Font(label2.Font.Name, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.Size = new Size(0, 13);
@@ -171,6 +175,7 @@ namespace WellaTodo
             g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
             g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width-1, rc.Height-1);
             //g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), outerBorderPath);
+            Console.WriteLine("todo item paint [{0}]",TD_infomation);
         }
 
         private void SetPathOuterBorder()
@@ -281,9 +286,9 @@ namespace WellaTodo
         {
             TD_complete = roundCheckbox1.Checked;
             if (TD_complete)
-                label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Strikeout);
+                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Strikeout);
             else
-                label1.Font = new Font(label1.Font.Name, label1.Font.SizeInPoints, FontStyle.Regular);
+                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
             IsCompleteClicked = true;
             UserControl_Event_method?.Invoke(this, e);
             IsCompleteClicked = false;

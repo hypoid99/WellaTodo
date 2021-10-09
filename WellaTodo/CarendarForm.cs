@@ -12,6 +12,13 @@ namespace WellaTodo
 {
     public partial class CarendarForm : Form
     {
+        DateTime _selectedDateTime;
+        public DateTime SelectedDateTime { get => _selectedDateTime; set => _selectedDateTime = value; }
+        bool isSelected;
+        public bool IsSelected { get => isSelected; set => isSelected = value; }
+
+        
+
         public CarendarForm()
         {
             InitializeComponent();
@@ -25,6 +32,8 @@ namespace WellaTodo
             dateTimePicker1.ShowUpDown = true;
 
             monthCalendar1.Location = new Point(30, 50);
+
+            IsSelected = false;
         }
 
         private void ConvertStringToDateTime()
@@ -45,8 +54,19 @@ namespace WellaTodo
         private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
         {
             dateTimePicker1.Value = monthCalendar1.SelectionStart;
+            SelectedDateTime = dateTimePicker1.Value;
+        }
 
-            // 현재시간으로 시간 변경 추가하기
+        private void button1_Click(object sender, EventArgs e)
+        {
+            isSelected = true;
+            Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            isSelected = false;
+            Close();
         }
     }
 }
