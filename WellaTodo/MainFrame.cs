@@ -22,11 +22,12 @@ namespace WellaTodo
         public event ViewHandler<IView> Changed_View_Event;
 
         static readonly string WINDOW_CAPTION = "Wella Todo v0.8";
-        static readonly int WINDOW_WIDTH = 900;
+        static readonly int WINDOW_WIDTH = 1000;
         static readonly int WINDOW_HEIGHT = 500;
 
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
+        static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_TEXTBOX_BACK_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
@@ -36,6 +37,7 @@ namespace WellaTodo
 
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
+        LoginSettingForm loginSettingForm = new LoginSettingForm();
         OutputForm outputForm = new OutputForm();
 
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
@@ -46,11 +48,16 @@ namespace WellaTodo
         RoundLabel roundLabel3 = new RoundLabel();
         RoundLabel roundLabel4 = new RoundLabel();
 
+        Label createDate = new Label();
+        RoundLabel upArrow = new RoundLabel();
+        RoundLabel downArrow = new RoundLabel();
+
         bool isDetailWindowOpen = false;
         bool isTextboxClicked = false;
 
         int m_present_data_position = -1;
         int m_before_data_position;
+        int m_selectedMainMenu = 5;
 
         public MainFrame()
         {
@@ -66,7 +73,7 @@ namespace WellaTodo
         {
             DateTime dt = DateTime.Now;
             Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
-            Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd dddd tt h:mm") + "]";
+            Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
 
             m_Data = m_Controller.Get_Model().GetDataCollection();
 
@@ -179,10 +186,34 @@ namespace WellaTodo
             textBox1.Location = new Point(DETAIL_WINDOW_X1 + 5, 185);
             textBox1.Size = new Size(DETAIL_WINDOW_WIDTH - 25, 130);
 
-            button1.Location = new Point(DETAIL_WINDOW_X1 + 25, 330);
+            createDate.Text = " 생성됨";
+            createDate.Location = new Point(DETAIL_WINDOW_X1 + 10, 325);
+            createDate.Size = new Size(100, 50);
+            createDate.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(createDate);
+
+            upArrow.Click += new EventHandler(upArrow_Click);
+            upArrow.MouseEnter += new EventHandler(upArrow_MouseEnter);
+            upArrow.MouseLeave += new EventHandler(upArrow_MouseLeave);
+            upArrow.Text = "위로";
+            upArrow.Location = new Point(DETAIL_WINDOW_X1 + 115, 320);
+            upArrow.Size = new Size(60, 30);
+            upArrow.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(upArrow);
+
+            downArrow.Click += new EventHandler(downArrow_Click);
+            downArrow.MouseEnter += new EventHandler(downArrow_MouseEnter);
+            downArrow.MouseLeave += new EventHandler(downArrow_MouseLeave);
+            downArrow.Text = "아래로";
+            downArrow.Location = new Point(DETAIL_WINDOW_X1 + 180, 320);
+            downArrow.Size = new Size(60, 30);
+            downArrow.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            splitContainer2.Panel2.Controls.Add(downArrow);
+
+            button1.Location = new Point(DETAIL_WINDOW_X1 + 15, 360);
             button1.Size = new Size(75, 25);
 
-            button2.Location = new Point(DETAIL_WINDOW_X1 + 150, 330);
+            button2.Location = new Point(DETAIL_WINDOW_X1 + 160, 360);
             button2.Size = new Size(75, 25);
 
             splitContainer1.Refresh();
@@ -323,7 +354,9 @@ namespace WellaTodo
         private void Add_Item(string text)
         {
             //m_Controller.performAddItem();
+            DateTime dt = DateTime.Now;
             m_Data.Insert(0, new CDataCell(text));
+            m_Data[0].DC_dateCreated = dt;
 
             Todo_Item item = new Todo_Item(text, false, false);
             flowLayoutPanel2.Controls.Add(item);
@@ -331,6 +364,36 @@ namespace WellaTodo
 
             item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
 
+            flowLayoutPanel2.VerticalScroll.Value = 0;
+            m_present_data_position = 0;
+
+            switch (m_selectedMainMenu)
+            {
+                case 1:     // 로그인 메뉴에서 입력됨
+                    break;
+                case 2:     // 오늘 할 일 메뉴에서 입력됨
+                    m_Data[0].DC_myToday = true;
+                    m_Data[0].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                    item.TD_infomation = MakeInformationText(0);
+                    break;
+                case 3:     // 중요 메뉴에서 입력됨
+                    m_Data[0].DC_important = true;
+                    item.TD_important = true;
+                    item.TD_infomation = MakeInformationText(0);
+                    break;
+                case 4:     // 계획된 일정 메뉴에서 입력됨
+                    m_Data[0].DC_deadlineType = 1;
+                    m_Data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                    item.TD_infomation = MakeInformationText(0);
+                    break;
+                case 5:     // 작업 메뉴에서 입력됨
+                    break;
+                case 6:     // 새목록 만들기 메뉴에서 입력됨
+                    break;
+                default:
+                    break;
+            }
+            DataCellToControl();
             Set_TodoItem_Width();
         }
 
@@ -497,7 +560,7 @@ namespace WellaTodo
             if (m_Data[m_present_data_position].DC_myToday)
             {
                 roundLabel1.Text = "나의하루에 추가됨";
-                roundLabel1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
 
             } else
             {
@@ -508,7 +571,7 @@ namespace WellaTodo
             if (m_Data[m_present_data_position].DC_remindType > 0)
             {
                 roundLabel2.Text = "알림 설정됨";
-                roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             }
             else
             {
@@ -519,7 +582,7 @@ namespace WellaTodo
             if (m_Data[m_present_data_position].DC_deadlineType > 0)
             {
                 roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             else
             {
@@ -530,13 +593,16 @@ namespace WellaTodo
             if (m_Data[m_present_data_position].DC_repeatType > 0)
             {
                 roundLabel4.Text = "반복 설정됨";
-                roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
             }
             else
             {
                 roundLabel4.Text = "반복";
                 roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
+
+            createDate.Text = m_Data[m_present_data_position].DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") 
+                + "생성됨["+ m_present_data_position.ToString() + "]";
 
             m_before_data_position = m_present_data_position;
         }
@@ -588,13 +654,22 @@ namespace WellaTodo
         private void label1_MouseLeave(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Regular);
-            label1.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 1)
+                label1.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label1.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_1::clicked");
-            Invoke_View_Event();
+            m_selectedMainMenu = 1;
+            Changed_MainMenu();
+
+            loginSettingForm.StartPosition = FormStartPosition.CenterParent;
+            loginSettingForm.ShowDialog();
+
+            //Invoke_View_Event();
         }
 
         private void label2_MouseEnter(object sender, EventArgs e)
@@ -606,12 +681,30 @@ namespace WellaTodo
         private void label2_MouseLeave(object sender, EventArgs e)
         {
             label2.Font = new Font(label2.Font, FontStyle.Regular);
-            label2.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 2)
+                label2.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label2.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_2::clicked");
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (!m_Data[pos].DC_myToday)
+                {
+                    item.Visible = false;
+                }
+                else
+                {
+                    item.Visible = true;
+                }
+                pos++;
+            }
+            m_selectedMainMenu = 2; // 오늘 할 일
+            Changed_MainMenu();
         }
 
         private void label3_MouseEnter(object sender, EventArgs e)
@@ -623,12 +716,30 @@ namespace WellaTodo
         private void label3_MouseLeave(object sender, EventArgs e)
         {
             label3.Font = new Font(label3.Font, FontStyle.Regular);
-            label3.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 3)
+                label3.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label3.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label3_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_3::clicked");
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (!item.TD_important || item.TD_complete)
+                {
+                    item.Visible = false;
+                }
+                else
+                {
+                    item.Visible = true;
+                }
+                pos++;
+            }
+            m_selectedMainMenu = 3; // 중요
+            Changed_MainMenu();
         }
 
         private void label4_MouseEnter(object sender, EventArgs e)
@@ -640,12 +751,32 @@ namespace WellaTodo
         private void label4_MouseLeave(object sender, EventArgs e)
         {
             label4.Font = new Font(label4.Font, FontStyle.Regular);
-            label4.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 4)
+                label4.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label4.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label4_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_4::clicked");
+            int pos = 0;
+            int sum;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                sum = m_Data[pos].DC_remindType + m_Data[pos].DC_deadlineType + m_Data[pos].DC_repeatType;
+                if (!m_Data[pos].DC_myToday && sum == 0)
+                {
+                    item.Visible = false;
+                }
+                else
+                {
+                    item.Visible = true;
+                }
+                pos++;
+            }
+            m_selectedMainMenu = 4; //계획된 일정
+            Changed_MainMenu();
         }
 
         private void label5_MouseEnter(object sender, EventArgs e)
@@ -657,12 +788,23 @@ namespace WellaTodo
         private void label5_MouseLeave(object sender, EventArgs e)
         {
             label5.Font = new Font(label5.Font, FontStyle.Regular);
-            label5.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 5)
+                label5.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label5.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label5_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_5::clicked");
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                item.Visible = true;
+                pos++;
+            }
+            m_selectedMainMenu = 5; // 모든 작업
+            Changed_MainMenu();
         }
 
         private void label6_MouseEnter(object sender, EventArgs e)
@@ -674,12 +816,19 @@ namespace WellaTodo
         private void label6_MouseLeave(object sender, EventArgs e)
         {
             label6.Font = new Font(label6.Font, FontStyle.Regular);
-            label6.BackColor = PSEUDO_BACK_COLOR;
+
+            if (m_selectedMainMenu == 6)
+                label6.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label6.BackColor = PSEUDO_BACK_COLOR;
         }
 
         private void label6_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(">Label_6::clicked");
+            m_selectedMainMenu = 6; // 새목록 만들기
+            Changed_MainMenu();
+
+            outputForm.StartPosition = FormStartPosition.CenterParent;
 
             if (outputForm.Visible)
             {
@@ -689,6 +838,35 @@ namespace WellaTodo
             {
                 outputForm.Show();
             }
+        }
+
+        private void Changed_MainMenu()
+        {
+            int pos = 1;
+            foreach (Label ctr in flowLayoutPanel1.Controls)
+            {
+                ctr.Width = splitContainer1.SplitterDistance;
+                if (pos == m_selectedMainMenu)
+                    ctr.BackColor = PSEUDO_SELECTED_COLOR;
+                else
+                    ctr.BackColor = PSEUDO_BACK_COLOR;
+                pos++;
+            }
+
+            if (m_selectedMainMenu == 5)
+            {
+                upArrow.Visible = true;
+                downArrow.Visible = true;
+            }
+            else
+            {
+                upArrow.Visible = false;
+                downArrow.Visible = false;
+            }
+
+            splitContainer2.SplitterDistance = splitContainer2.Width;
+            isDetailWindowOpen = false;
+            Set_TodoItem_Width();
         }
 
         //할일 입력창
@@ -915,12 +1093,12 @@ namespace WellaTodo
         // 상세창 - 나의 하루에 추가 메뉴
         private void roundLabel1_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
             if (m_Data[m_present_data_position].DC_myToday)
             {
                 m_Data[m_present_data_position].DC_myToday = false;
                 m_Data[m_present_data_position].DC_myTodayTime = default;
                 roundLabel1.Text = "나의 하루에 추가";
+                roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
             else
             {
@@ -928,6 +1106,7 @@ namespace WellaTodo
                 DateTime dt = DateTime.Now;
                 m_Data[m_present_data_position].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
                 roundLabel1.Text = "나의 하루에 추가됨";
+                roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
@@ -940,7 +1119,7 @@ namespace WellaTodo
         private void roundLabel1_MouseLeave(object sender, EventArgs e)
         {
             if (m_Data[m_present_data_position].DC_myToday)
-                roundLabel1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
             else
                 roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
@@ -954,7 +1133,7 @@ namespace WellaTodo
         private void roundLabel2_MouseLeave(object sender, EventArgs e)
         {
             if (m_Data[m_present_data_position].DC_remindType > 0)
-                roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             else
                 roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
@@ -993,6 +1172,7 @@ namespace WellaTodo
                 dt = dt.AddHours(4);
             m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0);
             roundLabel2.Text = "알림 설정됨";
+            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             SetInformationText();
         }
 
@@ -1004,6 +1184,7 @@ namespace WellaTodo
             dt = dt.AddDays(1);
             m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 08, 00, 00);
             roundLabel2.Text = "알림 설정됨";
+            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             SetInformationText();
         }
 
@@ -1039,6 +1220,7 @@ namespace WellaTodo
             }
             m_Data[m_present_data_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 08, 00, 00);
             roundLabel2.Text = "알림 설정됨";
+            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             SetInformationText();
         }
 
@@ -1051,6 +1233,7 @@ namespace WellaTodo
                 m_Data[m_present_data_position].DC_remindType = 4;
                 m_Data[m_present_data_position].DC_remindTime = carendar.SelectedDateTime;
                 roundLabel2.Text = "알림 설정됨";
+                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
                 carendar.IsSelected = false;
             }
             else
@@ -1058,6 +1241,7 @@ namespace WellaTodo
                 m_Data[m_present_data_position].DC_remindType = 0;
                 m_Data[m_present_data_position].DC_remindTime = default;
                 roundLabel2.Text = "미리 알림";
+                roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
             SetInformationText();
         }
@@ -1067,6 +1251,7 @@ namespace WellaTodo
             m_Data[m_present_data_position].DC_remindType = 0;
             m_Data[m_present_data_position].DC_remindTime = default;
             roundLabel2.Text = "미리 알림";
+            roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             SetInformationText();
         }
 
@@ -1079,7 +1264,7 @@ namespace WellaTodo
         private void roundLabel3_MouseLeave(object sender, EventArgs e)
         {
             if (m_Data[m_present_data_position].DC_deadlineType > 0)
-                roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             else
                 roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
@@ -1112,6 +1297,7 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
             roundLabel3.Text = "기한 설정됨";
+            roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             SetInformationText();
         }
 
@@ -1123,6 +1309,7 @@ namespace WellaTodo
             dt = dt.AddDays(1);
             m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
             roundLabel3.Text = "기한 설정됨";
+            roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             SetInformationText();
         }
 
@@ -1135,13 +1322,15 @@ namespace WellaTodo
                 m_Data[m_present_data_position].DC_deadlineType = 3;
                 m_Data[m_present_data_position].DC_deadlineTime = carendar.SelectedDateTime;
                 roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
                 carendar.IsSelected = false;
             }
             else
             {
-                m_Data[m_present_data_position].DC_remindType = 0;
-                m_Data[m_present_data_position].DC_remindTime = default;
-                roundLabel2.Text = "기한 설정";
+                m_Data[m_present_data_position].DC_deadlineType = 0;
+                m_Data[m_present_data_position].DC_deadlineTime = default;
+                roundLabel3.Text = "기한 설정";
+                roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             }
             SetInformationText();
         }
@@ -1151,6 +1340,14 @@ namespace WellaTodo
             m_Data[m_present_data_position].DC_deadlineType = 0;
             m_Data[m_present_data_position].DC_deadlineTime = default;
             roundLabel3.Text = "기한 설정";
+            roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            if (m_Data[m_present_data_position].DC_repeatType > 0) // 반복이 되어 있을때
+            {
+                m_Data[m_present_data_position].DC_repeatType = 0;
+                m_Data[m_present_data_position].DC_repeatTime = default;
+                roundLabel4.Text = "반복";
+                roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+            }
             SetInformationText();
         }
 
@@ -1163,7 +1360,7 @@ namespace WellaTodo
         private void roundLabel4_MouseLeave(object sender, EventArgs e)
         {
             if (m_Data[m_present_data_position].DC_repeatType > 0)
-                roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
             else
                 roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
@@ -1176,14 +1373,14 @@ namespace WellaTodo
             MenuItem everyWeekRepeat = new MenuItem("매주", new EventHandler(this.OnEveryWeekRepeat_Click));
             MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(this.OnEveryMonthRepeat_Click));
             MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(this.OnEveryYearRepeat_Click));
-            MenuItem userDefineRepeat = new MenuItem("사용자 정의", new EventHandler(this.OnUserDefineRepeat_Click));
+            //MenuItem userDefineRepeat = new MenuItem("사용자 정의", new EventHandler(this.OnUserDefineRepeat_Click));
             MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(this.OnDeleteRepeat_Click));
             repeatMenu.MenuItems.Add(everyDayRepeat);
             repeatMenu.MenuItems.Add(workingDayRepeat);
             repeatMenu.MenuItems.Add(everyWeekRepeat);
             repeatMenu.MenuItems.Add(everyMonthRepeat);
             repeatMenu.MenuItems.Add(everyYearRepeat);
-            repeatMenu.MenuItems.Add(userDefineRepeat);
+            //repeatMenu.MenuItems.Add(userDefineRepeat);
             repeatMenu.MenuItems.Add(deleteRepeat);
 
             var mouseEventArgs = e as MouseEventArgs;
@@ -1198,114 +1395,85 @@ namespace WellaTodo
 
         private void OnEveryDayRepeat_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 1)
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_repeatType = 1;
+            m_Data[m_present_data_position].DC_repeatTime = dt;
+            roundLabel4.Text = "반복 설정됨";
+            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 1;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(1);
-                roundLabel4.Text = "반복 설정됨";
+                m_Data[m_present_data_position].DC_deadlineType = 1;
+                m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
 
         private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 2)
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_repeatType = 2;
+            m_Data[m_present_data_position].DC_repeatTime = dt;
+            roundLabel4.Text = "반복 설정됨";
+            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 2;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(2);
-                roundLabel4.Text = "반복 설정됨";
+                m_Data[m_present_data_position].DC_deadlineType = 1;
+                m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
 
         private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 3)
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_repeatType = 3;
+            m_Data[m_present_data_position].DC_repeatTime = dt;
+            roundLabel4.Text = "반복 설정됨";
+            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 3;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(3);
-                roundLabel4.Text = "반복 설정됨";
+                m_Data[m_present_data_position].DC_deadlineType = 1;
+                m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
 
         private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 4)
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_repeatType = 4;
+            m_Data[m_present_data_position].DC_repeatTime = dt;
+            roundLabel4.Text = "반복 설정됨";
+            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 4;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(4);
-                roundLabel4.Text = "반복 설정됨";
+                m_Data[m_present_data_position].DC_deadlineType = 1;
+                m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
 
         private void OnEveryYearRepeat_Click(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 5)
+            DateTime dt = DateTime.Now;
+            m_Data[m_present_data_position].DC_repeatType = 5;
+            m_Data[m_present_data_position].DC_repeatTime = dt;
+            roundLabel4.Text = "반복 설정됨";
+            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            if (m_Data[m_present_data_position].DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 5;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(5);
-                roundLabel4.Text = "반복 설정됨";
-            }
-            SetInformationText();
-        }
-
-        private void OnUserDefineRepeat_Click(object sender, EventArgs e)
-        {
-            DateTime now = DateTime.Now;
-
-            if (m_Data[m_present_data_position].DC_repeatType == 6)
-            {
-                m_Data[m_present_data_position].DC_repeatType = 0;
-                m_Data[m_present_data_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-            }
-            else
-            {
-                m_Data[m_present_data_position].DC_repeatType = 6;
-                m_Data[m_present_data_position].DC_repeatTime = now.AddHours(6);
-                roundLabel4.Text = "반복 설정됨";
+                m_Data[m_present_data_position].DC_deadlineType = 1;
+                m_Data[m_present_data_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
             }
             SetInformationText();
         }
@@ -1315,14 +1483,82 @@ namespace WellaTodo
             m_Data[m_present_data_position].DC_repeatType = 0;
             m_Data[m_present_data_position].DC_repeatTime = default;
             roundLabel4.Text = "반복";
+            roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+
             SetInformationText();
+        }
+
+        private void upArrow_MouseEnter(object sender, EventArgs e)
+        {
+            upArrow.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void upArrow_MouseLeave(object sender, EventArgs e)
+        {
+            upArrow.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+        }
+
+        private void upArrow_Click(object sender, EventArgs e)
+        {
+            int pos = m_present_data_position;
+
+            if (pos == 0) return;
+
+            if (!m_Data[pos].DC_complete)
+            {
+                Control c = flowLayoutPanel2.Controls[pos];
+                Todo_Item item = c as Todo_Item;
+                flowLayoutPanel2.Controls.SetChildIndex(item, pos - 1);
+
+                CDataCell dc = m_Data[pos]; //추출
+                m_Data.RemoveAt(pos); //삭제
+                m_Data.Insert(pos - 1, dc); //삽입
+
+                m_present_data_position = pos - 1;
+
+                DataCellToControl();
+            }
+        }
+
+        private void downArrow_MouseEnter(object sender, EventArgs e)
+        {
+            downArrow.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void downArrow_MouseLeave(object sender, EventArgs e)
+        {
+            downArrow.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
+        }
+
+        private void downArrow_Click(object sender, EventArgs e)
+        {
+            int pos = m_present_data_position;
+
+            if (pos == (m_Data.Count - 1)) return;
+
+            if (m_Data[pos+1].DC_complete) return;
+
+            if (!m_Data[pos].DC_complete)
+            {
+                Control c = flowLayoutPanel2.Controls[pos];
+                Todo_Item item = c as Todo_Item;
+                flowLayoutPanel2.Controls.SetChildIndex(item, pos + 1);
+
+                CDataCell dc = m_Data[pos]; //추출
+                m_Data.RemoveAt(pos); //삭제
+                m_Data.Insert(pos + 1, dc); //삽입
+
+                m_present_data_position = pos + 1;
+
+                DataCellToControl();
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime dt = DateTime.Now;
 
-            Text = WINDOW_CAPTION + " [" + dt.ToString() + "]";
+            Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
         }
 
         private void SetInformationText()
@@ -1396,7 +1632,7 @@ namespace WellaTodo
                     infoText = infoText + "[매주]";
                     break;
                 case 4:
-                    infoText = infoText + "[매월]:";
+                    infoText = infoText + "[매월]";
                     break;
                 case 5:
                     infoText = infoText + "[매년]";

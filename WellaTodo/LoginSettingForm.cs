@@ -10,16 +10,16 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public partial class DeadlineForm : Form
+    public partial class LoginSettingForm : Form
     {
-        public DeadlineForm()
+        public LoginSettingForm()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Close();
         }
     }
 }

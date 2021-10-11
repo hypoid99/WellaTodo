@@ -1,7 +1,7 @@
 ﻿
 namespace WellaTodo
 {
-    partial class DeadlineForm
+    partial class LoginSettingForm
     {
         /// <summary>
         /// Required designer variable.
@@ -42,14 +42,14 @@ namespace WellaTodo
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // DeadlineForm
+            // LoginSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(462, 280);
             this.Controls.Add(this.button1);
-            this.Name = "DeadlineForm";
-            this.Text = "DeadlineForm";
+            this.Name = "LoginSettingForm";
+            this.Text = "Setting";
             this.ResumeLayout(false);
 
         }
