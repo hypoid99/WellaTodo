@@ -55,9 +55,9 @@ namespace WellaTodo
         bool isDetailWindowOpen = false;
         bool isTextboxClicked = false;
 
-        int m_present_data_position = -1;
+        int m_present_data_position = -1; // 초기값 설정
         int m_before_data_position;
-        int m_selectedMainMenu = 5;
+        int m_selectedMainMenu = 6; // 초기 작업 메뉴 설정
 
         public MainFrame()
         {
@@ -102,6 +102,7 @@ namespace WellaTodo
             flowLayoutPanel1.Controls.Add(label4);
             flowLayoutPanel1.Controls.Add(label5);
             flowLayoutPanel1.Controls.Add(label6);
+            flowLayoutPanel1.Controls.Add(label7);
 
             foreach (Label ctr in flowLayoutPanel1.Controls)
             {
@@ -386,9 +387,11 @@ namespace WellaTodo
                     m_Data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
                     item.TD_infomation = MakeInformationText(0);
                     break;
-                case 5:     // 작업 메뉴에서 입력됨
+                case 5:     // 완료됨 메뉴에서 입력됨
                     break;
-                case 6:     // 새목록 만들기 메뉴에서 입력됨
+                case 6:     // 작업 메뉴에서 입력됨
+                    break;
+                case 7:     // 새목록 만들기 메뉴에서 입력됨
                     break;
                 default:
                     break;
@@ -470,6 +473,10 @@ namespace WellaTodo
 
                             DataCellToControl();
                         }
+                        if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
+                        if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
+                        if (m_selectedMainMenu == 4) label4_Click(sender, e); // 계획된 일정에서 실행
+                        if (m_selectedMainMenu == 5) label5_Click(sender, e); // 완료됨에서 실행
                         break;
                     }
 
@@ -507,6 +514,7 @@ namespace WellaTodo
 
                             DataCellToControl();
                         }
+                        if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
                         break;
                     }
 
@@ -690,19 +698,30 @@ namespace WellaTodo
 
         private void label2_Click(object sender, EventArgs e)
         {
+            int cnt = 0;
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                if (!m_Data[pos].DC_myToday)
+                if (!m_Data[pos].DC_myToday || item.TD_complete)
                 {
                     item.Visible = false;
                 }
                 else
                 {
                     item.Visible = true;
+                    cnt++;
                 }
                 pos++;
             }
+
+            Console.WriteLine("L2 count[{0}]", cnt);
+            if (cnt == 0)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width;
+                isDetailWindowOpen = false;
+                Set_TodoItem_Width();
+            }
+
             m_selectedMainMenu = 2; // 오늘 할 일
             Changed_MainMenu();
         }
@@ -725,6 +744,7 @@ namespace WellaTodo
 
         private void label3_Click(object sender, EventArgs e)
         {
+            int cnt = 0;
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
@@ -735,9 +755,19 @@ namespace WellaTodo
                 else
                 {
                     item.Visible = true;
+                    cnt++;
                 }
                 pos++;
             }
+
+            Console.WriteLine("L3 count[{0}]", cnt);
+            if (cnt == 0)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width;
+                isDetailWindowOpen = false;
+                Set_TodoItem_Width();
+            }
+
             m_selectedMainMenu = 3; // 중요
             Changed_MainMenu();
         }
@@ -760,21 +790,32 @@ namespace WellaTodo
 
         private void label4_Click(object sender, EventArgs e)
         {
+            int cnt = 0;
             int pos = 0;
             int sum;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
                 sum = m_Data[pos].DC_remindType + m_Data[pos].DC_deadlineType + m_Data[pos].DC_repeatType;
-                if (!m_Data[pos].DC_myToday && sum == 0)
+                if ((!m_Data[pos].DC_myToday && sum == 0) || item.TD_complete)
                 {
                     item.Visible = false;
                 }
                 else
                 {
                     item.Visible = true;
+                    cnt++;
                 }
                 pos++;
             }
+
+            Console.WriteLine("L4 count[{0}]", cnt);
+            if (cnt == 0)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width;
+                isDetailWindowOpen = false;
+                Set_TodoItem_Width();
+            }
+
             m_selectedMainMenu = 4; //계획된 일정
             Changed_MainMenu();
         }
@@ -797,13 +838,31 @@ namespace WellaTodo
 
         private void label5_Click(object sender, EventArgs e)
         {
+            int cnt = 0;
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
-                item.Visible = true;
+                if (!item.TD_complete)
+                {
+                    item.Visible = false;
+                }
+                else
+                {
+                    item.Visible = true;
+                    cnt++;
+                }
                 pos++;
             }
-            m_selectedMainMenu = 5; // 모든 작업
+
+            Console.WriteLine("L5 count[{0}]", cnt);
+            if (cnt == 0)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width;
+                isDetailWindowOpen = false;
+                Set_TodoItem_Width();
+            }
+
+            m_selectedMainMenu = 5; // 완료됨
             Changed_MainMenu();
         }
 
@@ -825,9 +884,45 @@ namespace WellaTodo
 
         private void label6_Click(object sender, EventArgs e)
         {
-            m_selectedMainMenu = 6; // 새목록 만들기
-            Changed_MainMenu();
+            int cnt = 0;
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                item.Visible = true;
+                cnt++;
+                pos++;
+            }
 
+            Console.WriteLine("L6 count[{0}]", cnt);
+            if (cnt == 0)
+            {
+                splitContainer2.SplitterDistance = splitContainer2.Width;
+                isDetailWindowOpen = false;
+                Set_TodoItem_Width();
+            }
+
+            m_selectedMainMenu = 6; // 모든 작업
+            Changed_MainMenu();
+        }
+
+        private void label7_MouseEnter(object sender, EventArgs e)
+        {
+            label7.Font = new Font(label7.Font, FontStyle.Underline);
+            label7.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void label7_MouseLeave(object sender, EventArgs e)
+        {
+            label7.Font = new Font(label7.Font, FontStyle.Regular);
+
+            if (m_selectedMainMenu == 7)
+                label7.BackColor = PSEUDO_SELECTED_COLOR;
+            else
+                label7.BackColor = PSEUDO_BACK_COLOR;
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
             outputForm.StartPosition = FormStartPosition.CenterParent;
 
             if (outputForm.Visible)
@@ -838,8 +933,14 @@ namespace WellaTodo
             {
                 outputForm.Show();
             }
+
+            m_selectedMainMenu = 7; // 새목록 만들기
+            Changed_MainMenu();
         }
 
+        //
+        // 메뉴별 색상 및 위/아래 이동 버튼 처리
+        //
         private void Changed_MainMenu()
         {
             int pos = 1;
@@ -853,7 +954,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (m_selectedMainMenu == 5)
+            if (m_selectedMainMenu == 6)
             {
                 upArrow.Visible = true;
                 downArrow.Visible = true;
@@ -864,9 +965,9 @@ namespace WellaTodo
                 downArrow.Visible = false;
             }
 
-            splitContainer2.SplitterDistance = splitContainer2.Width;
-            isDetailWindowOpen = false;
-            Set_TodoItem_Width();
+            //splitContainer2.SplitterDistance = splitContainer2.Width;
+            //isDetailWindowOpen = false;
+            //Set_TodoItem_Width();
         }
 
         //할일 입력창
@@ -1028,6 +1129,8 @@ namespace WellaTodo
         {
             if (isDetailWindowOpen)
             {
+                m_Data[m_present_data_position].DC_complete = roundCheckbox1.Checked;
+
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
