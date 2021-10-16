@@ -80,6 +80,9 @@ namespace WellaTodo
             Initiate_View();
             Load_Item();
 
+            m_selectedMainMenu = 5; // 완료됨
+            Changed_MainMenu();
+
             timer1.Interval = 60000;
             timer1.Enabled = true;
         }
@@ -216,9 +219,6 @@ namespace WellaTodo
 
             button2.Location = new Point(DETAIL_WINDOW_X1 + 160, 360);
             button2.Size = new Size(75, 25);
-
-            splitContainer1.Refresh();
-            splitContainer2.Refresh();
         }
 
         //--------------------------------------------------------------
@@ -242,17 +242,8 @@ namespace WellaTodo
                 int width = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                 splitContainer2.SplitterDistance = width < 0 ? 1 : width;
             }
-            
-            int pos = 0;
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                item.Width = flowLayoutPanel2.VerticalScroll.Visible
-                    ? flowLayoutPanel2.Width - SystemInformation.VerticalScrollBarWidth - 5
-                    : flowLayoutPanel2.Width - 5;
-                item.IsItemSelected = m_present_data_position == pos;
-                pos++;
-            }
-            
+
+            Set_TodoItem_Width();
         }
 
         //--------------------------------------------------------------
@@ -652,7 +643,10 @@ namespace WellaTodo
             }
         }
 
-        //메뉴 이벤트
+        //
+        // 메뉴 이벤트 처리 부분 ===================
+        //
+
         private void label1_MouseEnter(object sender, EventArgs e)
         {
             label1.Font = new Font(label1.Font, FontStyle.Underline);
@@ -714,13 +708,12 @@ namespace WellaTodo
                 pos++;
             }
 
-            Console.WriteLine("L2 count[{0}]", cnt);
             if (cnt == 0)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isDetailWindowOpen = false;
-                Set_TodoItem_Width();
             }
+            Set_TodoItem_Width();
 
             m_selectedMainMenu = 2; // 오늘 할 일
             Changed_MainMenu();
@@ -760,13 +753,12 @@ namespace WellaTodo
                 pos++;
             }
 
-            Console.WriteLine("L3 count[{0}]", cnt);
             if (cnt == 0)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isDetailWindowOpen = false;
-                Set_TodoItem_Width();
             }
+            Set_TodoItem_Width();
 
             m_selectedMainMenu = 3; // 중요
             Changed_MainMenu();
@@ -808,13 +800,12 @@ namespace WellaTodo
                 pos++;
             }
 
-            Console.WriteLine("L4 count[{0}]", cnt);
             if (cnt == 0)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isDetailWindowOpen = false;
-                Set_TodoItem_Width();
             }
+            Set_TodoItem_Width();
 
             m_selectedMainMenu = 4; //계획된 일정
             Changed_MainMenu();
@@ -854,13 +845,12 @@ namespace WellaTodo
                 pos++;
             }
 
-            Console.WriteLine("L5 count[{0}]", cnt);
             if (cnt == 0)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isDetailWindowOpen = false;
-                Set_TodoItem_Width();
             }
+            Set_TodoItem_Width();
 
             m_selectedMainMenu = 5; // 완료됨
             Changed_MainMenu();
@@ -893,13 +883,12 @@ namespace WellaTodo
                 pos++;
             }
 
-            Console.WriteLine("L6 count[{0}]", cnt);
             if (cnt == 0)
             {
                 splitContainer2.SplitterDistance = splitContainer2.Width;
                 isDetailWindowOpen = false;
-                Set_TodoItem_Width();
             }
+            Set_TodoItem_Width();
 
             m_selectedMainMenu = 6; // 모든 작업
             Changed_MainMenu();
@@ -964,11 +953,11 @@ namespace WellaTodo
                 upArrow.Visible = false;
                 downArrow.Visible = false;
             }
-
-            //splitContainer2.SplitterDistance = splitContainer2.Width;
-            //isDetailWindowOpen = false;
-            //Set_TodoItem_Width();
         }
+
+        //
+        // 할일 입력 처리 부분 -----------------
+        //
 
         //할일 입력창
         private void textBox2_Enter(object sender, EventArgs e)
@@ -1014,6 +1003,10 @@ namespace WellaTodo
                 e.SuppressKeyPress = true;
             }
         }
+
+        //
+        // 상세창 처리 부분 (제목 / 완료 / 중요 / 메모 / 위아래 / 닫기 / 삭제)
+        //
 
         //상세창 제목 키 입력
         private void textBox3_KeyUp(object sender, KeyEventArgs e)
