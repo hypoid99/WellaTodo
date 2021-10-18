@@ -80,7 +80,7 @@ namespace WellaTodo
             Initiate_View();
             Load_Item();
 
-            m_selectedMainMenu = 5; // 완료됨
+            m_selectedMainMenu = 6; // 작업
             Changed_MainMenu();
 
             timer1.Interval = 60000;
@@ -239,8 +239,12 @@ namespace WellaTodo
 
             if (isDetailWindowOpen)
             {
+                flowLayoutPanel2.AutoScroll = false;
+
                 int width = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                 splitContainer2.SplitterDistance = width < 0 ? 1 : width;
+
+                flowLayoutPanel2.AutoScroll = true;
             }
 
             Set_TodoItem_Width();
@@ -387,7 +391,7 @@ namespace WellaTodo
                 default:
                     break;
             }
-            DataCellToControl();
+            SendDataToDetailWindow();
             Set_TodoItem_Width();
         }
 
@@ -448,7 +452,7 @@ namespace WellaTodo
                             m_present_data_position = m_Data.Count - 1;
                             roundCheckbox1.Checked = true;
 
-                            DataCellToControl();
+                            SendDataToDetailWindow();
                         }
                         else
                         {
@@ -462,7 +466,7 @@ namespace WellaTodo
                             m_present_data_position = 0;
                             roundCheckbox1.Checked = false;
 
-                            DataCellToControl();
+                            SendDataToDetailWindow();
                         }
                         if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
                         if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
@@ -487,7 +491,7 @@ namespace WellaTodo
                             m_present_data_position = 0;
                             starCheckbox1.Checked = true;
 
-                            DataCellToControl();
+                            SendDataToDetailWindow();
                         }
                         else if (item.TD_important && item.TD_complete)
                         {
@@ -495,7 +499,7 @@ namespace WellaTodo
                             m_present_data_position = pos;
                             starCheckbox1.Checked = true;
 
-                            DataCellToControl();
+                            SendDataToDetailWindow();
                         }
                         else if (!item.TD_important)
                         {
@@ -503,7 +507,7 @@ namespace WellaTodo
                             m_present_data_position = pos;
                             starCheckbox1.Checked = false;
 
-                            DataCellToControl();
+                            SendDataToDetailWindow();
                         }
                         if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
                         break;
@@ -537,19 +541,25 @@ namespace WellaTodo
                     }
                     else
                     {
-                        DataCellToControl();
+                        flowLayoutPanel2.AutoScroll = false;
 
                         splitContainer2.SplitterDistance = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                         isDetailWindowOpen = true;
+
+                        flowLayoutPanel2.AutoScroll = true;
+
+                        SendDataToDetailWindow();
+
                         break;
                     }
                 }
                 pos++;
             }
+            
             Set_TodoItem_Width();
         }
 
-        private void DataCellToControl()
+        private void SendDataToDetailWindow()
         {
             textBox3.Text = m_Data[m_present_data_position].DC_title;
             roundCheckbox1.Checked = m_Data[m_present_data_position].DC_complete;
@@ -671,6 +681,10 @@ namespace WellaTodo
             loginSettingForm.StartPosition = FormStartPosition.CenterParent;
             loginSettingForm.ShowDialog();
 
+            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                SaveFile();
+            }
             //Invoke_View_Event();
         }
 
@@ -1612,7 +1626,7 @@ namespace WellaTodo
 
                 m_present_data_position = pos - 1;
 
-                DataCellToControl();
+                SendDataToDetailWindow();
             }
         }
 
@@ -1646,7 +1660,7 @@ namespace WellaTodo
 
                 m_present_data_position = pos + 1;
 
-                DataCellToControl();
+                SendDataToDetailWindow();
             }
         }
 
