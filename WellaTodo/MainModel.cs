@@ -10,9 +10,9 @@ namespace WellaTodo
 	{
 		public event ModelHandler<MainModel> Changed_Model_Event;
 
+		List<List<CDataCell>> myDataBase = new List<List<CDataCell>>();
 		List<CDataCell> myData = new List<CDataCell>();
-		List<CDataCell> myData_Completed = new List<CDataCell>();
-
+		
 		public MainModel()
 		{
 			Initialize();
@@ -35,22 +35,25 @@ namespace WellaTodo
 			return myData;
         }
 
-		public List<CDataCell> GetDataCompletedCollection()
-		{
-			return myData_Completed;
-		}
-
-		public void Initialize()
+		private void Initialize()
         {
-			//myData.Insert(0, new CDataCell(1, false, "할일 1번째", false, "메모추가"));
-			//myData.Insert(0, new CDataCell(2, false, "할일 2번째", false, "메모추가"));
-			//myData.Insert(0, new CDataCell(3, false, "할일 3번째", false, "메모추가"));
-			//myData.Insert(0, new CDataCell(4, false, "할일 4번째", false, "메모추가"));
-			//myData.Insert(0, new CDataCell(5, false, "할일 5번째", false, "메모추가"));
-			//DisplayDataCell(myData);
+
 		}
 
-		public void DisplayDataCell(List<CDataCell> data_collection)
+		public void StoreData(int index)
+        {
+            if (myDataBase.Count <= index) return;
+
+            myDataBase[index] = myData;
+        }
+
+		public List<CDataCell> RestoreData(int index)
+        {
+			return myDataBase[index];
+        }
+
+
+		private void DisplayDataCell(List<CDataCell> data_collection)
         {
 			Console.WriteLine(">MainModel-- start display datacell");
 			foreach (CDataCell data in data_collection)

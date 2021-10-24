@@ -37,6 +37,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -47,7 +48,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -182,6 +182,18 @@
             this.label6.MouseEnter += new System.EventHandler(this.label6_MouseEnter);
             this.label6.MouseLeave += new System.EventHandler(this.label6_MouseLeave);
             // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(3, 240);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(200, 40);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "출력창";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label7.Click += new System.EventHandler(this.label7_Click);
+            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
+            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
+            // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(10, 354);
@@ -274,6 +286,7 @@
             this.textBox1.Size = new System.Drawing.Size(260, 118);
             this.textBox1.TabIndex = 6;
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
+            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // openFileDialog1
             // 
@@ -282,18 +295,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(3, 240);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(200, 40);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "새목록만들기";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
-            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
-            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
             // 
             // MainFrame
             // 

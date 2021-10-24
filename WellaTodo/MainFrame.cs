@@ -29,15 +29,28 @@ namespace WellaTodo
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_TEXTBOX_BACK_COLOR = Color.LightCyan;
-        static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
+        static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.White;
+        //static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
         static readonly int DETAIL_WINDOW_WIDTH = 260;
         static readonly int DETAIL_WINDOW_X1 = 5;
         static readonly int MENU_WINDOW_WIDTH = 150;
 
+        public enum MenuList 
+        { 
+            LOGIN_SETTING_MENU      = 1,
+            MYTODAY_MENU            = 2,
+            IMPORTANT_MENU          = 3,
+            DEADLINE_MENU           = 4,
+            COMPLETE_MENU           = 5,
+            TODO_ITEM_MENU          = 6
+        }
+
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
         LoginSettingForm loginSettingForm = new LoginSettingForm();
+        AlarmForm alarmForm = new AlarmForm();
+        MemoForm memoForm = new MemoForm();
         OutputForm outputForm = new OutputForm();
 
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
@@ -92,7 +105,7 @@ namespace WellaTodo
             Repaint();
         }
 
-        public void Initiate_View()
+        private void Initiate_View()
         {
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
             splitContainer1.Panel1MinSize = 100;
@@ -133,6 +146,7 @@ namespace WellaTodo
             roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
+            roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
             roundCheckbox1.Location = new Point(DETAIL_WINDOW_X1 + 2, 5);
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
@@ -145,12 +159,13 @@ namespace WellaTodo
             starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
             starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
+            starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
             starCheckbox1.Location = new Point(DETAIL_WINDOW_X1 + 215, 5);
             starCheckbox1.Size = new Size(25, 25);
             starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(starCheckbox1);
 
-            roundLabel1.Click += new EventHandler(roundLabel1_Click);
+            roundLabel1.MouseClick += new MouseEventHandler(roundLabel1_Click);
             roundLabel1.MouseEnter += new EventHandler(roundLabel1_MouseEnter);
             roundLabel1.MouseLeave += new EventHandler(roundLabel1_MouseLeave);
             roundLabel1.Text = "나의 하루에 추가";
@@ -159,7 +174,7 @@ namespace WellaTodo
             roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(roundLabel1);
 
-            roundLabel2.Click += new EventHandler(roundLabel2_Click);
+            roundLabel2.MouseClick += new MouseEventHandler(roundLabel2_Click);
             roundLabel2.MouseEnter += new EventHandler(roundLabel2_MouseEnter);
             roundLabel2.MouseLeave += new EventHandler(roundLabel2_MouseLeave);
             roundLabel2.Text = "미리 알림";
@@ -168,7 +183,7 @@ namespace WellaTodo
             roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(roundLabel2);
 
-            roundLabel3.Click += new EventHandler(roundLabel3_Click);
+            roundLabel3.MouseClick += new MouseEventHandler(roundLabel3_Click);
             roundLabel3.MouseEnter += new EventHandler(roundLabel3_MouseEnter);
             roundLabel3.MouseLeave += new EventHandler(roundLabel3_MouseLeave);
             roundLabel3.Text = "기한 설정";
@@ -177,7 +192,7 @@ namespace WellaTodo
             roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
             splitContainer2.Panel2.Controls.Add(roundLabel3);
 
-            roundLabel4.Click += new EventHandler(roundLabel4_Click);
+            roundLabel4.MouseClick += new MouseEventHandler(roundLabel4_Click);
             roundLabel4.MouseEnter += new EventHandler(roundLabel4_MouseEnter);
             roundLabel4.MouseLeave += new EventHandler(roundLabel4_MouseLeave);
             roundLabel4.Text = "반복";
@@ -239,11 +254,14 @@ namespace WellaTodo
 
             if (isDetailWindowOpen)
             {
+                int temp;
+                temp = flowLayoutPanel2.VerticalScroll.Value;
                 flowLayoutPanel2.AutoScroll = false;
 
                 int width = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                 splitContainer2.SplitterDistance = width < 0 ? 1 : width;
 
+                flowLayoutPanel2.VerticalScroll.Value = temp;
                 flowLayoutPanel2.AutoScroll = true;
             }
 
@@ -331,7 +349,7 @@ namespace WellaTodo
                 chk_important = data.DC_important;
                 Todo_Item item = new Todo_Item(text, chk_complete, chk_important);
                 flowLayoutPanel2.Controls.Add(item);
-                item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+                item.UserControl_Click += new UserControl_Event(TodoItem_UserControl_Click);
             }
 
             int pos = 0;
@@ -358,7 +376,7 @@ namespace WellaTodo
             flowLayoutPanel2.Controls.Add(item);
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
 
-            item.UserControl_Event_method += new UserControl_Event(Click_Todo_Item);
+            item.UserControl_Click += new UserControl_Event(TodoItem_UserControl_Click);
 
             flowLayoutPanel2.VerticalScroll.Value = 0;
             m_present_data_position = 0;
@@ -427,7 +445,22 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 항목을 클릭했을때 처리
         //--------------------------------------------------------------
-        private void Click_Todo_Item(object sender, EventArgs e)
+        private void TodoItem_UserControl_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            
+            switch (me.Button)
+            {
+                case MouseButtons.Left:
+                    TodoItem_Left_Click(sender, me);
+                    break;
+                case MouseButtons.Right:
+                    TodoItem_Right_Click(sender, me);
+                    break;
+            }
+        }
+
+        private void TodoItem_Left_Click(object sender, MouseEventArgs e)
         {
             int pos = 0;
             Todo_Item sd = (Todo_Item)sender;
@@ -439,35 +472,7 @@ namespace WellaTodo
                     //완료됨 클릭시
                     if (item.IsCompleteClicked)
                     {
-                        if (item.TD_complete)
-                        {
-                            int cnt = flowLayoutPanel2.Controls.Count;
-                            flowLayoutPanel2.Controls.SetChildIndex(item, cnt);
-
-                            m_Data[pos].DC_complete = true;
-                            CDataCell dc = m_Data[pos]; //추출
-                            m_Data.RemoveAt(pos); //삭제
-                            m_Data.Insert(m_Data.Count, dc); //삽입
-
-                            m_present_data_position = m_Data.Count - 1;
-                            roundCheckbox1.Checked = true;
-
-                            SendDataToDetailWindow();
-                        }
-                        else
-                        {
-                            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-
-                            m_Data[pos].DC_complete = false;
-                            CDataCell dc = m_Data[pos]; //추출
-                            m_Data.RemoveAt(pos); //삭제
-                            m_Data.Insert(0, dc); //삽입
-
-                            m_present_data_position = 0;
-                            roundCheckbox1.Checked = false;
-
-                            SendDataToDetailWindow();
-                        }
+                        CompleteProcess(item, pos);
                         if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
                         if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
                         if (m_selectedMainMenu == 4) label4_Click(sender, e); // 계획된 일정에서 실행
@@ -478,56 +483,8 @@ namespace WellaTodo
                     // 중요항목 클릭시
                     if (item.IsImportantClicked)
                     {
-                        if (item.TD_important && !item.TD_complete)
-                        {
-                            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-
-                            m_Data[pos].DC_important = true;
-                            CDataCell dc = m_Data[pos]; //추출
-                            m_Data.RemoveAt(pos); //삭제
-                            m_Data.Insert(0, dc); //삽입
-
-                            flowLayoutPanel2.VerticalScroll.Value = 0;
-                            m_present_data_position = 0;
-                            starCheckbox1.Checked = true;
-
-                            SendDataToDetailWindow();
-                        }
-                        else if (item.TD_important && item.TD_complete)
-                        {
-                            m_Data[pos].DC_important = true;
-                            m_present_data_position = pos;
-                            starCheckbox1.Checked = true;
-
-                            SendDataToDetailWindow();
-                        }
-                        else if (!item.TD_important)
-                        {
-                            m_Data[pos].DC_important = false;
-                            m_present_data_position = pos;
-                            starCheckbox1.Checked = false;
-
-                            SendDataToDetailWindow();
-                        }
+                        ImportantProcess(item, pos);
                         if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
-                        break;
-                    }
-
-                    // 컨텍스트 메뉴 삭제 클릭시
-                    if (item.IsDeleteClicked)
-                    {
-                        if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
-                        {
-                            break;
-                        }
-                        splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isDetailWindowOpen = false;
-
-                        item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
-                        splitContainer2.Panel1.Controls.Remove(item);
-                        item.Dispose();
-
-                        m_Data.Remove(m_Data[pos]);
                         break;
                     }
 
@@ -541,15 +498,17 @@ namespace WellaTodo
                     }
                     else
                     {
+                        int temp;
+                        temp = flowLayoutPanel2.VerticalScroll.Value;
                         flowLayoutPanel2.AutoScroll = false;
 
                         splitContainer2.SplitterDistance = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                         isDetailWindowOpen = true;
-
+                        
+                        flowLayoutPanel2.VerticalScroll.Value = temp;
                         flowLayoutPanel2.AutoScroll = true;
 
                         SendDataToDetailWindow();
-
                         break;
                     }
                 }
@@ -559,13 +518,242 @@ namespace WellaTodo
             Set_TodoItem_Width();
         }
 
+        private void ImportantProcess(Todo_Item item, int pos)
+        {
+            if (item.TD_important && !item.TD_complete)
+            {
+                flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+
+                m_Data[pos].DC_important = true;
+                CDataCell dc = m_Data[pos]; //추출
+                m_Data.RemoveAt(pos); //삭제
+                m_Data.Insert(0, dc); //삽입
+
+                flowLayoutPanel2.VerticalScroll.Value = 0;
+                m_present_data_position = 0;
+                starCheckbox1.Checked = true;
+
+                SendDataToDetailWindow();
+            }
+            else if (item.TD_important && item.TD_complete)
+            {
+                m_Data[pos].DC_important = true;
+                m_present_data_position = pos;
+                starCheckbox1.Checked = true;
+
+                SendDataToDetailWindow();
+            }
+            else if (!item.TD_important)
+            {
+                m_Data[pos].DC_important = false;
+                m_present_data_position = pos;
+                starCheckbox1.Checked = false;
+
+                SendDataToDetailWindow();
+            }
+        }
+
+        private void CompleteProcess(Todo_Item item, int pos)
+        {
+            if (item.TD_complete)
+            {
+                int cnt = flowLayoutPanel2.Controls.Count;
+                flowLayoutPanel2.Controls.SetChildIndex(item, cnt);
+
+                m_Data[pos].DC_complete = true;
+                CDataCell dc = m_Data[pos]; //추출
+                m_Data.RemoveAt(pos); //삭제
+                m_Data.Insert(m_Data.Count, dc); //삽입
+
+                m_present_data_position = m_Data.Count - 1;
+                roundCheckbox1.Checked = true;
+
+                SendDataToDetailWindow();
+            }
+            else
+            {
+                flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+
+                m_Data[pos].DC_complete = false;
+                CDataCell dc = m_Data[pos]; //추출
+                m_Data.RemoveAt(pos); //삭제
+                m_Data.Insert(0, dc); //삽입
+
+                m_present_data_position = 0;
+                roundCheckbox1.Checked = false;
+
+                SendDataToDetailWindow();
+            }
+        }
+
+        private void TodoItem_Right_Click(object sender, MouseEventArgs e)
+        {
+            int pos = 0;
+            Todo_Item sd = (Todo_Item)sender;
+
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (item.Equals(sd))
+                {
+                    m_present_data_position = pos;
+                    SendDataToDetailWindow();
+                }
+                pos++;
+            }
+            Set_TodoItem_Width();
+
+            ContextMenu todoItemContextMenu = new ContextMenu();
+            todoItemContextMenu.Popup += new EventHandler(OnTodoItemPopupEvent);
+
+            MenuItem myTodayItem = new MenuItem("나의 하루에 추가", new EventHandler(OnMyTodayMenuItem_Click));
+            MenuItem importantItem = new MenuItem("중요로 표시", new EventHandler(OnImportantMenuItem_Click));
+            MenuItem completeItem = new MenuItem("완료됨으로 표시", new EventHandler(OnCompleteMenuItem_Click));
+            MenuItem toTodayItem = new MenuItem("오늘까지", new EventHandler(OnToTodayMenuItem_Click));
+            MenuItem toTomorrowItem = new MenuItem("내일까지", new EventHandler(OnToTomorrowMenuItem_Click));
+            MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDayMenuItem_Click));
+            MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadlineMenuItem_Click));
+            MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteMenuItem_Click));
+
+            todoItemContextMenu.MenuItems.Add(myTodayItem);
+            todoItemContextMenu.MenuItems.Add(importantItem);
+            todoItemContextMenu.MenuItems.Add(completeItem);
+            todoItemContextMenu.MenuItems.Add("-");
+            todoItemContextMenu.MenuItems.Add(toTodayItem);
+            todoItemContextMenu.MenuItems.Add(toTomorrowItem);
+            todoItemContextMenu.MenuItems.Add(selectDayItem);
+            todoItemContextMenu.MenuItems.Add(deleteDeadlineItem);
+            todoItemContextMenu.MenuItems.Add("-");
+            todoItemContextMenu.MenuItems.Add(deleteItem);
+
+            int px = Control.MousePosition.X - Location.X;
+            int py = Control.MousePosition.Y - Location.Y - 30;
+            todoItemContextMenu.Show(this, new Point(px, py));
+        }
+
+        private void OnTodoItemPopupEvent(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+
+            ctm.MenuItems[0].Text = m_Data[m_present_data_position].DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
+            ctm.MenuItems[1].Text = m_Data[m_present_data_position].DC_important ? "중요도 제거" : "중요로 표시";
+            ctm.MenuItems[2].Text = m_Data[m_present_data_position].DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
+            ctm.MenuItems[4].Enabled = m_Data[m_present_data_position].DC_deadlineType != 1;
+            ctm.MenuItems[5].Enabled = m_Data[m_present_data_position].DC_deadlineType != 2;
+            ctm.MenuItems[7].Enabled = m_Data[m_present_data_position].DC_deadlineType > 0;
+        }
+
+        private void OnMyTodayMenuItem_Click(object sender, EventArgs e)
+        {
+            roundLabel1_Click(sender, (MouseEventArgs)e);
+        }
+
+        private void OnImportantMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_Data[m_present_data_position].DC_important)
+            {
+                starCheckbox1.Checked = false;
+                m_Data[m_present_data_position].DC_important = false;
+            } else
+            {
+                starCheckbox1.Checked = true;
+                m_Data[m_present_data_position].DC_important = true;
+            }
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (pos == m_present_data_position)
+                {
+                    item.TD_important = starCheckbox1.Checked;
+                    ImportantProcess(item, pos);
+                    if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
+                    break;
+                }
+                pos++;
+            }
+        }
+
+        private void OnCompleteMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_Data[m_present_data_position].DC_complete)
+            {
+                roundCheckbox1.Checked = false;
+                m_Data[m_present_data_position].DC_complete = false;
+            }
+            else
+            {
+                roundCheckbox1.Checked = true;
+                m_Data[m_present_data_position].DC_complete = true;
+            }
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (pos == m_present_data_position)
+                {
+                    item.TD_complete = roundCheckbox1.Checked;
+                    CompleteProcess(item, pos);
+                    if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
+                    if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
+                    if (m_selectedMainMenu == 4) label4_Click(sender, e); // 계획된 일정에서 실행
+                    if (m_selectedMainMenu == 5) label5_Click(sender, e); // 완료됨에서 실행
+                    break;
+                }
+                pos++;
+            }
+        }
+
+        private void OnToTodayMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("OnToTodayMenuItem_Click");
+        }
+
+        private void OnToTomorrowMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("OnToTomorrowMenuItem_Click");
+        }
+
+        private void OnSelectDayMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("OnSelectDayMenuItem_Click");
+        }
+
+        private void OnDeleteDeadlineMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("OnDeleteDeadlineMenuItem_Click");
+        }
+
+        private void OnDeleteMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
+            
+            splitContainer2.SplitterDistance = splitContainer2.Width;
+            isDetailWindowOpen = false;
+
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (m_present_data_position == pos)
+                {
+                    item.UserControl_Click -= new UserControl_Event(TodoItem_UserControl_Click);
+                    splitContainer2.Panel1.Controls.Remove(item);
+                    item.Dispose();
+
+                    m_Data.Remove(m_Data[m_present_data_position]);
+                }
+                pos++;
+            }
+            Set_TodoItem_Width();
+        }
+
         private void SendDataToDetailWindow()
         {
             textBox3.Text = m_Data[m_present_data_position].DC_title;
             roundCheckbox1.Checked = m_Data[m_present_data_position].DC_complete;
             starCheckbox1.Checked = m_Data[m_present_data_position].DC_important;
             textBox1.Text = m_Data[m_present_data_position].DC_memo;
-
+            textBox1.SelectionStart = textBox1.Text.Length;
+            
             if (m_Data[m_present_data_position].DC_myToday)
             {
                 roundLabel1.Text = "나의하루에 추가됨";
@@ -675,6 +863,8 @@ namespace WellaTodo
 
         private void label1_Click(object sender, EventArgs e)
         {
+            int temp;
+            temp = m_selectedMainMenu;
             m_selectedMainMenu = 1;
             Changed_MainMenu();
 
@@ -685,7 +875,9 @@ namespace WellaTodo
             {
                 SaveFile();
             }
-            //Invoke_View_Event();
+
+            m_selectedMainMenu = temp;
+            Changed_MainMenu();
         }
 
         private void label2_MouseEnter(object sender, EventArgs e)
@@ -926,7 +1118,14 @@ namespace WellaTodo
 
         private void label7_Click(object sender, EventArgs e)
         {
-            outputForm.StartPosition = FormStartPosition.CenterParent;
+            int temp;
+            temp = m_selectedMainMenu;
+
+            m_selectedMainMenu = 7; // 새목록 만들기
+            Changed_MainMenu();
+
+            outputForm.StartPosition = FormStartPosition.Manual;
+            outputForm.Location = new Point(Location.X + (Width - outputForm.Width) / 2, Location.Y + (Height - outputForm.Height) / 2);
 
             if (outputForm.Visible)
             {
@@ -937,7 +1136,7 @@ namespace WellaTodo
                 outputForm.Show();
             }
 
-            m_selectedMainMenu = 7; // 새목록 만들기
+            m_selectedMainMenu = temp;
             Changed_MainMenu();
         }
 
@@ -1088,7 +1287,66 @@ namespace WellaTodo
         {
             //메모 내용에 변경이 있는지 확인(?)
             m_Data[m_present_data_position].DC_memo = textBox1.Text;
+            Console.WriteLine("메모 저장");
         }
+
+        // 상세창 메모 컨텍스트 메뉴
+        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem extendMemo = new MenuItem("메모확장", new EventHandler(OnExtendMemo_Click));
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_Click));
+                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_Click));
+                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent);
+                textboxMenu.MenuItems.Add(extendMemo);
+                textboxMenu.MenuItems.Add("-");
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textboxMenu.MenuItems.Add(selectAllMenu);
+                textboxMenu.MenuItems.Add("-");
+                textboxMenu.MenuItems.Add(undoMenu);
+                textBox1.ContextMenu = textboxMenu;
+
+                textBox1.ContextMenu.Show(textBox1, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+
+            ctm.MenuItems[2].Enabled = textBox1.SelectedText.Length != 0; // copy
+            ctm.MenuItems[3].Enabled = textBox1.SelectedText.Length != 0; // cut
+            ctm.MenuItems[4].Enabled = Clipboard.ContainsText(); // paste
+            ctm.MenuItems[5].Enabled = textBox1.Text.Length != 0; // selectAll
+            ctm.MenuItems[7].Enabled = textBox1.CanUndo; // undo
+        }
+
+        private void OnExtendMemo_Click(object sender, EventArgs e)
+        {
+            memoForm.StartPosition = FormStartPosition.Manual;
+            memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
+            memoForm.TextBoxString = textBox1.Text;
+            memoForm.ShowDialog();
+            textBox1.Text = memoForm.TextBoxString;
+            textBox1.SelectionStart = textBox1.Text.Length;
+
+            m_Data[m_present_data_position].DC_memo = textBox1.Text;
+            Console.WriteLine("메모 저장");
+        }
+
+        private void OnCopyMenu_Click(object sender, EventArgs e) { textBox1.Copy(); }
+        private void OnCutMenu_Click(object sender, EventArgs e) { textBox1.Cut(); }
+        private void OnPasteMenu_Click(object sender, EventArgs e) { textBox1.Paste(); }
+        private void OnSelectAllMenu_Click(object sender, EventArgs e) { textBox1.SelectAll(); }
+        private void OnUndoMenu_Click(object sender, EventArgs e) { textBox1.Undo(); }
 
         // 상세창 닫기 버튼
         private void button1_Click(object sender, EventArgs e)
@@ -1116,7 +1374,7 @@ namespace WellaTodo
                 {
                     if (pos == m_present_data_position)
                     {
-                        item.UserControl_Event_method -= new UserControl_Event(Click_Todo_Item);
+                        item.UserControl_Click -= new UserControl_Event(TodoItem_UserControl_Click);
                         splitContainer2.Panel1.Controls.Remove(item);
                         item.Dispose();
 
@@ -1132,7 +1390,7 @@ namespace WellaTodo
         }
 
         //상세창 완료 체크시
-        private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
+        private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
             {
@@ -1141,14 +1399,20 @@ namespace WellaTodo
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_present_data_position)
+                    if (m_present_data_position == pos)
                     {
                         item.TD_complete = roundCheckbox1.Checked;
+                        CompleteProcess(item, pos);
                         break;
                     }
                     pos++;
                 }
             }
+        }
+
+        private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
+        {
+            
         }
 
         private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -1162,7 +1426,7 @@ namespace WellaTodo
         }
 
         //상세창 중요 체크시
-        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
+        private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
             {
@@ -1171,14 +1435,19 @@ namespace WellaTodo
                 int pos = 0;
                 foreach (Todo_Item item in flowLayoutPanel2.Controls)
                 {
-                    if (pos == m_present_data_position)
+                    if (m_present_data_position == pos)
                     {
                         item.TD_important = starCheckbox1.Checked;
+                        ImportantProcess(item, pos);
                         break;
                     }
                     pos++;
                 }
             }
+        }
+        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void starCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -1201,8 +1470,9 @@ namespace WellaTodo
         }
 
         // 상세창 - 나의 하루에 추가 메뉴
-        private void roundLabel1_Click(object sender, EventArgs e)
+        private void roundLabel1_Click(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return;
             if (m_Data[m_present_data_position].DC_myToday)
             {
                 m_Data[m_present_data_position].DC_myToday = false;
@@ -1248,14 +1518,16 @@ namespace WellaTodo
                 roundLabel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        private void roundLabel2_Click(object sender, EventArgs e)
+        private void roundLabel2_Click(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return;
+
             ContextMenu remindMenu = new ContextMenu();
-            MenuItem todayRemind = new MenuItem("오늘 나중에", new EventHandler(this.OnTodayRemind_Click));
-            MenuItem tomorrowRemind = new MenuItem("내일", new EventHandler(this.OnTomorrowRemind_Click));
-            MenuItem nextWeekRemind = new MenuItem("다음 주", new EventHandler(this.OnNextWeekRemind_Click));
-            MenuItem selectRemind = new MenuItem("날짜 및 시간 선택", new EventHandler(this.OnSelectRemind_Click));
-            MenuItem deleteRemind = new MenuItem("미리 알림 제거", new EventHandler(this.OnDeleteRemind_Click));
+            MenuItem todayRemind = new MenuItem("오늘 나중에", new EventHandler(OnTodayRemind_Click));
+            MenuItem tomorrowRemind = new MenuItem("내일", new EventHandler(OnTomorrowRemind_Click));
+            MenuItem nextWeekRemind = new MenuItem("다음 주", new EventHandler(OnNextWeekRemind_Click));
+            MenuItem selectRemind = new MenuItem("날짜 및 시간 선택", new EventHandler(OnSelectRemind_Click));
+            MenuItem deleteRemind = new MenuItem("미리 알림 제거", new EventHandler(OnDeleteRemind_Click));
             remindMenu.MenuItems.Add(todayRemind);
             remindMenu.MenuItems.Add(tomorrowRemind);
             remindMenu.MenuItems.Add(nextWeekRemind);
@@ -1379,13 +1651,15 @@ namespace WellaTodo
                 roundLabel3.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        private void roundLabel3_Click(object sender, EventArgs e)
+        private void roundLabel3_Click(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return;
+
             ContextMenu deadlineMenu = new ContextMenu();
-            MenuItem todayDeadline = new MenuItem("오늘", new EventHandler(this.OnTodayDeadline_Click));
-            MenuItem tomorrowDeadline = new MenuItem("내일", new EventHandler(this.OnTomorrowDeadline_Click));
-            MenuItem selectDeadline = new MenuItem("날짜 선택", new EventHandler(this.OnSelectDeadline_Click));
-            MenuItem deleteDeadline = new MenuItem("기한 설정 제거", new EventHandler(this.OnDeleteDeadline_Click));
+            MenuItem todayDeadline = new MenuItem("오늘", new EventHandler(OnTodayDeadline_Click));
+            MenuItem tomorrowDeadline = new MenuItem("내일", new EventHandler(OnTomorrowDeadline_Click));
+            MenuItem selectDeadline = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click));
+            MenuItem deleteDeadline = new MenuItem("기한 설정 제거", new EventHandler(OnDeleteDeadline_Click));
             deadlineMenu.MenuItems.Add(todayDeadline);
             deadlineMenu.MenuItems.Add(tomorrowDeadline);
             deadlineMenu.MenuItems.Add(selectDeadline);
@@ -1475,16 +1749,18 @@ namespace WellaTodo
                 roundLabel4.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        private void roundLabel4_Click(object sender, EventArgs e)
+        private void roundLabel4_Click(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return;
+
             ContextMenu repeatMenu = new ContextMenu();
-            MenuItem everyDayRepeat = new MenuItem("매일", new EventHandler(this.OnEveryDayRepeat_Click));
-            MenuItem workingDayRepeat = new MenuItem("평일", new EventHandler(this.OnWorkingDayRepeat_Click));
-            MenuItem everyWeekRepeat = new MenuItem("매주", new EventHandler(this.OnEveryWeekRepeat_Click));
-            MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(this.OnEveryMonthRepeat_Click));
-            MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(this.OnEveryYearRepeat_Click));
+            MenuItem everyDayRepeat = new MenuItem("매일", new EventHandler(OnEveryDayRepeat_Click));
+            MenuItem workingDayRepeat = new MenuItem("평일", new EventHandler(OnWorkingDayRepeat_Click));
+            MenuItem everyWeekRepeat = new MenuItem("매주", new EventHandler(OnEveryWeekRepeat_Click));
+            MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(OnEveryMonthRepeat_Click));
+            MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(OnEveryYearRepeat_Click));
             //MenuItem userDefineRepeat = new MenuItem("사용자 정의", new EventHandler(this.OnUserDefineRepeat_Click));
-            MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(this.OnDeleteRepeat_Click));
+            MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(OnDeleteRepeat_Click));
             repeatMenu.MenuItems.Add(everyDayRepeat);
             repeatMenu.MenuItems.Add(workingDayRepeat);
             repeatMenu.MenuItems.Add(everyWeekRepeat);
@@ -1664,11 +1940,131 @@ namespace WellaTodo
             }
         }
 
+        //
+        // 알람 체크
+        //
+        private void AlarmCheck()
+        {
+            int result;
+            string txt;
+            DateTime dt = DateTime.Now;
+            DateTime tt;
+
+            alarmForm.StartPosition = FormStartPosition.Manual;
+            alarmForm.Location = new Point(Location.X + (Width - alarmForm.Width) / 2, Location.Y + (Height - alarmForm.Height) / 2);
+
+            int pos = 0;
+            foreach (CDataCell data in m_Data)
+            {
+                // 오늘할 일 체크
+                if (data.DC_myToday) //if (!data.DC_complete && data.DC_myToday)
+                {
+                    tt = data.DC_myTodayTime;
+                    result = DateTime.Compare(dt, tt);
+                    
+                    if (result > 0) // 날짜 지남
+                    {
+                        Console.WriteLine("MyToday - pos[{0}] today [{1}] target[{2}] result[{3}]", pos, dt.ToString("yyyy-MM-dd HH:mm:ss"), tt.ToString("yyyy-MM-dd HH:mm:ss"), result);
+
+                        if (!alarmForm.Visible ) alarmForm.Show();
+                        txt = "MyToday - pos:" + pos.ToString() + "today:" + dt.ToString("yyyy-MM-dd HH:mm:ss") + "target:" + tt.ToString("yyyy-MM-dd HH:mm:ss") + "result:" + result.ToString() + "\r\n";
+                        alarmForm.TextBoxString = txt;
+
+                        data.DC_myToday = false;
+                        data.DC_myTodayTime = default;
+                        ChangeAlarmInformationText(pos);
+                    }
+                }
+
+                // 미리 알림 체크
+                if (data.DC_remindType > 0)
+                {
+                    tt = data.DC_remindTime;
+                    result = DateTime.Compare(dt, tt);
+
+                    if (result > 0) // 날짜 지남
+                    {
+                        Console.WriteLine("Remind - pos[{0}] today [{1}] target[{2}] result[{3}]", pos, dt.ToString("yyyy-MM-dd HH:mm:ss"), tt.ToString("yyyy-MM-dd HH:mm:ss"), result);
+
+                        if (!alarmForm.Visible) alarmForm.Show();
+                        txt = "Remind - pos:" + pos.ToString() + "today:" + dt.ToString("yyyy-MM-dd HH:mm:ss") + "target:" + tt.ToString("yyyy-MM-dd HH:mm:ss") + "result:" + result.ToString() + "\r\n";
+                        alarmForm.TextBoxString = txt;
+
+                        data.DC_remindType = 0;
+                        data.DC_remindTime = default;
+                        ChangeAlarmInformationText(pos);
+                    }
+                }
+
+                // 기한 설정 체크
+                if (data.DC_deadlineType > 0)
+                {
+                    tt = data.DC_deadlineTime;
+                    result = DateTime.Compare(dt, tt);
+
+                    if (result > 0) // 날짜 지남
+                    {
+                        Console.WriteLine("Deadline - pos[{0}] today [{1}] target[{2}] result[{3}]", pos, dt.ToString("yyyy-MM-dd HH:mm:ss"), tt.ToString("yyyy-MM-dd HH:mm:ss"), result);
+
+                        if (!alarmForm.Visible) alarmForm.Show();
+                        txt = "Deadline - pos:" + pos.ToString() + "today:" + dt.ToString("yyyy-MM-dd HH:mm:ss") + "target:" + tt.ToString("yyyy-MM-dd HH:mm:ss") + "result:" + result.ToString() + "\r\n";
+                        alarmForm.TextBoxString = txt;
+
+                        data.DC_deadlineType = 0;
+                        data.DC_deadlineTime = default;
+                        ChangeAlarmInformationText(pos);
+                    }
+                }
+
+                // 반복 체크
+                if (data.DC_repeatType > 0)
+                {
+                    tt = data.DC_repeatTime;
+                    result = DateTime.Compare(dt, tt);
+
+                    if (result > 0) // 날짜 지남
+                    {
+                        Console.WriteLine("Repeat - pos[{0}] today [{1}] target[{2}] result[{3}]", pos, dt.ToString("yyyy-MM-dd HH:mm:ss"), tt.ToString("yyyy-MM-dd HH:mm:ss"), result);
+
+                        if (!alarmForm.Visible) alarmForm.Show();
+                        txt = "Repeat - pos:" + pos.ToString() + "today:" + dt.ToString("yyyy-MM-dd HH:mm:ss") + "target:" + tt.ToString("yyyy-MM-dd HH:mm:ss") + "result:" + result.ToString() + "\r\n";
+                        alarmForm.TextBoxString = txt;
+
+                        data.DC_repeatType = 0;
+                        data.DC_repeatTime = default;
+                        ChangeAlarmInformationText(pos);
+                    }
+                }
+                pos++;
+            }
+            if (!alarmForm.Visible) alarmForm.Show();
+            txt = "Now :" + dt.ToString("yyyy-MM-dd HH:mm:ss") + "--------------------------------" + "\r\n";
+            alarmForm.TextBoxString = txt;
+        }
+
+        private void ChangeAlarmInformationText(int pos)
+        {
+            string infoText = MakeInformationText(pos);
+            int cnt = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (pos == cnt)
+                {
+                    item.TD_infomation = infoText;
+                    item.Refresh();
+                    break;
+                }
+                cnt++;
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime dt = DateTime.Now;
 
-            Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
+            Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd)") + "]";
+
+            AlarmCheck();
         }
 
         private void SetInformationText()

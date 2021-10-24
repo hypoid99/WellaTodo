@@ -14,7 +14,7 @@ namespace WellaTodo
 {
     public partial class Todo_Item : UserControl
     {
-        public event UserControl_Event UserControl_Event_method;
+        public event UserControl_Event UserControl_Click;
 
         static readonly int TODO_ITEM_WIDTH = 180;
         static readonly int TODO_ITEM_HEIGHT = 35;
@@ -49,38 +49,18 @@ namespace WellaTodo
             set { _important = value; starCheckbox1.Checked = value; }
         }
 
-        private string _infomation;
-        public string TD_infomation { get => _infomation; set => _infomation = value; }
-
-        private bool isCompleteClicked = false;
-        public bool IsCompleteClicked { get => isCompleteClicked; set => isCompleteClicked = value; }
-        private bool isImportantClicked = false;
-        public bool IsImportantClicked { get => isImportantClicked; set => isImportantClicked = value; }
-        private bool isDeleteClicked = false;
-        public bool IsDeleteClicked { get => isDeleteClicked; set => isDeleteClicked = value; }
+        public string TD_infomation { get; set; }
+        public bool IsCompleteClicked { get; set; } = false;
+        public bool IsImportantClicked { get; set; } = false;
+        public bool IsDeleteClicked { get; set; } = false;
         private bool isItemSelected = false;
         public bool IsItemSelected 
         { 
             get => isItemSelected; 
             set 
             { 
-                isItemSelected = value; 
-                if (IsItemSelected)
-                {
-                    BackColor = PSEUDO_SELECTED_COLOR;
-                    roundCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
-                    label1.BackColor = PSEUDO_SELECTED_COLOR;
-                    label2.BackColor = PSEUDO_SELECTED_COLOR;
-                    starCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
-                } 
-                else
-                {
-                    BackColor = PSEUDO_BACK_COLOR;
-                    roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
-                    label1.BackColor = PSEUDO_BACK_COLOR;
-                    label2.BackColor = PSEUDO_BACK_COLOR;
-                    starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
-                }
+                isItemSelected = value;
+                ChangeItemColor();
             } 
         }
 
@@ -112,12 +92,18 @@ namespace WellaTodo
             BackColor = PSEUDO_BACK_COLOR;
 
             roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
+            roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
+            roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
+            roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
             roundCheckbox1.Location = new Point(12, 4);
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(roundCheckbox1);
 
             starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
+            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter); 
+            starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
+            starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
             starCheckbox1.Location = new Point(Width - 40, 5);
             starCheckbox1.Size = new Size(25, 25);
             starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
@@ -130,6 +116,8 @@ namespace WellaTodo
             else
                 label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
 
+            label2.MouseEnter += new EventHandler(label2_MouseEnter);
+            label2.MouseLeave += new EventHandler(label2_MouseLeave);
             label2.MouseClick += new MouseEventHandler(label2_MouseClick);
             label2.Font = new Font(label2.Font.Name, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
@@ -147,7 +135,7 @@ namespace WellaTodo
 
         private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
         {
-            if (_infomation.Length == 0)
+            if (TD_infomation.Length == 0)
             {
                 label1.Location = new Point(45, 13);
 
@@ -203,20 +191,44 @@ namespace WellaTodo
 
         private void Todo_Item_Click(object sender, MouseEventArgs e)
         {
-            if (UserControl_Event_method != null)
+            if (UserControl_Click != null) UserControl_Click?.Invoke(this, e);
+        }
+
+        private void ChangeToBackColor()
+        {
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+        }
+
+        private void ChangeToHighlightColor()
+        {
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void ChangeItemColor()
+        {
+            if (IsItemSelected)
             {
-                switch (e.Button)
-                {
-                    case MouseButtons.Left:
-                        UserControl_Event_method?.Invoke(this, e);
-                        break;
-                    case MouseButtons.Right:
-                        ContextMenu deleteMenu = new ContextMenu();
-                        MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(this.OnDeleteMenuItem_Click));
-                        deleteMenu.MenuItems.Add(deleteItem);
-                        deleteMenu.Show(this, new Point(e.X, e.Y));
-                        break;
-                }
+                BackColor = PSEUDO_SELECTED_COLOR;
+                roundCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
+                label1.BackColor = PSEUDO_SELECTED_COLOR;
+                label2.BackColor = PSEUDO_SELECTED_COLOR;
+                starCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+            else
+            {
+                BackColor = PSEUDO_BACK_COLOR;
+                roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
+                label1.BackColor = PSEUDO_BACK_COLOR;
+                label2.BackColor = PSEUDO_BACK_COLOR;
+                starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             }
         }
 
@@ -225,38 +237,32 @@ namespace WellaTodo
         //---------------------------------------------------------
         private void Todo_Item_MouseEnter(object sender, EventArgs e)
         {
-            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            ChangeToHighlightColor();
         }
 
         private void Todo_Item_MouseLeave(object sender, EventArgs e)
         {
-            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            ChangeToBackColor();
         }
 
         private void label1_MouseEnter(object sender, EventArgs e)
         {
-            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            ChangeToHighlightColor();
         }
 
         private void label1_MouseLeave(object sender, EventArgs e)
         {
-            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            ChangeToBackColor();
+        }
+
+        private void label2_MouseEnter(object sender, EventArgs e)
+        {
+            ChangeToHighlightColor();
+        }
+
+        private void label2_MouseLeave(object sender, EventArgs e)
+        {
+            ChangeToBackColor();
         }
 
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
@@ -274,11 +280,21 @@ namespace WellaTodo
             Todo_Item_Click(sender, e);
         }
 
-        private void OnDeleteMenuItem_Click(object sender, EventArgs e)
+        private void roundCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
-            IsDeleteClicked = true;
-            UserControl_Event_method?.Invoke(this, e);
-            IsDeleteClicked = false;
+            IsCompleteClicked = true;
+            Todo_Item_Click(sender, e);
+            IsCompleteClicked = false;
+        }
+
+        private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
+        {
+            ChangeToHighlightColor();
+        }
+
+        private void roundCheckbox1_MouseLeave(object sender, EventArgs e)
+        {
+            ChangeToBackColor();
         }
 
         private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
@@ -288,17 +304,28 @@ namespace WellaTodo
                 label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Strikeout);
             else
                 label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
-            IsCompleteClicked = true;
-            UserControl_Event_method?.Invoke(this, e);
-            IsCompleteClicked = false;
+        }
+
+        private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            IsImportantClicked = true;
+            Todo_Item_Click(sender, e);
+            IsImportantClicked = false;
+        }
+
+        private void starCheckbox1_MouseEnter(object sender, EventArgs e)
+        {
+            ChangeToHighlightColor();
+        }
+
+        private void starCheckbox1_MouseLeave(object sender, EventArgs e)
+        {
+            ChangeToBackColor();
         }
 
         private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
             TD_important = starCheckbox1.Checked;
-            IsImportantClicked = true;
-            UserControl_Event_method?.Invoke(this, e);
-            IsImportantClicked = false;
         }
     }
 }
