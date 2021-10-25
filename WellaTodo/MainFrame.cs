@@ -89,15 +89,24 @@ namespace WellaTodo
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
 
             m_Data = m_Controller.Get_Model().GetDataCollection();
+            Load_File();
 
             Initiate_View();
-            Load_Item();
+            Initiate_Item();
 
             m_selectedMainMenu = 6; // 작업
             Changed_MainMenu();
 
             timer1.Interval = 60000;
             timer1.Enabled = true;
+        }
+
+        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Save_File();
+            }
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
@@ -237,7 +246,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        //Repaint
+        // Repaint
         //--------------------------------------------------------------
         private void Repaint()
         {
@@ -283,6 +292,12 @@ namespace WellaTodo
                 pos++;
             }
             Display_Data();
+        }
+
+        private void CloseDetailWindow()
+        {
+            splitContainer2.SplitterDistance = splitContainer2.Width;
+            isDetailWindowOpen = false;
         }
 
         private void Display_Data()
@@ -334,13 +349,11 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 항목 초기 데이타 로딩
         //--------------------------------------------------------------
-        private void Load_Item()
+        private void Initiate_Item()
         {
             string text;
             bool chk_complete;
             bool chk_important;
-
-            LoadFile();
 
             foreach (CDataCell data in m_Data)
             {
@@ -416,7 +429,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 파일 로딩
         //--------------------------------------------------------------
-        private void LoadFile()
+        private void Load_File()
         {
             Stream rs = new FileStream("a.dat", FileMode.Open);
             BinaryFormatter deserializer = new BinaryFormatter();
@@ -433,7 +446,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 파일 세이브
         //--------------------------------------------------------------
-        private void SaveFile()
+        private void Save_File()
         {
             Stream ws = new FileStream("a.dat", FileMode.Create);
             BinaryFormatter serializer = new BinaryFormatter();
@@ -492,8 +505,7 @@ namespace WellaTodo
                     m_present_data_position = pos;
                     if (isDetailWindowOpen && (m_before_data_position == pos))
                     {
-                        splitContainer2.SplitterDistance = splitContainer2.Width;
-                        isDetailWindowOpen = false;
+                        CloseDetailWindow();
                         break;
                     }
                     else
@@ -612,6 +624,7 @@ namespace WellaTodo
             MenuItem toTomorrowItem = new MenuItem("내일까지", new EventHandler(OnToTomorrowMenuItem_Click));
             MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDayMenuItem_Click));
             MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadlineMenuItem_Click));
+            MenuItem menuEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
             MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteMenuItem_Click));
 
             todoItemContextMenu.MenuItems.Add(myTodayItem);
@@ -622,6 +635,8 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add(toTomorrowItem);
             todoItemContextMenu.MenuItems.Add(selectDayItem);
             todoItemContextMenu.MenuItems.Add(deleteDeadlineItem);
+            todoItemContextMenu.MenuItems.Add("-");
+            todoItemContextMenu.MenuItems.Add(menuEditItem);
             todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(deleteItem);
 
@@ -723,12 +738,24 @@ namespace WellaTodo
             Console.WriteLine("OnDeleteDeadlineMenuItem_Click");
         }
 
+        private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
+        {
+            memoForm.StartPosition = FormStartPosition.Manual;
+            memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
+            memoForm.TextBoxString = textBox1.Text;
+            memoForm.ShowDialog();
+            textBox1.Text = memoForm.TextBoxString;
+            textBox1.SelectionStart = textBox1.Text.Length;
+
+            m_Data[m_present_data_position].DC_memo = textBox1.Text;
+            Console.WriteLine("메모 저장");
+        }
+
         private void OnDeleteMenuItem_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
-            
-            splitContainer2.SplitterDistance = splitContainer2.Width;
-            isDetailWindowOpen = false;
+
+            CloseDetailWindow();
 
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
@@ -873,7 +900,7 @@ namespace WellaTodo
 
             if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                SaveFile();
+                Save_File();
             }
 
             m_selectedMainMenu = temp;
@@ -914,11 +941,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (cnt == 0)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (cnt == 0) CloseDetailWindow();
             Set_TodoItem_Width();
 
             m_selectedMainMenu = 2; // 오늘 할 일
@@ -959,11 +982,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (cnt == 0)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (cnt == 0) CloseDetailWindow();
             Set_TodoItem_Width();
 
             m_selectedMainMenu = 3; // 중요
@@ -1006,11 +1025,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (cnt == 0)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (cnt == 0) CloseDetailWindow();
             Set_TodoItem_Width();
 
             m_selectedMainMenu = 4; //계획된 일정
@@ -1051,11 +1066,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (cnt == 0)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (cnt == 0) CloseDetailWindow();
             Set_TodoItem_Width();
 
             m_selectedMainMenu = 5; // 완료됨
@@ -1089,11 +1100,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            if (cnt == 0)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (cnt == 0) CloseDetailWindow();
             Set_TodoItem_Width();
 
             m_selectedMainMenu = 6; // 모든 작업
@@ -1196,6 +1203,36 @@ namespace WellaTodo
             }
         }
 
+        private void textBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox2_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox2_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox2_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox2);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox2.ContextMenu = textboxMenu;
+
+                textBox2.ContextMenu.Show(textBox2, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox2(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox2.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox2.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+        private void OnCopyMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Copy(); }
+        private void OnCutMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Cut(); }
+        private void OnPasteMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Paste(); }
+
         private void textBox2_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1221,7 +1258,38 @@ namespace WellaTodo
         // 상세창 처리 부분 (제목 / 완료 / 중요 / 메모 / 위아래 / 닫기 / 삭제)
         //
 
-        //상세창 제목 키 입력
+        //상세창 제목 입력
+        private void textBox3_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox3_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox3_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox3_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox3);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox3.ContextMenu = textboxMenu;
+
+                textBox3.ContextMenu.Show(textBox3, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox3(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox3.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox3.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+
+        private void OnCopyMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Copy(); }
+        private void OnCutMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Cut(); }
+        private void OnPasteMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Paste(); }
+
         private void textBox3_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1259,7 +1327,6 @@ namespace WellaTodo
             }
         }
 
-        //상세창 제목 커서 벗어남
         private void textBox3_Leave(object sender, EventArgs e)
         {
             if (textBox3.Text.Trim().Length == 0)
@@ -1296,14 +1363,14 @@ namespace WellaTodo
             if (e.Button == MouseButtons.Right)
             {
                 ContextMenu textboxMenu = new ContextMenu();
-                MenuItem extendMemo = new MenuItem("메모확장", new EventHandler(OnExtendMemo_Click));
-                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_Click));
-                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_Click));
-                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_Click));
-                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_Click));
-                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_Click));
+                MenuItem extendMemo = new MenuItem("메모확장", new EventHandler(OnExtendMemo_textBox1_Click));
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox1_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox1_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox1_Click));
+                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_textBox1_Click));
+                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_textBox1_Click));
 
-                textboxMenu.Popup += new EventHandler(OnPopupEvent);
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox1);
                 textboxMenu.MenuItems.Add(extendMemo);
                 textboxMenu.MenuItems.Add("-");
                 textboxMenu.MenuItems.Add(copyMenu);
@@ -1318,7 +1385,7 @@ namespace WellaTodo
             }
         }
 
-        private void OnPopupEvent(object sender, EventArgs e)
+        private void OnPopupEvent_textBox1(object sender, EventArgs e)
         {
             ContextMenu ctm = (ContextMenu)sender;
 
@@ -1329,7 +1396,7 @@ namespace WellaTodo
             ctm.MenuItems[7].Enabled = textBox1.CanUndo; // undo
         }
 
-        private void OnExtendMemo_Click(object sender, EventArgs e)
+        private void OnExtendMemo_textBox1_Click(object sender, EventArgs e)
         {
             memoForm.StartPosition = FormStartPosition.Manual;
             memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
@@ -1342,30 +1409,23 @@ namespace WellaTodo
             Console.WriteLine("메모 저장");
         }
 
-        private void OnCopyMenu_Click(object sender, EventArgs e) { textBox1.Copy(); }
-        private void OnCutMenu_Click(object sender, EventArgs e) { textBox1.Cut(); }
-        private void OnPasteMenu_Click(object sender, EventArgs e) { textBox1.Paste(); }
-        private void OnSelectAllMenu_Click(object sender, EventArgs e) { textBox1.SelectAll(); }
-        private void OnUndoMenu_Click(object sender, EventArgs e) { textBox1.Undo(); }
+        private void OnCopyMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Copy(); }
+        private void OnCutMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Cut(); }
+        private void OnPasteMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Paste(); }
+        private void OnSelectAllMenu_textBox1_Click(object sender, EventArgs e) { textBox1.SelectAll(); }
+        private void OnUndoMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Undo(); }
 
         // 상세창 닫기 버튼
         private void button1_Click(object sender, EventArgs e)
         {
-            if (isDetailWindowOpen)
-            {
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
-            }
+            if (isDetailWindowOpen) CloseDetailWindow();
             Set_TodoItem_Width();
         }
 
         //상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
-            if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
-            {
-                return;
-            }
+            if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
             int pos = 0;
             if (isDetailWindowOpen)
@@ -1383,13 +1443,14 @@ namespace WellaTodo
                     }
                     pos++;
                 }
-                splitContainer2.SplitterDistance = splitContainer2.Width;
-                isDetailWindowOpen = false;
+                CloseDetailWindow();
             }
             Set_TodoItem_Width();
         }
 
+        //
         //상세창 완료 체크시
+        //
         private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
@@ -1425,7 +1486,9 @@ namespace WellaTodo
             roundCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
+        //
         //상세창 중요 체크시
+        //
         private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
             if (isDetailWindowOpen)
@@ -1460,16 +1523,9 @@ namespace WellaTodo
             starCheckbox1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        // 끝낼때 저장 여부 묻기
-        private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                SaveFile();
-            }
-        }
-
+        //
         // 상세창 - 나의 하루에 추가 메뉴
+        //
         private void roundLabel1_Click(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
@@ -1504,7 +1560,9 @@ namespace WellaTodo
                 roundLabel1.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
         }
 
+        //
         // 상세창 - 미리 알림 메뉴
+        //
         private void roundLabel2_MouseEnter(object sender, EventArgs e)
         {
             roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1637,7 +1695,9 @@ namespace WellaTodo
             SetInformationText();
         }
 
+        //
         // 상세창 - 기한 설정 메뉴
+        //
         private void roundLabel3_MouseEnter(object sender, EventArgs e)
         {
             roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1735,7 +1795,9 @@ namespace WellaTodo
             SetInformationText();
         }
 
+        //
         // 상세창 - 반복 메뉴
+        //
         private void roundLabel4_MouseEnter(object sender, EventArgs e)
         {
             roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1874,6 +1936,9 @@ namespace WellaTodo
             SetInformationText();
         }
 
+        //
+        // upArrow
+        //
         private void upArrow_MouseEnter(object sender, EventArgs e)
         {
             upArrow.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1901,11 +1966,13 @@ namespace WellaTodo
                 m_Data.Insert(pos - 1, dc); //삽입
 
                 m_present_data_position = pos - 1;
-
                 SendDataToDetailWindow();
             }
         }
 
+        //
+        // downArrow
+        //
         private void downArrow_MouseEnter(object sender, EventArgs e)
         {
             downArrow.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1921,7 +1988,6 @@ namespace WellaTodo
             int pos = m_present_data_position;
 
             if (pos == (m_Data.Count - 1)) return;
-
             if (m_Data[pos+1].DC_complete) return;
 
             if (!m_Data[pos].DC_complete)
@@ -1935,7 +2001,6 @@ namespace WellaTodo
                 m_Data.Insert(pos + 1, dc); //삽입
 
                 m_present_data_position = pos + 1;
-
                 SendDataToDetailWindow();
             }
         }
@@ -2088,10 +2153,7 @@ namespace WellaTodo
         {
             string infoText = "";
 
-            if (m_Data[pos].DC_myToday)
-            {
-                infoText = infoText + "[오늘 할일]";
-            }
+            if (m_Data[pos].DC_myToday) infoText += "[오늘 할일]";
 
             switch (m_Data[pos].DC_remindType)
             {
