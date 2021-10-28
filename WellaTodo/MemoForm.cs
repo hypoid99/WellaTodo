@@ -29,6 +29,8 @@ namespace WellaTodo
         {
             textBox1.Text = TextBoxString;
             textBox1.SelectionStart = textBox1.Text.Length;
+
+            textBox1.Font = new Font("맑은고딕", 14.0f, FontStyle.Regular);
         }
 
         private void MemoForm_FormClosing(object sender, FormClosingEventArgs e)

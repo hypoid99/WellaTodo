@@ -210,7 +210,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Location = new System.Drawing.Point(10, 10);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -229,7 +229,7 @@
             this.splitContainer2.Panel2MinSize = 1;
             this.splitContainer2.Size = new System.Drawing.Size(600, 340);
             this.splitContainer2.SplitterDistance = 306;
-            this.splitContainer2.SplitterWidth = 5;
+            this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
             // 
             // flowLayoutPanel2
@@ -238,7 +238,7 @@
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(306, 340);
             this.flowLayoutPanel2.TabIndex = 0;
@@ -289,6 +289,7 @@
             this.textBox1.TabIndex = 6;
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.textBox1.MouseLeave += new System.EventHandler(this.textBox1_MouseLeave);
             // 
             // openFileDialog1
             // 

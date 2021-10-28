@@ -160,7 +160,7 @@ namespace WellaTodo
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             Rectangle rc = ClientRectangle;
 
-            g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
+            g.FillRectangle(new SolidBrush(BackColor), rc.Left-1, rc.Top-1, rc.Width+1, rc.Height+1);
             g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width-1, rc.Height-1);
             //g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), outerBorderPath);
         }
