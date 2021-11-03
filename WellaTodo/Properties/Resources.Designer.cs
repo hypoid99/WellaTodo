@@ -63,39 +63,9 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap check_Round {
+        internal static System.Drawing.Bitmap outline_info_black_24dp {
             get {
-                object obj = ResourceManager.GetObject("check_Round", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap check_Star {
-            get {
-                object obj = ResourceManager.GetObject("check_Star", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap uncheck_Round {
-            get {
-                object obj = ResourceManager.GetObject("uncheck_Round", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap uncheck_Star {
-            get {
-                object obj = ResourceManager.GetObject("uncheck_Star", resourceCulture);
+                object obj = ResourceManager.GetObject("outline_info_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

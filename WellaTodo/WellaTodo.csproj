@@ -59,6 +59,12 @@
       <DependentUpon>CarendarForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CDataCell.cs" />
+    <Compile Include="LabelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LabelEditor.Designer.cs">
+      <DependentUpon>LabelEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoginSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,12 @@
     <Compile Include="Todo_Item.Designer.cs">
       <DependentUpon>Todo_Item.cs</DependentUpon>
     </Compile>
+    <Compile Include="TwoLineList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TwoLineList.Designer.cs">
+      <DependentUpon>TwoLineList.cs</DependentUpon>
+    </Compile>
     <Compile Include="WellaTodo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AlarmForm.resx">
@@ -145,6 +157,9 @@
     <EmbeddedResource Include="Todo_Item.resx">
       <DependentUpon>Todo_Item.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TwoLineList.resx">
+      <DependentUpon>TwoLineList.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -159,19 +174,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\check_Round1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\check_Round.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\check_Round11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\check_Round111.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\check_Round1111.png" />
+    <None Include="outline_info_black_24dp.png" />
+    <Content Include="Resources\outline_info_black_24dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -74,6 +74,11 @@ namespace WellaTodo
         public Todo_Item()
         {
             InitializeComponent();
+
+            TD_title = "입력하세요";
+            TD_complete = false;
+            TD_important = false;
+            TD_infomation = "";
         }
 
         public Todo_Item(string text, bool chk_complete, bool chk_important)
@@ -90,6 +95,7 @@ namespace WellaTodo
         {
             Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
             BackColor = PSEUDO_BACK_COLOR;
+            Margin = new Padding(3, 1, 3, 1);
 
             roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);

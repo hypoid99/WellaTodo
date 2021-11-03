@@ -9,6 +9,8 @@ namespace WellaTodo
     [Serializable]
     public class CDataCell
     {
+        private string _groupName;
+        private string _listName;
         private string _title;
         private bool _complete;
         private bool _important;

@@ -1,4 +1,4 @@
-﻿// copyright honeysoft v0.14 -> v0.7
+﻿// copyright honeysoft v0.14 -> v0.7 -> v0.8
 
 using System;
 using System.Collections.Generic;
@@ -29,8 +29,8 @@ namespace WellaTodo
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_TEXTBOX_BACK_COLOR = Color.LightCyan;
-        private Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.White;
-        //static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
+        //static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.White;
+        static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
         static readonly string FONT_NAME = "맑은고딕";
         static readonly float FONT_SIZE = 9.0f;
@@ -52,6 +52,7 @@ namespace WellaTodo
 
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
+
         LoginSettingForm loginSettingForm = new LoginSettingForm();
         AlarmForm alarmForm = new AlarmForm();
         MemoForm memoForm = new MemoForm();
@@ -124,6 +125,33 @@ namespace WellaTodo
             splitContainer1.Panel1MinSize = 100;
             splitContainer1.Panel2MinSize = 200;
 
+            labelUserName.Dock = DockStyle.Top;
+            labelUserName.Text = "Noname";
+            labelUserName.Size = new Size(labelUserName.Size.Width, 50);
+
+            textBox4.Dock = DockStyle.Bottom;
+
+
+            Image img = new Bitmap(Properties.Resources.outline_info_black_24dp);
+            TwoLineList list1 = new TwoLineList(img, "primary1", "secondary", "meta");
+            TwoLineList list2 = new TwoLineList(img, "primary2", "", "meta");
+            TwoLineList list3 = new TwoLineList(img, "primary3", "secondary", "meta");
+            flowLayoutPanel_Menulist.Visible = true;
+            flowLayoutPanel_Menulist.Margin = new Padding(0);
+            flowLayoutPanel_Menulist.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel_Menulist.WrapContents = false;
+            flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
+            flowLayoutPanel_Menulist.Location = new Point(labelUserName.Location.X, labelUserName.Height);
+            flowLayoutPanel_Menulist.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height);
+            flowLayoutPanel_Menulist.Controls.Add(list1);
+            flowLayoutPanel_Menulist.Controls.Add(list2);
+            flowLayoutPanel_Menulist.Controls.Add(list3);
+            foreach (TwoLineList ctr in flowLayoutPanel_Menulist.Controls)
+            {
+                ctr.Width = flowLayoutPanel_Menulist.Width;
+            }
+
+            // 메뉴
             label1.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
             label2.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
             label3.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
@@ -132,7 +160,20 @@ namespace WellaTodo
             label6.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
             label7.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
 
+            flowLayoutPanel1.Visible = false;
+
+            flowLayoutPanel1.Margin = new Padding(0);
+            flowLayoutPanel1.Width = splitContainer1.SplitterDistance;
+            flowLayoutPanel1.Location = new Point(labelUserName.Location.X, labelUserName.Height);
+            flowLayoutPanel1.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height);
             flowLayoutPanel1.BackColor = PSEUDO_BACK_COLOR;
+
+            flowLayoutPanel1.AutoScroll = false;
+            flowLayoutPanel1.HorizontalScroll.Maximum = 0;
+            flowLayoutPanel1.HorizontalScroll.Enabled = false;
+            flowLayoutPanel1.HorizontalScroll.Visible = false;
+            flowLayoutPanel1.AutoScroll = true;
+
             flowLayoutPanel1.Controls.Add(label1);
             flowLayoutPanel1.Controls.Add(label2);
             flowLayoutPanel1.Controls.Add(label3);
@@ -143,16 +184,18 @@ namespace WellaTodo
 
             foreach (Label ctr in flowLayoutPanel1.Controls)
             {
-                ctr.Width = splitContainer1.SplitterDistance;
+                ctr.Width = flowLayoutPanel1.Width - 2;
                 ctr.BackColor = PSEUDO_BACK_COLOR;
             }
 
             splitContainer2.SplitterDistance = splitContainer2.Width;
             splitContainer2.IsSplitterFixed = true;
             splitContainer2.Location = new Point(0, 0);
+
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
             splitContainer2.Panel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
 
+            // 태스크 항목
             flowLayoutPanel2.AutoScroll = false;
             flowLayoutPanel2.HorizontalScroll.Maximum = 0;
             flowLayoutPanel2.HorizontalScroll.Enabled = false;
@@ -164,6 +207,7 @@ namespace WellaTodo
             textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
             textBox2.Text = "+ 작업 추가";
 
+            // 상세창
             roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
@@ -264,9 +308,20 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Repaint()
         {
+            flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
+            flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height;
+
+            foreach (TwoLineList ctr in flowLayoutPanel_Menulist.Controls)
+            {
+                ctr.Width = flowLayoutPanel_Menulist.Width - 2;
+            }
+
+            flowLayoutPanel1.Width = splitContainer1.SplitterDistance;
+            flowLayoutPanel1.Height = splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height;
+
             foreach (Label ctr in flowLayoutPanel1.Controls)
             {
-                ctr.Width = splitContainer1.SplitterDistance;
+                ctr.Width = flowLayoutPanel1.Width - 2;
             }
 
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
@@ -492,10 +547,10 @@ namespace WellaTodo
                     if (item.IsCompleteClicked)
                     {
                         Complete_Process(item, pos);
-                        if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
-                        if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
-                        if (m_selectedMainMenu == 4) label4_Click(sender, e); // 계획된 일정에서 실행
-                        if (m_selectedMainMenu == 5) label5_Click(sender, e); // 완료됨에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.MYTODAY_MENU) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) label3_Click(sender, e); // 중요 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.DEADLINE_MENU) label4_Click(sender, e); // 계획된 일정에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.TODO_ITEM_MENU) label5_Click(sender, e); // 완료됨에서 실행
                         break;
                     }
 
@@ -503,7 +558,7 @@ namespace WellaTodo
                     if (item.IsImportantClicked)
                     {
                         Important_Process(item, pos);
-                        if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) label3_Click(sender, e); // 중요 메뉴에서 실행
                         break;
                     }
 
@@ -735,6 +790,7 @@ namespace WellaTodo
             memoForm.StartPosition = FormStartPosition.Manual;
             memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
             memoForm.TextBoxString = textBox1.Text;
+            memoForm.Text = m_Data[m_present_data_position].DC_title;
             memoForm.ShowDialog();
             textBox1.Text = memoForm.TextBoxString;
             textBox1.SelectionStart = textBox1.Text.Length;
@@ -1057,6 +1113,16 @@ namespace WellaTodo
                 item.Visible = true;
             }
 
+            /* LINQ Query
+            var subset = from Todo_Item item in flowLayoutPanel2.Controls
+                         where item.TD_complete == true
+                         select item;
+            foreach (Todo_Item item in subset)
+            {
+                Console.WriteLine(item.TD_title.ToString () + "is compelte" + item.TD_complete.ToString());
+            }
+            */
+
             Set_TodoItem_Width();
             flowLayoutPanel2.AutoScroll = true;
             m_selectedMainMenu = (int)MenuList.TODO_ITEM_MENU; // 모든 작업
@@ -1102,7 +1168,6 @@ namespace WellaTodo
             int pos = 1;
             foreach (Label ctr in flowLayoutPanel1.Controls)
             {
-                ctr.Width = splitContainer1.SplitterDistance;
                 if (pos == m_selectedMainMenu)
                     ctr.BackColor = PSEUDO_SELECTED_COLOR;
                 else
