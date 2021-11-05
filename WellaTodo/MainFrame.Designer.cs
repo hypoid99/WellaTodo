@@ -33,14 +33,6 @@
             this.flowLayoutPanel_Menulist = new System.Windows.Forms.FlowLayoutPanel();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.labelUserName = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -55,7 +47,6 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -75,7 +66,6 @@
             this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel_Menulist);
             this.splitContainer1.Panel1.Controls.Add(this.textBox4);
             this.splitContainer1.Panel1.Controls.Add(this.labelUserName);
-            this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel1);
             this.splitContainer1.Panel1MinSize = 100;
             // 
             // splitContainer1.Panel2
@@ -94,145 +84,31 @@
             // 
             // flowLayoutPanel_Menulist
             // 
-            this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 247);
+            this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 43);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
-            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(197, 100);
+            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(197, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
             // 
             // textBox4
             // 
-            this.textBox4.BackColor = System.Drawing.Color.PaleGreen;
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.textBox4.Location = new System.Drawing.Point(0, 378);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(204, 25);
             this.textBox4.TabIndex = 2;
+            this.textBox4.Enter += new System.EventHandler(this.textBox4_Enter);
+            this.textBox4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox4_KeyDown);
+            this.textBox4.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox4_KeyUp);
+            this.textBox4.Leave += new System.EventHandler(this.textBox4_Leave);
+            this.textBox4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox4_MouseDown);
             // 
             // labelUserName
             // 
-            this.labelUserName.BackColor = System.Drawing.Color.PaleGreen;
-            this.labelUserName.Dock = System.Windows.Forms.DockStyle.Top;
             this.labelUserName.Location = new System.Drawing.Point(0, 0);
             this.labelUserName.Name = "labelUserName";
             this.labelUserName.Size = new System.Drawing.Size(204, 40);
             this.labelUserName.TabIndex = 1;
             this.labelUserName.Text = "계정";
             this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.flowLayoutPanel1.Controls.Add(this.label1);
-            this.flowLayoutPanel1.Controls.Add(this.label2);
-            this.flowLayoutPanel1.Controls.Add(this.label3);
-            this.flowLayoutPanel1.Controls.Add(this.label4);
-            this.flowLayoutPanel1.Controls.Add(this.label5);
-            this.flowLayoutPanel1.Controls.Add(this.label6);
-            this.flowLayoutPanel1.Controls.Add(this.label7);
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 44);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(10);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(204, 184);
-            this.flowLayoutPanel1.TabIndex = 0;
-            this.flowLayoutPanel1.WrapContents = false;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(200, 40);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "로그인";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
-            this.label1.MouseEnter += new System.EventHandler(this.label1_MouseEnter);
-            this.label1.MouseLeave += new System.EventHandler(this.label1_MouseLeave);
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.SystemColors.Control;
-            this.label2.Location = new System.Drawing.Point(0, 40);
-            this.label2.Margin = new System.Windows.Forms.Padding(0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(200, 40);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "오늘할일";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            this.label2.MouseEnter += new System.EventHandler(this.label2_MouseEnter);
-            this.label2.MouseLeave += new System.EventHandler(this.label2_MouseLeave);
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.SystemColors.Control;
-            this.label3.Location = new System.Drawing.Point(0, 80);
-            this.label3.Margin = new System.Windows.Forms.Padding(0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(200, 40);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "중요";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            this.label3.MouseEnter += new System.EventHandler(this.label3_MouseEnter);
-            this.label3.MouseLeave += new System.EventHandler(this.label3_MouseLeave);
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(0, 120);
-            this.label4.Margin = new System.Windows.Forms.Padding(0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(200, 40);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "계획된 일정";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
-            this.label4.MouseEnter += new System.EventHandler(this.label4_MouseEnter);
-            this.label4.MouseLeave += new System.EventHandler(this.label4_MouseLeave);
-            // 
-            // label5
-            // 
-            this.label5.BackColor = System.Drawing.SystemColors.Control;
-            this.label5.Location = new System.Drawing.Point(0, 160);
-            this.label5.Margin = new System.Windows.Forms.Padding(0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(200, 40);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "완료됨";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.Click += new System.EventHandler(this.label5_Click);
-            this.label5.MouseEnter += new System.EventHandler(this.label5_MouseEnter);
-            this.label5.MouseLeave += new System.EventHandler(this.label5_MouseLeave);
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.SystemColors.Control;
-            this.label6.Location = new System.Drawing.Point(0, 200);
-            this.label6.Margin = new System.Windows.Forms.Padding(0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(200, 40);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "작업";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label6.Click += new System.EventHandler(this.label6_Click);
-            this.label6.MouseEnter += new System.EventHandler(this.label6_MouseEnter);
-            this.label6.MouseLeave += new System.EventHandler(this.label6_MouseLeave);
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(0, 240);
-            this.label7.Margin = new System.Windows.Forms.Padding(0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(200, 40);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "출력창";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
-            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
-            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
             // 
             // textBox2
             // 
@@ -358,7 +234,6 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
@@ -371,13 +246,6 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
@@ -388,7 +256,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_Menulist;

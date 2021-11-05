@@ -174,7 +174,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="outline_info_black_24dp.png" />
+    <None Include="icon\outline_wb_sunny_black_24dp.png" />
+    <None Include="icon\outline_grade_black_24dp.png" />
+    <None Include="icon\outline_event_note_black_24dp.png" />
+    <None Include="icon\outline_check_circle_black_24dp.png" />
+    <None Include="icon\outline_home_black_24dp.png" />
+    <None Include="icon\outline_list_black_24dp.png" />
     <Content Include="Resources\outline_info_black_24dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

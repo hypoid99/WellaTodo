@@ -12,6 +12,8 @@ namespace WellaTodo
 {
     public partial class TwoLineList : UserControl
     {
+        public event TwoLineList_Event TwoLineList_Click;
+
         static readonly int LIST_WIDTH = 250;
         static readonly int LIST_HEIGHT = 40;
 
@@ -23,9 +25,6 @@ namespace WellaTodo
         static readonly float FONT_SIZE_PRIMARY = 11.0f;
         static readonly float FONT_SIZE_SECONDARY = 9.0f;
         static readonly float FONT_SIZE_METADATA = 9.0f;
-
-        static readonly bool MOUSE_ENTER = true;
-        static readonly bool MOUSE_LEAVE = false;
 
         public Image IconImage
         {
@@ -51,7 +50,17 @@ namespace WellaTodo
             set => label_Metadata.Text = value;
         }
 
-        public bool IsSelected { get; set; } = false;
+        private bool isSelected = false;
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                isSelected = value;
+                ChangeSelectedColor();
+            }
+        }
+
 
         public TwoLineList()
         {
@@ -94,8 +103,11 @@ namespace WellaTodo
             label_SecondaryText.Location = new Point(30, 20);
             label_SecondaryText.BackColor = BACK_COLOR;
 
+            label_Metadata.AutoSize = false;
             label_Metadata.Font = new Font(FONT_NAME, FONT_SIZE_METADATA, FontStyle.Regular);
-            label_Metadata.Location = new Point(Width - 40, 15);
+            label_Metadata.Location = new Point(Width - 35, 3);
+            label_Metadata.Size = new Size(30, 30);
+            label_Metadata.TextAlign = ContentAlignment.MiddleRight;
             label_Metadata.BackColor = BACK_COLOR;
         }
 
@@ -119,24 +131,46 @@ namespace WellaTodo
                 label_SecondaryText.AutoSize = true;
             }
 
-            label_Metadata.Location = new Point(Width - 40, 10);
+            label_Metadata.Location = new Point(Width - 35, 3);
         }
 
-        private void ChangeBackColor(bool isMouseEnter)
+        private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
-            if (isMouseEnter)
+            if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
+        }
+
+        private void ChangeToBackColor()
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+        }
+
+        private void ChangeToHighlightColor()
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+        }
+
+        private void ChangeSelectedColor()
+        {
+            if (IsSelected)
             {
-                BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-                label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-                label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-                label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+                BackColor = SELECTED_COLOR;
+                label_PrimaryText.BackColor = SELECTED_COLOR;
+                label_SecondaryText.BackColor = SELECTED_COLOR;
+                label_Metadata.BackColor = SELECTED_COLOR;
+
             }
             else
             {
-                BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-                label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-                label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-                label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+                BackColor = BACK_COLOR;
+                label_PrimaryText.BackColor = BACK_COLOR;
+                label_SecondaryText.BackColor = BACK_COLOR;
+                label_Metadata.BackColor = BACK_COLOR;
             }
         }
 
@@ -145,52 +179,77 @@ namespace WellaTodo
         //---------------------------------------------------------
         private void TwoLineList_MouseEnter(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_ENTER);
+            ChangeToHighlightColor();
         }
 
         private void TwoLineList_MouseLeave(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_LEAVE);
+            ChangeToBackColor();
         }
 
         private void pictureBox_Icon_MouseEnter(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_ENTER);
+            ChangeToHighlightColor();
         }
 
         private void pictureBox_Icon_MouseLeave(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_LEAVE);
+            ChangeToBackColor();
         }
 
         private void label_PrimaryText_MouseEnter(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_ENTER);
+            ChangeToHighlightColor();
         }
 
         private void label_PrimaryText_MouseLeave(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_LEAVE);
+            ChangeToBackColor();
         }
 
         private void label_SecondaryText_MouseEnter(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_ENTER);
+            ChangeToHighlightColor();
         }
 
         private void label_SecondaryText_MouseLeave(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_LEAVE);
+            ChangeToBackColor();
         }
 
         private void label_Metadata_MouseEnter(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_ENTER);
+            ChangeToHighlightColor();
         }
 
         private void label_Metadata_MouseLeave(object sender, EventArgs e)
         {
-            ChangeBackColor(MOUSE_LEAVE);
+            ChangeToBackColor();
+        }
+
+        private void TwoLineList_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
+        }
+
+        private void pictureBox_Icon_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
+        }
+
+        private void label_PrimaryText_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
+        }
+
+        private void label_SecondaryText_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
+        }
+
+        private void label_Metadata_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
         }
     }
 }

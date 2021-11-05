@@ -15,6 +15,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace WellaTodo
 {
+    public delegate void TwoLineList_Event(object sender, EventArgs e);
     public delegate void UserControl_Event(object sender, EventArgs e);
 
     public partial class MainFrame : Form, IView, IModelObserver
@@ -24,6 +25,9 @@ namespace WellaTodo
         static readonly string WINDOW_CAPTION = "Wella Todo v0.8";
         static readonly int WINDOW_WIDTH = 1000;
         static readonly int WINDOW_HEIGHT = 500;
+        static readonly int MENU_WINDOW_WIDTH = 200;
+        static readonly int DETAIL_WINDOW_WIDTH = 260;
+        static readonly int DETAIL_WINDOW_X1 = 5;
 
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
@@ -32,12 +36,8 @@ namespace WellaTodo
         //static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
-        static readonly string FONT_NAME = "맑은고딕";
-        static readonly float FONT_SIZE = 9.0f;
-
-        static readonly int DETAIL_WINDOW_WIDTH = 260;
-        static readonly int DETAIL_WINDOW_X1 = 5;
-        static readonly int MENU_WINDOW_WIDTH = 150;
+        //static readonly string FONT_NAME = "맑은고딕";
+        //static readonly float FONT_SIZE = 9.0f;
 
         public enum MenuList 
         { 
@@ -52,6 +52,7 @@ namespace WellaTodo
 
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
+        List<TwoLineList> m_ListName = new List<TwoLineList>();
 
         LoginSettingForm loginSettingForm = new LoginSettingForm();
         AlarmForm alarmForm = new AlarmForm();
@@ -72,10 +73,11 @@ namespace WellaTodo
 
         bool isDetailWindowOpen = false;
         bool isTextboxClicked = false;
+        bool isTextbox4Clicked = false;
 
         int m_present_data_position = -1; // 초기값 설정
         int m_before_data_position;
-        int m_selectedMainMenu = 6; // 초기 작업 메뉴 설정
+        int m_selectedMainMenu = (int)MenuList.TODO_ITEM_MENU; // 초기 작업 메뉴 설정
 
         public MainFrame()
         {
@@ -99,9 +101,6 @@ namespace WellaTodo
             Initiate_View();
             Initiate_Item();
 
-            m_selectedMainMenu = 6; // 작업
-            Changed_MainMenu();
-
             timer1.Interval = 60000;
             timer1.Enabled = true;
         }
@@ -124,74 +123,63 @@ namespace WellaTodo
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
             splitContainer1.Panel1MinSize = 100;
             splitContainer1.Panel2MinSize = 200;
+            splitContainer1.Panel1.BackColor = PSEUDO_BACK_COLOR;
+            splitContainer1.Panel2.BackColor = PSEUDO_BACK_COLOR;
 
-            labelUserName.Dock = DockStyle.Top;
+
             labelUserName.Text = "Noname";
-            labelUserName.Size = new Size(labelUserName.Size.Width, 50);
+            labelUserName.Location = new Point(0, 0);
+            labelUserName.Size = new Size(splitContainer1.Panel1.Width, 50);
+            labelUserName.BackColor = PSEUDO_BACK_COLOR;
 
-            textBox4.Dock = DockStyle.Bottom;
+            // 메뉴
+            TwoLineList twolinelist_Menu1 = new TwoLineList(new Bitmap(Properties.Resources.outline_wb_sunny_black_24dp), "오늘 할 일", "", "");
+            TwoLineList twolinelist_Menu2 = new TwoLineList(new Bitmap(Properties.Resources.outline_grade_black_24dp), "중요", "", "");
+            TwoLineList twolinelist_Menu3 = new TwoLineList(new Bitmap(Properties.Resources.outline_event_note_black_24dp), "계획된 일정", "", "");
+            TwoLineList twolinelist_Menu4 = new TwoLineList(new Bitmap(Properties.Resources.outline_check_circle_black_24dp), "완료됨", "", "");
+            TwoLineList twolinelist_Menu5 = new TwoLineList(new Bitmap(Properties.Resources.outline_home_black_24dp), "작업", "", "");
+            twolinelist_Menu1.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu2.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu3.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu4.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu5.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
 
+            flowLayoutPanel_Menulist.AutoScroll = false;
+            flowLayoutPanel_Menulist.HorizontalScroll.Maximum = 0;
+            flowLayoutPanel_Menulist.HorizontalScroll.Enabled = false;
+            flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
+            flowLayoutPanel_Menulist.AutoScroll = true;
 
-            Image img = new Bitmap(Properties.Resources.outline_info_black_24dp);
-            TwoLineList list1 = new TwoLineList(img, "primary1", "secondary", "meta");
-            TwoLineList list2 = new TwoLineList(img, "primary2", "", "meta");
-            TwoLineList list3 = new TwoLineList(img, "primary3", "secondary", "meta");
-            flowLayoutPanel_Menulist.Visible = true;
+            flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
             flowLayoutPanel_Menulist.Margin = new Padding(0);
             flowLayoutPanel_Menulist.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel_Menulist.WrapContents = false;
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
             flowLayoutPanel_Menulist.Location = new Point(labelUserName.Location.X, labelUserName.Height);
-            flowLayoutPanel_Menulist.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height);
-            flowLayoutPanel_Menulist.Controls.Add(list1);
-            flowLayoutPanel_Menulist.Controls.Add(list2);
-            flowLayoutPanel_Menulist.Controls.Add(list3);
+            flowLayoutPanel_Menulist.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height - 30);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu1);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu2);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu3);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu4);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu5);
+
+            m_ListName.Add(twolinelist_Menu5);
+            twolinelist_Menu5.IsSelected = true;
+
             foreach (TwoLineList ctr in flowLayoutPanel_Menulist.Controls)
             {
                 ctr.Width = flowLayoutPanel_Menulist.Width;
             }
+            
 
-            // 메뉴
-            label1.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label2.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label3.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label4.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label5.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label6.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label7.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-
-            flowLayoutPanel1.Visible = false;
-
-            flowLayoutPanel1.Margin = new Padding(0);
-            flowLayoutPanel1.Width = splitContainer1.SplitterDistance;
-            flowLayoutPanel1.Location = new Point(labelUserName.Location.X, labelUserName.Height);
-            flowLayoutPanel1.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height);
-            flowLayoutPanel1.BackColor = PSEUDO_BACK_COLOR;
-
-            flowLayoutPanel1.AutoScroll = false;
-            flowLayoutPanel1.HorizontalScroll.Maximum = 0;
-            flowLayoutPanel1.HorizontalScroll.Enabled = false;
-            flowLayoutPanel1.HorizontalScroll.Visible = false;
-            flowLayoutPanel1.AutoScroll = true;
-
-            flowLayoutPanel1.Controls.Add(label1);
-            flowLayoutPanel1.Controls.Add(label2);
-            flowLayoutPanel1.Controls.Add(label3);
-            flowLayoutPanel1.Controls.Add(label4);
-            flowLayoutPanel1.Controls.Add(label5);
-            flowLayoutPanel1.Controls.Add(label6);
-            flowLayoutPanel1.Controls.Add(label7);
-
-            foreach (Label ctr in flowLayoutPanel1.Controls)
-            {
-                ctr.Width = flowLayoutPanel1.Width - 2;
-                ctr.BackColor = PSEUDO_BACK_COLOR;
-            }
+            textBox4.Location = new Point(2, splitContainer1.Panel1.Height - 35);
+            textBox4.Size = new Size(splitContainer1.Panel1.Width - 2, 25);
+            textBox4.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
+            textBox4.Text = "+ 새 목록 추가";
 
             splitContainer2.SplitterDistance = splitContainer2.Width;
             splitContainer2.IsSplitterFixed = true;
             splitContainer2.Location = new Point(0, 0);
-
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
             splitContainer2.Panel2.BackColor = PSEUDO_DETAIL_WINDOW_BACK_COLOR;
 
@@ -309,19 +297,16 @@ namespace WellaTodo
         private void Repaint()
         {
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
-            flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height;
+            flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height - 30;
+
+            labelUserName.Width = flowLayoutPanel_Menulist.Width;
+
+            textBox4.Location = new Point(10, splitContainer1.Panel1.Height - 35);
+            textBox4.Size = new Size(flowLayoutPanel_Menulist.Width - 2, 25);
 
             foreach (TwoLineList ctr in flowLayoutPanel_Menulist.Controls)
             {
                 ctr.Width = flowLayoutPanel_Menulist.Width - 2;
-            }
-
-            flowLayoutPanel1.Width = splitContainer1.SplitterDistance;
-            flowLayoutPanel1.Height = splitContainer1.Panel1.Height - labelUserName.Height - textBox4.Height;
-
-            foreach (Label ctr in flowLayoutPanel1.Controls)
-            {
-                ctr.Width = flowLayoutPanel1.Width - 2;
             }
 
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width - 5, splitContainer1.Panel2.Height - 50);
@@ -336,6 +321,41 @@ namespace WellaTodo
             }
 
             Set_TodoItem_Width();
+        }
+
+        // -------------------------------------------------------------
+        // 스프릿컨테이너-1 이벤트
+        //-------------------------------------------------------------
+        private void splitContainer1_MouseDown(object sender, MouseEventArgs e)
+        {
+            splitContainer1.IsSplitterFixed = true;
+        }
+
+        private void splitContainer1_MouseUp(object sender, MouseEventArgs e)
+        {
+            splitContainer1.IsSplitterFixed = false;
+        }
+
+        private void splitContainer1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (splitContainer1.IsSplitterFixed)
+            {
+                if (e.Button.Equals(MouseButtons.Left))
+                {
+                    if (splitContainer1.Orientation.Equals(Orientation.Vertical))
+                    {
+                        if (e.X > 0 && e.X < (splitContainer1.Width))
+                        {
+                            splitContainer1.SplitterDistance = e.X;
+                            Repaint();
+                        }
+                    }
+                }
+                else
+                {
+                    splitContainer1.IsSplitterFixed = false;
+                }
+            }
         }
 
         //--------------------------------------------------------------
@@ -434,6 +454,7 @@ namespace WellaTodo
             }
 
             Set_TodoItem_Width();
+            CheckMetadata();
         }
 
         //--------------------------------------------------------------
@@ -457,34 +478,35 @@ namespace WellaTodo
 
             switch (m_selectedMainMenu)
             {
-                case 1:     // 로그인 메뉴에서 입력됨
+                case (int)MenuList.LOGIN_SETTING_MENU:     // 로그인 메뉴에서 입력됨
                     break;
-                case 2:     // 오늘 할 일 메뉴에서 입력됨
+                case (int)MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
                     m_Data[0].DC_myToday = true;
                     m_Data[0].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
                     item.TD_infomation = MakeInformationText(0);
                     break;
-                case 3:     // 중요 메뉴에서 입력됨
+                case (int)MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
                     m_Data[0].DC_important = true;
                     item.TD_important = true;
                     item.TD_infomation = MakeInformationText(0);
                     break;
-                case 4:     // 계획된 일정 메뉴에서 입력됨
+                case (int)MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
                     m_Data[0].DC_deadlineType = 1;
                     m_Data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59);
                     item.TD_infomation = MakeInformationText(0);
                     break;
-                case 5:     // 완료됨 메뉴에서 입력됨
+                case (int)MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨
                     break;
-                case 6:     // 작업 메뉴에서 입력됨
+                case (int)MenuList.TODO_ITEM_MENU:     // 작업 메뉴에서 입력됨
                     break;
-                case 7:     // 새목록 만들기 메뉴에서 입력됨
+                case (int)MenuList.RESERVED_MENU:     // 새목록 만들기 메뉴에서 입력됨
                     break;
                 default:
                     break;
             }
             SendDataToDetailWindow();
             Set_TodoItem_Width();
+            CheckMetadata();
         }
 
         //--------------------------------------------------------------
@@ -517,6 +539,333 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
+        // 메뉴리스트를 클릭했을때 처리
+        //--------------------------------------------------------------
+        private void TwoLineList_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            switch (me.Button)
+            {
+                case MouseButtons.Left:
+                    Menulist_Left_Click(sender, me);
+                    break;
+                case MouseButtons.Right:
+                    Menulist_Right_Click(sender, me);
+                    break;
+            }
+        }
+
+        private void Menulist_Left_Click(object sender, MouseEventArgs e)
+        {
+            TwoLineList sd = (TwoLineList)sender;
+
+            int pos = 0;
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                item.IsSelected = false;
+                if (item.Equals(sd))
+                {
+                    item.IsSelected = true;
+                    switch (pos)
+                    {
+                        case 0: // 오늘 할 일
+                            Menu_MyToday(sender, e);
+                            m_selectedMainMenu = (int)MenuList.MYTODAY_MENU;
+                            break;
+                        case 1: // 중요
+                            Menu_Important(sender, e);
+                            m_selectedMainMenu = (int)MenuList.IMPORTANT_MENU;
+                            break;
+                        case 2: // 계획된 일정
+                            Menu_Planned(sender, e);
+                            m_selectedMainMenu = (int)MenuList.DEADLINE_MENU;
+                            break;
+                        case 3: // 완료됨
+                            Menu_Completed(sender, e);
+                            m_selectedMainMenu = (int)MenuList.COMPLETE_MENU;
+                            break;
+                        case 4: // 작업
+                            Menu_Task(sender, e);
+                            m_selectedMainMenu = (int)MenuList.TODO_ITEM_MENU;
+                            break;
+                        default:
+                            Console.WriteLine("click list");
+                            break;
+                    }
+                }
+                pos++;
+            }
+        }
+
+        private void Menulist_Right_Click(object sender, MouseEventArgs e)
+        {
+            TwoLineList sd = (TwoLineList)sender;
+            Console.WriteLine("Menulist_Right_Click");
+        }
+
+        private void Menu_MyToday(object sender, MouseEventArgs e)
+        {
+            CloseDetailWindow();
+            upArrow.Visible = false;
+            downArrow.Visible = false;
+
+            flowLayoutPanel2.AutoScroll = false;
+
+            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
+            {
+                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
+                if (!m_Data[i].DC_myToday || item.TD_complete)
+                    item.Visible = false;
+                else
+                    item.Visible = true;
+            }
+
+            Set_TodoItem_Width();
+            flowLayoutPanel2.AutoScroll = true;
+        }
+
+        private void Menu_Important(object sender, MouseEventArgs e)
+        {
+            CloseDetailWindow();
+            upArrow.Visible = false;
+            downArrow.Visible = false;
+
+            flowLayoutPanel2.AutoScroll = false;
+
+            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
+            {
+                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
+                if (!item.TD_important || item.TD_complete)
+                    item.Visible = false;
+                else
+                    item.Visible = true;
+            }
+
+            Set_TodoItem_Width();
+            flowLayoutPanel2.AutoScroll = true;
+        }
+
+        private void Menu_Planned(object sender, MouseEventArgs e)
+        {
+            CloseDetailWindow();
+            upArrow.Visible = false;
+            downArrow.Visible = false;
+
+            flowLayoutPanel2.AutoScroll = false;
+
+            int pos = 0;
+            int sum;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                sum = m_Data[pos].DC_remindType + m_Data[pos].DC_deadlineType + m_Data[pos].DC_repeatType;
+                if ((!m_Data[pos].DC_myToday && sum == 0) || item.TD_complete)
+                    item.Visible = false;
+                else
+                    item.Visible = true;
+                pos++;
+            }
+
+            Set_TodoItem_Width();
+            flowLayoutPanel2.AutoScroll = true;
+        }
+
+        private void Menu_Completed(object sender, MouseEventArgs e)
+        {
+            CloseDetailWindow();
+            upArrow.Visible = false;
+            downArrow.Visible = false;
+
+            flowLayoutPanel2.AutoScroll = false;
+
+            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
+            {
+                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
+                if (!item.TD_complete)
+                    item.Visible = false;
+                else
+                    item.Visible = true;
+            }
+
+            Set_TodoItem_Width();
+            flowLayoutPanel2.AutoScroll = true;
+        }
+
+        private void Menu_Task(object sender, MouseEventArgs e)
+        {
+            CloseDetailWindow();
+            upArrow.Visible = true;
+            downArrow.Visible = true;
+
+            flowLayoutPanel2.AutoScroll = false;
+
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                item.Visible = true;
+            }
+
+            Set_TodoItem_Width();
+            flowLayoutPanel2.AutoScroll = true;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            int temp;
+            temp = m_selectedMainMenu;
+            m_selectedMainMenu = (int)MenuList.LOGIN_SETTING_MENU;
+
+            loginSettingForm.StartPosition = FormStartPosition.CenterParent;
+            loginSettingForm.ShowDialog();
+
+            if (loginSettingForm.IsSaveClose)
+            {
+                if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    Save_File();
+                }
+            }
+
+            switch (loginSettingForm.ColorTheme)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+            }
+
+            m_selectedMainMenu = temp;
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            int temp;
+            temp = m_selectedMainMenu;
+            m_selectedMainMenu = (int)MenuList.RESERVED_MENU; // 새목록 만들기
+
+            outputForm.StartPosition = FormStartPosition.Manual;
+            outputForm.Location = new Point(Location.X + (Width - outputForm.Width) / 2, Location.Y + (Height - outputForm.Height) / 2);
+
+            if (outputForm.Visible)
+                outputForm.Hide();
+            else
+                outputForm.Show();
+
+            m_selectedMainMenu = temp;
+        }
+
+        //--------------------------------------------------------------
+        // 목록 추가하기 처리
+        //--------------------------------------------------------------
+        private void Add_NewList(string txt)
+        {
+            string listName = txt;
+
+            // 동일 이름의 목록 찾기 -> 발견시 뒷자리 번호 부여
+            foreach (TwoLineList item in m_ListName)
+            {
+                if(item.PrimaryText == txt)
+                {
+                    listName = txt + "(1)";
+                }
+            }
+
+            // 신규 목록 등록하기
+            TwoLineList list;
+            list = new TwoLineList(new Bitmap(Properties.Resources.outline_list_black_24dp), listName, "", "");
+            list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+
+            m_ListName.Add(list);
+            flowLayoutPanel_Menulist.Controls.Add(list);
+
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                item.Width = flowLayoutPanel_Menulist.VerticalScroll.Visible
+                ? flowLayoutPanel_Menulist.Width - SystemInformation.VerticalScrollBarWidth
+                : flowLayoutPanel_Menulist.Width;
+            }
+
+            foreach (TwoLineList item in m_ListName)
+            {
+                Console.WriteLine(item.PrimaryText);
+            }
+        }
+
+        private void textBox4_Enter(object sender, EventArgs e)
+        {
+            if (!isTextbox4Clicked) textBox4.Text = "";
+            isTextbox4Clicked = true;
+        }
+
+        private void textBox4_Leave(object sender, EventArgs e)
+        {
+            if (isTextbox4Clicked)
+            {
+                if (textBox4.Text.Trim().Length == 0)
+                {
+                    textBox4.Text = "+ 새 목록 추가";
+                    isTextbox4Clicked = false;
+                }
+            }
+            else
+            {
+                textBox4.Text = "+ 새 목록 추가";
+                isTextbox4Clicked = false;
+            }
+        }
+
+        private void textBox4_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = false;
+                e.SuppressKeyPress = false;
+                if (textBox4.Text.Trim().Length == 0) return;
+                Add_NewList(textBox4.Text);
+                textBox4.Text = "";
+            }
+        }
+
+        private void textBox4_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void textBox4_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox4_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox4_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox4_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox4);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox4.ContextMenu = textboxMenu;
+
+                textBox4.ContextMenu.Show(textBox4, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox4(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox4.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox4.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+        private void OnCopyMenu_textBox4_Click(object sender, EventArgs e) { textBox4.Copy(); }
+        private void OnCutMenu_textBox4_Click(object sender, EventArgs e) { textBox4.Cut(); }
+        private void OnPasteMenu_textBox4_Click(object sender, EventArgs e) { textBox4.Paste(); }
+
+
+        //--------------------------------------------------------------
         // 할일 항목을 클릭했을때 처리
         //--------------------------------------------------------------
         private void TodoItem_UserControl_Click(object sender, EventArgs e)
@@ -547,10 +896,10 @@ namespace WellaTodo
                     if (item.IsCompleteClicked)
                     {
                         Complete_Process(item, pos);
-                        if (m_selectedMainMenu == (int)MenuList.MYTODAY_MENU) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
-                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) label3_Click(sender, e); // 중요 메뉴에서 실행
-                        if (m_selectedMainMenu == (int)MenuList.DEADLINE_MENU) label4_Click(sender, e); // 계획된 일정에서 실행
-                        if (m_selectedMainMenu == (int)MenuList.TODO_ITEM_MENU) label5_Click(sender, e); // 완료됨에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.MYTODAY_MENU) Menu_MyToday(sender, e); // 오늘할일 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) Menu_Important(sender, e); // 중요 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.DEADLINE_MENU) Menu_Planned(sender, e); // 계획된 일정에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.COMPLETE_MENU) Menu_Completed(sender, e); // 완료됨에서 실행
                         break;
                     }
 
@@ -558,7 +907,7 @@ namespace WellaTodo
                     if (item.IsImportantClicked)
                     {
                         Important_Process(item, pos);
-                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) label3_Click(sender, e); // 중요 메뉴에서 실행
+                        if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) Menu_Important(sender, e); // 중요 메뉴에서 실행
                         break;
                     }
 
@@ -583,6 +932,7 @@ namespace WellaTodo
                 pos++;
             }
             Set_TodoItem_Width();
+            CheckMetadata();
         }
 
         private void Important_Process(Todo_Item item, int pos)
@@ -686,7 +1036,6 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add(menuEditItem);
             todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(deleteItem);
-
             int px = Control.MousePosition.X - Location.X;
             int py = Control.MousePosition.Y - Location.Y - 30;
             todoItemContextMenu.Show(this, new Point(px, py));
@@ -707,6 +1056,7 @@ namespace WellaTodo
         private void OnMyTodayMenuItem_Click(object sender, EventArgs e)
         {
             Register_MyToday();
+            CheckMetadata();
         }
 
         private void OnImportantMenuItem_Click(object sender, EventArgs e)
@@ -728,11 +1078,12 @@ namespace WellaTodo
                 {
                     item.TD_important = starCheckbox1.Checked;
                     Important_Process(item, pos);
-                    if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
+                    if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) Menu_Important(sender, (MouseEventArgs)e); // 중요 메뉴에서 실행
                     break;
                 }
                 pos++;
             }
+            CheckMetadata();
         }
 
         private void OnCompleteMenuItem_Click(object sender, EventArgs e)
@@ -755,34 +1106,39 @@ namespace WellaTodo
                 {
                     item.TD_complete = roundCheckbox1.Checked;
                     Complete_Process(item, pos);
-                    if (m_selectedMainMenu == 2) label2_Click(sender, e); // 오늘할일 메뉴에서 실행
-                    if (m_selectedMainMenu == 3) label3_Click(sender, e); // 중요 메뉴에서 실행
-                    if (m_selectedMainMenu == 4) label4_Click(sender, e); // 계획된 일정에서 실행
-                    if (m_selectedMainMenu == 5) label5_Click(sender, e); // 완료됨에서 실행
+                    if (m_selectedMainMenu == (int)MenuList.MYTODAY_MENU) Menu_MyToday(sender, (MouseEventArgs)e); // 오늘할일 메뉴에서 실행
+                    if (m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU) Menu_Important(sender, (MouseEventArgs)e); // 중요 메뉴에서 실행
+                    if (m_selectedMainMenu == (int)MenuList.DEADLINE_MENU) Menu_Planned(sender, (MouseEventArgs)e); // 계획된 일정에서 실행
+                    if (m_selectedMainMenu == (int)MenuList.COMPLETE_MENU) Menu_Completed(sender, (MouseEventArgs)e); // 완료됨에서 실행
                     break;
                 }
                 pos++;
             }
+            CheckMetadata();
         }
 
         private void OnToTodayMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine("OnToTodayMenuItem_Click");
+            CheckMetadata();
         }
 
         private void OnToTomorrowMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine("OnToTomorrowMenuItem_Click");
+            CheckMetadata();
         }
 
         private void OnSelectDayMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine("OnSelectDayMenuItem_Click");
+            CheckMetadata();
         }
 
         private void OnDeleteDeadlineMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine("OnDeleteDeadlineMenuItem_Click");
+            CheckMetadata();
         }
 
         private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
@@ -819,6 +1175,38 @@ namespace WellaTodo
                 pos++;
             }
             Set_TodoItem_Width();
+            CheckMetadata();
+        }
+
+        private void CheckMetadata()
+        {
+            int cnt = 0;
+            int pos = 0;
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                switch (pos)
+                {
+                    case 0: // 오늘 할 일
+                        cnt = (from CDataCell data in m_Data where data.DC_myToday select data).Count();
+                        break;
+                    case 1: // 중요
+                        cnt = (from CDataCell data in m_Data where data.DC_important select data).Count();
+                        break;
+                    case 2: // 계획된 일정
+                        cnt = (from CDataCell data in m_Data where data.DC_deadlineType > 0 select data).Count();
+                        break;
+                    case 3: // 완료됨
+                        cnt = (from CDataCell data in m_Data where data.DC_complete select data).Count();
+                        break;
+                    case 4: // 작업
+                        cnt = m_Data.Count;
+                        break;
+                    default:
+                        break;
+                }
+                item.MetadataText = cnt.ToString();
+                pos++;
+            }
         }
 
         private void SendDataToDetailWindow()
@@ -877,314 +1265,6 @@ namespace WellaTodo
                 + "생성됨["+ m_present_data_position.ToString() + "]";
 
             m_before_data_position = m_present_data_position;
-        }
-
-        //
-        // 스프릿컨테이너-1 이벤트
-        //
-        private void splitContainer1_MouseDown(object sender, MouseEventArgs e)
-        {
-            splitContainer1.IsSplitterFixed = true;
-        }
-
-        private void splitContainer1_MouseUp(object sender, MouseEventArgs e)
-        {
-            splitContainer1.IsSplitterFixed = false;
-        }
-
-        private void splitContainer1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (splitContainer1.IsSplitterFixed)
-            {
-                if (e.Button.Equals(MouseButtons.Left))
-                {
-                    if (splitContainer1.Orientation.Equals(Orientation.Vertical))
-                    {
-                        if (e.X > 0 && e.X < (splitContainer1.Width))
-                        {
-                            splitContainer1.SplitterDistance = e.X;
-                            Repaint();
-                        }
-                    }
-                }
-                else
-                {
-                    splitContainer1.IsSplitterFixed = false;
-                }
-            }
-        }
-
-        //
-        // 메뉴 이벤트 처리 부분 ===================
-        //
-        private void label1_MouseEnter(object sender, EventArgs e)
-        {
-            label1.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label1.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label1_MouseLeave(object sender, EventArgs e)
-        {
-            label1.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label1.BackColor = m_selectedMainMenu == (int)MenuList.LOGIN_SETTING_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            int temp;
-            temp = m_selectedMainMenu;
-            m_selectedMainMenu = (int)MenuList.LOGIN_SETTING_MENU;
-            Changed_MainMenu();
-
-            loginSettingForm.StartPosition = FormStartPosition.CenterParent;
-            loginSettingForm.ShowDialog();
-
-            if (loginSettingForm.IsSaveClose)
-            {
-                if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Save_File();
-                }
-            }
-            
-            switch (loginSettingForm.ColorTheme)
-            {
-                case 1:
-                    break;
-                case 2:
-                    break;
-            }
-
-            m_selectedMainMenu = temp;
-            Changed_MainMenu();
-        }
-
-        private void label2_MouseEnter(object sender, EventArgs e)
-        {
-            label2.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label2_MouseLeave(object sender, EventArgs e)
-        {
-            label2.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label2.BackColor = m_selectedMainMenu == (int)MenuList .MYTODAY_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-            CloseDetailWindow();
-
-            flowLayoutPanel2.AutoScroll = false;
-
-            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
-            {
-                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
-                if (!m_Data[i].DC_myToday || item.TD_complete)
-                    item.Visible = false;
-                else
-                    item.Visible = true;
-            }
-
-            Set_TodoItem_Width();
-            flowLayoutPanel2.AutoScroll = true;
-
-            m_selectedMainMenu = (int)MenuList.MYTODAY_MENU; // 오늘 할 일
-            Changed_MainMenu();
-        }
-
-        private void label3_MouseEnter(object sender, EventArgs e)
-        {
-            label3.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label3_MouseLeave(object sender, EventArgs e)
-        {
-            label3.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label3.BackColor = m_selectedMainMenu == (int)MenuList.IMPORTANT_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-            CloseDetailWindow();
-
-            flowLayoutPanel2.AutoScroll = false;
-
-            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
-            {
-                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
-                if (!item.TD_important || item.TD_complete)
-                    item.Visible = false;
-                else
-                    item.Visible = true;
-            }
-
-            Set_TodoItem_Width();
-            flowLayoutPanel2.AutoScroll = true;
-            m_selectedMainMenu = (int)MenuList.IMPORTANT_MENU; // 중요
-            Changed_MainMenu();
-        }
-
-        private void label4_MouseEnter(object sender, EventArgs e)
-        {
-            label4.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label4_MouseLeave(object sender, EventArgs e)
-        {
-            label4.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label4.BackColor = m_selectedMainMenu == (int)MenuList.DEADLINE_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-            CloseDetailWindow();
-            flowLayoutPanel2.AutoScroll = false;
-            int pos = 0;
-            int sum;
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                sum = m_Data[pos].DC_remindType + m_Data[pos].DC_deadlineType + m_Data[pos].DC_repeatType;
-                if ((!m_Data[pos].DC_myToday && sum == 0) || item.TD_complete)
-                    item.Visible = false;
-                else
-                    item.Visible = true;
-                pos++;
-            }
-
-            Set_TodoItem_Width();
-            flowLayoutPanel2.AutoScroll = true;
-            m_selectedMainMenu = (int)MenuList.DEADLINE_MENU; //계획된 일정
-            Changed_MainMenu();
-        }
-
-        private void label5_MouseEnter(object sender, EventArgs e)
-        {
-            label5.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label5.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label5_MouseLeave(object sender, EventArgs e)
-        {
-            label5.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label5.BackColor = m_selectedMainMenu == (int)MenuList.COMPLETE_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-            CloseDetailWindow();
-            flowLayoutPanel2.AutoScroll = false;
-
-            for (int i = flowLayoutPanel2.Controls.Count - 1; i >= 0; i--)
-            {
-                Todo_Item item = (Todo_Item)flowLayoutPanel2.Controls[i];
-                if (!item.TD_complete)
-                    item.Visible = false;
-                else
-                    item.Visible = true;
-            }
-
-            Set_TodoItem_Width();
-            flowLayoutPanel2.AutoScroll = true;
-            m_selectedMainMenu = (int)MenuList.COMPLETE_MENU; // 완료됨
-            Changed_MainMenu();
-        }
-
-        private void label6_MouseEnter(object sender, EventArgs e)
-        {
-            label6.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label6.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label6_MouseLeave(object sender, EventArgs e)
-        {
-            label6.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label6.BackColor = m_selectedMainMenu == (int)MenuList.TODO_ITEM_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-            CloseDetailWindow();
-            flowLayoutPanel2.AutoScroll = false;
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
-            {
-                item.Visible = true;
-            }
-
-            /* LINQ Query
-            var subset = from Todo_Item item in flowLayoutPanel2.Controls
-                         where item.TD_complete == true
-                         select item;
-            foreach (Todo_Item item in subset)
-            {
-                Console.WriteLine(item.TD_title.ToString () + "is compelte" + item.TD_complete.ToString());
-            }
-            */
-
-            Set_TodoItem_Width();
-            flowLayoutPanel2.AutoScroll = true;
-            m_selectedMainMenu = (int)MenuList.TODO_ITEM_MENU; // 모든 작업
-            Changed_MainMenu();
-        }
-
-        private void label7_MouseEnter(object sender, EventArgs e)
-        {
-            label7.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Underline);
-            label7.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void label7_MouseLeave(object sender, EventArgs e)
-        {
-            label7.Font = new Font(FONT_NAME, FONT_SIZE, FontStyle.Regular);
-            label7.BackColor = m_selectedMainMenu == (int)MenuList.RESERVED_MENU ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-            int temp;
-            temp = m_selectedMainMenu;
-            m_selectedMainMenu = (int)MenuList.RESERVED_MENU; // 새목록 만들기
-            Changed_MainMenu();
-
-            outputForm.StartPosition = FormStartPosition.Manual;
-            outputForm.Location = new Point(Location.X + (Width - outputForm.Width) / 2, Location.Y + (Height - outputForm.Height) / 2);
-
-            if (outputForm.Visible)
-                outputForm.Hide();
-            else
-                outputForm.Show();
-
-            m_selectedMainMenu = temp;
-            Changed_MainMenu();
-        }
-
-        //
-        // 메뉴별 색상 및 위/아래 이동 버튼 처리
-        //
-        private void Changed_MainMenu()
-        {
-            int pos = 1;
-            foreach (Label ctr in flowLayoutPanel1.Controls)
-            {
-                if (pos == m_selectedMainMenu)
-                    ctr.BackColor = PSEUDO_SELECTED_COLOR;
-                else
-                    ctr.BackColor = PSEUDO_BACK_COLOR;
-                pos++;
-            }
-
-            if (m_selectedMainMenu == 6) // 작업 메뉴에만 위아래 버튼 보이기
-            {
-                upArrow.Visible = true;
-                downArrow.Visible = true;
-            }
-            else
-            {
-                upArrow.Visible = false;
-                downArrow.Visible = false;
-            }
         }
 
         //
@@ -2240,4 +2320,14 @@ public enum DayOfWeek
     Friday = 5,
     Saturday = 6
 }
+
+
+            // LINQ Query
+            var subset = from Todo_Item item in flowLayoutPanel2.Controls
+                         where item.TD_complete == true
+                         select item;
+            foreach (Todo_Item item in subset)
+            {
+                Console.WriteLine(item.TD_title.ToString () + "is compelte" + item.TD_complete.ToString());
+            }
 */
