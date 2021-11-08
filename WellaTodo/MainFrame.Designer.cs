@@ -31,10 +31,11 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel_Menulist = new System.Windows.Forms.FlowLayoutPanel();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox_AddList = new System.Windows.Forms.TextBox();
             this.labelUserName = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.label_ListName = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -64,7 +65,7 @@
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.Menu;
             this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel_Menulist);
-            this.splitContainer1.Panel1.Controls.Add(this.textBox4);
+            this.splitContainer1.Panel1.Controls.Add(this.textBox_AddList);
             this.splitContainer1.Panel1.Controls.Add(this.labelUserName);
             this.splitContainer1.Panel1MinSize = 100;
             // 
@@ -89,20 +90,21 @@
             this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(197, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
             // 
-            // textBox4
+            // textBox_AddList
             // 
-            this.textBox4.Location = new System.Drawing.Point(0, 378);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(204, 25);
-            this.textBox4.TabIndex = 2;
-            this.textBox4.Enter += new System.EventHandler(this.textBox4_Enter);
-            this.textBox4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox4_KeyDown);
-            this.textBox4.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox4_KeyUp);
-            this.textBox4.Leave += new System.EventHandler(this.textBox4_Leave);
-            this.textBox4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox4_MouseDown);
+            this.textBox_AddList.Location = new System.Drawing.Point(0, 378);
+            this.textBox_AddList.Name = "textBox_AddList";
+            this.textBox_AddList.Size = new System.Drawing.Size(204, 25);
+            this.textBox_AddList.TabIndex = 2;
+            this.textBox_AddList.Enter += new System.EventHandler(this.textBox_AddList_Enter);
+            this.textBox_AddList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyDown);
+            this.textBox_AddList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyUp);
+            this.textBox_AddList.Leave += new System.EventHandler(this.textBox_AddList_Leave);
+            this.textBox_AddList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_AddList_MouseDown);
             // 
             // labelUserName
             // 
+            this.labelUserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelUserName.Location = new System.Drawing.Point(0, 0);
             this.labelUserName.Name = "labelUserName";
             this.labelUserName.Size = new System.Drawing.Size(204, 40);
@@ -132,6 +134,7 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.AutoScroll = true;
+            this.splitContainer2.Panel1.Controls.Add(this.label_ListName);
             this.splitContainer2.Panel1.Controls.Add(this.flowLayoutPanel2);
             this.splitContainer2.Panel1MinSize = 200;
             // 
@@ -148,15 +151,25 @@
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
             // 
+            // label_ListName
+            // 
+            this.label_ListName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label_ListName.Location = new System.Drawing.Point(19, 15);
+            this.label_ListName.Name = "label_ListName";
+            this.label_ListName.Size = new System.Drawing.Size(100, 23);
+            this.label_ListName.TabIndex = 1;
+            this.label_ListName.Text = "label1";
+            this.label_ListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.AutoScroll = true;
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 56);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(306, 340);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(273, 206);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
             // 
@@ -256,9 +269,10 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox_AddList;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_Menulist;
+        private System.Windows.Forms.Label label_ListName;
     }
 }
 

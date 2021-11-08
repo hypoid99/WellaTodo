@@ -14,7 +14,7 @@ namespace WellaTodo
 {
     public partial class Todo_Item : UserControl
     {
-        public event UserControl_Event UserControl_Click;
+        public event TodoItemList_Event UserControl_Click;
 
         static readonly int TODO_ITEM_WIDTH = 180;
         static readonly int TODO_ITEM_HEIGHT = 35;
@@ -27,6 +27,9 @@ namespace WellaTodo
 
         static readonly float FONT_SIZE_TITLE = 9.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;
+
+        CDataCell m_DataCell;
+        public CDataCell TD_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
         private string _title;
         public string TD_title
@@ -88,6 +91,17 @@ namespace WellaTodo
             TD_title = text;
             TD_complete = chk_complete;
             TD_important = chk_important;
+            TD_infomation = "";
+        }
+
+        public Todo_Item(CDataCell dc)
+        {
+            InitializeComponent();
+
+            TD_DataCell = dc;
+            TD_title = m_DataCell.DC_title;
+            TD_complete = m_DataCell.DC_complete;
+            TD_important = m_DataCell.DC_important;
             TD_infomation = "";
         }
 

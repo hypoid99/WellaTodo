@@ -9,8 +9,7 @@ namespace WellaTodo
     [Serializable]
     public class CDataCell
     {
-        //private string _groupName;
-        //private string _listName;
+        private string _listName;
         private string _title;
         private bool _complete;
         private bool _important;
@@ -25,6 +24,7 @@ namespace WellaTodo
         private int _repeatType;
         private DateTime _repeatTime;
 
+        public string DC_listName { get => _listName; set => _listName = value; }
         public string DC_title { get => _title; set => _title = value; }
         public bool DC_complete { get => _complete; set => _complete = value; }
         public bool DC_important { get => _important; set => _important = value; }
@@ -41,6 +41,7 @@ namespace WellaTodo
 
         public CDataCell()
         {
+            _listName = "작업";
             _title = "입력하세요";
             _complete = false;
             _important = false;
@@ -56,8 +57,9 @@ namespace WellaTodo
             _repeatTime = default;
         }
 
-        public CDataCell(string title)
+        public CDataCell(string list, string title)
         {
+            _listName = list.Length == 0 ? "작업" : list;
             _title = title;
             _complete = false;
             _important = false;
