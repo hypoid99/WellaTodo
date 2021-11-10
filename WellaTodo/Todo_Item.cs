@@ -17,7 +17,7 @@ namespace WellaTodo
         public event TodoItemList_Event UserControl_Click;
 
         static readonly int TODO_ITEM_WIDTH = 180;
-        static readonly int TODO_ITEM_HEIGHT = 35;
+        static readonly int TODO_ITEM_HEIGHT = 40;
 
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
@@ -25,7 +25,8 @@ namespace WellaTodo
         static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
-        static readonly float FONT_SIZE_TITLE = 9.0f;
+        static readonly string FONT_NAME = "맑은고딕";
+        static readonly float FONT_SIZE_TITLE = 14.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;
 
         CDataCell m_DataCell;
@@ -115,7 +116,7 @@ namespace WellaTodo
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
             roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
-            roundCheckbox1.Location = new Point(12, 4);
+            roundCheckbox1.Location = new Point(12, 6);
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(roundCheckbox1);
@@ -132,14 +133,14 @@ namespace WellaTodo
             label1.Location = new Point(45, 13);
             label1.BackColor = PSEUDO_BACK_COLOR;
             if (TD_complete)
-                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
             else
-                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
 
             label2.MouseEnter += new EventHandler(label2_MouseEnter);
             label2.MouseLeave += new EventHandler(label2_MouseLeave);
             label2.MouseClick += new MouseEventHandler(label2_MouseClick);
-            label2.Font = new Font(label2.Font.Name, FONT_SIZE_INFORMATION, FontStyle.Regular);
+            label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.Size = new Size(0, 13);
@@ -155,25 +156,27 @@ namespace WellaTodo
 
         private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
         {
-            if (TD_infomation.Length == 0)
+            //label1.BackColor = Color.Yellow;
+            //label2.BackColor = Color.Blue;
+            if (TD_infomation.Length == 0) // 가운데
             {
-                label1.Location = new Point(45, 13);
+                label1.Location = new Point(45, 8);
 
                 label2.Location = new Point(245, 20);
-                label2.Size = new Size(0, 13);
                 label2.Text = "";
                 label2.AutoSize = false;
             }
             else
             {
-                label1.Location = new Point(45, 5);
+                label1.Location = new Point(45, 2);  // 윗쪽
 
-                label2.Location = new Point(45, 20);
+                label2.Location = new Point(45, 26);
+                label2.Size = new Size(0, 15);
                 label2.Text = TD_infomation;
                 label2.AutoSize = true;
             }
 
-            starCheckbox1.Location = new Point(Width - 40, 5);
+            starCheckbox1.Location = new Point(Width - 40, 7);
 
             Graphics g = pevent.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -321,9 +324,9 @@ namespace WellaTodo
         {
             TD_complete = roundCheckbox1.Checked;
             if (TD_complete)
-                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
             else
-                label1.Font = new Font(label1.Font.Name, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
         }
 
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)

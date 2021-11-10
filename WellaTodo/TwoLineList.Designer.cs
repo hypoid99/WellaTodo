@@ -1,5 +1,4 @@
-﻿
-namespace WellaTodo
+﻿namespace WellaTodo
 {
     partial class TwoLineList
     {

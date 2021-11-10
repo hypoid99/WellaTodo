@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
+    [Serializable]
     public partial class TwoLineList : UserControl
     {
         public event TwoLineList_Event TwoLineList_Click;
@@ -22,9 +23,9 @@ namespace WellaTodo
         static readonly Color SELECTED_COLOR = Color.Cyan;
 
         static readonly string FONT_NAME = "맑은고딕";
-        static readonly float FONT_SIZE_PRIMARY = 11.0f;
-        static readonly float FONT_SIZE_SECONDARY = 9.0f;
-        static readonly float FONT_SIZE_METADATA = 9.0f;
+        static readonly float FONT_SIZE_PRIMARY = 14.0f;
+        static readonly float FONT_SIZE_SECONDARY = 8.0f;
+        static readonly float FONT_SIZE_METADATA = 8.0f;
 
         public Image IconImage
         {
@@ -250,6 +251,11 @@ namespace WellaTodo
         private void label_Metadata_MouseClick(object sender, MouseEventArgs e)
         {
             Mouse_Clicked(sender, e);
+        }
+
+        public override String ToString()
+        {
+            return PrimaryText;
         }
     }
 }

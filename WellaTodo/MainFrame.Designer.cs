@@ -104,7 +104,6 @@
             // 
             // labelUserName
             // 
-            this.labelUserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelUserName.Location = new System.Drawing.Point(0, 0);
             this.labelUserName.Name = "labelUserName";
             this.labelUserName.Size = new System.Drawing.Size(204, 40);
@@ -153,7 +152,6 @@
             // 
             // label_ListName
             // 
-            this.label_ListName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label_ListName.Location = new System.Drawing.Point(19, 15);
             this.label_ListName.Name = "label_ListName";
             this.label_ListName.Size = new System.Drawing.Size(100, 23);
@@ -164,7 +162,6 @@
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.AutoScroll = true;
-            this.flowLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 56);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
