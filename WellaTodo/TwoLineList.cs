@@ -10,10 +10,11 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    [Serializable]
     public partial class TwoLineList : UserControl
     {
         public event TwoLineList_Event TwoLineList_Click;
+
+        private TextBox textBox_Rename;
 
         static readonly int LIST_WIDTH = 250;
         static readonly int LIST_HEIGHT = 40;
@@ -62,6 +63,11 @@ namespace WellaTodo
             }
         }
 
+        private string primaryText_Renamed;
+        public string PrimaryText_Renamed { get => primaryText_Renamed; set => primaryText_Renamed = value; }
+
+        bool isTextboxClicked = false;
+        
 
         public TwoLineList()
         {
@@ -110,6 +116,16 @@ namespace WellaTodo
             label_Metadata.Size = new Size(30, 30);
             label_Metadata.TextAlign = ContentAlignment.MiddleRight;
             label_Metadata.BackColor = BACK_COLOR;
+
+            textBox_Rename = new TextBox();
+            textBox_Rename.Visible = false;
+            textBox_Rename.Location = new Point(30, 10);
+            Controls.Add(textBox_Rename);
+            textBox_Rename.Enter += new System.EventHandler(textBox_Rename_Enter);
+            textBox_Rename.KeyDown += new System.Windows.Forms.KeyEventHandler(textBox_Rename_KeyDown);
+            textBox_Rename.KeyUp += new System.Windows.Forms.KeyEventHandler(textBox_Rename_KeyUp);
+            textBox_Rename.Leave += new System.EventHandler(textBox_Rename_Leave);
+            textBox_Rename.MouseDown += new System.Windows.Forms.MouseEventHandler(textBox_Rename_MouseDown);
         }
 
         private void TwoLineList_Paint(object sender, PaintEventArgs e)
@@ -138,6 +154,85 @@ namespace WellaTodo
         private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
             if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
+        }
+
+        private void textBox_Rename_Enter(object sender, EventArgs e)
+        {
+            isTextboxClicked = true;
+        }
+
+        private void textBox_Rename_Leave(object sender, EventArgs e)
+        {
+            textBox_Rename.Visible = false;
+            label_PrimaryText.Visible = true;
+
+            if (isTextboxClicked)
+            {
+                if (textBox_Rename.Text.Trim().Length == 0)
+                {
+                    isTextboxClicked = false;
+                    return;
+                }
+
+                // Change PrimaryText
+                PrimaryText_Renamed = textBox_Rename.Text;
+
+                MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
+                if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, me);
+            }
+            isTextboxClicked = false;
+        }
+
+        private void textBox_Rename_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                textBox_Rename.Visible = false;
+                label_PrimaryText.Visible = true;
+                return;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = false;
+                e.SuppressKeyPress = false;
+                if (textBox_Rename.Text.Trim().Length == 0) 
+                {
+                    textBox_Rename.Visible = false;
+                    label_PrimaryText.Visible = true;
+                    return;
+                }
+
+                // Change PrimaryText
+                textBox_Rename.Visible = false;
+                label_PrimaryText.Visible = true;
+                PrimaryText_Renamed = textBox_Rename.Text;
+
+                MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
+                if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, me);
+            }
+        }
+
+        private void textBox_Rename_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void textBox_Rename_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        public void RenamePrimaryText()
+        {
+            textBox_Rename.Visible = true;
+            label_PrimaryText.Visible = false;
+            textBox_Rename.Text = PrimaryText;
+            textBox_Rename.Focus();
         }
 
         private void ChangeToBackColor()
@@ -230,26 +325,31 @@ namespace WellaTodo
 
         private void TwoLineList_MouseClick(object sender, MouseEventArgs e)
         {
+            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void pictureBox_Icon_MouseClick(object sender, MouseEventArgs e)
         {
+            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_PrimaryText_MouseClick(object sender, MouseEventArgs e)
         {
+            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_SecondaryText_MouseClick(object sender, MouseEventArgs e)
         {
+            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_Metadata_MouseClick(object sender, MouseEventArgs e)
         {
+            Focus();
             Mouse_Clicked(sender, e);
         }
 

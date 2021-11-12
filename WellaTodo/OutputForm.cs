@@ -25,7 +25,11 @@ namespace WellaTodo
             if (txt.Length  == 0) return;
 
             if ((txt.Length + textBox1.TextLength) > textBox1.MaxLength)
-                MessageBox.Show("문자열이 너무 깁니다");
+            {
+                textBox1.Clear();
+                TextBoxString = "문자열이 너무 깁니다";
+                textBox1.AppendText(TextBoxString);
+            } 
             else
                 textBox1.AppendText(TextBoxString);
         }

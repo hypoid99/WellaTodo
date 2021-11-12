@@ -23,6 +23,8 @@ namespace WellaTodo
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
+        static readonly Color PSEUDO_INFORMATION_TEXT_COLOR = Color.Red;
+        static readonly Color PSEUDO_COMPLETE_TEXT_COLOR = Color.Gray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
         static readonly string FONT_NAME = "맑은고딕";
@@ -83,6 +85,8 @@ namespace WellaTodo
             TD_complete = false;
             TD_important = false;
             TD_infomation = "";
+
+            Initiate_View();
         }
 
         public Todo_Item(string text, bool chk_complete, bool chk_important)
@@ -93,6 +97,8 @@ namespace WellaTodo
             TD_complete = chk_complete;
             TD_important = chk_important;
             TD_infomation = "";
+
+            Initiate_View();
         }
 
         public Todo_Item(CDataCell dc)
@@ -104,6 +110,8 @@ namespace WellaTodo
             TD_complete = m_DataCell.DC_complete;
             TD_important = m_DataCell.DC_important;
             TD_infomation = "";
+
+            Initiate_View();
         }
 
         private void Todo_Item_Load(object sender, EventArgs e)
@@ -111,7 +119,63 @@ namespace WellaTodo
             Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
             BackColor = PSEUDO_BACK_COLOR;
             Margin = new Padding(3, 1, 3, 1);
+        }
 
+        private void Todo_Item_Resize(object sender, EventArgs e)
+        {
+            starCheckbox1.Location = new Point(Width - 40, 5);
+        }
+
+        private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
+        {
+            if (TD_infomation.Length == 0) // 가운데
+            {
+                label1.Location = new Point(45, 8);
+                label2.Location = new Point(245, 20);
+                label2.Text = "";
+                label2.AutoSize = false;
+            }
+            else
+            {
+                label1.Location = new Point(45, 2);  // 윗쪽
+                label2.Location = new Point(45, 26);
+                label2.Size = new Size(0, 15);
+                label2.Text = TD_infomation;
+                label2.AutoSize = true;
+            }
+
+            if (TD_complete)
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+
+            }
+            else
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
+
+            starCheckbox1.Location = new Point(Width - 40, 7);
+
+            Graphics g = pevent.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Rectangle rc = ClientRectangle;
+
+            g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
+            //g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width - 1, rc.Height - 1);
+            int x1 = rc.Left;
+            int y1 = rc.Top;
+            int x2 = rc.Left + rc.Width - 1;
+            int y2 = rc.Top + rc.Height - 1;
+            g.DrawLine(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), x1, y2, x2, y2);
+        }
+
+        private void Initiate_View()
+        {
             roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
@@ -122,7 +186,7 @@ namespace WellaTodo
             Controls.Add(roundCheckbox1);
 
             starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
-            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter); 
+            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
             starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
             starCheckbox1.Location = new Point(Width - 40, 5);
@@ -133,9 +197,18 @@ namespace WellaTodo
             label1.Location = new Point(45, 13);
             label1.BackColor = PSEUDO_BACK_COLOR;
             if (TD_complete)
+            {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+
+            }
             else
+            {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
 
             label2.MouseEnter += new EventHandler(label2_MouseEnter);
             label2.MouseLeave += new EventHandler(label2_MouseLeave);
@@ -143,49 +216,10 @@ namespace WellaTodo
             label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
+            label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             label2.Size = new Size(0, 13);
             label2.Text = "";
             Controls.Add(label2);
-        }
-
-        private void Todo_Item_Resize(object sender, EventArgs e)
-        {
-            starCheckbox1.Location = new Point(Width - 40, 5);
-            SetPathOuterBorder();
-        }
-
-        private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
-        {
-            //label1.BackColor = Color.Yellow;
-            //label2.BackColor = Color.Blue;
-            if (TD_infomation.Length == 0) // 가운데
-            {
-                label1.Location = new Point(45, 8);
-
-                label2.Location = new Point(245, 20);
-                label2.Text = "";
-                label2.AutoSize = false;
-            }
-            else
-            {
-                label1.Location = new Point(45, 2);  // 윗쪽
-
-                label2.Location = new Point(45, 26);
-                label2.Size = new Size(0, 15);
-                label2.Text = TD_infomation;
-                label2.AutoSize = true;
-            }
-
-            starCheckbox1.Location = new Point(Width - 40, 7);
-
-            Graphics g = pevent.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            Rectangle rc = ClientRectangle;
-
-            g.FillRectangle(new SolidBrush(BackColor), rc.Left-1, rc.Top-1, rc.Width+1, rc.Height+1);
-            g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width-1, rc.Height-1);
-            //g.DrawPath(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), outerBorderPath);
         }
 
         private void SetPathOuterBorder()
@@ -324,9 +358,17 @@ namespace WellaTodo
         {
             TD_complete = roundCheckbox1.Checked;
             if (TD_complete)
+            {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+            }
             else
+            {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }     
         }
 
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)

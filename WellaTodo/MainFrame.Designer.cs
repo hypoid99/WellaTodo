@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFrame));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel_Menulist = new System.Windows.Forms.FlowLayoutPanel();
             this.textBox_AddList = new System.Windows.Forms.TextBox();
-            this.labelUserName = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label_ListName = new System.Windows.Forms.Label();
@@ -44,6 +44,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.labelUserName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -58,7 +59,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -76,8 +77,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2MinSize = 200;
             this.splitContainer1.Size = new System.Drawing.Size(982, 403);
-            this.splitContainer1.SplitterDistance = 204;
-            this.splitContainer1.SplitterWidth = 3;
+            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
             this.splitContainer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseMove);
@@ -102,15 +103,6 @@
             this.textBox_AddList.Leave += new System.EventHandler(this.textBox_AddList_Leave);
             this.textBox_AddList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_AddList_MouseDown);
             // 
-            // labelUserName
-            // 
-            this.labelUserName.Location = new System.Drawing.Point(0, 0);
-            this.labelUserName.Name = "labelUserName";
-            this.labelUserName.Size = new System.Drawing.Size(204, 40);
-            this.labelUserName.TabIndex = 1;
-            this.labelUserName.Text = "계정";
-            this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(10, 354);
@@ -132,14 +124,12 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.AutoScroll = true;
             this.splitContainer2.Panel1.Controls.Add(this.label_ListName);
             this.splitContainer2.Panel1.Controls.Add(this.flowLayoutPanel2);
             this.splitContainer2.Panel1MinSize = 200;
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.AutoScroll = true;
             this.splitContainer2.Panel2.Controls.Add(this.button2);
             this.splitContainer2.Panel2.Controls.Add(this.button1);
             this.splitContainer2.Panel2.Controls.Add(this.textBox3);
@@ -152,6 +142,7 @@
             // 
             // label_ListName
             // 
+            this.label_ListName.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label_ListName.Location = new System.Drawing.Point(19, 15);
             this.label_ListName.Name = "label_ListName";
             this.label_ListName.Size = new System.Drawing.Size(100, 23);
@@ -225,18 +216,34 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // labelUserName
+            // 
+            this.labelUserName.Image = global::WellaTodo.Properties.Resources.outline_manage_accounts_black_24dp;
+            this.labelUserName.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelUserName.Location = new System.Drawing.Point(0, 0);
+            this.labelUserName.Name = "labelUserName";
+            this.labelUserName.Size = new System.Drawing.Size(204, 40);
+            this.labelUserName.TabIndex = 1;
+            this.labelUserName.Text = "      계정";
+            this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelUserName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.labelUserName_MouseClick);
+            this.labelUserName.MouseEnter += new System.EventHandler(this.labelUserName_MouseEnter);
+            this.labelUserName.MouseLeave += new System.EventHandler(this.labelUserName_MouseLeave);
+            // 
             // MainFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 403);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(400, 47);
             this.Name = "MainFrame";
             this.Text = "WellaTodo v0.15";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrame_FormClosing);
             this.Load += new System.EventHandler(this.MainFrame_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainFrame_Paint);
             this.Resize += new System.EventHandler(this.MainFrame_Resize);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

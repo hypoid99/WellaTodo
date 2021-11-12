@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>wella.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -59,12 +62,6 @@
       <DependentUpon>CarendarForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CDataCell.cs" />
-    <Compile Include="LabelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LabelEditor.Designer.cs">
-      <DependentUpon>LabelEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="LoginSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,6 +171,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="icon\outline_manage_accounts_black_24dp.png" />
+    <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />
     <None Include="icon\outline_event_note_black_24dp.png" />

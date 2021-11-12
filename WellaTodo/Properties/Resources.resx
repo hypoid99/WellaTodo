@@ -133,6 +133,9 @@
   <data name="outline_list_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_list_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_manage_accounts_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_manage_accounts_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_wb_sunny_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_wb_sunny_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
