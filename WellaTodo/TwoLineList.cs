@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Drawing.Drawing2D;
+
 namespace WellaTodo
 {
     public partial class TwoLineList : UserControl
@@ -22,6 +24,7 @@ namespace WellaTodo
         static readonly Color BACK_COLOR = Color.White;
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
+        static readonly Color BORDER_COLOR = Color.LightGray;
 
         static readonly string FONT_NAME = "맑은고딕";
         static readonly float FONT_SIZE_PRIMARY = 14.0f;
@@ -67,6 +70,7 @@ namespace WellaTodo
         public string PrimaryText_Renamed { get => primaryText_Renamed; set => primaryText_Renamed = value; }
 
         bool isTextboxClicked = false;
+        bool isDivider = false;
         
 
         public TwoLineList()
@@ -77,6 +81,7 @@ namespace WellaTodo
             PrimaryText = "제목없음";
             SecondaryText = "";
             MetadataText = "";
+            isDivider = true;
 
             Initialize();
         }
@@ -89,12 +94,27 @@ namespace WellaTodo
             PrimaryText = primaryText;
             SecondaryText = secondaryText;
             MetadataText = metadataText;
+            isDivider = false;
 
             Initialize();
         }
 
         private void Initialize()
         {
+            if (isDivider)
+            {
+                Size = new Size(LIST_WIDTH, 2);
+                Margin = new Padding(0);
+                BackColor = BACK_COLOR;
+
+                pictureBox_Icon.Visible = false;
+                label_PrimaryText.Visible = false;
+                label_SecondaryText.Visible = false;
+                label_Metadata.Visible = false;
+
+                return;
+            }
+
             Size = new Size(LIST_WIDTH, LIST_HEIGHT);
             Margin = new Padding(1);
             BackColor = BACK_COLOR;
@@ -128,8 +148,23 @@ namespace WellaTodo
             textBox_Rename.MouseDown += new System.Windows.Forms.MouseEventHandler(textBox_Rename_MouseDown);
         }
 
-        private void TwoLineList_Paint(object sender, PaintEventArgs e)
+        private void TwoLineList_Paint(object sender, PaintEventArgs pevent)
         {
+            if (isDivider)
+            {
+                Graphics g = pevent.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                Rectangle rc = ClientRectangle;
+                int x1 = rc.Left;
+                int y1 = rc.Top;
+                int x2 = rc.Left + rc.Width - 1;
+                int y2 = rc.Top + rc.Height - 1;
+                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y1, x2, y1);
+                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y2, x2, y2);
+                return;
+            }
+
             if (SecondaryText.Length == 0)
             {
                 label_PrimaryText.Location = new Point(30, 10);
@@ -153,6 +188,7 @@ namespace WellaTodo
 
         private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
+            Focus();
             if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
         }
 
@@ -325,31 +361,26 @@ namespace WellaTodo
 
         private void TwoLineList_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void pictureBox_Icon_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_PrimaryText_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_SecondaryText_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
             Mouse_Clicked(sender, e);
         }
 
         private void label_Metadata_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
             Mouse_Clicked(sender, e);
         }
 

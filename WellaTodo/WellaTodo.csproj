@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="icon\outline_manage_accounts_black_24dp.png" />
+    <None Include="icon\outline_assignment_black_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />

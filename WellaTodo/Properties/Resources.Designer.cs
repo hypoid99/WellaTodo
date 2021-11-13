@@ -63,6 +63,16 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_assignment_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_assignment_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_check_circle_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_check_circle_black_24dp", resourceCulture);

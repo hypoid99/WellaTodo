@@ -36,9 +36,10 @@ namespace WellaTodo
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.button3 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -56,6 +57,7 @@ namespace WellaTodo
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Location = new System.Drawing.Point(44, 22);
             this.groupBox1.Name = "groupBox1";
@@ -72,6 +74,7 @@ namespace WellaTodo
             this.button2.TabIndex = 0;
             this.button2.Text = "로그인";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox2
             // 
@@ -113,17 +116,6 @@ namespace WellaTodo
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "색상 선택";
             // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(51, 33);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(65, 19);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "White";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
@@ -135,6 +127,17 @@ namespace WellaTodo
             this.radioButton2.Text = "PapayaWhip";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(51, 33);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(65, 19);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "White";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("굴림", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
@@ -145,6 +148,14 @@ namespace WellaTodo
             this.button3.Text = "저장후 닫기";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(42, 27);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(193, 25);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "이름을 기입하세요";
             // 
             // LoginSettingForm
             // 
@@ -161,6 +172,7 @@ namespace WellaTodo
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoginSettingForm_FormClosing);
             this.Load += new System.EventHandler(this.LoginSettingForm_Load);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -181,5 +193,6 @@ namespace WellaTodo
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

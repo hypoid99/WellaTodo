@@ -33,6 +33,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel_Menulist = new System.Windows.Forms.FlowLayoutPanel();
             this.textBox_AddList = new System.Windows.Forms.TextBox();
+            this.labelUserName = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label_ListName = new System.Windows.Forms.Label();
@@ -44,7 +45,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.labelUserName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -96,12 +96,24 @@
             this.textBox_AddList.Location = new System.Drawing.Point(0, 378);
             this.textBox_AddList.Name = "textBox_AddList";
             this.textBox_AddList.Size = new System.Drawing.Size(204, 25);
-            this.textBox_AddList.TabIndex = 2;
+            this.textBox_AddList.TabIndex = 5;
             this.textBox_AddList.Enter += new System.EventHandler(this.textBox_AddList_Enter);
             this.textBox_AddList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyDown);
             this.textBox_AddList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyUp);
             this.textBox_AddList.Leave += new System.EventHandler(this.textBox_AddList_Leave);
             this.textBox_AddList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_AddList_MouseDown);
+            // 
+            // labelUserName
+            // 
+            this.labelUserName.Location = new System.Drawing.Point(0, 0);
+            this.labelUserName.Name = "labelUserName";
+            this.labelUserName.Size = new System.Drawing.Size(204, 40);
+            this.labelUserName.TabIndex = 1;
+            this.labelUserName.Text = "      계정";
+            this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelUserName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.labelUserName_MouseClick);
+            this.labelUserName.MouseEnter += new System.EventHandler(this.labelUserName_MouseEnter);
+            this.labelUserName.MouseLeave += new System.EventHandler(this.labelUserName_MouseLeave);
             // 
             // textBox2
             // 
@@ -215,20 +227,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // labelUserName
-            // 
-            this.labelUserName.Image = global::WellaTodo.Properties.Resources.outline_manage_accounts_black_24dp;
-            this.labelUserName.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.labelUserName.Location = new System.Drawing.Point(0, 0);
-            this.labelUserName.Name = "labelUserName";
-            this.labelUserName.Size = new System.Drawing.Size(204, 40);
-            this.labelUserName.TabIndex = 1;
-            this.labelUserName.Text = "      계정";
-            this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.labelUserName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.labelUserName_MouseClick);
-            this.labelUserName.MouseEnter += new System.EventHandler(this.labelUserName_MouseEnter);
-            this.labelUserName.MouseLeave += new System.EventHandler(this.labelUserName_MouseLeave);
             // 
             // MainFrame
             // 

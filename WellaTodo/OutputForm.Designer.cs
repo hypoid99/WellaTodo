@@ -35,19 +35,21 @@ namespace WellaTodo
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(18, 26);
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(752, 257);
+            this.textBox1.Size = new System.Drawing.Size(791, 371);
             this.textBox1.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(312, 305);
+            this.button1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button1.Location = new System.Drawing.Point(0, 328);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(141, 43);
+            this.button1.Size = new System.Drawing.Size(791, 43);
             this.button1.TabIndex = 1;
             this.button1.Text = "지우기";
             this.button1.UseVisualStyleBackColor = true;

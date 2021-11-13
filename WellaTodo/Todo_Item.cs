@@ -248,6 +248,7 @@ namespace WellaTodo
 
         private void Todo_Item_Click(object sender, MouseEventArgs e)
         {
+            Focus();
             if (UserControl_Click != null) UserControl_Click?.Invoke(this, e);
         }
 
@@ -339,6 +340,20 @@ namespace WellaTodo
 
         private void roundCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
+            TD_complete = roundCheckbox1.Checked;
+            if (TD_complete)
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+            }
+            else
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
+
             IsCompleteClicked = true;
             Todo_Item_Click(sender, e);
             IsCompleteClicked = false;
@@ -356,23 +371,13 @@ namespace WellaTodo
 
         private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
-            TD_complete = roundCheckbox1.Checked;
-            if (TD_complete)
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
-                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
-                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
-            }
-            else
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                label1.ForeColor = System.Drawing.SystemColors.ControlText;
-                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
-            }     
+                
         }
 
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
+            TD_important = starCheckbox1.Checked;
+
             IsImportantClicked = true;
             Todo_Item_Click(sender, e);
             IsImportantClicked = false;
@@ -390,7 +395,7 @@ namespace WellaTodo
 
         private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
-            TD_important = starCheckbox1.Checked;
+            
         }
     }
 }
