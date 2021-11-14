@@ -14,7 +14,7 @@ namespace WellaTodo
     {
         public int ColorTheme { get; set; } = 1;
         public bool IsSaveClose { get; set; } = false;
-        public string UserName { get; set; }
+        public string UserName { get; set; } = "홍길동";
 
         public LoginSettingForm()
         {
@@ -23,7 +23,6 @@ namespace WellaTodo
 
         private void LoginSettingForm_Load(object sender, EventArgs e)
         {
-            UserName = "이름을 기입하세요";
             textBox1.Text = UserName;
             switch (ColorTheme)
             {

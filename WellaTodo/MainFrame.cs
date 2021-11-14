@@ -50,13 +50,13 @@ namespace WellaTodo
 
         public enum MenuList 
         { 
-            LOGIN_SETTING_MENU      = 1, // 디바이더 (?)
+            LOGIN_SETTING_MENU      = 1,
             MYTODAY_MENU            = 2,
             IMPORTANT_MENU          = 3,
             DEADLINE_MENU           = 4,
             COMPLETE_MENU           = 5,
             TODO_ITEM_MENU          = 6,
-            RESERVED_MENU           = 7, // 디바이더 (?)
+            RESERVED_MENU           = 7,
             LIST_MENU               = 8
         }
 
@@ -428,8 +428,8 @@ namespace WellaTodo
                     outputForm.TextBoxString = txt;
                     pos++;
                 }
-
                 outputForm.TextBoxString = ">Data Selected Position:[" + m_selected_position + "]--" + m_Data[m_selected_position].DC_title + "\r\n";
+                
                 foreach (TwoLineList data in m_ListName)
                 {
                     txt = ">m_ListName: " + data.ToString () + "\r\n";
@@ -638,7 +638,7 @@ namespace WellaTodo
 
             if (loginSettingForm.UserName.Length != 0)
             {
-                labelUserName.Text = "      사용자 계정 / 셋팅" + " ("+ loginSettingForm.UserName + ")";
+                labelUserName.Text = "      사용자 ("+ loginSettingForm.UserName + ")";
             }
 
         }
@@ -677,35 +677,32 @@ namespace WellaTodo
                 {
                     item.IsSelected = true;
 
-                    if (item.PrimaryText == "오늘 할 일")
+                    switch (item.PrimaryText)
                     {
-                        m_selected_menu = (int)MenuList.MYTODAY_MENU;
-                        Menu_MyToday();
-                    }
-                    else if (item.PrimaryText == "중요")
-                    {
-                        m_selected_menu = (int)MenuList.IMPORTANT_MENU;
-                        Menu_Important();
-                    }
-                    else if (item.PrimaryText == "계획된 일정")
-                    {
-                        m_selected_menu = (int)MenuList.DEADLINE_MENU;
-                        Menu_Planned();
-                    }
-                    else if (item.PrimaryText == "완료됨")
-                    {
-                        m_selected_menu = (int)MenuList.COMPLETE_MENU;
-                        Menu_Completed();
-                    }
-                    else if (item.PrimaryText == "작업")
-                    {
-                        m_selected_menu = (int)MenuList.TODO_ITEM_MENU;
-                        Menu_Task();
-                    }
-                    else
-                    {
-                        m_selected_menu = (int)MenuList.LIST_MENU;
-                        Menu_List(item);
+                        case "오늘 할 일":
+                            m_selected_menu = (int)MenuList.MYTODAY_MENU;
+                            Menu_MyToday();
+                            break;
+                        case "중요":
+                            m_selected_menu = (int)MenuList.IMPORTANT_MENU;
+                            Menu_Important();
+                            break;
+                        case "계획된 일정":
+                            m_selected_menu = (int)MenuList.DEADLINE_MENU;
+                            Menu_Planned();
+                            break;
+                        case "완료됨":
+                            m_selected_menu = (int)MenuList.COMPLETE_MENU;
+                            Menu_Completed();
+                            break;
+                        case "작업":
+                            m_selected_menu = (int)MenuList.TODO_ITEM_MENU;
+                            Menu_Task();
+                            break;
+                        default:
+                            m_selected_menu = (int)MenuList.LIST_MENU;
+                            Menu_List(item);
+                            break;
                     }
                 }
             }
@@ -723,30 +720,27 @@ namespace WellaTodo
                 {
                     item.IsSelected = true;
 
-                    if (item.PrimaryText == "오늘 할 일")
+                    switch (item.PrimaryText)
                     {
-                        m_selected_menu = (int)MenuList.MYTODAY_MENU;
-                    }
-                    else if (item.PrimaryText == "중요")
-                    {
-                        m_selected_menu = (int)MenuList.IMPORTANT_MENU;
-                    }
-                    else if (item.PrimaryText == "계획된 일정")
-                    {
-                        m_selected_menu = (int)MenuList.DEADLINE_MENU;
-                    }
-                    else if (item.PrimaryText == "완료됨")
-                    {
-                        m_selected_menu = (int)MenuList.COMPLETE_MENU;
-                    }
-                    else if (item.PrimaryText == "작업")
-                    { 
-                        m_selected_menu = (int)MenuList.TODO_ITEM_MENU; 
-                    }
-                    else
-                    {
-                        m_selected_menu = (int)MenuList.LIST_MENU;
-                        m_selected_listname = item.PrimaryText;
+                        case "오늘 할 일":
+                            m_selected_menu = (int)MenuList.MYTODAY_MENU;
+                            break;
+                        case "중요":
+                            m_selected_menu = (int)MenuList.IMPORTANT_MENU;
+                            break;
+                        case "계획된 일정":
+                            m_selected_menu = (int)MenuList.DEADLINE_MENU;
+                            break;
+                        case "완료됨":
+                            m_selected_menu = (int)MenuList.COMPLETE_MENU;
+                            break;
+                        case "작업":
+                            m_selected_menu = (int)MenuList.TODO_ITEM_MENU;
+                            break;
+                        default:
+                            m_selected_menu = (int)MenuList.LIST_MENU;
+                            m_selected_listname = item.PrimaryText;
+                            break;
                     }
                 }
             }
@@ -1010,11 +1004,11 @@ namespace WellaTodo
 
         private bool Check_ListName(string txt)
         {
-            if (txt == "오늘 할 일") return false;
-            if (txt == "중요") return false;
-            if (txt == "계획된 일정") return false;
-            if (txt == "완료됨") return false;
-            if (txt == "작업") return false;
+            if (txt == "오늘 할 일"
+                || txt == "중요"
+                || txt == "계획된 일정"
+                || txt == "완료됨"
+                || txt == "작업") return false;
 
             foreach (TwoLineList item in m_ListName)
             {
@@ -1490,31 +1484,28 @@ namespace WellaTodo
             int cnt = 0;
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
-                if (item.PrimaryText == "오늘 할 일")
+                switch (item.PrimaryText)
                 {
-                    cnt = (from CDataCell data in m_Data where data.DC_myToday && !data.DC_complete select data).Count();
-                }
-                else if (item.PrimaryText == "중요")
-                {
-                    cnt = (from CDataCell data in m_Data where data.DC_important && !data.DC_complete select data).Count();
-                }
-                else if (item.PrimaryText == "계획된 일정")
-                {
-                    cnt = (from CDataCell data in m_Data
-                           where (data.DC_myToday || data.DC_deadlineType > 0 || data.DC_repeatType > 0) && !data.DC_complete
-                           select data).Count();
-                }
-                else if (item.PrimaryText == "완료됨")
-                {
-                    cnt = (from CDataCell data in m_Data where data.DC_complete select data).Count();
-                }
-                else if (item.PrimaryText == "작업")
-                {
-                    cnt = (from CDataCell data in m_Data where data.DC_listName == "작업" select data).Count();
-                }
-                else
-                {
-                    cnt = (from CDataCell data in m_Data where data.DC_listName == item.PrimaryText select data).Count();
+                    case "오늘 할 일":
+                        cnt = (from CDataCell data in m_Data where data.DC_myToday && !data.DC_complete select data).Count();
+                        break;
+                    case "중요":
+                        cnt = (from CDataCell data in m_Data where data.DC_important && !data.DC_complete select data).Count();
+                        break;
+                    case "계획된 일정":
+                        cnt = (from CDataCell data in m_Data
+                               where (data.DC_myToday || data.DC_deadlineType > 0 || data.DC_repeatType > 0) && !data.DC_complete
+                               select data).Count();
+                        break;
+                    case "완료됨":
+                        cnt = (from CDataCell data in m_Data where data.DC_complete select data).Count();
+                        break;
+                    case "작업":
+                        cnt = (from CDataCell data in m_Data where data.DC_listName == "작업" select data).Count();
+                        break;
+                    default:
+                        cnt = (from CDataCell data in m_Data where data.DC_listName == item.PrimaryText select data).Count();
+                        break;
                 }
                 item.MetadataText = cnt.ToString();
             }
@@ -2231,14 +2222,12 @@ namespace WellaTodo
             MenuItem everyWeekRepeat = new MenuItem("매주", new EventHandler(OnEveryWeekRepeat_Click));
             MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(OnEveryMonthRepeat_Click));
             MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(OnEveryYearRepeat_Click));
-            //MenuItem userDefineRepeat = new MenuItem("사용자 정의", new EventHandler(this.OnUserDefineRepeat_Click));
             MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(OnDeleteRepeat_Click));
             repeatMenu.MenuItems.Add(everyDayRepeat);
             repeatMenu.MenuItems.Add(workingDayRepeat);
             repeatMenu.MenuItems.Add(everyWeekRepeat);
             repeatMenu.MenuItems.Add(everyMonthRepeat);
             repeatMenu.MenuItems.Add(everyYearRepeat);
-            //repeatMenu.MenuItems.Add(userDefineRepeat);
             repeatMenu.MenuItems.Add(deleteRepeat);
 
             int px = splitContainer1.SplitterDistance + splitContainer2.SplitterDistance + 60;
@@ -2369,8 +2358,6 @@ namespace WellaTodo
         {
             upArrow.Focus();
             /*
-            int pos = m_present_data_position;
-
             if (pos == 0) return;
 
             if (!m_Data[pos].DC_complete)
@@ -2525,7 +2512,6 @@ namespace WellaTodo
             if (!alarmForm.Visible && alarm ) alarmForm.Show();
             txt = "Now : " + dt.ToString("yyyy-MM-dd HH:mm:ss") + "--------------------------------" + "\r\n";
             alarmForm.TextBoxString = txt;
-
             Update_Metadata();
         }
 
