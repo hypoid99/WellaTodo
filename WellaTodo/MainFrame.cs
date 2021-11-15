@@ -66,7 +66,6 @@ namespace WellaTodo
         List<string> m_listName_Data = new List<string>();
 
         LoginSettingForm loginSettingForm = new LoginSettingForm();
-        //AlarmForm alarmForm = new AlarmForm();
         MemoForm memoForm = new MemoForm();
         OutputForm outputForm = new OutputForm();
 
@@ -280,6 +279,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Repaint()
         {
+            Console.WriteLine("Repaint()");
             //Rectangle rc = ClientRectangle;
             //Console.WriteLine(">ClientRectangle W[{0}] H[{1}]", rc.Width, rc.Height);
             //Console.WriteLine("splitContainer1.SplitterDistance [{0}]", splitContainer1.SplitterDistance);
@@ -363,6 +363,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Set_TodoItem_Width()
         {
+            Console.WriteLine("Set_TodoItem_Width()");
             int pos = 0;
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
@@ -905,6 +906,7 @@ namespace WellaTodo
             downArrow.Visible = false;
             label_ListName.Image = ICON_SUNNY;
             label_ListName.Text = "   " + "오늘 할 일";
+            m_selected_listname = "오늘 할 일";
 
             Add_Task_To_Panel(from CDataCell dt in m_Data where dt.DC_myToday && !dt.DC_complete select dt);
         }
@@ -915,6 +917,7 @@ namespace WellaTodo
             downArrow.Visible = false;
             label_ListName.Image = ICON_GRADE;
             label_ListName.Text = "   " + "중요";
+            m_selected_listname = "중요";
 
             Add_Task_To_Panel(from CDataCell dt in m_Data where dt.DC_important && !dt.DC_complete select dt);
         }
@@ -925,6 +928,7 @@ namespace WellaTodo
             downArrow.Visible = false;
             label_ListName.Image = ICON_EVENTNOTE;
             label_ListName.Text = "   " + "계획된 일정";
+            m_selected_listname = "계획된 일정";
 
             Add_Task_To_Panel(from CDataCell dt in m_Data where (dt.DC_myToday || dt.DC_deadlineType > 0 || dt.DC_repeatType > 0) && !dt.DC_complete select dt);
         }
@@ -935,6 +939,7 @@ namespace WellaTodo
             downArrow.Visible = false;
             label_ListName.Image = ICON_CHECKCIRCLE;
             label_ListName.Text = "   " + "완료됨";
+            m_selected_listname = "완료됨";
 
             Add_Task_To_Panel(from CDataCell dt in m_Data where dt.DC_complete == true select dt);
         }
@@ -952,16 +957,20 @@ namespace WellaTodo
 
         private void Add_Task_To_Panel(IEnumerable<CDataCell> dataset)
         {
+            Console.WriteLine("Add_Task_To_Panel");
             flowLayoutPanel2.Controls.Clear();
+            flowLayoutPanel2.AutoScroll = false;
             foreach (CDataCell data in dataset)
             {
                 Todo_Item item = new Todo_Item(data);
                 flowLayoutPanel2.Controls.Add(item);
                 item.Width = flowLayoutPanel2.Width - 5;
+                //Delay(500);   
                 Change_TaskInfomationText(data);
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
             }
+            flowLayoutPanel2.AutoScroll = true;
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // 선택 항목 표기
             {
@@ -1376,7 +1385,7 @@ namespace WellaTodo
             MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click)); // 재활용
             MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadline_Click)); // 재활용
             MenuItem menuEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
-            MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteMenuItem_Click));
+            MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteItem_Click));
             
             todoItemContextMenu.MenuItems.Add(myTodayItem);
             todoItemContextMenu.MenuItems.Add(importantItem);
@@ -1474,7 +1483,7 @@ namespace WellaTodo
             m_Data[m_selected_position].DC_memo = textBox1.Text;
         }
 
-        private void OnDeleteMenuItem_Click(object sender, EventArgs e)
+        private void OnDeleteItem_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("항목 삭제?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
@@ -2909,6 +2918,19 @@ namespace WellaTodo
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd)") + "]";
 
             AlarmCheck();
+        }
+
+        private void Delay(int ms)
+        {
+            DateTime dateTimeNow = DateTime.Now;
+            TimeSpan duration = new TimeSpan(0, 0, 0, 0, ms);
+            DateTime dateTimeAdd = dateTimeNow.Add(duration);
+            while (dateTimeAdd >= dateTimeNow)
+            {
+                System.Windows.Forms.Application.DoEvents();
+                dateTimeNow = DateTime.Now;
+            }
+            return;
         }
     }
 }
