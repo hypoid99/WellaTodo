@@ -18,6 +18,8 @@ namespace WellaTodo
         public AlarmForm()
         {
             InitializeComponent();
+
+            textBox1.Font = new Font("맑은고딕", 18.0f, FontStyle.Regular);
         }
 
         private void OutputText(string txt)

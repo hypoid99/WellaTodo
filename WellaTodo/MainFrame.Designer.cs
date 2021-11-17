@@ -172,6 +172,7 @@
             this.flowLayoutPanel2.Size = new System.Drawing.Size(273, 206);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
+            this.flowLayoutPanel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel2_Scroll);
             // 
             // button2
             // 
