@@ -24,7 +24,7 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> Changed_View_Event;
 
-        static readonly string WINDOW_CAPTION = "Wella Todo v0.8";
+        static readonly string WINDOW_CAPTION = "Wella Todo v0.85";
         static readonly int WINDOW_WIDTH = 1000;
         static readonly int WINDOW_HEIGHT = 500;
         static readonly int MENU_WINDOW_WIDTH = 200;
@@ -512,7 +512,7 @@ namespace WellaTodo
             flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu4);
             flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu5);
             flowLayoutPanel_Menulist.Controls.Add(divider2);
-
+            
             m_ListName.Add(twolinelist_Menu5); // "작업" 리스트를 등록한다
             
             foreach (string list_name in m_listName_Data) // 목록 리스트를 등록한다
@@ -570,7 +570,6 @@ namespace WellaTodo
                 m_listName_Data.Add(list);
             }
             rs_list.Close();
-            
         }
 
         //--------------------------------------------------------------
@@ -596,7 +595,13 @@ namespace WellaTodo
             }
             serializer_list.Serialize(ws_list, m_listName_Data);
             ws_list.Close();
-            
+            /*
+            Stream ws1 = new FileStream("menulist.dat", FileMode.Create);
+            BinaryFormatter serializer1 = new BinaryFormatter();
+
+            serializer1.Serialize(ws1, m_MenuList);
+            ws1.Close();
+            */
         }
 
         //--------------------------------------------------------------
@@ -1283,7 +1288,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 할일 항목 탐색
+        // 할일 항목 탐색  -> m_selected_position을 활용시에만 가능
         //--------------------------------------------------------------
         private Todo_Item Find_Task()
         {
@@ -1291,7 +1296,7 @@ namespace WellaTodo
             {
                 if (m_Data[m_selected_position].Equals(item.TD_DataCell)) return item;
             }
-            MessageBox.Show("Task item finding ERROR");
+            MessageBox.Show("Task item finding ERROR [" + m_selected_position + "]");
             return null;
         }
 
@@ -2661,9 +2666,19 @@ namespace WellaTodo
 
         private void Update_Task_Infomation(CDataCell dc)
         {
-            Todo_Item item = Find_Task();
-            item.TD_infomation = MakeInfoTextFromDataCell(dc);
-            item.Refresh();
+            //Todo_Item item = Find_Task();
+            //item.TD_infomation = MakeInfoTextFromDataCell(dc);
+            //item.Refresh();
+
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.Equals(item.TD_DataCell))
+                {
+                    item.TD_infomation = MakeInfoTextFromDataCell(dc);
+                    item.Refresh();
+                    break;
+                }
+            }
         }
 
         private string MakeInfoTextFromDataCell(CDataCell dt)
