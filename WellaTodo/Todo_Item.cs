@@ -176,7 +176,6 @@ namespace WellaTodo
 
         private void Initiate_View()
         {
-            roundCheckbox1.CheckedChanged += new EventHandler(roundCheckbox1_CheckedChanged);
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
             roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
@@ -185,7 +184,6 @@ namespace WellaTodo
             roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(roundCheckbox1);
 
-            starCheckbox1.CheckedChanged += new EventHandler(starCheckbox1_CheckedChanged);
             starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
             starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
@@ -369,11 +367,6 @@ namespace WellaTodo
             ChangeToBackColor();
         }
 
-        private void roundCheckbox1_CheckedChanged(object sender, EventArgs e)
-        {
-                
-        }
-
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
             TD_important = starCheckbox1.Checked;
@@ -391,11 +384,6 @@ namespace WellaTodo
         private void starCheckbox1_MouseLeave(object sender, EventArgs e)
         {
             ChangeToBackColor();
-        }
-
-        private void starCheckbox1_CheckedChanged(object sender, EventArgs e)
-        {
-            
         }
     }
 }
