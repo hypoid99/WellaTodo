@@ -57,8 +57,11 @@ namespace WellaTodo
             this.Load += new System.EventHandler(this.Todo_Item_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Todo_Item_Paint);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseDown);
             this.MouseEnter += new System.EventHandler(this.Todo_Item_MouseEnter);
             this.MouseLeave += new System.EventHandler(this.Todo_Item_MouseLeave);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseUp);
             this.Resize += new System.EventHandler(this.Todo_Item_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();

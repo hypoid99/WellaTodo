@@ -48,7 +48,7 @@ namespace WellaTodo
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_TEXTBOX_BACK_COLOR = Color.LightCyan;
 
-        static readonly string FONT_NAME = "맑은고딕";
+        static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_TITLE = 24.0f;
         static readonly float FONT_SIZE_TEXT = 14.0f;
 
@@ -67,8 +67,9 @@ namespace WellaTodo
         MainController m_Controller;
         List<CDataCell> m_Data = new List<CDataCell>();
         List<TwoLineList> m_ListName = new List<TwoLineList>();
-        List<string> m_listName_Data = new List<string>();
+        List<string> m_ListName_stringData = new List<string>();
         List<Todo_Item> m_Task = new List<Todo_Item>();
+        ToolTip m_TaskToolTip = new ToolTip();
 
         LoginSettingForm loginSettingForm = new LoginSettingForm();
         MemoForm memoForm = new MemoForm();
@@ -97,8 +98,6 @@ namespace WellaTodo
         string m_selected_listname;
         int m_currentPage = 1;
         int m_thumbsPerPage = 20;
-        int m_taskDragStart;
-        int m_taskDragEnd;
 
         public MainFrame()
         {
@@ -528,7 +527,7 @@ namespace WellaTodo
             
             m_ListName.Add(twolinelist_Menu5); // "작업" 리스트를 등록한다
             
-            foreach (string list_name in m_listName_Data) // 목록 리스트를 등록한다
+            foreach (string list_name in m_ListName_stringData) // 목록 리스트를 등록한다
             {
                 if (list_name != "작업")
                 {
@@ -577,10 +576,10 @@ namespace WellaTodo
             BinaryFormatter deserializer_list = new BinaryFormatter();
             List<string> list_name = (List<string>)deserializer_list.Deserialize(rs_list);
 
-            m_listName_Data.Clear();
+            m_ListName_stringData.Clear();
             foreach (string list in list_name)
             {
-                m_listName_Data.Add(list);
+                m_ListName_stringData.Add(list);
             }
             rs_list.Close();
         }
@@ -600,21 +599,14 @@ namespace WellaTodo
             Stream ws_list = new FileStream("list.dat", FileMode.Create);
             BinaryFormatter serializer_list = new BinaryFormatter();
 
-            m_listName_Data.Clear();
+            m_ListName_stringData.Clear();
             for (int i = 0; i < m_ListName.Count; i++)  // 목록 리스트 이름을 저장한다
             {
                 TwoLineList item = m_ListName[i];
-                m_listName_Data.Add(item.PrimaryText);
+                m_ListName_stringData.Add(item.PrimaryText);
             }
-            serializer_list.Serialize(ws_list, m_listName_Data);
+            serializer_list.Serialize(ws_list, m_ListName_stringData);
             ws_list.Close();
-            /*
-            Stream ws1 = new FileStream("menulist.dat", FileMode.Create);
-            BinaryFormatter serializer1 = new BinaryFormatter();
-
-            serializer1.Serialize(ws1, m_MenuList);
-            ws1.Close();
-            */
         }
 
         //--------------------------------------------------------------
@@ -725,52 +717,84 @@ namespace WellaTodo
         {
             TwoLineList sd = (TwoLineList)sender;
 
+            Close_DetailWindow();
+
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
                 item.IsSelected = false;
                 if (item.Equals(sd))
                 {
                     item.IsSelected = true;
-
                     switch (item.PrimaryText)
                     {
                         case "오늘 할 일":
                             m_selected_menu = (int)MenuList.MYTODAY_MENU;
+                            Menu_MyToday();
                             break;
                         case "중요":
                             m_selected_menu = (int)MenuList.IMPORTANT_MENU;
+                            Menu_Important();
                             break;
                         case "계획된 일정":
                             m_selected_menu = (int)MenuList.DEADLINE_MENU;
+                            Menu_Planned();
                             break;
                         case "완료됨":
                             m_selected_menu = (int)MenuList.COMPLETE_MENU;
+                            Menu_Completed();
                             break;
                         case "작업":
                             m_selected_menu = (int)MenuList.TODO_ITEM_MENU;
                             m_selected_listname = item.PrimaryText;
+                            Menu_Task();
                             break;
                         default:
                             m_selected_menu = (int)MenuList.LIST_MENU;
                             m_selected_listname = item.PrimaryText;
+                            Menu_List(item);
                             break;
                     }
                 }
             }
 
+            MenuList_Right_Click_ContextMenu();
+        }
+
+        private void MenuList_Right_Click_ContextMenu()
+        {
             ContextMenu menuListContextMenu = new ContextMenu();
             menuListContextMenu.Popup += new EventHandler(OnMenuListPopupEvent);
 
             MenuItem saveData = new MenuItem("데이터 저장", new EventHandler(OnSaveDataMenu_Click));
             MenuItem displayData = new MenuItem("데이터 표시", new EventHandler(OnDisplayDataMenu_Click));
+            MenuItem moveListUp = new MenuItem("목록 위로 이동", new EventHandler(OnMenuListUp_Click));
+            MenuItem moveListDown = new MenuItem("목록 아래로 이동", new EventHandler(OnMenuListDown_Click));
             MenuItem renameList = new MenuItem("목록 이름바꾸기", new EventHandler(OnRenameMenuList_Click));
             MenuItem deleteList = new MenuItem("목록 삭제", new EventHandler(OnDeleteMenuList_Click));
 
             menuListContextMenu.MenuItems.Add(saveData);
             menuListContextMenu.MenuItems.Add(displayData);
             menuListContextMenu.MenuItems.Add("-");
+            menuListContextMenu.MenuItems.Add(moveListUp);
+            menuListContextMenu.MenuItems.Add(moveListDown);
+            menuListContextMenu.MenuItems.Add("-");
             menuListContextMenu.MenuItems.Add(renameList);
             menuListContextMenu.MenuItems.Add(deleteList);
+
+            if (m_selected_menu == (int)MenuList.LIST_MENU)
+            {
+                moveListUp.Enabled = true;
+                moveListDown.Enabled = true;
+                renameList.Enabled = true;
+                deleteList.Enabled = true;
+            }
+            else
+            {
+                moveListUp.Enabled = false;
+                moveListDown.Enabled = false;
+                renameList.Enabled = false;
+                deleteList.Enabled = false;
+            }
 
             int px = Control.MousePosition.X - Location.X;
             int py = Control.MousePosition.Y - Location.Y - 30;
@@ -779,19 +803,7 @@ namespace WellaTodo
 
         private void OnMenuListPopupEvent(object sender, EventArgs e)
         {
-            ContextMenu ctm = (ContextMenu)sender;
 
-            if (m_selected_menu == (int)MenuList.LIST_MENU)
-            {
-                ctm.MenuItems[3].Enabled = true;
-                ctm.MenuItems[4].Enabled = true;
-            }
-            else
-            {
-                ctm.MenuItems[3].Enabled = false;
-                ctm.MenuItems[4].Enabled = false;
-            }
-            
         }
 
         private void OnSaveDataMenu_Click(object sender, EventArgs e)
@@ -812,6 +824,68 @@ namespace WellaTodo
             else
                 outputForm.Show();
             Display_Data();
+        }
+
+        private void OnMenuListUp_Click(object sender, EventArgs e)
+        {
+            int pos = 0;
+            for(int i = 0; i < m_ListName.Count; i++)
+            {
+                if (m_ListName[i].PrimaryText == m_selected_listname)
+                {
+                    pos = i;
+                }
+            }
+            if (pos == 1) return;  // 작업 이상은 UP 불가
+
+            TwoLineList dc = m_ListName[pos]; //추출
+            m_ListName.RemoveAt(pos); //삭제
+            m_ListName.Insert(pos - 1, dc); // 삽입
+
+            pos = 0;
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                if (item.PrimaryText == m_selected_listname)
+                {
+                    flowLayoutPanel_Menulist.Controls.SetChildIndex(item, pos - 1);
+                    break;
+                }
+                pos++;
+            }
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
+        }
+
+        private void OnMenuListDown_Click(object sender, EventArgs e)
+        {
+            int pos = 0;
+            for (int i = 0; i < m_ListName.Count; i++)
+            {
+                if (m_ListName[i].PrimaryText == m_selected_listname)
+                {
+                    pos = i;
+                }
+            }
+            if (pos == m_ListName.Count - 1) return;
+
+            TwoLineList dc = m_ListName[pos]; //추출
+            m_ListName.RemoveAt(pos); //삭제
+            m_ListName.Insert(pos + 1, dc); // 삽입
+
+            pos = 0;
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                if (item.PrimaryText == m_selected_listname)
+                {
+                    flowLayoutPanel_Menulist.Controls.SetChildIndex(item, pos + 1);
+                    break;
+                }
+                pos++;
+            }
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
         }
 
         private void OnRenameMenuList_Click(object sender, EventArgs e)
@@ -836,17 +910,19 @@ namespace WellaTodo
                 pos++;
             }
             
+            /*
             pos = 0;
-            for (int i = 0; i < m_listName_Data.Count; i++)  // 목록 리스트 문자 데이터 변경
+            for (int i = 0; i < m_ListName_stringData.Count; i++)  // 목록 리스트 문자 데이터 변경
             {
-                string item = m_listName_Data[i];
+                string item = m_ListName_stringData[i];
                 if (sd.PrimaryText == item)
                 {
-                    m_listName_Data[pos] = sd.PrimaryText_Renamed;
+                    m_ListName_stringData[pos] = sd.PrimaryText_Renamed;
                 }
                 pos++;
             }
-            
+            */
+
             pos = 0;
             foreach (TwoLineList item in m_ListName)  // 목록 리스트내 이름 변경
             {
@@ -980,9 +1056,10 @@ namespace WellaTodo
                 Todo_Item item = new Todo_Item(data);
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
-                item.MouseDown += new MouseEventHandler(Task_MouseDown);
-                m_Task.Add(item);
                 item.TD_infomation = MakeInfoTextFromDataCell(data);
+                m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
+
+                m_Task.Add(item);
             }
 
             m_currentPage = 1;
@@ -1207,6 +1284,8 @@ namespace WellaTodo
 
             Todo_Item item = new Todo_Item(dc);  // Task 생성
 
+            m_Task.Insert(0, item);
+
             flowLayoutPanel2.Controls.Add(item);
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
             item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
@@ -1267,6 +1346,8 @@ namespace WellaTodo
         {
             string txt = "항목 삭제? [" + m_Data[m_selected_position].DC_title + "]";
             if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
+
+            labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
             Todo_Item item = Find_Task();
             item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
@@ -1354,11 +1435,10 @@ namespace WellaTodo
             Todo_Item sd = (Todo_Item)sender;
 
             m_selected_position = m_Data.IndexOf(sd.TD_DataCell);
-
             SendDataCellToDetailWindow(sd.TD_DataCell);
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls) item.IsItemSelected = false;
-            foreach (Todo_Item item in m_Task) item.IsItemSelected = false;
+            foreach (Todo_Item item in m_Task) item.IsItemSelected = false; // m_Task도 false 해줘야함
             sd.IsItemSelected = true;
 
             TodoItem_Right_Click_ContextMenu();
@@ -1400,25 +1480,19 @@ namespace WellaTodo
         private void Complete_Process(Todo_Item item)
         {
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
-
+            Console.WriteLine(m_currentPage);
             if (item.TD_complete)
             {
-                if ((m_Task.Count / m_thumbsPerPage) < 1)  // 한 페이지 보다 작을 경우
+                if ((m_Task.Count / m_thumbsPerPage) < 1                            // 한 페이지 보다 작을 경우
+                    || m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1)      // 전체 페이지가 출력된 경우
+                    || m_currentPage == m_Task.Count / m_thumbsPerPage)             // 딱 맞게 20개 단위로 출력된 경우
                 {
                     flowLayoutPanel2.Controls.SetChildIndex(item, flowLayoutPanel2.Controls.Count);
                 }
                 else
                 {
-                    if (m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1))  // 전체 페이지가 출력된 경우
-                    {
-                        flowLayoutPanel2.Controls.SetChildIndex(item, flowLayoutPanel2.Controls.Count);
-                    }
-                    else
-                    {
-                        // 전체 페이지가 출력 안된 경우는 한개만 추가함
-                        flowLayoutPanel2.Controls.Remove(item);
-                        flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage]);
-                    }
+                    flowLayoutPanel2.Controls.Remove(item);  // 전체 페이지가 출력 안된 경우는 한개만 추가함
+                    flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage]);
                 }
 
                 int pos = m_Task.IndexOf(item);
@@ -1471,6 +1545,7 @@ namespace WellaTodo
             MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click)); // 재활용
             MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadline_Click)); // 재활용
             MenuItem menuEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
+            MenuItem moveItem = new MenuItem("항목 이동");
             MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteItem_Click));
 
             todoItemContextMenu.MenuItems.Add(myTodayItem);
@@ -1484,7 +1559,14 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(menuEditItem);
             todoItemContextMenu.MenuItems.Add("-");
+            todoItemContextMenu.MenuItems.Add(moveItem);
             todoItemContextMenu.MenuItems.Add(deleteItem);
+
+            foreach (TwoLineList item in m_ListName)
+            {
+                moveItem.MenuItems.Add(new MenuItem(item.PrimaryText, new EventHandler(OnMoveItem_Click)));
+            }
+
             int px = Control.MousePosition.X - Location.X;
             int py = Control.MousePosition.Y - Location.Y - 30;
             todoItemContextMenu.Show(this, new Point(px, py));
@@ -1525,6 +1607,24 @@ namespace WellaTodo
         private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
         {
             Edit_Task_Memo();
+        }
+
+        private void OnMoveItem_Click(object sender, EventArgs e)
+        {
+            MenuItem list = (MenuItem)sender;
+            if (list.Text == m_selected_listname) return;
+
+            labelUserName.Focus();  // 레이아웃 유지용 포커싱
+
+            Todo_Item item = Find_Task();
+            flowLayoutPanel2.Controls.Remove(item); // 제거
+
+            int pos = m_Task.IndexOf(item);
+            m_Task.RemoveAt(pos); //삭제
+
+            m_Data[m_selected_position].DC_listName = list.Text;  // 목록명 변경
+
+            Update_Menu_Metadata();
         }
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
@@ -2779,29 +2879,72 @@ namespace WellaTodo
 
         private void Task_MouseDown(object sender, MouseEventArgs e)
         {
-            Todo_Item sd = (Todo_Item)sender;
-            m_taskDragStart = flowLayoutPanel2.Controls.IndexOf(sd);
-            Console.WriteLine("Task_MouseDown"+sd.TD_title+"-"+m_taskDragStart);
-            sd.DoDragDrop(sd, DragDropEffects.Move);
+            //isTaskDragging = false;
+            //pointDragStart = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+
+            //Todo_Item sd = (Todo_Item)sender;
+            //Console.WriteLine("Task_MouseDown:"+sd.TD_title);
+            //m_taskDragStart = flowLayoutPanel2.Controls.IndexOf(sd);
+            //sd.DoDragDrop(sd, DragDropEffects.Move);
+        }
+
+        private void Task_MouseUp(object sender, MouseEventArgs e)
+        {
+            /*
+            if (isTaskDragging)
+            {
+                Console.WriteLine("Task_MouseUp - Drag");
+            }
+            else
+            {
+                Console.WriteLine("Task_MouseUp - Click");
+            }
+            isTaskDragging = false;
+            */
+        }
+
+        private void Task_MouseMove(object sender, MouseEventArgs e)
+        {
+            /*
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point pointCurrent = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(pointCurrent.X - pointDragStart.X);
+            deltaY = Math.Abs(pointCurrent.Y - pointDragStart.Y);
+
+            if ((deltaX < threshold) && (deltaY < threshold))
+            {
+                isTaskDragging = false;
+            }
+            else
+            {
+                isTaskDragging = true;
+            }
+            */
         }
 
         private void Task_DragOver(object sender, DragEventArgs e)
         {
+            //Console.WriteLine("Task_DragOver");
             //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
-            e.Effect = DragDropEffects.Move;
+            //e.Effect = DragDropEffects.Move;
         }
 
         private void Task_DragDrop(object sender, DragEventArgs e)
         {
             //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
-            Control c = e.Data.GetData(e.Data.GetFormats()[0]) as Control;
-            Todo_Item item = (Todo_Item)c;
-            Console.WriteLine("Task_DragDrop" + item.TD_title);
-
+            //Control c = e.Data.GetData(e.Data.GetFormats()[0]) as Control;
+            //Todo_Item item = (Todo_Item)c;
+            //Console.WriteLine("Task_DragDrop"+item.TD_title);
+            /*
             if (item != null)
             {
                 //item.Location = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
+                //Point mp = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
+                //Console.WriteLine("mx : " + mp.X + " my : " + mp.Y);
             }
+            */
         }
 
         private void timer1_Tick(object sender, EventArgs e)

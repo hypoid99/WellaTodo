@@ -26,7 +26,7 @@ namespace WellaTodo
         static readonly Color SELECTED_COLOR = Color.Cyan;
         static readonly Color BORDER_COLOR = Color.LightGray;
 
-        static readonly string FONT_NAME = "맑은고딕";
+        static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_PRIMARY = 14.0f;
         static readonly float FONT_SIZE_SECONDARY = 8.0f;
         static readonly float FONT_SIZE_METADATA = 8.0f;

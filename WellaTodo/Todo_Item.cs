@@ -27,7 +27,7 @@ namespace WellaTodo
         static readonly Color PSEUDO_COMPLETE_TEXT_COLOR = Color.Gray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
-        static readonly string FONT_NAME = "맑은고딕";
+        static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_TITLE = 14.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;
 
@@ -384,6 +384,49 @@ namespace WellaTodo
         private void starCheckbox1_MouseLeave(object sender, EventArgs e)
         {
             ChangeToBackColor();
+        }
+
+        private void Todo_Item_MouseDown(object sender, MouseEventArgs e)
+        {
+           // Console.WriteLine("Todo_Item_MouseDown");
+            //isDragging = false;
+            //pointStart = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+            //Todo_Item sd = (Todo_Item)sender;
+            //sd.DoDragDrop(sd, DragDropEffects.Move);
+            //DoDragDrop(this, DragDropEffects.Move);
+        }
+
+        private void Todo_Item_MouseMove(object sender, MouseEventArgs e)
+        {
+            /*
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point pointCurrent = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(pointCurrent.X - pointStart.X);
+            deltaY = Math.Abs(pointCurrent.Y - pointStart.Y);
+
+            if ((deltaX < threshold) && (deltaY < threshold ))
+            {
+                isDragging = true;
+            }
+            */
+        }
+
+        private void Todo_Item_MouseUp(object sender, MouseEventArgs e)
+        {
+            /*
+            if (isDragging)
+            {
+                Console.WriteLine("Todo_Item_MouseUp - Drag");
+            }
+            else
+            {
+                Console.WriteLine("Todo_Item_MouseUp - Click");
+                Todo_Item_Click(sender, e);  // click
+            }
+            isDragging = false;
+            */
         }
     }
 }
