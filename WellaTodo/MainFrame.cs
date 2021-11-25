@@ -34,6 +34,7 @@ namespace WellaTodo
         static readonly int TAIL_HEIGHT = 50;
         static readonly int TASK_WIDTH_GAP = 25;
         static readonly int MENU_WIDTH_GAP = 15;
+        static readonly int TEXTBOX_HEIGHT_GAP = 42;
 
         static readonly Image ICON_ACCOUNT = Properties.Resources.outline_manage_accounts_black_24dp;
         static readonly Image ICON_SUNNY = Properties.Resources.outline_wb_sunny_black_24dp;
@@ -86,6 +87,9 @@ namespace WellaTodo
         Label createDateLabel = new Label();
         RoundLabel upArrow = new RoundLabel();
         RoundLabel downArrow = new RoundLabel();
+
+        RoundLabel saveButton = new RoundLabel();
+        RoundLabel carendarButton = new RoundLabel();
 
         Color COLOR_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
@@ -164,7 +168,7 @@ namespace WellaTodo
             labelUserName.BackColor = PSEUDO_BACK_COLOR;
 
             textBox_AddList.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
-            textBox_AddList.Location = new Point(10, splitContainer1.Panel1.Height - 40);
+            textBox_AddList.Location = new Point(10, splitContainer1.Panel1.Height - TEXTBOX_HEIGHT_GAP);
             textBox_AddList.Size = new Size(flowLayoutPanel_Menulist.Width - MENU_WIDTH_GAP, 25);
             textBox_AddList.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
             textBox_AddList.Text = "+ 새 목록 추가";
@@ -199,7 +203,7 @@ namespace WellaTodo
             flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
 
             textBox2.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
-            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 40);
+            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 25, 25);
             textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
             textBox2.Text = "+ 작업 추가";
@@ -280,6 +284,14 @@ namespace WellaTodo
             downArrow.Size = new Size(60, 30);
             splitContainer2.Panel2.Controls.Add(downArrow);
 
+            saveButton.Click += new EventHandler(saveButton_Click);
+            saveButton.MouseEnter += new EventHandler(saveButton_MouseEnter);
+            saveButton.MouseLeave += new EventHandler(saveButton_MouseLeave);
+            saveButton.Text = "저장";
+            saveButton.Location = new Point(400, 10);
+            saveButton.Size = new Size(60, 30);
+            //splitContainer2.Panel1.Controls.Add(saveButton);
+
             // 닫기 버튼
             button1.Location = new Point(DETAIL_WINDOW_X1 + 15, 360);
             button1.Size = new Size(75, 25);
@@ -307,7 +319,7 @@ namespace WellaTodo
 
             labelUserName.Width = flowLayoutPanel_Menulist.Width;
 
-            textBox_AddList.Location = new Point(10, splitContainer1.Panel1.Height - 35);
+            textBox_AddList.Location = new Point(10, splitContainer1.Panel1.Height - TEXTBOX_HEIGHT_GAP);
             textBox_AddList.Size = new Size(flowLayoutPanel_Menulist.Width - MENU_WIDTH_GAP, 25);
 
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
@@ -327,7 +339,7 @@ namespace WellaTodo
             label_ListName.Size = new Size(splitContainer2.Panel1.Width, 50);
             flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
-            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - 35);
+            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
             textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
             if (isDetailWindowOpen)
@@ -1752,6 +1764,8 @@ namespace WellaTodo
                 e.SuppressKeyPress = false;
                 if (textBox2.Text.Trim().Length == 0) return;
 
+                textBox2.Text = textBox2.Text.Replace("&", "&&");
+
                 Add_Task(textBox2.Text);  // 입력 사항에 오류가 있는지 체크할 것
 
                 textBox2.Text = "";
@@ -2631,6 +2645,24 @@ namespace WellaTodo
             }
 
             //Display_Menu_Status();
+        }
+
+        //
+        // saveButton
+        //
+        private void saveButton_MouseEnter(object sender, EventArgs e)
+        {
+            saveButton.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void saveButton_MouseLeave(object sender, EventArgs e)
+        {
+            saveButton.BackColor = PSEUDO_BACK_COLOR;
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         // ------------------------------------------------------------------

@@ -23,7 +23,7 @@ namespace WellaTodo
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
-        static readonly Color PSEUDO_INFORMATION_TEXT_COLOR = Color.Red;
+        static readonly Color PSEUDO_INFORMATION_TEXT_COLOR = Color.Gray;
         static readonly Color PSEUDO_COMPLETE_TEXT_COLOR = Color.Gray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
@@ -153,10 +153,21 @@ namespace WellaTodo
             }
             else
             {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                if (TD_important)
+                {
+                    label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Bold);
+                    label1.ForeColor = Color.Blue;
+                }
+                else
+                {
+                    label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                    label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                }
+
                 label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             }
+
+            
 
             starCheckbox1.Location = new Point(Width - 40, 7);
 
