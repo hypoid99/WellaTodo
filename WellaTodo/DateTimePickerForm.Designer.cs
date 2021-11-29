@@ -1,7 +1,7 @@
 ﻿
 namespace WellaTodo
 {
-    partial class CarendarForm
+    partial class DateTimePickerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -71,7 +71,7 @@ namespace WellaTodo
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // CarendarForm
+            // DateTimePickerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -80,10 +80,10 @@ namespace WellaTodo
             this.Controls.Add(this.button1);
             this.Controls.Add(this.monthCalendar1);
             this.Controls.Add(this.dateTimePicker1);
-            this.Name = "CarendarForm";
+            this.Name = "DateTimePickerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "CarendarForm";
-            this.Load += new System.EventHandler(this.CarendarForm_Load);
+            this.Load += new System.EventHandler(this.DateTimePickerForm_Load);
             this.ResumeLayout(false);
 
         }

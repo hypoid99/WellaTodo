@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public partial class CarendarForm : Form
+    public partial class DateTimePickerForm : Form
     {
         DateTime _selectedDateTime;
         public DateTime SelectedDateTime { get => _selectedDateTime; set => _selectedDateTime = value; }
@@ -19,16 +19,16 @@ namespace WellaTodo
 
         
 
-        public CarendarForm()
+        public DateTimePickerForm()
         {
             InitializeComponent();
         }
 
-        private void CarendarForm_Load(object sender, EventArgs e)
+        private void DateTimePickerForm_Load(object sender, EventArgs e)
         {
             dateTimePicker1.Location = new Point(30, 25);
             dateTimePicker1.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-            dateTimePicker1.Format = DateTimePickerFormat.Custom ;
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
             dateTimePicker1.ShowUpDown = true;
 
             monthCalendar1.Location = new Point(30, 50);

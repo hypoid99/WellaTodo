@@ -2131,7 +2131,7 @@ namespace WellaTodo
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
         {
-            CarendarForm carendar = new CarendarForm();
+            DateTimePickerForm carendar = new DateTimePickerForm();
             carendar.ShowDialog();
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {
@@ -2274,7 +2274,7 @@ namespace WellaTodo
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
         {
-            CarendarForm carendar = new CarendarForm();
+            DateTimePickerForm carendar = new DateTimePickerForm();
             carendar.ShowDialog();
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {

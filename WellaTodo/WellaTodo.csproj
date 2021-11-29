@@ -55,11 +55,11 @@
     <Compile Include="AlarmForm.Designer.cs">
       <DependentUpon>AlarmForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CarendarForm.cs">
+    <Compile Include="DateTimePickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CarendarForm.Designer.cs">
-      <DependentUpon>CarendarForm.cs</DependentUpon>
+    <Compile Include="DateTimePickerForm.Designer.cs">
+      <DependentUpon>DateTimePickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CDataCell.cs" />
     <Compile Include="LoginSettingForm.cs">
@@ -126,8 +126,8 @@
     <EmbeddedResource Include="AlarmForm.resx">
       <DependentUpon>AlarmForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CarendarForm.resx">
-      <DependentUpon>CarendarForm.cs</DependentUpon>
+    <EmbeddedResource Include="DateTimePickerForm.resx">
+      <DependentUpon>DateTimePickerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginSettingForm.resx">
       <DependentUpon>LoginSettingForm.cs</DependentUpon>
