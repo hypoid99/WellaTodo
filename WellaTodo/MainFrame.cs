@@ -25,9 +25,9 @@ namespace WellaTodo
         public event ViewHandler<IView> Changed_View_Event;
 
         static readonly string WINDOW_CAPTION = "Wella Todo v0.85";
-        static readonly int WINDOW_WIDTH = 1000;
-        static readonly int WINDOW_HEIGHT = 500;
-        static readonly int MENU_WINDOW_WIDTH = 200;
+        static readonly int WINDOW_WIDTH = 1200;
+        static readonly int WINDOW_HEIGHT = 700;
+        static readonly int MENU_WINDOW_WIDTH = 350;
         static readonly int DETAIL_WINDOW_WIDTH = 260;
         static readonly int DETAIL_WINDOW_X1 = 5;
         static readonly int HEADER_HEIGHT = 50;
@@ -102,6 +102,9 @@ namespace WellaTodo
         string m_selected_listname;
         int m_currentPage = 1;
         int m_thumbsPerPage = 20;
+
+        int m_printCounter = 0;
+        int m_printPageNo = 1;
 
         public MainFrame()
         {
@@ -779,6 +782,7 @@ namespace WellaTodo
 
             MenuItem saveData = new MenuItem("데이터 저장", new EventHandler(OnSaveDataMenu_Click));
             MenuItem displayData = new MenuItem("데이터 표시", new EventHandler(OnDisplayDataMenu_Click));
+            MenuItem printData = new MenuItem("데이터 인쇄", new EventHandler(OnPrintDataMenu_Click));
             MenuItem moveListUp = new MenuItem("목록 위로 이동", new EventHandler(OnMenuListUp_Click));
             MenuItem moveListDown = new MenuItem("목록 아래로 이동", new EventHandler(OnMenuListDown_Click));
             MenuItem renameList = new MenuItem("목록 이름바꾸기", new EventHandler(OnRenameMenuList_Click));
@@ -786,6 +790,7 @@ namespace WellaTodo
 
             menuListContextMenu.MenuItems.Add(saveData);
             menuListContextMenu.MenuItems.Add(displayData);
+            menuListContextMenu.MenuItems.Add(printData);
             menuListContextMenu.MenuItems.Add("-");
             menuListContextMenu.MenuItems.Add(moveListUp);
             menuListContextMenu.MenuItems.Add(moveListDown);
@@ -836,6 +841,29 @@ namespace WellaTodo
             else
                 outputForm.Show();
             Display_Data();
+        }
+
+        private void OnPrintDataMenu_Click(object sender, EventArgs e)
+        {
+
+            printPreviewDialog1.StartPosition = FormStartPosition.CenterParent;
+            printPreviewDialog1.Document = printDocument1;
+            //printPreviewDialog1.ClientSize = new Size(this.Width, this.Height);
+            printPreviewDialog1.MinimumSize = new System.Drawing.Size(800, 600);
+            printPreviewDialog1.UseAntiAlias = true;
+            if (printPreviewDialog1.ShowDialog() == DialogResult.Cancel)
+            {
+                m_printCounter = 0;
+                m_printPageNo = 1;
+            }
+
+            /*
+            printDialog1.Document = printDocument1;
+            if (printDialog1.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
+            */
         }
 
         private void OnMenuListUp_Click(object sender, EventArgs e)
@@ -2979,6 +3007,80 @@ namespace WellaTodo
             */
         }
 
+        // ---------------------------------------------------------------------------
+        // 인쇄하기
+        // ---------------------------------------------------------------------------
+        private void printDocument1_BeginPrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        {
+            m_printCounter = 0;
+            m_printPageNo = 1;
+        }
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            int start_X = 10;
+            int start_Y = 140;
+            int lineHeight = 30;
+            int printLineNo = 0;
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+
+            //e.PageSettings.PaperSize = new System.Drawing.Printing.PaperSize("A4", 850, 1100);
+            float pageWidth = e.PageSettings.PrintableArea.Width;
+            float pageHeight = e.PageSettings.PrintableArea.Height - 50;
+            Font font = new Font("Arial", 14, FontStyle.Regular);
+            float fontHeight = font.GetHeight();
+
+            if (m_printPageNo == 1)
+            {
+                //RectangleF drawRect = new RectangleF((float)(startWidth + width), (float)startHeight, (float)width1, avgHeight);
+                //e.Graphics.DrawRectangle(Pens.Black, (float)(startWidth + width), (float)startHeight, (float)width1, avgHeight);
+                //e.Graphics.DrawString("목록 및 할일 인쇄", new Font("Arial", 20, FontStyle.Bold), Brushes.Black, drawRect, sf);
+                
+                e.Graphics.DrawString("목록 및 할일 인쇄", new Font("Arial", 20, FontStyle.Bold), Brushes.Black, 10, 40);
+                e.Graphics.DrawString("인쇄일 : " + DateTime.Now.ToString("yyyy/MM/dd"), new Font("Arial", 13), Brushes.Black, 10, 80);
+                e.Graphics.DrawString("페이지번호 : " + m_printPageNo, new Font("Arial", 13), Brushes.Black, 10, 100);
+
+                e.Graphics.DrawString(m_selected_listname, new Font("Arial", 16, FontStyle.Bold), Brushes.Black, start_X, start_Y);
+                start_X += 50;
+                start_Y += lineHeight;
+            }
+
+            for (int i = m_printCounter; i < m_Task.Count; i++)
+            {
+                e.Graphics.DrawString(m_Task[i].TD_title, new Font("Arial", 14, FontStyle.Regular), Brushes.Black, start_X, start_Y);
+                m_printCounter++;
+
+                /*
+                start_Y += lineHeight;
+                printLineNo++;
+                if (printLineNo % 35 == 0) // 한페이지당 35줄 인쇄
+                {
+                    e.HasMorePages = true;
+                    m_printPageNo++;
+                    return;
+                }
+                else
+                {
+                    e.HasMorePages = false;
+                }
+                */
+
+                start_Y += (int)fontHeight;
+                if (start_Y >= pageHeight)
+                {
+                    e.HasMorePages = true;
+                    m_printPageNo++;
+                    return;
+                }
+                else
+                {
+                    e.HasMorePages = false;
+                }
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime dt = DateTime.Now;
@@ -3000,7 +3102,7 @@ namespace WellaTodo
                 dateTimeNow = DateTime.Now;
             }
             return;
-        } 
+        }
     }
 }
 

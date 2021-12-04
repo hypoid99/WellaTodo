@@ -41,6 +41,39 @@ namespace WellaTodo
             if (radioButton2.Checked) ColorTheme = 2;
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            FormEffect(this);
+        }
+
+        private void FormEffect(Form fm)
+        {
+            double[] opacity = new double[] { 0.1d, 0.3d, 0.7d, 0.8d, 0.9d, 1.0d };
+            int cnt = 0;
+            Timer tm = new Timer();
+            {
+                fm.RightToLeftLayout = false;
+                fm.Opacity = 0d;
+                tm.Interval = 100;   // 나타나는 속도를 조정함.          
+                tm.Tick += delegate (object obj, EventArgs e)
+                {
+                    if ((cnt + 1 > opacity.Length) || fm == null)
+                    {
+                        tm.Stop();
+                        tm.Dispose();
+                        tm = null;
+                        return;
+                    }
+                    else
+                    {
+                        fm.Opacity = opacity[cnt++];
+                    }
+                };
+                tm.Start();
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             IsSaveClose = false;
