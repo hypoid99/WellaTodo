@@ -59,15 +59,20 @@ namespace WellaTodo
         public bool IsSelected
         {
             get => isSelected;
-            set
-            {
+            set 
+            { 
                 isSelected = value;
-                ChangeSelectedColor();
+                BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+                foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
             }
         }
 
         private string primaryText_Renamed;
-        public string PrimaryText_Renamed { get => primaryText_Renamed; set => primaryText_Renamed = value; }
+        public string PrimaryText_Renamed 
+        { 
+            get => primaryText_Renamed; 
+            set => primaryText_Renamed = value; 
+        }
 
         bool isTextboxClicked = false;
         bool isDivider = false;
@@ -138,14 +143,14 @@ namespace WellaTodo
             label_Metadata.BackColor = BACK_COLOR;
 
             textBox_Rename = new TextBox();
+            textBox_Rename.Enter += new EventHandler(textBox_Rename_Enter);
+            textBox_Rename.KeyDown += new KeyEventHandler(textBox_Rename_KeyDown);
+            textBox_Rename.KeyUp += new KeyEventHandler(textBox_Rename_KeyUp);
+            textBox_Rename.Leave += new EventHandler(textBox_Rename_Leave);
+            textBox_Rename.MouseDown += new MouseEventHandler(textBox_Rename_MouseDown);
             textBox_Rename.Visible = false;
             textBox_Rename.Location = new Point(30, 10);
             Controls.Add(textBox_Rename);
-            textBox_Rename.Enter += new System.EventHandler(textBox_Rename_Enter);
-            textBox_Rename.KeyDown += new System.Windows.Forms.KeyEventHandler(textBox_Rename_KeyDown);
-            textBox_Rename.KeyUp += new System.Windows.Forms.KeyEventHandler(textBox_Rename_KeyUp);
-            textBox_Rename.Leave += new System.EventHandler(textBox_Rename_Leave);
-            textBox_Rename.MouseDown += new System.Windows.Forms.MouseEventHandler(textBox_Rename_MouseDown);
         }
 
         private void TwoLineList_Paint(object sender, PaintEventArgs pevent)
@@ -271,115 +276,22 @@ namespace WellaTodo
             textBox_Rename.Focus();
         }
 
-        private void ChangeToBackColor()
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-            label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-            label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-            label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-        }
-
-        private void ChangeToHighlightColor()
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-            label_PrimaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-            label_SecondaryText.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-            label_Metadata.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-        }
-
-        private void ChangeSelectedColor()
-        {
-            if (IsSelected)
-            {
-                BackColor = SELECTED_COLOR;
-                label_PrimaryText.BackColor = SELECTED_COLOR;
-                label_SecondaryText.BackColor = SELECTED_COLOR;
-                label_Metadata.BackColor = SELECTED_COLOR;
-
-            }
-            else
-            {
-                BackColor = BACK_COLOR;
-                label_PrimaryText.BackColor = BACK_COLOR;
-                label_SecondaryText.BackColor = BACK_COLOR;
-                label_Metadata.BackColor = BACK_COLOR;
-            }
-        }
-
         //---------------------------------------------------------
         // control event
         //---------------------------------------------------------
-        private void TwoLineList_MouseEnter(object sender, EventArgs e)
+        private void List_MouseEnter(object sender, EventArgs e)
         {
-            ChangeToHighlightColor();
+            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
         }
 
-        private void TwoLineList_MouseLeave(object sender, EventArgs e)
+        private void List_MouseLeave(object sender, EventArgs e)
         {
-            ChangeToBackColor();
+            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
         }
 
-        private void pictureBox_Icon_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void pictureBox_Icon_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void label_PrimaryText_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void label_PrimaryText_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void label_SecondaryText_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void label_SecondaryText_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void label_Metadata_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void label_Metadata_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void TwoLineList_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
-        private void pictureBox_Icon_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
-        private void label_PrimaryText_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
-        private void label_SecondaryText_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
-        private void label_Metadata_MouseClick(object sender, MouseEventArgs e)
+        private void List_MouseClick(object sender, MouseEventArgs e)
         {
             Mouse_Clicked(sender, e);
         }

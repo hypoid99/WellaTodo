@@ -17,8 +17,6 @@ namespace WellaTodo
         bool isSelected;
         public bool IsSelected { get => isSelected; set => isSelected = value; }
 
-        
-
         public DateTimePickerForm()
         {
             InitializeComponent();

@@ -41,6 +41,7 @@ namespace WellaTodo
             if (radioButton2.Checked) ColorTheme = 2;
         }
 
+        /*
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
@@ -73,7 +74,7 @@ namespace WellaTodo
                 tm.Start();
             }
         }
-
+        */
         private void button1_Click(object sender, EventArgs e)
         {
             IsSaveClose = false;

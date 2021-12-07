@@ -29,28 +29,13 @@ namespace WellaTodo
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(45, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "To do Item";
-            this.label1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.label1_MouseClick);
-            this.label1.MouseEnter += new System.EventHandler(this.label1_MouseEnter);
-            this.label1.MouseLeave += new System.EventHandler(this.label1_MouseLeave);
             // 
             // Todo_Item
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
-            this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Todo_Item";
             this.Size = new System.Drawing.Size(381, 35);
@@ -64,11 +49,9 @@ namespace WellaTodo
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Todo_Item_MouseUp);
             this.Resize += new System.EventHandler(this.Todo_Item_Resize);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Label label1;
     }
 }

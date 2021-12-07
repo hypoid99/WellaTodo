@@ -23,6 +23,8 @@ namespace WellaTodo
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color PSEUDO_SELECTED_COLOR = Color.Cyan;
         static readonly Color PSEUDO_BORDER_COLOR = Color.LightGray;
+        static readonly Color PSEUDO_FORE_TEXT_COLOR = Color.Black;
+        static readonly Color PSEUDO_IMPORTANT_TEXT_COLOR = Color.Blue;
         static readonly Color PSEUDO_INFORMATION_TEXT_COLOR = Color.Gray;
         static readonly Color PSEUDO_COMPLETE_TEXT_COLOR = Color.Gray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
@@ -37,81 +39,53 @@ namespace WellaTodo
         private string _title;
         public string TD_title
         {
-            get { return _title; }
+            get => _title;
             set { _title = value; label1.Text = value; }
         }
 
         private bool _complete;
         public bool TD_complete
         {
-            get { return _complete; }
+            get => _complete;
             set { _complete = value; roundCheckbox1.Checked = value; }
         }
 
         private bool _important;
         public bool TD_important
         {
-            get { return _important; }
+            get => _important;
             set { _important = value; starCheckbox1.Checked = value; }
         }
 
         public string TD_infomation { get; set; }
+
         public bool IsCompleteClicked { get; set; } = false;
         public bool IsImportantClicked { get; set; } = false;
-        public bool IsDeleteClicked { get; set; } = false;
+
         private bool isItemSelected = false;
         public bool IsItemSelected 
         { 
             get => isItemSelected; 
-            set 
-            { 
-                isItemSelected = value;
-                ChangeItemColor();
-            } 
+            set { isItemSelected = value; ChangeItemSelectedColor(); } 
         }
 
+        Label label1 = new Label();
+        Label label2 = new Label();
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
         StarCheckbox starCheckbox1 = new StarCheckbox();
-        Label label2 = new Label();
-
+        
         GraphicsPath outerBorderPath = null;
         int cornerRadius = 10;
-
-        public Todo_Item()
-        {
-            InitializeComponent();
-
-            TD_title = "입력하세요";
-            TD_complete = false;
-            TD_important = false;
-            TD_infomation = "";
-
-            Initiate_View();
-        }
-
-        public Todo_Item(string text, bool chk_complete, bool chk_important)
-        {
-            InitializeComponent();
-
-            TD_title = text;
-            TD_complete = chk_complete;
-            TD_important = chk_important;
-            TD_infomation = "";
-
-            Initiate_View();
-        }
 
         public Todo_Item(CDataCell dc)
         {
             InitializeComponent();
 
             TD_DataCell = dc;
-            TD_title = m_DataCell.DC_title;
-            TD_complete = m_DataCell.DC_complete;
-            TD_important = m_DataCell.DC_important;
+            TD_title = dc.DC_title;
+            TD_complete = dc.DC_complete;
+            TD_important = dc.DC_important;
             TD_infomation = "";
-
-            Initiate_View();
         }
 
         private void Todo_Item_Load(object sender, EventArgs e)
@@ -119,6 +93,8 @@ namespace WellaTodo
             Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
             BackColor = PSEUDO_BACK_COLOR;
             Margin = new Padding(3, 1, 3, 1);
+
+            Initiate_View();
         }
 
         private void Todo_Item_Resize(object sender, EventArgs e)
@@ -151,23 +127,18 @@ namespace WellaTodo
                 label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
 
             }
-            else
+            else if (TD_important)
             {
-                if (TD_important)
-                {
-                    label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Bold);
-                    label1.ForeColor = Color.Blue;
-                }
-                else
-                {
-                    label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                    label1.ForeColor = System.Drawing.SystemColors.ControlText;
-                }
-
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Bold);
+                label1.ForeColor = PSEUDO_IMPORTANT_TEXT_COLOR;
                 label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             }
-
-            
+            else
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
 
             starCheckbox1.Location = new Point(Width - 40, 7);
 
@@ -176,58 +147,51 @@ namespace WellaTodo
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             Rectangle rc = ClientRectangle;
 
-            g.FillRectangle(new SolidBrush(BackColor), rc.Left - 1, rc.Top - 1, rc.Width + 1, rc.Height + 1);
-            //g.DrawRectangle(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), rc.Left, rc.Top, rc.Width - 1, rc.Height - 1);
             int x1 = rc.Left;
             int y1 = rc.Top;
             int x2 = rc.Left + rc.Width - 1;
             int y2 = rc.Top + rc.Height - 1;
+            g.FillRectangle(new SolidBrush(BackColor), x1 - 1, y1 - 1, rc.Width + 1, rc.Height + 1);
             g.DrawLine(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), x1, y2, x2, y2);
         }
 
         private void Initiate_View()
         {
-            roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
-            roundCheckbox1.MouseLeave += new EventHandler(roundCheckbox1_MouseLeave);
+            roundCheckbox1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
+            roundCheckbox1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
             roundCheckbox1.Location = new Point(12, 6);
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(roundCheckbox1);
 
-            starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
-            starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
+            starCheckbox1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
+            starCheckbox1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
             starCheckbox1.Location = new Point(Width - 40, 5);
             starCheckbox1.Size = new Size(25, 25);
             starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(starCheckbox1);
 
+            label1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
+            label1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
+            label1.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
+            label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
             label1.Location = new Point(45, 13);
+            label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
             label1.BackColor = PSEUDO_BACK_COLOR;
-            if (TD_complete)
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
-                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
-                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+            label1.AutoSize = true;
+            label1.Size = new Size(77, 15);
+            Controls.Add(label1);
 
-            }
-            else
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                label1.ForeColor = System.Drawing.SystemColors.ControlText;
-                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
-            }
-
-            label2.MouseEnter += new EventHandler(label2_MouseEnter);
-            label2.MouseLeave += new EventHandler(label2_MouseLeave);
-            label2.MouseClick += new MouseEventHandler(label2_MouseClick);
+            label2.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
+            label2.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
+            label2.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
             label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             label2.Size = new Size(0, 13);
-            label2.Text = "";
             Controls.Add(label2);
         }
 
@@ -261,95 +225,36 @@ namespace WellaTodo
             if (UserControl_Click != null) UserControl_Click?.Invoke(this, e);
         }
 
-        private void ChangeToBackColor()
+        private void ChangeItemSelectedColor()
         {
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
-        }
-
-        private void ChangeToHighlightColor()
-        {
-            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            roundCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            label2.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-            starCheckbox1.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void ChangeItemColor()
-        {
-            if (IsItemSelected)
-            {
-                BackColor = PSEUDO_SELECTED_COLOR;
-                roundCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
-                label1.BackColor = PSEUDO_SELECTED_COLOR;
-                label2.BackColor = PSEUDO_SELECTED_COLOR;
-                starCheckbox1.BackColor = PSEUDO_SELECTED_COLOR;
-            }
-            else
-            {
-                BackColor = PSEUDO_BACK_COLOR;
-                roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
-                label1.BackColor = PSEUDO_BACK_COLOR;
-                label2.BackColor = PSEUDO_BACK_COLOR;
-                starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
-            }
+            foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 
         //---------------------------------------------------------
         // control event
         //---------------------------------------------------------
-        private void Todo_Item_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void Todo_Item_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void label1_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void label1_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
-        private void label2_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void label2_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
-        }
-
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
             Todo_Item_Click(sender, e);
         }
 
-        private void label1_MouseClick(object sender, MouseEventArgs e)
+        private void Todo_Item_MouseEnter(object sender, EventArgs e)
         {
-            Todo_Item_Click(sender, e);
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
         }
 
-        private void label2_MouseClick(object sender, MouseEventArgs e)
+        private void Todo_Item_MouseLeave(object sender, EventArgs e)
         {
-            Todo_Item_Click(sender, e);
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 
         private void roundCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
             TD_complete = roundCheckbox1.Checked;
+
             if (TD_complete)
             {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
@@ -359,23 +264,12 @@ namespace WellaTodo
             else
             {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                label1.ForeColor = System.Drawing.SystemColors.ControlText;
+                label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
                 label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             }
 
             IsCompleteClicked = true;
             Todo_Item_Click(sender, e);
-            IsCompleteClicked = false;
-        }
-
-        private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void roundCheckbox1_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
         }
 
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)
@@ -384,17 +278,6 @@ namespace WellaTodo
 
             IsImportantClicked = true;
             Todo_Item_Click(sender, e);
-            IsImportantClicked = false;
-        }
-
-        private void starCheckbox1_MouseEnter(object sender, EventArgs e)
-        {
-            ChangeToHighlightColor();
-        }
-
-        private void starCheckbox1_MouseLeave(object sender, EventArgs e)
-        {
-            ChangeToBackColor();
         }
 
         private void Todo_Item_MouseDown(object sender, MouseEventArgs e)

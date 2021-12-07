@@ -42,9 +42,9 @@
             this.pictureBox_Icon.Size = new System.Drawing.Size(30, 32);
             this.pictureBox_Icon.TabIndex = 0;
             this.pictureBox_Icon.TabStop = false;
-            this.pictureBox_Icon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Icon_MouseClick);
-            this.pictureBox_Icon.MouseEnter += new System.EventHandler(this.pictureBox_Icon_MouseEnter);
-            this.pictureBox_Icon.MouseLeave += new System.EventHandler(this.pictureBox_Icon_MouseLeave);
+            this.pictureBox_Icon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
+            this.pictureBox_Icon.MouseEnter += new System.EventHandler(this.List_MouseEnter);
+            this.pictureBox_Icon.MouseLeave += new System.EventHandler(this.List_MouseLeave);
             // 
             // label_PrimaryText
             // 
@@ -54,9 +54,9 @@
             this.label_PrimaryText.Size = new System.Drawing.Size(89, 15);
             this.label_PrimaryText.TabIndex = 1;
             this.label_PrimaryText.Text = "Primary Text";
-            this.label_PrimaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.label_PrimaryText_MouseClick);
-            this.label_PrimaryText.MouseEnter += new System.EventHandler(this.label_PrimaryText_MouseEnter);
-            this.label_PrimaryText.MouseLeave += new System.EventHandler(this.label_PrimaryText_MouseLeave);
+            this.label_PrimaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
+            this.label_PrimaryText.MouseEnter += new System.EventHandler(this.List_MouseEnter);
+            this.label_PrimaryText.MouseLeave += new System.EventHandler(this.List_MouseLeave);
             // 
             // label_SecondaryText
             // 
@@ -66,9 +66,9 @@
             this.label_SecondaryText.Size = new System.Drawing.Size(112, 15);
             this.label_SecondaryText.TabIndex = 2;
             this.label_SecondaryText.Text = "Secondary Text";
-            this.label_SecondaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.label_SecondaryText_MouseClick);
-            this.label_SecondaryText.MouseEnter += new System.EventHandler(this.label_SecondaryText_MouseEnter);
-            this.label_SecondaryText.MouseLeave += new System.EventHandler(this.label_SecondaryText_MouseLeave);
+            this.label_SecondaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
+            this.label_SecondaryText.MouseEnter += new System.EventHandler(this.List_MouseEnter);
+            this.label_SecondaryText.MouseLeave += new System.EventHandler(this.List_MouseLeave);
             // 
             // label_Metadata
             // 
@@ -78,9 +78,9 @@
             this.label_Metadata.Size = new System.Drawing.Size(67, 15);
             this.label_Metadata.TabIndex = 3;
             this.label_Metadata.Text = "Metadata";
-            this.label_Metadata.MouseClick += new System.Windows.Forms.MouseEventHandler(this.label_Metadata_MouseClick);
-            this.label_Metadata.MouseEnter += new System.EventHandler(this.label_Metadata_MouseEnter);
-            this.label_Metadata.MouseLeave += new System.EventHandler(this.label_Metadata_MouseLeave);
+            this.label_Metadata.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
+            this.label_Metadata.MouseEnter += new System.EventHandler(this.List_MouseEnter);
+            this.label_Metadata.MouseLeave += new System.EventHandler(this.List_MouseLeave);
             // 
             // TwoLineList
             // 
@@ -93,9 +93,9 @@
             this.Name = "TwoLineList";
             this.Size = new System.Drawing.Size(250, 50);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.TwoLineList_Paint);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TwoLineList_MouseClick);
-            this.MouseEnter += new System.EventHandler(this.TwoLineList_MouseEnter);
-            this.MouseLeave += new System.EventHandler(this.TwoLineList_MouseLeave);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
+            this.MouseEnter += new System.EventHandler(this.List_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.List_MouseLeave);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Icon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

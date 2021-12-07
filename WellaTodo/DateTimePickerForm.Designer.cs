@@ -82,7 +82,7 @@ namespace WellaTodo
             this.Controls.Add(this.dateTimePicker1);
             this.Name = "DateTimePickerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "CarendarForm";
+            this.Text = "날짜 선택";
             this.Load += new System.EventHandler(this.DateTimePickerForm_Load);
             this.ResumeLayout(false);
 
