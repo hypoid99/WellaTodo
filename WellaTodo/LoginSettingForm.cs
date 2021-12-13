@@ -13,7 +13,6 @@ namespace WellaTodo
     public partial class LoginSettingForm : Form
     {
         public int ColorTheme { get; set; } = 1;
-        public bool IsSaveClose { get; set; } = false;
         public string UserName { get; set; } = "홍길동";
 
         public LoginSettingForm()
@@ -77,13 +76,6 @@ namespace WellaTodo
         */
         private void button1_Click(object sender, EventArgs e)
         {
-            IsSaveClose = false;
-            Close();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            IsSaveClose = true;
             Close();
         }
 

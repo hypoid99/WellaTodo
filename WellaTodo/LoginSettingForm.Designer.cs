@@ -31,6 +31,7 @@ namespace WellaTodo
         {
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -38,8 +39,6 @@ namespace WellaTodo
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -47,9 +46,9 @@ namespace WellaTodo
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(205, 285);
+            this.button1.Location = new System.Drawing.Point(191, 284);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 40);
+            this.button1.Size = new System.Drawing.Size(89, 40);
             this.button1.TabIndex = 0;
             this.button1.Text = "닫 기";
             this.button1.UseVisualStyleBackColor = true;
@@ -65,6 +64,14 @@ namespace WellaTodo
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "사용자 관리";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(42, 27);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(193, 25);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "이름을 기입하세요";
             // 
             // button2
             // 
@@ -138,31 +145,11 @@ namespace WellaTodo
             this.radioButton1.Text = "White";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
-            // button3
-            // 
-            this.button3.Font = new System.Drawing.Font("굴림", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.button3.Location = new System.Drawing.Point(46, 285);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(116, 40);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "저장후 닫기";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(42, 27);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(193, 25);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "이름을 기입하세요";
-            // 
             // LoginSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(462, 345);
-            this.Controls.Add(this.button3);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -192,7 +179,6 @@ namespace WellaTodo
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox1;
     }
 }

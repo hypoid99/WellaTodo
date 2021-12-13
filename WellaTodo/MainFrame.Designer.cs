@@ -34,8 +34,9 @@
             this.flowLayoutPanel_Menulist = new System.Windows.Forms.FlowLayoutPanel();
             this.textBox_AddList = new System.Windows.Forms.TextBox();
             this.labelUserName = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox_Task = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panel_Header = new System.Windows.Forms.Panel();
             this.label_ListName = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.button2 = new System.Windows.Forms.Button();
@@ -48,6 +49,7 @@
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
+            this.panel_Calendar = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,6 +58,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.panel_Header.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -76,7 +79,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
-            this.splitContainer1.Panel2.Controls.Add(this.textBox2);
+            this.splitContainer1.Panel2.Controls.Add(this.textBox_Task);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2MinSize = 200;
             this.splitContainer1.Size = new System.Drawing.Size(982, 403);
@@ -118,18 +121,17 @@
             this.labelUserName.MouseEnter += new System.EventHandler(this.labelUserName_MouseEnter);
             this.labelUserName.MouseLeave += new System.EventHandler(this.labelUserName_MouseLeave);
             // 
-            // textBox2
+            // textBox_Task
             // 
-            this.textBox2.Location = new System.Drawing.Point(10, 354);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(329, 25);
-            this.textBox2.TabIndex = 0;
-            this.textBox2.Enter += new System.EventHandler(this.textBox2_Enter);
-            this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-            this.textBox2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyUp);
-            this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
-            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
+            this.textBox_Task.Location = new System.Drawing.Point(10, 354);
+            this.textBox_Task.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox_Task.Name = "textBox_Task";
+            this.textBox_Task.Size = new System.Drawing.Size(329, 25);
+            this.textBox_Task.TabIndex = 0;
+            this.textBox_Task.Enter += new System.EventHandler(this.textBox_Task_Enter);
+            this.textBox_Task.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Task_KeyUp);
+            this.textBox_Task.Leave += new System.EventHandler(this.textBox_Task_Leave);
+            this.textBox_Task.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Task_MouseDown);
             // 
             // splitContainer2
             // 
@@ -139,7 +141,8 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.label_ListName);
+            this.splitContainer2.Panel1.Controls.Add(this.panel_Calendar);
+            this.splitContainer2.Panel1.Controls.Add(this.panel_Header);
             this.splitContainer2.Panel1.Controls.Add(this.flowLayoutPanel2);
             this.splitContainer2.Panel1MinSize = 200;
             // 
@@ -155,24 +158,32 @@
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
             // 
+            // panel_Header
+            // 
+            this.panel_Header.Controls.Add(this.label_ListName);
+            this.panel_Header.Location = new System.Drawing.Point(12, 11);
+            this.panel_Header.Name = "panel_Header";
+            this.panel_Header.Size = new System.Drawing.Size(283, 55);
+            this.panel_Header.TabIndex = 2;
+            // 
             // label_ListName
             // 
             this.label_ListName.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label_ListName.Location = new System.Drawing.Point(19, 15);
+            this.label_ListName.Location = new System.Drawing.Point(19, 18);
             this.label_ListName.Name = "label_ListName";
             this.label_ListName.Size = new System.Drawing.Size(100, 23);
             this.label_ListName.TabIndex = 1;
-            this.label_ListName.Text = "label1";
+            this.label_ListName.Text = "ListName";
             this.label_ListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.AutoScroll = true;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 56);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(12, 85);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(273, 206);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(283, 166);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
             this.flowLayoutPanel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel2_Scroll);
@@ -251,6 +262,15 @@
             // 
             this.printDialog1.UseEXDialog = true;
             // 
+            // panel_Calendar
+            // 
+            this.panel_Calendar.Location = new System.Drawing.Point(15, 263);
+            this.panel_Calendar.Name = "panel_Calendar";
+            this.panel_Calendar.Size = new System.Drawing.Size(279, 61);
+            this.panel_Calendar.TabIndex = 3;
+            this.panel_Calendar.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Calendar_Paint);
+            this.panel_Calendar.Resize += new System.EventHandler(this.panel_Calendar_Resize);
+            // 
             // MainFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -261,6 +281,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(400, 47);
             this.Name = "MainFrame";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WellaTodo v0.15";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrame_FormClosing);
             this.Load += new System.EventHandler(this.MainFrame_Load);
@@ -277,6 +298,7 @@
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.panel_Header.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -285,7 +307,7 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox_Task;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Button button2;
@@ -301,6 +323,8 @@
         private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Windows.Forms.PrintDialog printDialog1;
+        private System.Windows.Forms.Panel panel_Header;
+        private System.Windows.Forms.Panel panel_Calendar;
     }
 }
 

@@ -15,6 +15,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using System.Diagnostics;
 
+using System.Drawing.Drawing2D;
+
 namespace WellaTodo
 {
     public delegate void TwoLineList_Event(object sender, EventArgs e);
@@ -94,8 +96,9 @@ namespace WellaTodo
         Color COLOR_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
         bool isDetailWindowOpen = false;
-        bool isTextboxClicked = false;
-        bool isTextbox_AddList_Clicked = false;
+        bool isCalendarWindowOpen = false;
+        bool isTextbox_Task_Clicked = false;
+        bool isTextbox_List_Clicked = false;
 
         int m_selected_position;
         int m_selected_menu = (int)MenuList.TODO_ITEM_MENU; // 초기 작업 메뉴 설정
@@ -129,8 +132,9 @@ namespace WellaTodo
             Load_Data_File();
 
             Initiate_View();
-            Change_ColorTheme();
             Initiate_MenuList();
+            Initiate_Calendar();
+            Change_ColorTheme();
 
             timer1.Interval = 3000;
             timer1.Enabled = true;
@@ -182,12 +186,33 @@ namespace WellaTodo
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Panel2.Height - TAIL_HEIGHT);
             splitContainer2.Panel1.BackColor = PSEUDO_BACK_COLOR;
 
+            panel_Header.Location = new Point(0, 0);
+            panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
+            panel_Header .BackColor = PSEUDO_HIGHLIGHT_COLOR;
+
             label_ListName.Image = ICON_HOME;
             label_ListName.ImageAlign = ContentAlignment.MiddleLeft;
             label_ListName.Font = new Font(FONT_NAME, FONT_SIZE_TITLE);
-            label_ListName.Location = new Point(0,0);
-            label_ListName.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
+            label_ListName.AutoSize = true;
+            label_ListName.Location = new Point(10,10); // font size에 따라 위치 설정할 것
+            label_ListName.Size = new Size(panel_Header.Width, HEADER_HEIGHT);
             label_ListName.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+
+            saveButton.Click += new EventHandler(saveButton_Click);
+            saveButton.MouseEnter += new EventHandler(saveButton_MouseEnter);
+            saveButton.MouseLeave += new EventHandler(saveButton_MouseLeave);
+            saveButton.Text = "저장";
+            saveButton.Location = new Point(panel_Header.Width - 140, 10);
+            saveButton.Size = new Size(60, 30);
+            panel_Header.Controls.Add(saveButton);
+
+            calendarButton.Click += new EventHandler(calendarButton_Click);
+            calendarButton.MouseEnter += new EventHandler(calendarButton_MouseEnter);
+            calendarButton.MouseLeave += new EventHandler(calendarButton_MouseLeave);
+            calendarButton.Text = "달력";
+            calendarButton.Location = new Point(panel_Header.Width - 70, 10);
+            calendarButton.Size = new Size(60, 30);
+            panel_Header.Controls.Add(calendarButton);
 
             // 태스크 항목
             flowLayoutPanel2.AllowDrop = true;
@@ -202,14 +227,20 @@ namespace WellaTodo
 
             flowLayoutPanel2.MouseWheel += new MouseEventHandler(flowLayoutPanel2_MouseWheel);
 
-            flowLayoutPanel2.Location = new Point(0, label_ListName.Height);
+            flowLayoutPanel2.Location = new Point(0, HEADER_HEIGHT);
             flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
 
-            textBox2.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
-            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
-            textBox2.Size = new Size(splitContainer1.Panel2.Width - 25, 25);
-            textBox2.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
-            textBox2.Text = "+ 작업 추가";
+            textBox_Task.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
+            textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+            textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 25, 25);
+            textBox_Task.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
+            textBox_Task.Text = "+ 작업 추가";
+
+            // 달력창
+            panel_Calendar.Location = new Point(0, HEADER_HEIGHT);
+            panel_Calendar.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
+            panel_Calendar.Visible = false;
+            panel_Calendar.BackColor = Color.White;
 
             // 상세창
             roundCheckbox1.MouseEnter += new EventHandler(roundCheckbox1_MouseEnter);
@@ -287,14 +318,6 @@ namespace WellaTodo
             downArrow.Size = new Size(60, 30);
             splitContainer2.Panel2.Controls.Add(downArrow);
 
-            saveButton.Click += new EventHandler(saveButton_Click);
-            saveButton.MouseEnter += new EventHandler(saveButton_MouseEnter);
-            saveButton.MouseLeave += new EventHandler(saveButton_MouseLeave);
-            saveButton.Text = "저장";
-            saveButton.Location = new Point(400, 10);
-            saveButton.Size = new Size(60, 30);
-            //splitContainer2.Panel1.Controls.Add(saveButton);
-
             // 닫기 버튼
             button1.Location = new Point(DETAIL_WINDOW_X1 + 15, 360);
             button1.Size = new Size(75, 25);
@@ -339,11 +362,20 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer2.Panel1.Width [{0}]", splitContainer2.Panel1.Width);
             //Console.WriteLine("splitContainer2.Panel2.Width [{0}]", splitContainer2.Panel2.Width);
 
-            label_ListName.Size = new Size(splitContainer2.Panel1.Width, 50);
-            flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
-            textBox2.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
-            textBox2.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
+
+            panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
+
+            if (isCalendarWindowOpen)
+            {
+                panel_Calendar.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
+            }
+            else
+            {
+                flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
+                textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+                textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
+            }
 
             if (isDetailWindowOpen)
             {
@@ -394,19 +426,24 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Update_Task_Width()
         {
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            panel_Header.Width = splitContainer2.Panel1.Width;
+            saveButton.Location = new Point(panel_Header.Width - 140, 10);
+            calendarButton.Location = new Point(panel_Header.Width - 70, 10);
+
+            if (isCalendarWindowOpen)
             {
-                item.Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
-                //item.Width = flowLayoutPanel2.VerticalScroll.Visible
-                //    ? flowLayoutPanel2.Width - 8 - SystemInformation.VerticalScrollBarWidth
-                //    : flowLayoutPanel2.Width - 8;
+                panel_Calendar.Width = splitContainer2.Panel1.Width;
             }
-            Display_Data();
-        }
-
-        private void Update_List_Width()
-        {
-
+            else
+            {
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
+                {
+                    item.Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
+                    //item.Width = flowLayoutPanel2.VerticalScroll.Visible
+                    //    ? flowLayoutPanel2.Width - 8 - SystemInformation.VerticalScrollBarWidth
+                    //    : flowLayoutPanel2.Width - 8;
+                }
+            }
         }
 
         private void Change_ColorTheme()
@@ -449,6 +486,34 @@ namespace WellaTodo
             isDetailWindowOpen = false;
         }
 
+        private void Open_CalendarWindow()
+        {
+            if (!isCalendarWindowOpen)
+            {
+                label_ListName.Text = "   달력";
+
+                Close_DetailWindow();
+                flowLayoutPanel2.Visible = false;
+                textBox_Task.Visible = false;
+                panel_Calendar.Visible = true;
+                isCalendarWindowOpen = true;
+            }
+        }
+
+        private void Close_CalendarWindow()
+        {
+            if (isCalendarWindowOpen)
+            {
+                label_ListName.Text = "   " + m_selected_listname;
+                
+                Close_DetailWindow();
+                panel_Calendar.Visible = false;
+                flowLayoutPanel2.Visible = true;
+                textBox_Task.Visible = true;
+                isCalendarWindowOpen = false;
+            }
+        }
+
         private void Display_Data()
         {
             int pos;
@@ -473,17 +538,6 @@ namespace WellaTodo
                 txt = ">Selected Menu : [" + m_selected_menu.ToString() + "]----------------------\r\n";
                 outputForm.TextBoxString = txt;
             }
-        }
-
-        private void Display_Menu_Status()
-        {
-            /*
-            Console.WriteLine(">m_selected_menu : "+ m_selected_menu + " [" + m_selected_listname + "]");
-            Console.WriteLine(">m_selected_position : " + m_selected_position + " [" + m_Data[m_selected_position].DC_title + "]");
-            Console.WriteLine(">flowlayout_count : " + flowLayoutPanel2.Controls.Count);
-            Console.WriteLine(">m_currentPage : " + m_currentPage);
-            Console.WriteLine(">---------------------");
-            */
         }
 
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
@@ -647,22 +701,12 @@ namespace WellaTodo
             loginSettingForm.StartPosition = FormStartPosition.CenterParent;
             loginSettingForm.ShowDialog();
 
-            if (loginSettingForm.IsSaveClose)
-            {
-                if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Save_Data_File();
-                    loginSettingForm.IsSaveClose = false;
-                }
-            }
-
             Change_ColorTheme();
 
             if (loginSettingForm.UserName.Length != 0)
             {
                 labelUserName.Text = "      사용자 ("+ loginSettingForm.UserName + ")";
             }
-
         }
 
 
@@ -671,6 +715,8 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void TwoLineList_Click(object sender, EventArgs e)
         {
+            if (isCalendarWindowOpen) Close_CalendarWindow();
+
             MouseEventArgs me = (MouseEventArgs)e;
 
             switch (me.Button)
@@ -1244,24 +1290,24 @@ namespace WellaTodo
 
         private void textBox_AddList_Enter(object sender, EventArgs e)
         {
-            if (!isTextbox_AddList_Clicked) textBox_AddList.Text = "";
-            isTextbox_AddList_Clicked = true;
+            if (!isTextbox_List_Clicked) textBox_AddList.Text = "";
+            isTextbox_List_Clicked = true;
         }
 
         private void textBox_AddList_Leave(object sender, EventArgs e)
         {
-            if (isTextbox_AddList_Clicked)
+            if (isTextbox_List_Clicked)
             {
                 if (textBox_AddList.Text.Trim().Length == 0)
                 {
                     textBox_AddList.Text = "+ 새 목록 추가";
-                    isTextbox_AddList_Clicked = false;
+                    isTextbox_List_Clicked = false;
                 }
             }
             else
             {
                 textBox_AddList.Text = "+ 새 목록 추가";
-                isTextbox_AddList_Clicked = false;
+                isTextbox_List_Clicked = false;
             }
         }
 
@@ -1750,83 +1796,74 @@ namespace WellaTodo
         // -----------------------------------------------------------
         // 할일 입력 처리 부분
         // -----------------------------------------------------------
-        private void textBox2_Enter(object sender, EventArgs e)
-        {
-            if (!isTextboxClicked) textBox2.Text = "";
-            isTextboxClicked = true;
-        }
-
-        private void textBox2_Leave(object sender, EventArgs e)
-        {
-            if (isTextboxClicked)
-            {
-                if (textBox2.Text.Trim().Length == 0)
-                {
-                    textBox2.Text = "+ 작업 추가";
-                    isTextboxClicked = false;
-                }
-            }
-            else
-            {
-                textBox2.Text = "+ 작업 추가";
-                isTextboxClicked = false;
-            }
-        }
-
-        private void textBox2_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextMenu textboxMenu = new ContextMenu();
-                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox2_Click));
-                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox2_Click));
-                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox2_Click));
-
-                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox2);
-                textboxMenu.MenuItems.Add(copyMenu);
-                textboxMenu.MenuItems.Add(cutMenu);
-                textboxMenu.MenuItems.Add(pasteMenu);
-                textBox2.ContextMenu = textboxMenu;
-
-                textBox2.ContextMenu.Show(textBox2, new Point(e.X, e.Y));
-            }
-        }
-
-        private void OnPopupEvent_textBox2(object sender, EventArgs e)
-        {
-            ContextMenu ctm = (ContextMenu)sender;
-            ctm.MenuItems[0].Enabled = textBox2.SelectedText.Length != 0; // copy
-            ctm.MenuItems[1].Enabled = textBox2.SelectedText.Length != 0; // cut
-            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
-        }
-        private void OnCopyMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Copy(); }
-        private void OnCutMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Cut(); }
-        private void OnPasteMenu_textBox2_Click(object sender, EventArgs e) { textBox2.Paste(); }
-
-        private void textBox2_KeyUp(object sender, KeyEventArgs e)
+        private void textBox_Task_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = false;
                 e.SuppressKeyPress = false;
-                if (textBox2.Text.Trim().Length == 0) return;
+                if (textBox_Task.Text.Trim().Length == 0) return;
 
-                textBox2.Text = textBox2.Text.Replace("&", "&&");
+                textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
 
-                Add_Task(textBox2.Text);  // 입력 사항에 오류가 있는지 체크할 것
+                Add_Task(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
 
-                textBox2.Text = "";
+                textBox_Task.Text = "";
             }
         }
 
-        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        private void textBox_Task_Leave(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (isTextbox_Task_Clicked)
             {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
+                if (textBox_Task.Text.Trim().Length == 0)
+                {
+                    textBox_Task.Text = "+ 작업 추가";
+                    isTextbox_Task_Clicked = false;
+                }
+            }
+            else
+            {
+                textBox_Task.Text = "+ 작업 추가";
+                isTextbox_Task_Clicked = false;
             }
         }
+
+        private void textBox_Task_Enter(object sender, EventArgs e)
+        {
+            if (!isTextbox_Task_Clicked) textBox_Task.Text = "";
+            isTextbox_Task_Clicked = true;
+        }
+
+        private void textBox_Task_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_Task_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_Task_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_Task_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_Task);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox_Task.ContextMenu = textboxMenu;
+
+                textBox_Task.ContextMenu.Show(textBox_Task, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox_Task(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox_Task.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox_Task.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+        private void OnCopyMenu_textBox_Task_Click(object sender, EventArgs e) { textBox_Task.Copy(); }
+        private void OnCutMenu_textBox_Task_Click(object sender, EventArgs e) { textBox_Task.Cut(); }
+        private void OnPasteMenu_textBox_Task_Click(object sender, EventArgs e) { textBox_Task.Paste(); }
 
         // --------------------------------------------------------------------------
         // 상세창 처리 부분 (제목 / 완료 / 중요 / 메모 / 위아래 / 닫기 / 삭제)
@@ -2696,26 +2733,52 @@ namespace WellaTodo
                 }
                 pos++;
             }
-
-            //Display_Menu_Status();
         }
 
         //
-        // saveButton
+        // save Button
         //
         private void saveButton_MouseEnter(object sender, EventArgs e)
         {
-            saveButton.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+            saveButton.BackColor = PSEUDO_SELECTED_COLOR;
         }
 
         private void saveButton_MouseLeave(object sender, EventArgs e)
         {
-            saveButton.BackColor = PSEUDO_BACK_COLOR;
+            saveButton.BackColor = PSEUDO_HIGHLIGHT_COLOR;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Save_Data_File();
+            }
+        }
 
+        //
+        // calendar Button
+        //
+        private void calendarButton_MouseEnter(object sender, EventArgs e)
+        {
+            calendarButton.BackColor = PSEUDO_SELECTED_COLOR;
+        }
+
+        private void calendarButton_MouseLeave(object sender, EventArgs e)
+        {
+            calendarButton.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void calendarButton_Click(object sender, EventArgs e)
+        {
+            if (isCalendarWindowOpen)
+            {
+                Close_CalendarWindow();
+            }
+            else
+            {
+                Open_CalendarWindow();
+            }
         }
 
         // ------------------------------------------------------------------
@@ -3126,6 +3189,68 @@ namespace WellaTodo
                 dateTimeNow = DateTime.Now;
             }
             return;
+        }
+
+        // -------------------------------------------------------
+        // 달력창
+        // -------------------------------------------------------
+        static readonly int CALENDAR_HEADER_HEIGHT = 50;
+        static readonly int CALENDAR_WEEK_HEIGHT = 30;
+        Panel[] dayPanel = new Panel[42];
+
+        private void Initiate_Calendar()
+        {
+            for (int i = 0; i < 42; i++)
+            {
+                dayPanel[i] = new Panel();
+                dayPanel[i].BackColor = Color.PapayaWhip;
+                panel_Calendar.Controls.Add(dayPanel[i]);
+            }
+        }
+
+        private void panel_Calendar_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            int x = 0;
+            int y = 0;
+            int w = panel_Calendar.Size.Width;
+            int h = panel_Calendar.Size.Height;
+            g.FillRectangle(new SolidBrush(BackColor), x - 1, y - 1, w + 1, h + 1);
+            g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y, w - 1, h - 1);
+            g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y, w - 1, CALENDAR_HEADER_HEIGHT);
+            g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y + CALENDAR_HEADER_HEIGHT, w - 1, CALENDAR_WEEK_HEIGHT);
+
+            int w_gap = (w / 7);
+            int h_gap = ((h - CALENDAR_HEADER_HEIGHT - CALENDAR_WEEK_HEIGHT) / 6);
+            string weekName;
+            for (int i = 0; i < 7; i++)
+            {
+                g.DrawRectangle(new Pen(Color.Black, 1.0f), x + i * w_gap, y + CALENDAR_HEADER_HEIGHT, w_gap, h - CALENDAR_HEADER_HEIGHT);
+                weekName = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.AbbreviatedDayNames[i][0].ToString();
+                g.DrawString(weekName, new Font("Arial", 12, FontStyle.Regular), new SolidBrush(Color.Black), x + 10 + i * w_gap, y + 5 + CALENDAR_HEADER_HEIGHT);
+            }
+
+            int pos = 0;
+            int line_sx = x;
+            int line_sy = y + CALENDAR_HEADER_HEIGHT + CALENDAR_WEEK_HEIGHT;
+            for (int i = 0; i < 7; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    g.DrawRectangle(new Pen(Color.Black, 1.0f), line_sx + i * w_gap, line_sy + j * h_gap, w_gap, h_gap);
+                    dayPanel[pos].Location = new Point(line_sx + 1 + i * w_gap, line_sy + 1 + j * h_gap);
+                    dayPanel[pos].Size = new Size(w_gap - 2, h_gap - 2);
+                    pos++;
+                }
+            }
+        }
+
+        private void panel_Calendar_Resize(object sender, EventArgs e)
+        {
+            panel_Calendar.Refresh();
         }
     }
 }
