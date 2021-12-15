@@ -264,9 +264,9 @@
             // 
             // panel_Calendar
             // 
-            this.panel_Calendar.Location = new System.Drawing.Point(15, 263);
+            this.panel_Calendar.Location = new System.Drawing.Point(14, 256);
             this.panel_Calendar.Name = "panel_Calendar";
-            this.panel_Calendar.Size = new System.Drawing.Size(279, 61);
+            this.panel_Calendar.Size = new System.Drawing.Size(280, 68);
             this.panel_Calendar.TabIndex = 3;
             this.panel_Calendar.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Calendar_Paint);
             this.panel_Calendar.Resize += new System.EventHandler(this.panel_Calendar_Resize);

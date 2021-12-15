@@ -54,6 +54,7 @@ namespace WellaTodo
         static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_TITLE = 24.0f;
         static readonly float FONT_SIZE_TEXT = 14.0f;
+        static readonly float FONT_SIZE_SMALL = 8.0f;
 
         public enum MenuList 
         { 
@@ -497,6 +498,8 @@ namespace WellaTodo
                 textBox_Task.Visible = false;
                 panel_Calendar.Visible = true;
                 isCalendarWindowOpen = true;
+
+                SetDate(m_dtValue); // 현재 날짜로 달력 열기
             }
         }
 
@@ -2792,6 +2795,8 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             DateTime tt;
 
+            return;
+
             int pos = 0;
             foreach (CDataCell data in m_Data)
             {
@@ -3196,53 +3201,127 @@ namespace WellaTodo
         // -------------------------------------------------------
         static readonly int CALENDAR_HEADER_HEIGHT = 50;
         static readonly int CALENDAR_WEEK_HEIGHT = 30;
-        Panel[] dayPanel = new Panel[42];
+        Label labelCurrentDate = new Label();
+        Button buttonToday = new Button();
+        Button buttonPrevMonth = new Button();
+        Button buttonNextMonth = new Button();
+        FlowLayoutPanel[] dayPanel = new FlowLayoutPanel[42];
+        DateTime m_dtValue = DateTime.Now;
 
         private void Initiate_Calendar()
         {
+            Console.WriteLine("Initiate_Calendar");
+            buttonToday.Size = new Size(50, 30);
+            buttonToday.Location = new Point(50, 10);
+            buttonToday.Click += new EventHandler(buttonToday_Click);
+            buttonToday.Text = "오늘";
+            panel_Calendar.Controls.Add(buttonToday);
+
+            buttonPrevMonth.Size = new Size(50, 30);
+            buttonPrevMonth.Location = new Point(110, 10);
+            buttonPrevMonth.Click += new EventHandler(buttonPrevMonth_Click);
+            buttonPrevMonth.Text = "이전달";
+            panel_Calendar.Controls.Add(buttonPrevMonth);
+
+            buttonNextMonth.Size = new Size(50, 30);
+            buttonNextMonth.Location = new Point(170, 10);
+            buttonNextMonth.Click += new EventHandler(buttonNextMonth_Click);
+            buttonNextMonth.Text = "다음달";
+            panel_Calendar.Controls.Add(buttonNextMonth);
+
+            labelCurrentDate.Font = new Font(FONT_NAME, FONT_SIZE_TITLE);
+            labelCurrentDate.AutoSize = true;
+            labelCurrentDate.Size = new Size(200, CALENDAR_HEADER_HEIGHT);
+            labelCurrentDate.Location = new Point(250, 10);
+            labelCurrentDate.Text = "2020년 1월";
+            panel_Calendar.Controls.Add(labelCurrentDate);
+
             for (int i = 0; i < 42; i++)
             {
-                dayPanel[i] = new Panel();
-                dayPanel[i].BackColor = Color.PapayaWhip;
+                dayPanel[i] = new FlowLayoutPanel();
+                dayPanel[i].Size = new Size(1, 1);
+                dayPanel[i].BackColor = Color.White;
                 panel_Calendar.Controls.Add(dayPanel[i]);
             }
         }
 
         private void panel_Calendar_Paint(object sender, PaintEventArgs e)
         {
+            Console.WriteLine("panel_Calendar_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            Font font = new Font(FONT_NAME, FONT_SIZE_TEXT);
+            Pen pen = new Pen(Color.Black, 1.0f);
+            SolidBrush brush = new SolidBrush(Color.Black);
 
             int x = 0;
             int y = 0;
             int w = panel_Calendar.Size.Width;
             int h = panel_Calendar.Size.Height;
-            g.FillRectangle(new SolidBrush(BackColor), x - 1, y - 1, w + 1, h + 1);
+            g.FillRectangle(new SolidBrush(Color.White), x - 1, y - 1, w + 1, h + 1);
             g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y, w - 1, h - 1);
             g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y, w - 1, CALENDAR_HEADER_HEIGHT);
             g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y + CALENDAR_HEADER_HEIGHT, w - 1, CALENDAR_WEEK_HEIGHT);
 
+            int num_WeeksInMonth = Calc_NumOfWeekInMonth(m_dtValue);
+
             int w_gap = (w / 7);
-            int h_gap = ((h - CALENDAR_HEADER_HEIGHT - CALENDAR_WEEK_HEIGHT) / 6);
+            int h_gap = ((h - CALENDAR_HEADER_HEIGHT - CALENDAR_WEEK_HEIGHT) / num_WeeksInMonth);
             string weekName;
             for (int i = 0; i < 7; i++)
             {
-                g.DrawRectangle(new Pen(Color.Black, 1.0f), x + i * w_gap, y + CALENDAR_HEADER_HEIGHT, w_gap, h - CALENDAR_HEADER_HEIGHT);
                 weekName = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.AbbreviatedDayNames[i][0].ToString();
-                g.DrawString(weekName, new Font("Arial", 12, FontStyle.Regular), new SolidBrush(Color.Black), x + 10 + i * w_gap, y + 5 + CALENDAR_HEADER_HEIGHT);
+                
+                int tx = x + i * w_gap;
+                int ty = y + CALENDAR_HEADER_HEIGHT;
+                int tw = w_gap;
+                int th = CALENDAR_WEEK_HEIGHT;
+                RectangleF drawRect = new RectangleF(tx, ty, tw, th);
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+                stringFormat.LineAlignment = StringAlignment.Center;
+
+                if (i == 0) // 일요일은 RED
+                    g.DrawString(weekName, font, new SolidBrush(Color.Red), drawRect, stringFormat);
+                else
+                    g.DrawString(weekName, font, brush, drawRect, stringFormat);
+
+                if (i == 6)
+                    g.DrawRectangle(pen, x, y + CALENDAR_HEADER_HEIGHT, w, h - CALENDAR_HEADER_HEIGHT);
+                else
+                    g.DrawRectangle(pen, x + i * w_gap, y + CALENDAR_HEADER_HEIGHT, w_gap, h - CALENDAR_HEADER_HEIGHT);
             }
 
-            int pos = 0;
             int line_sx = x;
             int line_sy = y + CALENDAR_HEADER_HEIGHT + CALENDAR_WEEK_HEIGHT;
-            for (int i = 0; i < 7; i++)
+            int pos = 0;
+            for (int j = 0; j < num_WeeksInMonth; j++)
             {
-                for (int j = 0; j < 6; j++)
+                for (int i = 0; i < 7; i++)
                 {
-                    g.DrawRectangle(new Pen(Color.Black, 1.0f), line_sx + i * w_gap, line_sy + j * h_gap, w_gap, h_gap);
+                    if (i == 6)
+                    {
+                        if (j == num_WeeksInMonth - 1)
+                            g.DrawRectangle(pen, line_sx, line_sy, w, h);
+                        else
+                            g.DrawRectangle(pen, line_sx, line_sy + j * h_gap, w, h_gap);
+                    }
+                    else
+                    {
+                        if (j == num_WeeksInMonth - 1)
+                            g.DrawRectangle(pen, line_sx + i * w_gap, line_sy, w_gap, h);
+                        else
+                            g.DrawRectangle(pen, line_sx + i * w_gap, line_sy + j * h_gap, w_gap, h_gap);
+                    }
                     dayPanel[pos].Location = new Point(line_sx + 1 + i * w_gap, line_sy + 1 + j * h_gap);
                     dayPanel[pos].Size = new Size(w_gap - 2, h_gap - 2);
+                    int cw = dayPanel[pos].Width;
+                    foreach (Control ctr in dayPanel[pos].Controls)
+                    {
+                        ctr.Width = cw;
+                    }
                     pos++;
                 }
             }
@@ -3250,7 +3329,91 @@ namespace WellaTodo
 
         private void panel_Calendar_Resize(object sender, EventArgs e)
         {
+            Console.WriteLine("panel_Calendar_Resize");
             panel_Calendar.Refresh();
+        }
+
+        private void SetDate(DateTime dt)
+        {
+            Console.WriteLine("SetDate");
+            m_dtValue = dt;
+            DateTime startDate = new DateTime(dt.Year, dt.Month, 1);
+            int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
+            int num_DayOfWeek = (int)startDate.DayOfWeek;
+            DateTime endDate = new DateTime(dt.Year, dt.Month, num_DaysInMonth);
+
+            for (int i = 0; i < 42; i++)
+            {
+                dayPanel[i].Controls.Clear();
+            }
+
+            for (int pos = 1; pos <= num_DaysInMonth; pos++)
+            {
+                int index = pos + num_DayOfWeek - 1;
+                Label label_Day = new Label();
+                label_Day.Text = pos.ToString();
+                label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
+                label_Day.Height = 20;
+                if ((index % 7) == 0)  // 일요일은 RED
+                {
+                    label_Day.ForeColor = Color.Red;
+                }
+                dayPanel[index].Controls.Add(label_Day);
+            }
+
+            labelCurrentDate.Text = dt.Year.ToString() + "년 " + dt.Month.ToString() + "월";
+
+            IEnumerable<CDataCell> dataset = from CDataCell dc in m_Data where dc.DC_deadlineType > 0 select dc;
+            int result_st;
+            int result_et;
+            foreach (CDataCell dc in dataset)
+            {
+                DateTime tt = dc.DC_deadlineTime;
+                result_st = DateTime.Compare(startDate, tt);
+                result_et = DateTime.Compare(endDate, tt);
+                if ((result_st <= 0) && (result_et >= 0))
+                {
+                    int pos = num_DayOfWeek + dc.DC_deadlineTime.Day - 1;
+                    Label label_planned = new Label();
+                    label_planned.Text = dc.DC_title;
+                    label_planned.Font = new Font(FONT_NAME, FONT_SIZE_SMALL);
+                    label_planned.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                    label_planned.AutoSize = false;
+                    label_planned.Width = dayPanel[pos].Width;
+                    label_planned.Height = 15;
+                    dayPanel[pos].Controls.Add(label_planned);
+                }
+            }
+            panel_Calendar.Refresh(); // refresh 해야함
+        }
+
+        private int Calc_NumOfWeekInMonth(DateTime dt)
+        {
+            DateTime startDate = new DateTime(dt.Year, dt.Month, 1);
+            int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
+            int num_DayOfWeek = (int)startDate.DayOfWeek;
+
+            int result = (num_DaysInMonth + num_DayOfWeek) / 7;
+            int mod = (num_DaysInMonth + num_DayOfWeek) % 7;
+            return mod == 0 ? result : result + 1;
+        }
+
+        private void buttonToday_Click(object sender, EventArgs e)
+        {
+            DateTime dt = DateTime.Now;
+            SetDate(dt);
+        }
+
+        private void buttonPrevMonth_Click(object sender, EventArgs e)
+        {
+            DateTime dt = m_dtValue.AddMonths(-1);
+            SetDate(dt);
+        }
+
+        private void buttonNextMonth_Click(object sender, EventArgs e)
+        {
+            DateTime dt = m_dtValue.AddMonths(1);
+            SetDate(dt);
         }
     }
 }
