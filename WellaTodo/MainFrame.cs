@@ -499,6 +499,8 @@ namespace WellaTodo
                 panel_Calendar.Visible = true;
                 isCalendarWindowOpen = true;
 
+                Update_Task_Width();
+                panel_Calendar.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
                 SetDate(m_dtValue); // 현재 날짜로 달력 열기
             }
         }
@@ -514,6 +516,11 @@ namespace WellaTodo
                 flowLayoutPanel2.Visible = true;
                 textBox_Task.Visible = true;
                 isCalendarWindowOpen = false;
+
+                flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
+                textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+                textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
+                Update_Task_Width();
             }
         }
 
@@ -2298,9 +2305,7 @@ namespace WellaTodo
 
             DateTime dt = DateTime.Now;
 
-            dt = dt.AddDays(1);
-
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
             
             roundLabel3.Text = "기한 설정됨";
             roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
@@ -2315,9 +2320,9 @@ namespace WellaTodo
 
             DateTime dt = DateTime.Now;
 
-            dt = dt.AddDays(2);
+            dt = dt.AddDays(1);
 
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
             
             roundLabel3.Text = "기한 설정됨";
             roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
@@ -2356,7 +2361,7 @@ namespace WellaTodo
                     dt = dt.AddDays(1);
                     break;
             }
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
             
             roundLabel3.Text = "기한 설정됨";
             roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
@@ -2369,10 +2374,15 @@ namespace WellaTodo
         {
             DateTimePickerForm carendar = new DateTimePickerForm();
             carendar.ShowDialog();
+            DateTime dt = carendar.SelectedDateTime;
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {
                 m_Data[m_selected_position].DC_deadlineType = 4;
-                m_Data[m_selected_position].DC_deadlineTime = carendar.SelectedDateTime;
+                if (dt.Hour == 0) // 시간을 입력하지 않을때
+                {
+                    dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+                }
+                m_Data[m_selected_position].DC_deadlineTime = dt;
                
                 roundLabel3.Text = "기한 설정됨";
                 roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
@@ -2795,8 +2805,6 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             DateTime tt;
 
-            return;
-
             int pos = 0;
             foreach (CDataCell data in m_Data)
             {
@@ -2855,29 +2863,32 @@ namespace WellaTodo
                 }
 
                 // 기한 설정 체크
-                if (data.DC_deadlineType > 0)
+                if (data.DC_deadlineType > 0)  // if (data.DC_deadlineType > 0)
                 {
                     tt = data.DC_deadlineTime;
                     result = DateTime.Compare(dt, tt);
 
                     if (result > 0) // 날짜 지남
                     {
-                        AlarmForm alarmForm = new AlarmForm();
-                        alarmForm.StartPosition = FormStartPosition.Manual;
-                        alarmForm.Location = new Point(Location.X + (Width - alarmForm.Width) / 2, Location.Y + (Height - alarmForm.Height) / 2);
-                        alarmForm.Show();
+                        if (data.DC_deadlineType != 5)
+                        {
+                            AlarmForm alarmForm = new AlarmForm();
+                            alarmForm.StartPosition = FormStartPosition.Manual;
+                            alarmForm.Location = new Point(Location.X + (Width - alarmForm.Width) / 2, Location.Y + (Height - alarmForm.Height) / 2);
+                            alarmForm.Show();
 
-                        txt = "기한 설정 싯점 도래 <" + data.DC_listName + ">  [" + pos.ToString() + "] " + data.DC_title + "\r\n";
-                        alarmForm.TextBoxString = txt;
-                        txt = tt.ToString("yyyy-MM-dd HH:mm:ss") + "- TARGET" + "\r\n";
-                        alarmForm.TextBoxString = txt;
-                        txt = dt.ToString("yyyy-MM-dd HH:mm:ss") + "- Now" + "\r\n";
-                        alarmForm.TextBoxString = txt;
+                            txt = "기한 설정 싯점 도래 <" + data.DC_listName + ">  [" + pos.ToString() + "] " + data.DC_title + "\r\n";
+                            alarmForm.TextBoxString = txt;
+                            txt = tt.ToString("yyyy-MM-dd HH:mm:ss") + "- TARGET" + "\r\n";
+                            alarmForm.TextBoxString = txt;
+                            txt = dt.ToString("yyyy-MM-dd HH:mm:ss") + "- Now" + "\r\n";
+                            alarmForm.TextBoxString = txt;
 
-                        data.DC_deadlineType = 0;
-                        data.DC_deadlineTime = default;
-                        Update_Task_Infomation(data);
-                        alarm = true;
+                            data.DC_deadlineType = 5; // 알람처리 완료
+                            //data.DC_deadlineTime = default;
+                            Update_Task_Infomation(data);
+                            alarm = true;
+                        }
                     }
                 }
 
@@ -3009,19 +3020,19 @@ namespace WellaTodo
             switch (dt.DC_repeatType)
             {
                 case 1:
-                    infoText += " [매일]";
+                    infoText += " [매일]" + dt.DC_repeatTime.ToString("MM/dd(ddd)tthh:mm");
                     break;
                 case 2:
-                    infoText += " [평일]";
+                    infoText += " [평일]" + dt.DC_repeatTime.ToString("MM/dd(ddd)tthh:mm");
                     break;
                 case 3:
-                    infoText += " [매주]";
+                    infoText += " [매주]" + dt.DC_repeatTime.ToString("MM/dd(ddd)tthh:mm");
                     break;
                 case 4:
-                    infoText += " [매월]";
+                    infoText += " [매월]" + dt.DC_repeatTime.ToString("MM/dd(ddd)tthh:mm");
                     break;
                 case 5:
-                    infoText += " [매년]";
+                    infoText += " [매년]" + dt.DC_repeatTime.ToString("yyyy/MM/dd(ddd)tthh:mm");
                     break;
                 default:
                     break;
@@ -3201,6 +3212,8 @@ namespace WellaTodo
         // -------------------------------------------------------
         static readonly int CALENDAR_HEADER_HEIGHT = 50;
         static readonly int CALENDAR_WEEK_HEIGHT = 30;
+        static readonly int CALENDAR_TASK_TEXT_HEIGHT = 15;
+        static readonly int CALENDAR_DAY_TEXT_HEIGHT = 20;
         Label labelCurrentDate = new Label();
         Button buttonToday = new Button();
         Button buttonPrevMonth = new Button();
@@ -3212,19 +3225,19 @@ namespace WellaTodo
         {
             Console.WriteLine("Initiate_Calendar");
             buttonToday.Size = new Size(50, 30);
-            buttonToday.Location = new Point(50, 10);
+            buttonToday.Location = new Point(20, 10);
             buttonToday.Click += new EventHandler(buttonToday_Click);
             buttonToday.Text = "오늘";
             panel_Calendar.Controls.Add(buttonToday);
 
             buttonPrevMonth.Size = new Size(50, 30);
-            buttonPrevMonth.Location = new Point(110, 10);
+            buttonPrevMonth.Location = new Point(80, 10);
             buttonPrevMonth.Click += new EventHandler(buttonPrevMonth_Click);
             buttonPrevMonth.Text = "이전달";
             panel_Calendar.Controls.Add(buttonPrevMonth);
 
             buttonNextMonth.Size = new Size(50, 30);
-            buttonNextMonth.Location = new Point(170, 10);
+            buttonNextMonth.Location = new Point(140, 10);
             buttonNextMonth.Click += new EventHandler(buttonNextMonth_Click);
             buttonNextMonth.Text = "다음달";
             panel_Calendar.Controls.Add(buttonNextMonth);
@@ -3232,7 +3245,7 @@ namespace WellaTodo
             labelCurrentDate.Font = new Font(FONT_NAME, FONT_SIZE_TITLE);
             labelCurrentDate.AutoSize = true;
             labelCurrentDate.Size = new Size(200, CALENDAR_HEADER_HEIGHT);
-            labelCurrentDate.Location = new Point(250, 10);
+            labelCurrentDate.Location = new Point(200, 10);
             labelCurrentDate.Text = "2020년 1월";
             panel_Calendar.Controls.Add(labelCurrentDate);
 
@@ -3252,7 +3265,7 @@ namespace WellaTodo
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            Font font = new Font(FONT_NAME, FONT_SIZE_TEXT);
+            Font font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
             Pen pen = new Pen(Color.Black, 1.0f);
             SolidBrush brush = new SolidBrush(Color.Black);
 
@@ -3265,12 +3278,12 @@ namespace WellaTodo
             g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y, w - 1, CALENDAR_HEADER_HEIGHT);
             g.DrawRectangle(new Pen(Color.Black, 1.0f), x, y + CALENDAR_HEADER_HEIGHT, w - 1, CALENDAR_WEEK_HEIGHT);
 
+            // Week 표시
             int num_WeeksInMonth = Calc_NumOfWeekInMonth(m_dtValue);
-
             int w_gap = (w / 7);
             int h_gap = ((h - CALENDAR_HEADER_HEIGHT - CALENDAR_WEEK_HEIGHT) / num_WeeksInMonth);
             string weekName;
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++) 
             {
                 weekName = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.AbbreviatedDayNames[i][0].ToString();
                 
@@ -3294,6 +3307,7 @@ namespace WellaTodo
                     g.DrawRectangle(pen, x + i * w_gap, y + CALENDAR_HEADER_HEIGHT, w_gap, h - CALENDAR_HEADER_HEIGHT);
             }
 
+            // Day 표시
             int line_sx = x;
             int line_sy = y + CALENDAR_HEADER_HEIGHT + CALENDAR_WEEK_HEIGHT;
             int pos = 0;
@@ -3317,11 +3331,7 @@ namespace WellaTodo
                     }
                     dayPanel[pos].Location = new Point(line_sx + 1 + i * w_gap, line_sy + 1 + j * h_gap);
                     dayPanel[pos].Size = new Size(w_gap - 2, h_gap - 2);
-                    int cw = dayPanel[pos].Width;
-                    foreach (Control ctr in dayPanel[pos].Controls)
-                    {
-                        ctr.Width = cw;
-                    }
+                    foreach (Control ctr in dayPanel[pos].Controls) ctr.Width = dayPanel[pos].Width;  // TASK 폭 조정
                     pos++;
                 }
             }
@@ -3342,27 +3352,26 @@ namespace WellaTodo
             int num_DayOfWeek = (int)startDate.DayOfWeek;
             DateTime endDate = new DateTime(dt.Year, dt.Month, num_DaysInMonth);
 
-            for (int i = 0; i < 42; i++)
-            {
-                dayPanel[i].Controls.Clear();
-            }
+            labelCurrentDate.Text = dt.Year.ToString() + "년 " + dt.Month.ToString() + "월";
 
+            for (int i = 0; i < 42; i++) dayPanel[i].Controls.Clear();  // 클리어 dayPanel
+
+            // 날짜 표시
             for (int pos = 1; pos <= num_DaysInMonth; pos++)
             {
                 int index = pos + num_DayOfWeek - 1;
                 Label label_Day = new Label();
                 label_Day.Text = pos.ToString();
-                label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
-                label_Day.Height = 20;
-                if ((index % 7) == 0)  // 일요일은 RED
-                {
-                    label_Day.ForeColor = Color.Red;
-                }
+                label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
+                label_Day.Height = CALENDAR_DAY_TEXT_HEIGHT;
+                if ((m_dtValue.Year == DateTime.Today.Year) 
+                    && (m_dtValue.Month == DateTime.Today.Month) 
+                    && (pos == DateTime.Today.Day)) label_Day.BackColor = Color.Violet; // 오늘은 BLUE
+                if ((index % 7) == 0) label_Day.ForeColor = Color.Red;  // 일요일은 RED
                 dayPanel[index].Controls.Add(label_Day);
             }
 
-            labelCurrentDate.Text = dt.Year.ToString() + "년 " + dt.Month.ToString() + "월";
-
+            // TASK 표시
             IEnumerable<CDataCell> dataset = from CDataCell dc in m_Data where dc.DC_deadlineType > 0 select dc;
             int result_st;
             int result_et;
@@ -3376,11 +3385,15 @@ namespace WellaTodo
                     int pos = num_DayOfWeek + dc.DC_deadlineTime.Day - 1;
                     Label label_planned = new Label();
                     label_planned.Text = dc.DC_title;
-                    label_planned.Font = new Font(FONT_NAME, FONT_SIZE_SMALL);
-                    label_planned.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+                    label_planned.Font = dc.DC_complete
+                        ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
+                        : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
+                    label_planned.BackColor = DateTime.Compare(DateTime.Today, tt) < 0 
+                        ? PSEUDO_SELECTED_COLOR 
+                        : PSEUDO_HIGHLIGHT_COLOR;
                     label_planned.AutoSize = false;
                     label_planned.Width = dayPanel[pos].Width;
-                    label_planned.Height = 15;
+                    label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
                     dayPanel[pos].Controls.Add(label_planned);
                 }
             }
