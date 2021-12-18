@@ -19,14 +19,13 @@ using System.Drawing.Drawing2D;
 
 namespace WellaTodo
 {
-    public delegate void TwoLineList_Event(object sender, EventArgs e);
     public delegate void TodoItemList_Event(object sender, EventArgs e);
-    
+
     public partial class MainFrame : Form, IView, IModelObserver
     {
         public event ViewHandler<IView> Changed_View_Event;
 
-        static readonly string WINDOW_CAPTION = "Wella Todo v0.85";
+        static readonly string WINDOW_CAPTION = "Wella Todo v0.9";
         static readonly int WINDOW_WIDTH = 1200;
         static readonly int WINDOW_HEIGHT = 700;
         static readonly int MENU_WINDOW_WIDTH = 350;
@@ -369,6 +368,8 @@ namespace WellaTodo
 
             if (isCalendarWindowOpen)
             {
+                textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+                textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
                 panel_Calendar.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
             }
             else
@@ -495,11 +496,12 @@ namespace WellaTodo
 
                 Close_DetailWindow();
                 flowLayoutPanel2.Visible = false;
-                textBox_Task.Visible = false;
                 panel_Calendar.Visible = true;
                 isCalendarWindowOpen = true;
 
                 Update_Task_Width();
+                textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+                textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
                 panel_Calendar.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
                 SetDate(m_dtValue); // 현재 날짜로 달력 열기
             }
@@ -514,7 +516,6 @@ namespace WellaTodo
                 Close_DetailWindow();
                 panel_Calendar.Visible = false;
                 flowLayoutPanel2.Visible = true;
-                textBox_Task.Visible = true;
                 isCalendarWindowOpen = false;
 
                 flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
@@ -741,8 +742,6 @@ namespace WellaTodo
                     Menulist_Rename(sender, me);  // 목록명 변경되어 실행됨
                     break;
             }
-
-            //Display_Menu_Status();
         }
 
         private void Menulist_Left_Click(object sender, MouseEventArgs e)
@@ -1151,21 +1150,46 @@ namespace WellaTodo
 
         private void Add_Task_To_Panel_Paging(IEnumerable<CDataCell> dataset)
         {
+            Console.WriteLine("Add_Task_To_Panel_Paging:"+m_selected_position);
+
             m_Task.Clear();
-            foreach (CDataCell data in dataset)
+
+            flowLayoutPanel2.Controls.Clear();
+
+            /*
+            for (int i = 0; i < m_Task.Count; i++) // eventhandler 제거 및 m_Task 클리어
+            {
+                foreach (Todo_Item item in m_Task)
+                {
+                    item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+                    item.Dispose();
+                }
+                m_Task.Clear();
+            }
+
+            for (int i = 0; i < flowLayoutPanel2.Controls.Count; i++) // flowLayoutPanel2 dispose 및 클리어
+            {
+                foreach (Todo_Item item in flowLayoutPanel2.Controls)
+                {
+                    item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);  //  ????
+                    item.Dispose();
+                }
+                flowLayoutPanel2.Controls.Clear();
+            }
+            */
+
+            foreach (CDataCell data in dataset)  // m_Task에 저장
             {
                 Todo_Item item = new Todo_Item(data);
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
                 item.TD_infomation = MakeInfoTextFromDataCell(data);
                 m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
-
                 m_Task.Add(item);
             }
 
             m_currentPage = 1;
             flowLayoutPanel2.SuspendLayout();
-            flowLayoutPanel2.Controls.Clear();
             for (int i = 0; i < m_thumbsPerPage; i++)  // 한 페이지당 20개 표기, 첫페이지 표시
             {
                 if (i == m_Task.Count) break;
@@ -1452,13 +1476,36 @@ namespace WellaTodo
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
             Todo_Item item = Find_Task();
+
+            /*
+            foreach (Todo_Item task in m_Task)  //m_Task 에서 항목 삭제해야함, 
+            {
+                if (task.Equals(item))
+                {
+                    m_Task.Remove(task);
+                    break;
+                }
+            }
+            */
+
+            m_Task.Remove(item);  //m_Task 에서 항목 삭제해야함, 
+
             item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
             flowLayoutPanel2.Controls.Remove(item);
             item.Dispose();
 
-            //m_Task 에서도 항목 삭제해야함, 20개 항목 이상시는 1개 더 땡겨와야됨
+            int pos = m_currentPage * m_thumbsPerPage;
+            if (pos <= m_Task.Count)  // 20개 항목 이상시는 1개 더 땡겨와야됨
+            {
+                flowLayoutPanel2.Controls.Add(m_Task[pos - 1]);
+                Console.WriteLine("Add Task" + m_Task[pos - 1].TD_title);
+                m_Task[pos - 1].Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
+            }
 
-            m_Data.Remove(m_Data[m_selected_position]); // m_selected_position 재설정 (?)
+            m_Data.Remove(m_Data[m_selected_position]); 
+
+            m_selected_position--; 
+            if (m_selected_position < 0) m_selected_position = 0;  // m_selected_position 재설정
 
             Close_DetailWindow();
 
@@ -1817,6 +1864,11 @@ namespace WellaTodo
                 textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
 
                 Add_Task(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
+
+                if (isCalendarWindowOpen)
+                {
+                    Close_CalendarWindow();
+                }
 
                 textBox_Task.Text = "";
             }
@@ -3354,8 +3406,21 @@ namespace WellaTodo
 
             labelCurrentDate.Text = dt.Year.ToString() + "년 " + dt.Month.ToString() + "월";
 
-            for (int i = 0; i < 42; i++) dayPanel[i].Controls.Clear();  // 클리어 dayPanel
-
+            for (int i = 0; i < 42; i++) // eventhandler 제거 및 dayPanel 클리어
+            {
+                foreach (Control ctr in dayPanel[i].Controls)
+                {
+                    if (ctr is SingleLineList)
+                    {
+                        SingleLineList list = (SingleLineList)ctr;
+                        Console.WriteLine("clear"+list.ToString());
+                        list.SingleLineList_Click -= new SingleLineList_Event(SingleLineList_Click);
+                        list.Dispose();
+                    }
+                }
+                dayPanel[i].Controls.Clear();
+            }
+            
             // 날짜 표시
             for (int pos = 1; pos <= num_DaysInMonth; pos++)
             {
@@ -3383,8 +3448,8 @@ namespace WellaTodo
                 if ((result_st <= 0) && (result_et >= 0))
                 {
                     int pos = num_DayOfWeek + dc.DC_deadlineTime.Day - 1;
-                    Label label_planned = new Label();
-                    label_planned.Text = dc.DC_title;
+                    SingleLineList label_planned = new SingleLineList(dc.DC_title);
+                    label_planned.SingleLineList_Click += new SingleLineList_Event(SingleLineList_Click); // event 제거할 것
                     label_planned.Font = dc.DC_complete
                         ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                         : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
@@ -3392,6 +3457,7 @@ namespace WellaTodo
                         ? PSEUDO_SELECTED_COLOR 
                         : PSEUDO_HIGHLIGHT_COLOR;
                     label_planned.AutoSize = false;
+
                     label_planned.Width = dayPanel[pos].Width;
                     label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
                     dayPanel[pos].Controls.Add(label_planned);
@@ -3427,6 +3493,21 @@ namespace WellaTodo
         {
             DateTime dt = m_dtValue.AddMonths(1);
             SetDate(dt);
+        }
+
+        private void SingleLineList_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            Console.WriteLine("SingleLineList_Click");
+            switch (me.Button)
+            {
+                case MouseButtons.Left:
+
+                    break;
+                case MouseButtons.Right:
+
+                    break;
+            }
         }
     }
 }

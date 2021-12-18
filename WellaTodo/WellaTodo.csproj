@@ -85,6 +85,12 @@
     <Compile Include="MemoForm.Designer.cs">
       <DependentUpon>MemoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SingleLineList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SingleLineList.Designer.cs">
+      <DependentUpon>SingleLineList.cs</DependentUpon>
+    </Compile>
     <Compile Include="OutputForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MemoForm.resx">
       <DependentUpon>MemoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SingleLineList.resx">
+      <DependentUpon>SingleLineList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputForm.resx">
       <DependentUpon>OutputForm.cs</DependentUpon>

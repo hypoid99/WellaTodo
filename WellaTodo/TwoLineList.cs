@@ -12,11 +12,11 @@ using System.Drawing.Drawing2D;
 
 namespace WellaTodo
 {
+    public delegate void TwoLineList_Event(object sender, EventArgs e);
+
     public partial class TwoLineList : UserControl
     {
         public event TwoLineList_Event TwoLineList_Click;
-
-        private TextBox textBox_Rename;
 
         static readonly int LIST_WIDTH = 250;
         static readonly int LIST_HEIGHT = 40;
@@ -30,6 +30,8 @@ namespace WellaTodo
         static readonly float FONT_SIZE_PRIMARY = 14.0f;
         static readonly float FONT_SIZE_SECONDARY = 8.0f;
         static readonly float FONT_SIZE_METADATA = 8.0f;
+
+        private TextBox textBox_Rename;
 
         public Image IconImage
         {
