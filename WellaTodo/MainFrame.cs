@@ -1150,33 +1150,14 @@ namespace WellaTodo
 
         private void Add_Task_To_Panel_Paging(IEnumerable<CDataCell> dataset)
         {
-            Console.WriteLine("Add_Task_To_Panel_Paging:"+m_selected_position);
+            //Console.WriteLine("Add_Task_To_Panel_Paging:"+m_selected_position);
 
-            m_Task.Clear();
-
-            flowLayoutPanel2.Controls.Clear();
-
-            /*
             for (int i = 0; i < m_Task.Count; i++) // eventhandler 제거 및 m_Task 클리어
             {
-                foreach (Todo_Item item in m_Task)
-                {
-                    item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
-                    item.Dispose();
-                }
-                m_Task.Clear();
+                m_Task[i].UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+                //m_Task[i].Dispose();
             }
-
-            for (int i = 0; i < flowLayoutPanel2.Controls.Count; i++) // flowLayoutPanel2 dispose 및 클리어
-            {
-                foreach (Todo_Item item in flowLayoutPanel2.Controls)
-                {
-                    item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);  //  ????
-                    item.Dispose();
-                }
-                flowLayoutPanel2.Controls.Clear();
-            }
-            */
+            m_Task.Clear();
 
             foreach (CDataCell data in dataset)  // m_Task에 저장
             {
@@ -1190,6 +1171,7 @@ namespace WellaTodo
 
             m_currentPage = 1;
             flowLayoutPanel2.SuspendLayout();
+            flowLayoutPanel2.Controls.Clear();
             for (int i = 0; i < m_thumbsPerPage; i++)  // 한 페이지당 20개 표기, 첫페이지 표시
             {
                 if (i == m_Task.Count) break;
@@ -1498,7 +1480,6 @@ namespace WellaTodo
             if (pos <= m_Task.Count)  // 20개 항목 이상시는 1개 더 땡겨와야됨
             {
                 flowLayoutPanel2.Controls.Add(m_Task[pos - 1]);
-                Console.WriteLine("Add Task" + m_Task[pos - 1].TD_title);
                 m_Task[pos - 1].Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
             }
 
@@ -3275,7 +3256,7 @@ namespace WellaTodo
 
         private void Initiate_Calendar()
         {
-            Console.WriteLine("Initiate_Calendar");
+            //Console.WriteLine("Initiate_Calendar");
             buttonToday.Size = new Size(50, 30);
             buttonToday.Location = new Point(20, 10);
             buttonToday.Click += new EventHandler(buttonToday_Click);
@@ -3312,7 +3293,8 @@ namespace WellaTodo
 
         private void panel_Calendar_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("panel_Calendar_Paint");
+            //Console.WriteLine("panel_Calendar_Paint");
+            //MessageBox.Show("panel_Calendar_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -3391,13 +3373,14 @@ namespace WellaTodo
 
         private void panel_Calendar_Resize(object sender, EventArgs e)
         {
-            Console.WriteLine("panel_Calendar_Resize");
+            //Console.WriteLine("panel_Calendar_Resize");
+            //MessageBox.Show("panel_Calendar_Resize");
             panel_Calendar.Refresh();
         }
 
         private void SetDate(DateTime dt)
         {
-            Console.WriteLine("SetDate");
+            //Console.WriteLine("SetDate");
             m_dtValue = dt;
             DateTime startDate = new DateTime(dt.Year, dt.Month, 1);
             int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
@@ -3413,9 +3396,9 @@ namespace WellaTodo
                     if (ctr is SingleLineList)
                     {
                         SingleLineList list = (SingleLineList)ctr;
-                        Console.WriteLine("clear"+list.ToString());
+                        //Console.WriteLine("clear"+list.ToString());
                         list.SingleLineList_Click -= new SingleLineList_Event(SingleLineList_Click);
-                        list.Dispose();
+                        //list.Dispose();
                     }
                 }
                 dayPanel[i].Controls.Clear();
@@ -3498,7 +3481,7 @@ namespace WellaTodo
         private void SingleLineList_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
-            Console.WriteLine("SingleLineList_Click");
+            //Console.WriteLine("SingleLineList_Click");
             switch (me.Button)
             {
                 case MouseButtons.Left:
