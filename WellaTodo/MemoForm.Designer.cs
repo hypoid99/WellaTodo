@@ -64,6 +64,8 @@ namespace WellaTodo
             this.Text = "memoForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MemoForm_FormClosing);
             this.Load += new System.EventHandler(this.MemoForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MemoForm_Paint);
+            this.Resize += new System.EventHandler(this.MemoForm_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();
 

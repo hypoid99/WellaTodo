@@ -69,6 +69,8 @@ namespace WellaTodo
             set { isItemSelected = value; ChangeItemSelectedColor(); } 
         }
 
+        public int GetItemHeight => TODO_ITEM_HEIGHT;
+
         Label label1 = new Label();
         Label label2 = new Label();
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();

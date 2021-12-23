@@ -20,22 +20,35 @@ namespace WellaTodo
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void MemoForm_Load(object sender, EventArgs e)
         {
             textBox1.Text = TextBoxString;
             textBox1.SelectionStart = textBox1.Text.Length;
-
             textBox1.Font = new Font("돋움", 14.0f, FontStyle.Regular);
         }
 
         private void MemoForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             TextBoxString = textBox1.Text;
+        }
+
+        private void MemoForm_Resize(object sender, EventArgs e)
+        {
+            Refresh();
+        }
+
+        private void MemoForm_Paint(object sender, PaintEventArgs e)
+        {
+            textBox1.Location = new Point(10, 10);
+            textBox1.Size = new Size(Width - 40, Height - 100);
+
+            button1.Location = new Point(Width / 2 - 30, Height - 80);
+            button1.Size = new Size(60, 30);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private void textBox1_MouseDown(object sender, MouseEventArgs e)

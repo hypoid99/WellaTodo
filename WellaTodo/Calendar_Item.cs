@@ -12,11 +12,11 @@ using System.Drawing.Drawing2D;
 
 namespace WellaTodo
 {
-    public delegate void SingleLineList_Event(object sender, EventArgs e);
+    public delegate void Calendar_Item_Event(object sender, EventArgs e);
 
-    public partial class SingleLineList : UserControl
+    public partial class Calendar_Item : UserControl
     {
-        public event SingleLineList_Event SingleLineList_Click;
+        public event Calendar_Item_Event Calendar_Item_Click;
 
         static readonly int LIST_WIDTH = 100;
         static readonly int LIST_HEIGHT = 40;
@@ -32,6 +32,9 @@ namespace WellaTodo
         private PictureBox pictureBox_Icon = new PictureBox();
         private Label label_PrimaryText = new Label();
         ToolTip m_ToolTip = new ToolTip();
+
+        private CDataCell m_DataCell;
+        public CDataCell CD_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
         private Font m_Font = DefaultFont;
         public override Font Font
@@ -67,7 +70,7 @@ namespace WellaTodo
             set => label_PrimaryText.Text = value;
         }
 
-        public SingleLineList()
+        public Calendar_Item()
         {
             InitializeComponent();
 
@@ -77,22 +80,24 @@ namespace WellaTodo
             Initialize();
         }
 
-        public SingleLineList(string primaryText)
+        public Calendar_Item(CDataCell dc)
         {
             InitializeComponent();
 
+            CD_DataCell = dc;
             IconImage = null;
-            PrimaryText = primaryText;
+            PrimaryText = dc.DC_title;
 
             Initialize();
         }
 
-        public SingleLineList(Image iconImage, string primaryText)
+        public Calendar_Item(CDataCell dc, Image iconImage)
         {
             InitializeComponent();
 
+            CD_DataCell = dc;
             IconImage = iconImage;
-            PrimaryText = primaryText;
+            PrimaryText = dc.DC_title;
 
             Initialize();
         }
@@ -102,25 +107,25 @@ namespace WellaTodo
             Size = new Size(LIST_WIDTH, LIST_HEIGHT);
             Margin = new Padding(1);
             BackColor = BACK_COLOR;
-            Paint += new PaintEventHandler(SingleLineList_Paint);
-            MouseClick += new MouseEventHandler(SingleLineList_MouseClick);
-            MouseEnter += new EventHandler(SingleLineList_MouseEnter);
-            MouseLeave += new EventHandler(SingleLineList_MouseLeave);
+            Paint += new PaintEventHandler(Calendar_Item_Paint);
+            MouseClick += new MouseEventHandler(Calendar_Item_MouseClick);
+            MouseEnter += new EventHandler(Calendar_Item_MouseEnter);
+            MouseLeave += new EventHandler(Calendar_Item_MouseLeave);
 
             if (IconImage != null)
             {
                 pictureBox_Icon.Size = new Size(12, 12);
-                pictureBox_Icon.MouseClick += new MouseEventHandler(SingleLineList_MouseClick);
-                pictureBox_Icon.MouseEnter += new EventHandler(SingleLineList_MouseEnter);
-                pictureBox_Icon.MouseLeave += new EventHandler(SingleLineList_MouseLeave);
+                pictureBox_Icon.MouseClick += new MouseEventHandler(Calendar_Item_MouseClick);
+                pictureBox_Icon.MouseEnter += new EventHandler(Calendar_Item_MouseEnter);
+                pictureBox_Icon.MouseLeave += new EventHandler(Calendar_Item_MouseLeave);
                 pictureBox_Icon.Location = new Point(5, 8);
                 Controls.Add(pictureBox_Icon);
             }
 
             label_PrimaryText.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
-            label_PrimaryText.MouseClick += new MouseEventHandler(SingleLineList_MouseClick);
-            label_PrimaryText.MouseEnter += new EventHandler(SingleLineList_MouseEnter);
-            label_PrimaryText.MouseLeave += new EventHandler(SingleLineList_MouseLeave);
+            label_PrimaryText.MouseClick += new MouseEventHandler(Calendar_Item_MouseClick);
+            label_PrimaryText.MouseEnter += new EventHandler(Calendar_Item_MouseEnter);
+            label_PrimaryText.MouseLeave += new EventHandler(Calendar_Item_MouseLeave);
             //label_PrimaryText.Location = new Point(0, 0);
             label_PrimaryText.BackColor = BACK_COLOR;
             Controls.Add(label_PrimaryText);
@@ -129,7 +134,7 @@ namespace WellaTodo
             //m_ToolTip.SetToolTip(this, label_PrimaryText.Text);
         }
 
-        private void SingleLineList_Paint(object sender, PaintEventArgs pevent)
+        private void Calendar_Item_Paint(object sender, PaintEventArgs pevent)
         {
             Graphics g = pevent.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -148,20 +153,20 @@ namespace WellaTodo
         //---------------------------------------------------------
         // control event
         //---------------------------------------------------------
-        private void SingleLineList_MouseEnter(object sender, EventArgs e)
+        private void Calendar_Item_MouseEnter(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = HIGHLIGHT_COLOR;
         }
 
-        private void SingleLineList_MouseLeave(object sender, EventArgs e)
+        private void Calendar_Item_MouseLeave(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = BACK_COLOR;
         }
 
-        private void SingleLineList_MouseClick(object sender, MouseEventArgs e)
+        private void Calendar_Item_MouseClick(object sender, MouseEventArgs e)
         {
             Focus();
-            if (SingleLineList_Click != null) SingleLineList_Click?.Invoke(this, e);
+            if (Calendar_Item_Click != null) Calendar_Item_Click?.Invoke(this, e);
         }
 
         public override String ToString()

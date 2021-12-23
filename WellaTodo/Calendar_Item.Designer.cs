@@ -1,7 +1,7 @@
 ﻿
 namespace WellaTodo
 {
-    partial class SingleLineList
+    partial class Calendar_Item
     {
         /// <summary> 
         /// 필수 디자이너 변수입니다.
@@ -31,13 +31,20 @@ namespace WellaTodo
         {
             this.SuspendLayout();
             // 
-            // SingleLineList
+            // Calendar_Item
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Margin = new System.Windows.Forms.Padding(0);
-            this.Name = "SingleLineList";
+            this.Name = "Calendar_Item";
             this.Size = new System.Drawing.Size(300, 50);
+            this.ResumeLayout(false);
+
+            // Calendar_Item
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "Calendar_Item";
+            this.Size = new System.Drawing.Size(150, 50);
             this.ResumeLayout(false);
 
         }

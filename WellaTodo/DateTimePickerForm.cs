@@ -58,6 +58,7 @@ namespace WellaTodo
         private void button1_Click(object sender, EventArgs e)
         {
             isSelected = true;
+            SelectedDateTime = dateTimePicker1.Value;
             Close();
         }
 

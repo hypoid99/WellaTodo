@@ -31,6 +31,7 @@ namespace WellaTodo
         static readonly int MENU_WINDOW_WIDTH = 350;
         static readonly int DETAIL_WINDOW_WIDTH = 260;
         static readonly int DETAIL_WINDOW_X1 = 5;
+        static readonly int TASK_HEIGHT = 40;
         static readonly int HEADER_HEIGHT = 50;
         static readonly int TAIL_HEIGHT = 50;
         static readonly int TASK_WIDTH_GAP = 25;
@@ -77,6 +78,8 @@ namespace WellaTodo
         LoginSettingForm loginSettingForm = new LoginSettingForm();
         MemoForm memoForm = new MemoForm();
         OutputForm outputForm = new OutputForm();
+        TaskEditForm taskEditForm = new TaskEditForm();
+        CalculatorForm calculatorForm = new CalculatorForm();
 
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
         StarCheckbox starCheckbox1 = new StarCheckbox();
@@ -92,6 +95,7 @@ namespace WellaTodo
 
         RoundLabel saveButton = new RoundLabel();
         RoundLabel calendarButton = new RoundLabel();
+        RoundLabel calculatorButton = new RoundLabel();
 
         Color COLOR_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
@@ -150,12 +154,13 @@ namespace WellaTodo
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
-            Repaint();
+            Console.WriteLine("MainFrame_Paint");
+            Update_Display();
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
-            Repaint();
+            Update_Display();
         }
 
         private void Initiate_View()
@@ -202,7 +207,7 @@ namespace WellaTodo
             saveButton.MouseEnter += new EventHandler(saveButton_MouseEnter);
             saveButton.MouseLeave += new EventHandler(saveButton_MouseLeave);
             saveButton.Text = "저장";
-            saveButton.Location = new Point(panel_Header.Width - 140, 10);
+            saveButton.Location = new Point(panel_Header.Width - 210, 10);
             saveButton.Size = new Size(60, 30);
             panel_Header.Controls.Add(saveButton);
 
@@ -210,9 +215,17 @@ namespace WellaTodo
             calendarButton.MouseEnter += new EventHandler(calendarButton_MouseEnter);
             calendarButton.MouseLeave += new EventHandler(calendarButton_MouseLeave);
             calendarButton.Text = "달력";
-            calendarButton.Location = new Point(panel_Header.Width - 70, 10);
+            calendarButton.Location = new Point(panel_Header.Width - 140, 10);
             calendarButton.Size = new Size(60, 30);
             panel_Header.Controls.Add(calendarButton);
+
+            calculatorButton.Click += new EventHandler(calculatorButton_Click);
+            calculatorButton.MouseEnter += new EventHandler(calculatorButton_MouseEnter);
+            calculatorButton.MouseLeave += new EventHandler(calculatorButton_MouseLeave);
+            calculatorButton.Text = "계산기";
+            calculatorButton.Location = new Point(panel_Header.Width - 70, 10);
+            calculatorButton.Size = new Size(60, 30);
+            panel_Header.Controls.Add(calculatorButton);
 
             // 태스크 항목
             flowLayoutPanel2.AllowDrop = true;
@@ -328,9 +341,9 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // Repaint
+        // Update_Display
         //--------------------------------------------------------------
-        private void Repaint()
+        private void Update_Display()
         {
             //Rectangle rc = ClientRectangle;
             //Console.WriteLine(">ClientRectangle W[{0}] H[{1}]", rc.Width, rc.Height);
@@ -412,7 +425,7 @@ namespace WellaTodo
                         if (e.X > 0 && e.X < (splitContainer1.Width))
                         {
                             splitContainer1.SplitterDistance = e.X;
-                            Repaint();
+                            Update_Display();
                         }
                     }
                 }
@@ -429,8 +442,9 @@ namespace WellaTodo
         private void Update_Task_Width()
         {
             panel_Header.Width = splitContainer2.Panel1.Width;
-            saveButton.Location = new Point(panel_Header.Width - 140, 10);
-            calendarButton.Location = new Point(panel_Header.Width - 70, 10);
+            saveButton.Location = new Point(panel_Header.Width - 210, 10);
+            calendarButton.Location = new Point(panel_Header.Width - 140, 10);
+            calculatorButton.Location = new Point(panel_Header.Width - 70, 10);
 
             if (isCalendarWindowOpen)
             {
@@ -1179,6 +1193,18 @@ namespace WellaTodo
                 m_Task[i].Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
             }
             flowLayoutPanel2.ResumeLayout();
+
+            // 화면이 길어 20개 길이가 부족시 한페이지 더 추가함 -> 40개 이상은 불가
+            if (((flowLayoutPanel2.Height / TASK_HEIGHT) > m_thumbsPerPage) && (m_Task.Count > m_thumbsPerPage))  
+            {
+                for (int i = 0; i < m_thumbsPerPage; i++)
+                {
+                    if (m_currentPage * m_thumbsPerPage + i >= m_Task.Count) break;
+                    flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage + i]);
+                    m_Task[m_currentPage * m_thumbsPerPage + i].Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
+                }
+                m_currentPage++;
+            }
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // 판넬 내부에 선택 항목이 있을시 select 표기
             {
@@ -2411,7 +2437,7 @@ namespace WellaTodo
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {
                 m_Data[m_selected_position].DC_deadlineType = 4;
-                if (dt.Hour == 0) // 시간을 입력하지 않을때
+                if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
                 {
                     dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
                 }
@@ -2825,6 +2851,25 @@ namespace WellaTodo
             {
                 Open_CalendarWindow();
             }
+        }
+
+        //
+        // calculator Button
+        //
+        private void calculatorButton_MouseEnter(object sender, EventArgs e)
+        {
+            calculatorButton.BackColor = PSEUDO_SELECTED_COLOR;
+        }
+
+        private void calculatorButton_MouseLeave(object sender, EventArgs e)
+        {
+            calculatorButton.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void calculatorButton_Click(object sender, EventArgs e)
+        {
+            calculatorForm.StartPosition = FormStartPosition.CenterParent;
+            calculatorForm.ShowDialog();
         }
 
         // ------------------------------------------------------------------
@@ -3382,10 +3427,10 @@ namespace WellaTodo
         {
             //Console.WriteLine("SetDate");
             m_dtValue = dt;
-            DateTime startDate = new DateTime(dt.Year, dt.Month, 1);
+            DateTime startDate = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
             int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
             int num_DayOfWeek = (int)startDate.DayOfWeek;
-            DateTime endDate = new DateTime(dt.Year, dt.Month, num_DaysInMonth);
+            DateTime endDate = new DateTime(dt.Year, dt.Month, num_DaysInMonth, 23, 59, 59);
 
             labelCurrentDate.Text = dt.Year.ToString() + "년 " + dt.Month.ToString() + "월";
 
@@ -3393,11 +3438,11 @@ namespace WellaTodo
             {
                 foreach (Control ctr in dayPanel[i].Controls)
                 {
-                    if (ctr is SingleLineList)
+                    if (ctr is Calendar_Item)
                     {
-                        SingleLineList list = (SingleLineList)ctr;
+                        Calendar_Item list = (Calendar_Item)ctr;
                         //Console.WriteLine("clear"+list.ToString());
-                        list.SingleLineList_Click -= new SingleLineList_Event(SingleLineList_Click);
+                        list.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
                         //list.Dispose();
                     }
                 }
@@ -3431,8 +3476,8 @@ namespace WellaTodo
                 if ((result_st <= 0) && (result_et >= 0))
                 {
                     int pos = num_DayOfWeek + dc.DC_deadlineTime.Day - 1;
-                    SingleLineList label_planned = new SingleLineList(dc.DC_title);
-                    label_planned.SingleLineList_Click += new SingleLineList_Event(SingleLineList_Click); // event 제거할 것
+                    Calendar_Item label_planned = new Calendar_Item(dc);
+                    label_planned.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
                     label_planned.Font = dc.DC_complete
                         ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                         : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
@@ -3443,6 +3488,7 @@ namespace WellaTodo
 
                     label_planned.Width = dayPanel[pos].Width;
                     label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
+                    m_TaskToolTip.SetToolTip(label_planned, dc.DC_title);
                     dayPanel[pos].Controls.Add(label_planned);
                 }
             }
@@ -3478,18 +3524,48 @@ namespace WellaTodo
             SetDate(dt);
         }
 
-        private void SingleLineList_Click(object sender, EventArgs e)
+        private void Calendar_Item_Click(object sender, EventArgs e)
         {
-            MouseEventArgs me = (MouseEventArgs)e;
-            //Console.WriteLine("SingleLineList_Click");
-            switch (me.Button)
+            Calendar_Item sd = (Calendar_Item)sender;
+
+            taskEditForm.StartPosition = FormStartPosition.Manual;
+            taskEditForm.Location = new Point(Location.X + (Width - taskEditForm.Width) / 2, Location.Y + (Height - taskEditForm.Height) / 2);
+
+            IEnumerable<CDataCell> dataset = from CDataCell dc in m_Data where dc.Equals(sd.CD_DataCell) select dc;
+
+            CDataCell cd = dataset.First();
+
+            taskEditForm.TE_DataCell = cd;
+            taskEditForm.IsChanged = false;
+
+            taskEditForm.ShowDialog();
+
+            if (taskEditForm.IsChanged)  // Complete인지 Important인지 확인해서 Process 실행할 것
             {
-                case MouseButtons.Left:
+                int cnt = 0;
+                for (int i = 0; i < m_Data.Count; i++)
+                {
+                    if (m_Data[i].Equals(taskEditForm.TE_DataCell))
+                    {
+                        m_Data[i] = taskEditForm.TE_DataCell;
+                        taskEditForm.IsChanged = false;
+                        cnt++;
 
-                    break;
-                case MouseButtons.Right:
-
-                    break;
+                        SetDate(m_dtValue);  // 달력창 Update -> 필요한 항목만 변경 가능(?)
+                        
+                        foreach (Todo_Item item in m_Task)  // Task창에 있는 항목 Update
+                        {
+                            if (item.TD_DataCell.Equals(taskEditForm.TE_DataCell))
+                            {
+                                item.TD_title = taskEditForm.TE_DataCell.DC_title;
+                                item.TD_complete = taskEditForm.TE_DataCell.DC_complete;
+                                item.TD_important = taskEditForm.TE_DataCell.DC_important;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (cnt == 0) MessageBox.Show("No match Data exist!!");
             }
         }
     }

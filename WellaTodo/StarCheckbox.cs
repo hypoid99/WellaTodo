@@ -61,7 +61,7 @@ namespace WellaTodo
             //base.OnClick(e);
 
             Checked = !Checked;
-            Invalidate();
+            Refresh();
         }
 
         private void SetPathStarCheckbox()
