@@ -154,7 +154,6 @@ namespace WellaTodo
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("MainFrame_Paint");
             Update_Display();
         }
 

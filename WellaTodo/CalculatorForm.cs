@@ -45,6 +45,13 @@ namespace WellaTodo
             textBox_Result.Text = "0";
         }
 
+        private void Update_Calc_Display(string str)
+        {
+            double v = Double.Parse(str);
+            textBox_Result.Text = commaProcedure(v, str); // 3점 표기
+            textBox_Exp.Focus();  // 키 포커서 제거
+        }
+
         private string commaProcedure(double v, string s)
         {
             int pos = 0;
@@ -67,8 +74,6 @@ namespace WellaTodo
         {
             Button btn = sender as Button;
 
-            //Console.WriteLine("NumberButton_Click:"+btn.Text);
-
             if (textBox_Result.Text == "0" || opFlag == true || memFlag == true || calcFlag == true)
             {
                 textBox_Result.Text = btn.Text;
@@ -81,9 +86,7 @@ namespace WellaTodo
                 textBox_Result.Text = textBox_Result.Text + btn.Text;
             }
 
-            // 3자리마다 콤마 삽입            
-            double v = Double.Parse(textBox_Result.Text);
-            textBox_Result.Text = commaProcedure(v, textBox_Result.Text);
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Point_Click(object sender, EventArgs e)
@@ -92,12 +95,16 @@ namespace WellaTodo
                 return;
             else
                 textBox_Result.Text += ".";
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Plusminus_Click(object sender, EventArgs e)
         {
             double v = Double.Parse(textBox_Result.Text);
             textBox_Result.Text = (-v).ToString();
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Plus_Click(object sender, EventArgs e)
@@ -106,6 +113,8 @@ namespace WellaTodo
             textBox_Exp.Text = textBox_Result.Text + " + ";
             op = '+';
             opFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Minus_Click(object sender, EventArgs e)
@@ -114,6 +123,8 @@ namespace WellaTodo
             textBox_Exp.Text = textBox_Result.Text + " - ";
             op = '-';
             opFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Time_Click(object sender, EventArgs e)
@@ -122,6 +133,8 @@ namespace WellaTodo
             textBox_Exp.Text = textBox_Result.Text + " × ";
             op = '*';
             opFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Divide_Click(object sender, EventArgs e)
@@ -130,11 +143,12 @@ namespace WellaTodo
             textBox_Exp.Text = textBox_Result.Text + " ÷ ";
             op = '/';
             opFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Enter_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("button_Enter_Click");
             Double v = Double.Parse(textBox_Result.Text);
             switch (op)
             {
@@ -151,36 +165,44 @@ namespace WellaTodo
                     textBox_Result.Text = (savedValue / v).ToString();
                     break;
             }
-
-            // 3자리마다 콤마 삽입            
-            double x = Double.Parse(textBox_Result.Text);
-            textBox_Result.Text = commaProcedure(x, textBox_Result.Text);
-
             textBox_Exp.Text = "";
             calcFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Root_Click(object sender, EventArgs e)
         {
             textBox_Exp.Text = "√(" + textBox_Result.Text + ") ";
             textBox_Result.Text = Math.Sqrt(Double.Parse(textBox_Result.Text)).ToString();
+            calcFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Square_Click(object sender, EventArgs e)
         {
             textBox_Exp.Text = "sqr(" + textBox_Result.Text + ") ";
             textBox_Result.Text = (Double.Parse(textBox_Result.Text) * Double.Parse(textBox_Result.Text)).ToString();
+            calcFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_Inverse_Click(object sender, EventArgs e)
         {
             textBox_Exp.Text = "1 / (" + textBox_Result.Text + ") ";
             textBox_Result.Text = (1 / Double.Parse(textBox_Result.Text)).ToString();
+            calcFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_CE_Click(object sender, EventArgs e)
         {
             textBox_Result.Text = "0";
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_C_Click(object sender, EventArgs e)
@@ -190,6 +212,8 @@ namespace WellaTodo
             savedValue = 0;
             op = '\0';
             opFlag = false;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_BS_Click(object sender, EventArgs e)
@@ -200,9 +224,8 @@ namespace WellaTodo
             {
                 textBox_Result.Text = "0";
             }
-            // 3자리마다 콤마 삽입            
-            double x = Double.Parse(textBox_Result.Text);
-            textBox_Result.Text = commaProcedure(x, textBox_Result.Text);
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_MS_Click(object sender, EventArgs e)
@@ -211,12 +234,16 @@ namespace WellaTodo
             button_MC.Enabled = true;
             button_MR.Enabled = true;
             memFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_MR_Click(object sender, EventArgs e)
         {
             textBox_Result.Text = memory.ToString();
             memFlag = true;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_MC_Click(object sender, EventArgs e)
@@ -225,23 +252,40 @@ namespace WellaTodo
             memory = 0;
             button_MC.Enabled = false;
             button_MR.Enabled = false;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_MP_Click(object sender, EventArgs e)
         {
             memory += Double.Parse(textBox_Result.Text);
+
+            Update_Calc_Display(textBox_Result.Text);
         }
 
         private void button_MM_Click(object sender, EventArgs e)
         {
             memory -= Double.Parse(textBox_Result.Text);
+
+            Update_Calc_Display(textBox_Result.Text);
+        }
+
+        private void CalculatorForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
 
         private void CalculatorForm_KeyUp(object sender, KeyEventArgs e)
         {
-            Console.WriteLine(e.KeyCode.ToString());
             switch (e.KeyCode)
             {
+                case Keys.Enter:
+                    button_Enter.PerformClick();
+                    break;
                 case Keys.D0:
                     button_Num0.PerformClick();
                     break;
@@ -272,8 +316,8 @@ namespace WellaTodo
                 case Keys.D9:
                     button_Num9.PerformClick();
                     break;
-                case Keys.Enter:
-                    button_Enter.PerformClick();
+                case Keys.C:
+                    button_C.PerformClick();
                     break;
                 case Keys.Back:
                     button_BS.PerformClick();
@@ -286,9 +330,6 @@ namespace WellaTodo
                     break;
                 case Keys.OemMinus:
                     button_Minus.PerformClick();
-                    break;
-                case Keys.Space:
-                    button_C.PerformClick();
                     break;
                 case Keys.NumPad0:
                     button_Num0.PerformClick();
@@ -336,8 +377,10 @@ namespace WellaTodo
                     button_Divide.PerformClick();
                     break;
             }
-            e.Handled = true;
-            e.SuppressKeyPress = true;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
+
+            Update_Calc_Display(textBox_Result.Text);
         }
     }
 }

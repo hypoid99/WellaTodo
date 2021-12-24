@@ -91,6 +91,7 @@ namespace WellaTodo
             this.button_MC.Name = "button_MC";
             this.button_MC.Size = new System.Drawing.Size(65, 36);
             this.button_MC.TabIndex = 2;
+            this.button_MC.TabStop = false;
             this.button_MC.Text = "MC";
             this.button_MC.UseVisualStyleBackColor = true;
             this.button_MC.Click += new System.EventHandler(this.button_MC_Click);
@@ -102,6 +103,7 @@ namespace WellaTodo
             this.button_Percent.Name = "button_Percent";
             this.button_Percent.Size = new System.Drawing.Size(86, 52);
             this.button_Percent.TabIndex = 2;
+            this.button_Percent.TabStop = false;
             this.button_Percent.Text = "%";
             this.button_Percent.UseVisualStyleBackColor = true;
             // 
@@ -112,6 +114,7 @@ namespace WellaTodo
             this.button_Root.Name = "button_Root";
             this.button_Root.Size = new System.Drawing.Size(86, 52);
             this.button_Root.TabIndex = 2;
+            this.button_Root.TabStop = false;
             this.button_Root.Text = "√";
             this.button_Root.UseVisualStyleBackColor = true;
             this.button_Root.Click += new System.EventHandler(this.button_Root_Click);
@@ -123,6 +126,7 @@ namespace WellaTodo
             this.button_Square.Name = "button_Square";
             this.button_Square.Size = new System.Drawing.Size(86, 52);
             this.button_Square.TabIndex = 2;
+            this.button_Square.TabStop = false;
             this.button_Square.Text = "x2";
             this.button_Square.UseVisualStyleBackColor = true;
             this.button_Square.Click += new System.EventHandler(this.button_Square_Click);
@@ -134,6 +138,7 @@ namespace WellaTodo
             this.button_Inverse.Name = "button_Inverse";
             this.button_Inverse.Size = new System.Drawing.Size(86, 52);
             this.button_Inverse.TabIndex = 2;
+            this.button_Inverse.TabStop = false;
             this.button_Inverse.Text = "1/x";
             this.button_Inverse.UseVisualStyleBackColor = true;
             this.button_Inverse.Click += new System.EventHandler(this.button_Inverse_Click);
@@ -145,6 +150,7 @@ namespace WellaTodo
             this.button_MR.Name = "button_MR";
             this.button_MR.Size = new System.Drawing.Size(65, 36);
             this.button_MR.TabIndex = 2;
+            this.button_MR.TabStop = false;
             this.button_MR.Text = "MR";
             this.button_MR.UseVisualStyleBackColor = true;
             this.button_MR.Click += new System.EventHandler(this.button_MR_Click);
@@ -156,6 +162,7 @@ namespace WellaTodo
             this.button_MP.Name = "button_MP";
             this.button_MP.Size = new System.Drawing.Size(65, 36);
             this.button_MP.TabIndex = 2;
+            this.button_MP.TabStop = false;
             this.button_MP.Text = "M+";
             this.button_MP.UseVisualStyleBackColor = true;
             this.button_MP.Click += new System.EventHandler(this.button_MP_Click);
@@ -167,6 +174,7 @@ namespace WellaTodo
             this.button_MM.Name = "button_MM";
             this.button_MM.Size = new System.Drawing.Size(65, 36);
             this.button_MM.TabIndex = 2;
+            this.button_MM.TabStop = false;
             this.button_MM.Text = "M-";
             this.button_MM.UseVisualStyleBackColor = true;
             this.button_MM.Click += new System.EventHandler(this.button_MM_Click);
@@ -178,6 +186,7 @@ namespace WellaTodo
             this.button_MS.Name = "button_MS";
             this.button_MS.Size = new System.Drawing.Size(65, 36);
             this.button_MS.TabIndex = 2;
+            this.button_MS.TabStop = false;
             this.button_MS.Text = "MS";
             this.button_MS.UseVisualStyleBackColor = true;
             this.button_MS.Click += new System.EventHandler(this.button_MS_Click);
@@ -189,6 +198,7 @@ namespace WellaTodo
             this.button_CE.Name = "button_CE";
             this.button_CE.Size = new System.Drawing.Size(86, 52);
             this.button_CE.TabIndex = 2;
+            this.button_CE.TabStop = false;
             this.button_CE.Text = "CE";
             this.button_CE.UseVisualStyleBackColor = true;
             this.button_CE.Click += new System.EventHandler(this.button_CE_Click);
@@ -200,6 +210,7 @@ namespace WellaTodo
             this.button_C.Name = "button_C";
             this.button_C.Size = new System.Drawing.Size(86, 52);
             this.button_C.TabIndex = 2;
+            this.button_C.TabStop = false;
             this.button_C.Text = "C";
             this.button_C.UseVisualStyleBackColor = true;
             this.button_C.Click += new System.EventHandler(this.button_C_Click);
@@ -211,6 +222,7 @@ namespace WellaTodo
             this.button_BS.Name = "button_BS";
             this.button_BS.Size = new System.Drawing.Size(86, 52);
             this.button_BS.TabIndex = 2;
+            this.button_BS.TabStop = false;
             this.button_BS.Text = "BS";
             this.button_BS.UseVisualStyleBackColor = true;
             this.button_BS.Click += new System.EventHandler(this.button_BS_Click);
@@ -222,6 +234,7 @@ namespace WellaTodo
             this.button_Divide.Name = "button_Divide";
             this.button_Divide.Size = new System.Drawing.Size(86, 52);
             this.button_Divide.TabIndex = 2;
+            this.button_Divide.TabStop = false;
             this.button_Divide.Text = "÷";
             this.button_Divide.UseVisualStyleBackColor = true;
             this.button_Divide.Click += new System.EventHandler(this.button_Divide_Click);
@@ -233,6 +246,7 @@ namespace WellaTodo
             this.button_Num7.Name = "button_Num7";
             this.button_Num7.Size = new System.Drawing.Size(86, 52);
             this.button_Num7.TabIndex = 2;
+            this.button_Num7.TabStop = false;
             this.button_Num7.Text = "7";
             this.button_Num7.UseVisualStyleBackColor = true;
             // 
@@ -243,6 +257,7 @@ namespace WellaTodo
             this.button_Num8.Name = "button_Num8";
             this.button_Num8.Size = new System.Drawing.Size(86, 52);
             this.button_Num8.TabIndex = 2;
+            this.button_Num8.TabStop = false;
             this.button_Num8.Text = "8";
             this.button_Num8.UseVisualStyleBackColor = true;
             // 
@@ -253,6 +268,7 @@ namespace WellaTodo
             this.button_Num9.Name = "button_Num9";
             this.button_Num9.Size = new System.Drawing.Size(86, 52);
             this.button_Num9.TabIndex = 2;
+            this.button_Num9.TabStop = false;
             this.button_Num9.Text = "9";
             this.button_Num9.UseVisualStyleBackColor = true;
             // 
@@ -263,6 +279,7 @@ namespace WellaTodo
             this.button_Time.Name = "button_Time";
             this.button_Time.Size = new System.Drawing.Size(86, 52);
             this.button_Time.TabIndex = 2;
+            this.button_Time.TabStop = false;
             this.button_Time.Text = "×";
             this.button_Time.UseVisualStyleBackColor = true;
             this.button_Time.Click += new System.EventHandler(this.button_Time_Click);
@@ -274,6 +291,7 @@ namespace WellaTodo
             this.button_Num4.Name = "button_Num4";
             this.button_Num4.Size = new System.Drawing.Size(86, 52);
             this.button_Num4.TabIndex = 2;
+            this.button_Num4.TabStop = false;
             this.button_Num4.Text = "4";
             this.button_Num4.UseVisualStyleBackColor = true;
             // 
@@ -284,6 +302,7 @@ namespace WellaTodo
             this.button_Num5.Name = "button_Num5";
             this.button_Num5.Size = new System.Drawing.Size(86, 52);
             this.button_Num5.TabIndex = 2;
+            this.button_Num5.TabStop = false;
             this.button_Num5.Text = "5";
             this.button_Num5.UseVisualStyleBackColor = true;
             // 
@@ -294,6 +313,7 @@ namespace WellaTodo
             this.button_Num6.Name = "button_Num6";
             this.button_Num6.Size = new System.Drawing.Size(86, 52);
             this.button_Num6.TabIndex = 2;
+            this.button_Num6.TabStop = false;
             this.button_Num6.Text = "6";
             this.button_Num6.UseVisualStyleBackColor = true;
             // 
@@ -304,6 +324,7 @@ namespace WellaTodo
             this.button_Minus.Name = "button_Minus";
             this.button_Minus.Size = new System.Drawing.Size(86, 52);
             this.button_Minus.TabIndex = 2;
+            this.button_Minus.TabStop = false;
             this.button_Minus.Text = "-";
             this.button_Minus.UseVisualStyleBackColor = true;
             this.button_Minus.Click += new System.EventHandler(this.button_Minus_Click);
@@ -315,6 +336,7 @@ namespace WellaTodo
             this.button_Num1.Name = "button_Num1";
             this.button_Num1.Size = new System.Drawing.Size(86, 52);
             this.button_Num1.TabIndex = 2;
+            this.button_Num1.TabStop = false;
             this.button_Num1.Text = "1";
             this.button_Num1.UseVisualStyleBackColor = true;
             // 
@@ -325,6 +347,7 @@ namespace WellaTodo
             this.button_Num2.Name = "button_Num2";
             this.button_Num2.Size = new System.Drawing.Size(86, 52);
             this.button_Num2.TabIndex = 2;
+            this.button_Num2.TabStop = false;
             this.button_Num2.Text = "2";
             this.button_Num2.UseVisualStyleBackColor = true;
             // 
@@ -335,6 +358,7 @@ namespace WellaTodo
             this.button_Num3.Name = "button_Num3";
             this.button_Num3.Size = new System.Drawing.Size(86, 52);
             this.button_Num3.TabIndex = 2;
+            this.button_Num3.TabStop = false;
             this.button_Num3.Text = "3";
             this.button_Num3.UseVisualStyleBackColor = true;
             // 
@@ -345,6 +369,7 @@ namespace WellaTodo
             this.button_Plus.Name = "button_Plus";
             this.button_Plus.Size = new System.Drawing.Size(86, 52);
             this.button_Plus.TabIndex = 2;
+            this.button_Plus.TabStop = false;
             this.button_Plus.Text = "+";
             this.button_Plus.UseVisualStyleBackColor = true;
             this.button_Plus.Click += new System.EventHandler(this.button_Plus_Click);
@@ -356,6 +381,7 @@ namespace WellaTodo
             this.button_Plusminus.Name = "button_Plusminus";
             this.button_Plusminus.Size = new System.Drawing.Size(86, 52);
             this.button_Plusminus.TabIndex = 2;
+            this.button_Plusminus.TabStop = false;
             this.button_Plusminus.Text = "±";
             this.button_Plusminus.UseVisualStyleBackColor = true;
             this.button_Plusminus.Click += new System.EventHandler(this.button_Plusminus_Click);
@@ -367,6 +393,7 @@ namespace WellaTodo
             this.button_Num0.Name = "button_Num0";
             this.button_Num0.Size = new System.Drawing.Size(86, 52);
             this.button_Num0.TabIndex = 2;
+            this.button_Num0.TabStop = false;
             this.button_Num0.Text = "0";
             this.button_Num0.UseVisualStyleBackColor = true;
             // 
@@ -377,6 +404,7 @@ namespace WellaTodo
             this.button_Point.Name = "button_Point";
             this.button_Point.Size = new System.Drawing.Size(86, 52);
             this.button_Point.TabIndex = 2;
+            this.button_Point.TabStop = false;
             this.button_Point.Text = ".";
             this.button_Point.UseVisualStyleBackColor = true;
             this.button_Point.Click += new System.EventHandler(this.button_Point_Click);
@@ -388,6 +416,7 @@ namespace WellaTodo
             this.button_Enter.Name = "button_Enter";
             this.button_Enter.Size = new System.Drawing.Size(86, 52);
             this.button_Enter.TabIndex = 2;
+            this.button_Enter.TabStop = false;
             this.button_Enter.Text = "=";
             this.button_Enter.UseVisualStyleBackColor = true;
             this.button_Enter.Click += new System.EventHandler(this.button_Enter_Click);
@@ -396,7 +425,7 @@ namespace WellaTodo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(382, 527);
+            this.ClientSize = new System.Drawing.Size(382, 533);
             this.Controls.Add(this.button_Enter);
             this.Controls.Add(this.button_Point);
             this.Controls.Add(this.button_Plus);
@@ -428,9 +457,11 @@ namespace WellaTodo
             this.Controls.Add(this.button_MC);
             this.Controls.Add(this.textBox_Result);
             this.Controls.Add(this.textBox_Exp);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "CalculatorForm";
             this.Text = "계산기";
             this.Load += new System.EventHandler(this.CalculatorForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CalculatorForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.CalculatorForm_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
