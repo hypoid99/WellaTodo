@@ -34,11 +34,17 @@ namespace WellaTodo
         private bool isChanged = false;
         public bool IsChanged { get => isChanged; set => isChanged = value; }
 
+        private bool isDeleted = false;
+        public bool IsDeleted { get => isDeleted; set => isDeleted = value; }
+
+        private string[] repeatType = new string[]{"없음", "매일", "평일", "매주", "매월", "매년"};
+
         public TaskEditForm()
         {
             InitializeComponent();
 
             IsChanged = false;
+            IsDeleted = false;
             TE_DataCell = null;
         }
 
@@ -70,7 +76,7 @@ namespace WellaTodo
             roundLabel_Planned.MouseClick += new MouseEventHandler(roundLabel_Planned_Click);
             roundLabel_Planned.MouseEnter += new EventHandler(TaskEdit_MouseEnter);
             roundLabel_Planned.MouseLeave += new EventHandler(TaskEdit_MouseLeave);
-            roundLabel_Planned.Text = "기한 설정";
+            roundLabel_Planned.Text = "기한 : " + TE_DataCell.DC_deadlineTime.ToString();
             roundLabel_Planned.Location = new Point(PANEL_SX + 5, 40);
             roundLabel_Planned.Size = new Size(PANEL_WIDTH - 50, 30);
             panel_TaskEdit.Controls.Add(roundLabel_Planned);
@@ -78,14 +84,18 @@ namespace WellaTodo
             roundLabel_Repeat.MouseClick += new MouseEventHandler(roundLabel_Repeat_Click);
             roundLabel_Repeat.MouseEnter += new EventHandler(TaskEdit_MouseEnter);
             roundLabel_Repeat.MouseLeave += new EventHandler(TaskEdit_MouseLeave);
-            roundLabel_Repeat.Text = "반복";
+            roundLabel_Repeat.Text = "반복 : " + repeatType[TE_DataCell.DC_repeatType];
             roundLabel_Repeat.Location = new Point(PANEL_SX + 5, 75);
             roundLabel_Repeat.Size = new Size(PANEL_WIDTH - 50, 30);
             panel_TaskEdit.Controls.Add(roundLabel_Repeat);
 
+            textBox_Memo.MouseDown += new MouseEventHandler(textBox_Memo_MouseDown);
+            textBox_Memo.Leave += new EventHandler(textBox_Memo_Leave);
+            textBox_Memo.MouseLeave += new EventHandler(textBox_Memo_MouseLeave);
             textBox_Memo.Multiline = true;
             textBox_Memo.Location = new Point(PANEL_SX + 5, 115);
             textBox_Memo.Size = new Size(PANEL_WIDTH - 50, 130);
+            textBox_Memo.Text = TE_DataCell.DC_memo;
 
             // 닫기 버튼
             button_Close.Location = new Point(PANEL_SX + 20, 255);
@@ -124,7 +134,8 @@ namespace WellaTodo
 
         private void button_Delete_Click(object sender, EventArgs e)
         {
-
+            IsDeleted = true;
+            Close();
         }
 
         private void roundCheckbox_MouseClick(object sender, EventArgs e)
@@ -149,16 +160,9 @@ namespace WellaTodo
             //foreach (Control c in Controls) c.BackColor = BACK_COLOR;
         }
 
-        private void roundLabel_Planned_Click(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void roundLabel_Repeat_Click(object sender, MouseEventArgs e)
-        {
-
-        }
-
+        //
+        // 제목창
+        //
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -230,5 +234,169 @@ namespace WellaTodo
                 e.SuppressKeyPress = true;
             }
         }
+
+        //
+        // 기한 설정
+        //
+        private void roundLabel_Planned_MouseEnter(object sender, EventArgs e)
+        {
+            roundLabel_Planned.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void roundLabel_Planned_MouseLeave(object sender, EventArgs e)
+        {
+            roundLabel_Planned.BackColor = TE_DataCell.DC_deadlineType > 0 ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+        }
+
+        private void roundLabel_Planned_Click(object sender, MouseEventArgs e)
+        {
+            roundLabel_Planned.Focus();
+            if (e.Button != MouseButtons.Left) return;
+
+            ContextMenu deadlineMenu = new ContextMenu();
+            MenuItem selectDeadline = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click));
+            MenuItem deleteDeadline = new MenuItem("기한 설정 제거", new EventHandler(OnDeleteDeadline_Click));
+            deadlineMenu.MenuItems.Add(selectDeadline);
+            deadlineMenu.MenuItems.Add(deleteDeadline);
+
+            int px = roundLabel_Planned.Location.X;
+            int py = roundLabel_Planned.Location.Y + roundLabel_Planned.Height;
+            deadlineMenu.Show(this, new Point(px, py));
+        }
+
+        private void OnSelectDeadline_Click(object sender, EventArgs e)
+        {
+            DateTimePickerForm carendar = new DateTimePickerForm();
+            carendar.ShowDialog();
+        }
+
+        private void OnDeleteDeadline_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //
+        // 반복 메뉴
+        //
+        private void roundLabel_Repeat_MouseEnter(object sender, EventArgs e)
+        {
+            roundLabel_Repeat.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void roundLabel_Repeat_MouseLeave(object sender, EventArgs e)
+        {
+            roundLabel_Repeat.BackColor = TE_DataCell.DC_repeatType > 0 ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+        }
+
+        private void roundLabel_Repeat_Click(object sender, MouseEventArgs e)
+        {
+            roundLabel_Repeat.Focus();
+            if (e.Button != MouseButtons.Left) return;
+
+            ContextMenu repeatMenu = new ContextMenu();
+            MenuItem everyDayRepeat = new MenuItem("매일", new EventHandler(OnEveryDayRepeat_Click));
+            MenuItem workingDayRepeat = new MenuItem("평일", new EventHandler(OnWorkingDayRepeat_Click));
+            MenuItem everyWeekRepeat = new MenuItem("매주", new EventHandler(OnEveryWeekRepeat_Click));
+            MenuItem everyMonthRepeat = new MenuItem("매월", new EventHandler(OnEveryMonthRepeat_Click));
+            MenuItem everyYearRepeat = new MenuItem("매년", new EventHandler(OnEveryYearRepeat_Click));
+            MenuItem deleteRepeat = new MenuItem("반복 제거", new EventHandler(OnDeleteRepeat_Click));
+            repeatMenu.MenuItems.Add(everyDayRepeat);
+            repeatMenu.MenuItems.Add(workingDayRepeat);
+            repeatMenu.MenuItems.Add(everyWeekRepeat);
+            repeatMenu.MenuItems.Add(everyMonthRepeat);
+            repeatMenu.MenuItems.Add(everyYearRepeat);
+            repeatMenu.MenuItems.Add(deleteRepeat);
+
+            int px = roundLabel_Repeat.Location.X;
+            int py = roundLabel_Repeat.Location.Y + roundLabel_Repeat.Height;
+            repeatMenu.Show(this, new Point(px, py));
+        }
+
+        private void OnEveryDayRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OnEveryYearRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OnDeleteRepeat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //
+        // 메모창
+        //
+        private void textBox_Memo_Leave(object sender, EventArgs e)
+        {
+            //메모 내용에 변경이 있는지 확인(?)
+            TE_DataCell.DC_memo = textBox_Memo.Text;
+            isChanged = true;
+        }
+
+        private void textBox_Memo_MouseLeave(object sender, EventArgs e)
+        {
+            TE_DataCell.DC_memo = textBox_Memo.Text;
+            isChanged = true;
+        }
+
+        private void textBox_Memo_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_Memo_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_Memo_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_Memo_Click));
+                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_textBox_Memo_Click));
+                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_textBox_Memo_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_Memo);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textboxMenu.MenuItems.Add(selectAllMenu);
+                textboxMenu.MenuItems.Add("-");
+                textboxMenu.MenuItems.Add(undoMenu);
+                textBox_Memo.ContextMenu = textboxMenu;
+
+                textBox_Memo.ContextMenu.Show(textBox_Memo, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox_Memo(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+
+            ctm.MenuItems[0].Enabled = textBox_Memo.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox_Memo.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+            ctm.MenuItems[3].Enabled = textBox_Memo.Text.Length != 0; // selectAll
+            ctm.MenuItems[5].Enabled = textBox_Memo.CanUndo; // undo
+        }
+
+        private void OnCopyMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Copy(); }
+        private void OnCutMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Cut(); }
+        private void OnPasteMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Paste(); }
+        private void OnSelectAllMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.SelectAll(); }
+        private void OnUndoMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Undo(); }
     }
 }

@@ -197,6 +197,17 @@ namespace WellaTodo
             Controls.Add(label2);
         }
 
+        public void Display_Event_Status()
+        {
+            if (this.UserControl_Click != null)
+            {
+                foreach (Delegate d in UserControl_Click.GetInvocationList())
+                {
+                    Console.WriteLine(TD_title + "-" + d.Method.ToString());
+                }
+            }
+        }
+
         private void SetPathOuterBorder()
         {
             Rectangle rectangle = ClientRectangle;

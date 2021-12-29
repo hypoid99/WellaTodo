@@ -1180,6 +1180,7 @@ namespace WellaTodo
                 item.TD_infomation = MakeInfoTextFromDataCell(data);
                 m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
                 m_Task.Add(item);
+                //item.Display_Event_Status();
             }
 
             m_currentPage = 1;
@@ -1545,7 +1546,7 @@ namespace WellaTodo
                 if (m_Data[m_selected_position].Equals(item.TD_DataCell)) return item;
             }
 
-            MessageBox.Show("Task item finding ERROR [" + m_selected_position + "]");
+            MessageBox.Show("Find_Task : Task item finding ERROR [" + m_selected_position + "]");
             return (Todo_Item)flowLayoutPanel2.Controls[0];
         }
 
@@ -2680,6 +2681,7 @@ namespace WellaTodo
 
             roundLabel4.Text = "반복 설정됨";
             roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+
             if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
             {
                 data.DC_deadlineType = 1;
@@ -3440,57 +3442,61 @@ namespace WellaTodo
                     if (ctr is Calendar_Item)
                     {
                         Calendar_Item list = (Calendar_Item)ctr;
-                        //Console.WriteLine("clear"+list.ToString());
                         list.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
-                        //list.Dispose();
                     }
                 }
                 dayPanel[i].Controls.Clear();
             }
             
             // 날짜 표시
-            for (int pos = 1; pos <= num_DaysInMonth; pos++)
+            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
+            DateTime curDate = startDate.AddDays(-preDays);
+            for (int i = 0; i < dayPanel.Length; i++)
             {
-                int index = pos + num_DayOfWeek - 1;
                 Label label_Day = new Label();
-                label_Day.Text = pos.ToString();
+                if (curDate.Day == 1) // 매월 1일 표기
+                    label_Day.Text = curDate.Month.ToString() + "/" + curDate.Day.ToString();
+                else
+                    label_Day.Text = curDate.Day.ToString();
+                if (curDate.Month == startDate.Month) // 이전달 & 다음달 배경색
+                    dayPanel[i].BackColor = Color.White;
+                else
+                    dayPanel[i].BackColor = Color.LightGray;
                 label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
                 label_Day.Height = CALENDAR_DAY_TEXT_HEIGHT;
-                if ((m_dtValue.Year == DateTime.Today.Year) 
-                    && (m_dtValue.Month == DateTime.Today.Month) 
-                    && (pos == DateTime.Today.Day)) label_Day.BackColor = Color.Violet; // 오늘은 BLUE
-                if ((index % 7) == 0) label_Day.ForeColor = Color.Red;  // 일요일은 RED
-                dayPanel[index].Controls.Add(label_Day);
+                if (curDate == DateTime.Today) label_Day.BackColor = Color.Violet; // 오늘은 BLUE
+                if ((i % 7) == 0) label_Day.ForeColor = Color.Red;  // 일요일은 RED
+                dayPanel[i].Controls.Add(label_Day);
+                curDate = curDate.AddDays(1);
             }
 
-            // TASK 표시
-            IEnumerable<CDataCell> dataset = from CDataCell dc in m_Data where dc.DC_deadlineType > 0 select dc;
-            int result_st;
-            int result_et;
-            foreach (CDataCell dc in dataset)
+            // Task 표시
+            curDate = startDate.AddDays(-preDays);
+            for (int i = 0; i < dayPanel.Length; i++)
             {
-                DateTime tt = dc.DC_deadlineTime;
-                result_st = DateTime.Compare(startDate, tt);
-                result_et = DateTime.Compare(endDate, tt);
-                if ((result_st <= 0) && (result_et >= 0))
+                IEnumerable<CDataCell> dataset = from CDataCell dc in m_Data where dc.DC_deadlineType > 0 
+                                                 && (curDate.Date == dc.DC_deadlineTime.Date) select dc;
+                foreach (CDataCell dc in dataset)
                 {
-                    int pos = num_DayOfWeek + dc.DC_deadlineTime.Day - 1;
                     Calendar_Item label_planned = new Calendar_Item(dc);
+                    label_planned.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
                     label_planned.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
                     label_planned.Font = dc.DC_complete
                         ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                         : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
-                    label_planned.BackColor = DateTime.Compare(DateTime.Today, tt) < 0 
-                        ? PSEUDO_SELECTED_COLOR 
-                        : PSEUDO_HIGHLIGHT_COLOR;
+                    label_planned.BackColor = DateTime.Compare(curDate.Date, DateTime.Today.Date) < 0
+                        ? PSEUDO_HIGHLIGHT_COLOR
+                        : PSEUDO_SELECTED_COLOR;
                     label_planned.AutoSize = false;
 
-                    label_planned.Width = dayPanel[pos].Width;
+                    label_planned.Width = dayPanel[i].Width;
                     label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
                     m_TaskToolTip.SetToolTip(label_planned, dc.DC_title);
-                    dayPanel[pos].Controls.Add(label_planned);
+                    dayPanel[i].Controls.Add(label_planned);
                 }
+                curDate = curDate.AddDays(1);
             }
+
             panel_Calendar.Refresh(); // refresh 해야함
         }
 
@@ -3565,6 +3571,12 @@ namespace WellaTodo
                     }
                 }
                 if (cnt == 0) MessageBox.Show("No match Data exist!!");
+            }
+
+            if (taskEditForm.IsDeleted) // 목록 삭제
+            {
+                // Delete_Task();  -> 재작성할 것
+                taskEditForm.IsDeleted = false;
             }
         }
     }
