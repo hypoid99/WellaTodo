@@ -18,6 +18,52 @@ namespace WellaTodo
     {
         event ViewHandler<IView> Changed_View_Event;
 
-        void SetController(MainController controller);
+        //IController Controller { get; set; }
+        //string ViewName { get; set; }
+
+        void SetController(MainController cont);
+        void SetIController(IController cont);
+    }
+
+    public interface INotifiedView
+    {
+        void Activate(bool activate);
+        void Initialize();
+    }
+
+    public interface IViewsManager
+    {
+        //Navigator Navigator { get; set; }
+        //ViewInfoCollection ViewInfos { get; set; }
+        void ActivateView(string viewName);
+        IView GetView(string viewName);
+    }
+
+    public class ViewsManagerBase : IViewsManager
+    {
+        //private Navigator navigator;
+        //private ViewInfoCollection viewInfos;
+        /*
+        public virtual ViewInfoCollection ViewInfos
+        {
+            get { return viewInfos; }
+            set { viewInfos = value; }
+        }
+
+        public virtual Navigator Navigator
+        {
+            get { return navigator; }
+            set { navigator = value; }
+        }
+        */
+        public virtual void ActivateView(string viewName)
+        {
+
+        }
+
+        public virtual IView GetView(string viewName)
+        {
+            return null;
+        }
     }
 }

@@ -9,7 +9,18 @@ namespace WellaTodo
 	public class MainController : IController
 	{
 		IView m_view;
+		IModel model;
 		MainModel m_model;
+
+		public MainController(IView v, IModel m)
+		{
+			m_view = v;
+			model = m;
+
+			m_view.SetIController(this);
+			model.Attach_Model_Event((IModelObserver)m_view);
+			m_view.Changed_View_Event += new ViewHandler<IView>(this.Changed_View_Event_method);
+		}
 
 		public MainController(IView v, MainModel m)
 		{

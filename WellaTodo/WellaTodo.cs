@@ -20,15 +20,19 @@ namespace WellaTodo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            /*
             MainFrame mainFrame = new MainFrame();
             MainModel mainModel = new MainModel();
             new MainController(mainFrame, mainModel);
-            Application.Run(mainFrame);
-        }
 
-        internal class StarCheckbox
-        {
+            Application.Run(mainFrame);
+            */
+            MainFrame view = new MainFrame();
+            IModel model = new MainModel();
+            IController controller = new MainController(view, model);
+
+            Application.Run(view);
+            
         }
     }
 }

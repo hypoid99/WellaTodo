@@ -69,6 +69,7 @@ namespace WellaTodo
         }
 
         MainController m_Controller;
+        IController controller;
         List<CDataCell> m_Data = new List<CDataCell>();
         List<TwoLineList> m_ListName = new List<TwoLineList>();
         List<string> m_ListName_stringData = new List<string>();
@@ -120,9 +121,14 @@ namespace WellaTodo
             DoubleBuffered = true;
         }
 
-        public void SetController(MainController controller)
+        public void SetController(MainController cont)
         {
-            m_Controller = controller;
+            m_Controller = cont;
+        }
+
+        public void SetIController(IController cont)
+        {
+            controller = cont;
         }
 
         private void MainFrame_Load(object sender, EventArgs e)
@@ -131,7 +137,10 @@ namespace WellaTodo
             Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
 
-            m_Data = m_Controller.Get_Model().GetDataCollection();
+            //m_Data = m_Controller.Get_Model().GetDataCollection();
+
+            MainController ctr = (MainController)controller;
+            if (ctr.Get_Model() == null) Console.WriteLine("NULL");
 
             Load_Data_File();
 

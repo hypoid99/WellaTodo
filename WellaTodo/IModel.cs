@@ -11,6 +11,8 @@ namespace WellaTodo
     public class ModelEventArgs : EventArgs
     {
         public int value;
+        public List<Object> Data { get; set; }
+
         public ModelEventArgs(int val) { value = val; }
     }
 
