@@ -1061,13 +1061,13 @@ namespace WellaTodo
                 if (list.PrimaryText == m_selected_listname)
                 {
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
-                    flowLayoutPanel_Menulist.Controls.Remove(list);
+                    flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
 
-                    m_ListName.Remove(list);
+                    m_ListName.Remove(list); // 리스트 이름 제거
 
                     int pos = 0;
-                    while (pos < m_Data.Count)
+                    while (pos < m_Data.Count) // 리스트 제거
                     {
                         CDataCell dc = m_Data[pos];
                         if (dc.DC_listName == m_selected_listname)
