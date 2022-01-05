@@ -1420,79 +1420,9 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Add_Task(string text)
         {
-            m_Controller.PerformAddTask(m_selected_listname, text); // 함수 호출 방식 -> to Controller
+            m_Controller.Perform_Add_Task(m_selected_listname, text); // 함수 호출 방식 -> to Controller
             //CDataCell dc1 = new CDataCell(m_selected_listname, text);
             //Add_Task_Event.Invoke(this, new ViewEventArgs(dc1)); // 이벤트 호출 방식 -> to Controller
-
-            return;
-
-            DateTime dt = DateTime.Now;
-
-            CDataCell dc = new CDataCell(m_selected_listname, text);  // DataCell 생성
-            m_Data.Insert(0, dc);
-            m_Data[0].DC_dateCreated = dt;
-
-            Todo_Item item = new Todo_Item(dc);  // Task 생성
-
-            m_Task.Insert(0, item);
-
-            flowLayoutPanel2.Controls.Add(item);
-            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-            item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
-            item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click);
-
-            flowLayoutPanel2.VerticalScroll.Value = 0;
-
-            Close_DetailWindow();
-
-            switch (m_selected_menu)
-            {
-                case (int)MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
-                    m_Data[0].DC_listName = "작업";
-                    m_Data[0].DC_myToday = true;
-                    dt = dt.AddDays(1);
-                    m_Data[0].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Menu_MyToday();
-                    break;
-                case (int)MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
-                    m_Data[0].DC_listName = "작업";
-                    m_Data[0].DC_important = true;
-                    item.TD_important = true;
-                    Menu_Important();
-                    break;
-                case (int)MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
-                    m_Data[0].DC_listName = "작업";
-                    m_Data[0].DC_deadlineType = 1;
-                    dt = dt.AddDays(1);
-                    m_Data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Menu_Planned();
-                    break;
-                case (int)MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨
-                    m_Data[0].DC_listName = "작업";
-                    m_Data[0].DC_complete = true;
-                    item.TD_complete = true;
-                    for (int i = 1; i <= m_Data.Count; i++) // 완료됨 항목중 맨 위로 위치 정함
-                    {
-                        if ((m_Data[i].DC_listName == m_Data[0].DC_listName) && m_Data[i].DC_complete)
-                        {
-                            dc = m_Data[0]; //추출
-                            m_Data.RemoveAt(0); //삭제
-                            m_Data.Insert(i - 1, dc); //삽입
-                            break;
-                        }
-                    }
-                    Menu_Completed();
-                    break;
-            }
-
-            if (isCalendarWindowOpen)
-            {
-                Close_CalendarWindow();
-            }
-
-            Update_Task_Infomation(m_Data[0]);
-            Update_Task_Width();
-            Update_Menu_Metadata();
         }
 
         public void Update_Add_Task(IModel m, ModelEventArgs e)
@@ -1520,28 +1450,24 @@ namespace WellaTodo
             switch (m_selected_menu)
             {
                 case (int)MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
-                    data[0].DC_listName = "작업";
-                    data[0].DC_myToday = true;
                     dt = dt.AddDays(1);
-                    data[0].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    m_Controller.Perform_Modify_Task(dc, "작업", dc.DC_title, dc.DC_complete, dc.DC_important);
+                    m_Controller.Perform_Modify_MyToday(dc, true, new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00));
                     Menu_MyToday();
                     break;
                 case (int)MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
-                    data[0].DC_listName = "작업";
-                    data[0].DC_important = true;
+                    m_Controller.Perform_Modify_Task(dc, "작업", dc.DC_title, dc.DC_complete, true);
                     item.TD_important = true;
                     Menu_Important();
                     break;
                 case (int)MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
-                    data[0].DC_listName = "작업";
-                    data[0].DC_deadlineType = 1;
                     dt = dt.AddDays(1);
-                    data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    m_Controller.Perform_Modify_Task(dc, "작업", dc.DC_title, dc.DC_complete, dc.DC_important);
+                    m_Controller.Perform_Modify_Planned(dc, 1, new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00));
                     Menu_Planned();
                     break;
                 case (int)MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨
-                    data[0].DC_listName = "작업";
-                    data[0].DC_complete = true;
+                    m_Controller.Perform_Modify_Task(dc, "작업", dc.DC_title, true, dc.DC_important);
                     item.TD_complete = true;
                     for (int i = 1; i < data.Count; i++) // 완료됨 항목중 맨 위로 위치 정함
                     {
