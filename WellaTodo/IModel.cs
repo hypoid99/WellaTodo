@@ -10,15 +10,17 @@ namespace WellaTodo
 
     public class ModelEventArgs : EventArgs
     {
-        public int value;
+        public CDataCell Item { get; private set; }
         public List<Object> Data { get; set; }
 
-        public ModelEventArgs(int val) { value = val; }
+        public ModelEventArgs(CDataCell dc) { Item = dc; }
     }
 
     public interface IModelObserver
     {
         void ModelObserver_Event_method(IModel model, ModelEventArgs e);
+        void Update_View_Event_method(IModel model, ModelEventArgs e);
+        void Update_Add_Task(IModel model, ModelEventArgs e);
     }
 
     public interface IModel

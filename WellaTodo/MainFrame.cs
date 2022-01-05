@@ -23,7 +23,9 @@ namespace WellaTodo
 
     public partial class MainFrame : Form, IView, IModelObserver
     {
-        public event ViewHandler<IView> Changed_View_Event;
+        public event ViewHandler<IView> View_Changed_Event;
+        public event ViewHandler<IView> Add_Task_Event;
+        public event ViewHandler<IView> Delete_Task_Event;
 
         static readonly string WINDOW_CAPTION = "Wella Todo v0.9";
         static readonly int WINDOW_WIDTH = 1200;
@@ -69,7 +71,6 @@ namespace WellaTodo
         }
 
         MainController m_Controller;
-        IController controller;
         List<CDataCell> m_Data = new List<CDataCell>();
         List<TwoLineList> m_ListName = new List<TwoLineList>();
         List<string> m_ListName_stringData = new List<string>();
@@ -121,14 +122,9 @@ namespace WellaTodo
             DoubleBuffered = true;
         }
 
-        public void SetController(MainController cont)
+        public void SetController(MainController controller)
         {
-            m_Controller = cont;
-        }
-
-        public void SetIController(IController cont)
-        {
-            controller = cont;
+            m_Controller = controller;
         }
 
         private void MainFrame_Load(object sender, EventArgs e)
@@ -137,10 +133,7 @@ namespace WellaTodo
             Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
 
-            //m_Data = m_Controller.Get_Model().GetDataCollection();
-
-            MainController ctr = (MainController)controller;
-            if (ctr.Get_Model() == null) Console.WriteLine("NULL");
+            m_Data = m_Controller.Get_Model().GetDataCollection();
 
             Load_Data_File();
 
@@ -579,9 +572,16 @@ namespace WellaTodo
             // Model에서 온 데이타로 View를 업데이트
         }
 
+        public void Update_View_Event_method(IModel m, ModelEventArgs e)
+        {
+            Console.WriteLine(">MainFrame::Update_View_Event_method");
+            MainModel model = (MainModel)m;
+            Console.WriteLine("Task_Item_Storage.Count:" + model.Task_Item_Storage.Count);
+        }
+
         private void Invoke_View_Event()
         {
-            Console.WriteLine(">MainFrame::Invoke_View_Event");
+            /*
             try
             {
                 Changed_View_Event.Invoke(this, new ViewEventArgs(1));
@@ -590,6 +590,7 @@ namespace WellaTodo
             {
                 MessageBox.Show("Please enter a valid number", WINDOW_CAPTION);
             }
+            */
         }
 
         //--------------------------------------------------------------
@@ -656,6 +657,7 @@ namespace WellaTodo
                 : flowLayoutPanel_Menulist.Width - 2;
                 item.IsSelected = false;
             }
+
             twolinelist_Menu5.IsSelected = true;  // 작업이 select됨
 
             // 할일 항목 초기 표시
@@ -675,7 +677,7 @@ namespace WellaTodo
             List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
             foreach (CDataCell dt in todo_data)
             {
-                m_Data.Insert(m_Data.Count, dt);
+                m_Data.Insert(m_Data.Count, dt);  // add를 안하고 insert를 할까?
             }
             rs.Close();
             
@@ -1414,11 +1416,16 @@ namespace WellaTodo
         private void OnPasteMenu_textBox_AddList_Click(object sender, EventArgs e) { textBox_AddList.Paste(); }
 
         //--------------------------------------------------------------
-        // 할일 항목 추가 -> 아무 메뉴에서 생성 못하게 할 것
+        // 할일 항목 추가
         //--------------------------------------------------------------
         private void Add_Task(string text)
         {
-            //m_Controller.performAddItem();
+            m_Controller.PerformAddTask(m_selected_listname, text); // 함수 호출 방식 -> to Controller
+            //CDataCell dc1 = new CDataCell(m_selected_listname, text);
+            //Add_Task_Event.Invoke(this, new ViewEventArgs(dc1)); // 이벤트 호출 방식 -> to Controller
+
+            return;
+
             DateTime dt = DateTime.Now;
 
             CDataCell dc = new CDataCell(m_selected_listname, text);  // DataCell 생성
@@ -1477,7 +1484,85 @@ namespace WellaTodo
                     Menu_Completed();
                     break;
             }
+
+            if (isCalendarWindowOpen)
+            {
+                Close_CalendarWindow();
+            }
+
             Update_Task_Infomation(m_Data[0]);
+            Update_Task_Width();
+            Update_Menu_Metadata();
+        }
+
+        public void Update_Add_Task(IModel m, ModelEventArgs e)
+        {
+            MainModel model = (MainModel)m;
+            List<CDataCell> data = model.GetDataCollection();
+
+            CDataCell dc = e.Item;
+
+            Todo_Item item = new Todo_Item(dc);  // Task 생성
+
+            m_Task.Insert(0, item);
+
+            flowLayoutPanel2.Controls.Add(item);
+            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+            item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+            item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click);
+
+            flowLayoutPanel2.VerticalScroll.Value = 0;
+
+            Close_DetailWindow();
+
+            DateTime dt = DateTime.Now;
+
+            switch (m_selected_menu)
+            {
+                case (int)MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
+                    data[0].DC_listName = "작업";
+                    data[0].DC_myToday = true;
+                    dt = dt.AddDays(1);
+                    data[0].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    Menu_MyToday();
+                    break;
+                case (int)MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
+                    data[0].DC_listName = "작업";
+                    data[0].DC_important = true;
+                    item.TD_important = true;
+                    Menu_Important();
+                    break;
+                case (int)MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
+                    data[0].DC_listName = "작업";
+                    data[0].DC_deadlineType = 1;
+                    dt = dt.AddDays(1);
+                    data[0].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    Menu_Planned();
+                    break;
+                case (int)MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨
+                    data[0].DC_listName = "작업";
+                    data[0].DC_complete = true;
+                    item.TD_complete = true;
+                    for (int i = 1; i < data.Count; i++) // 완료됨 항목중 맨 위로 위치 정함
+                    {
+                        if ((data[i].DC_listName == data[0].DC_listName) && data[i].DC_complete)
+                        {
+                            dc = data[0]; //추출
+                            data.RemoveAt(0); //삭제
+                            data.Insert(i - 1, dc); //삽입
+                            break;
+                        }
+                    }
+                    Menu_Completed();
+                    break;
+            }
+
+            if (isCalendarWindowOpen)
+            {
+                Close_CalendarWindow();
+            }
+
+            Update_Task_Infomation(data[0]);
             Update_Task_Width();
             Update_Menu_Metadata();
         }
@@ -1875,16 +1960,10 @@ namespace WellaTodo
             {
                 e.Handled = false;
                 e.SuppressKeyPress = false;
+                //textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
                 if (textBox_Task.Text.Trim().Length == 0) return;
 
-                textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
-
                 Add_Task(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
-
-                if (isCalendarWindowOpen)
-                {
-                    Close_CalendarWindow();
-                }
 
                 textBox_Task.Text = "";
             }

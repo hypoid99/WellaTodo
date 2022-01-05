@@ -10,19 +10,21 @@ namespace WellaTodo
 
     public class ViewEventArgs : EventArgs
     {
-        public int value;
-        public ViewEventArgs(int val) { value = val; }
+        public CDataCell Item { get; private set; }
+
+        public ViewEventArgs(CDataCell dc) { Item = dc; }
     }
 
     public interface IView
     {
-        event ViewHandler<IView> Changed_View_Event;
+        event ViewHandler<IView> View_Changed_Event;
+        event ViewHandler<IView> Add_Task_Event;
+        event ViewHandler<IView> Delete_Task_Event;
 
         //IController Controller { get; set; }
         //string ViewName { get; set; }
 
-        void SetController(MainController cont);
-        void SetIController(IController cont);
+        void SetController(MainController controller);
     }
 
     public interface INotifiedView
