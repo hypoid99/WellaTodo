@@ -11,10 +11,12 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Model_Changed_Event;
 		public event ModelHandler<MainModel> Update_View_Event;
 		public event ModelHandler<MainModel> Update_Add_Task;
+		public event ModelHandler<MainModel> Update_Delete_Task;
 
 		List<CDataCell> myTaskItems = new List<CDataCell>();
 
 		List<CDataCell> m_Task_Items = new List<CDataCell>();
+
         public List<CDataCell> Task_Item_Storage { get => m_Task_Items; set => m_Task_Items = value; }
 
         public MainModel()
@@ -27,6 +29,7 @@ namespace WellaTodo
 			Model_Changed_Event += new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
 			Update_View_Event += new ModelHandler<MainModel>(imo.Update_View_Event_method);
 			Update_Add_Task += new ModelHandler<MainModel>(imo.Update_Add_Task);
+			Update_Delete_Task += new ModelHandler<MainModel>(imo.Update_Delete_Task);
 		}
 		
 		public void Update_Model()
@@ -52,15 +55,30 @@ namespace WellaTodo
 			Console.WriteLine(">MainModel::Add_Task");
 			DateTime dt = DateTime.Now;
 
-			CDataCell dc1 = new CDataCell(list, title);  // DataCell 생성
-			Task_Item_Storage.Insert(0, dc1);
-			Task_Item_Storage[0].DC_dateCreated = dt;
-
 			CDataCell dc = new CDataCell(list, title);  // DataCell 생성
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
 
 			Update_Add_Task.Invoke (this, new ModelEventArgs(dc));
+		}
+
+		public void Add_Task(CDataCell dc)
+		{
+			Console.WriteLine(">MainModel::Add_Task");
+			DateTime dt = DateTime.Now;
+
+			myTaskItems.Insert(0, dc);
+			myTaskItems[0].DC_dateCreated = dt;
+
+			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));
+		}
+
+		public void Delete_Task(CDataCell dc)
+        {
+			Console.WriteLine(">MainModel::Delete_Task");
+			myTaskItems.Remove(dc);
+
+			Update_Delete_Task.Invoke(this, new ModelEventArgs(dc));
 		}
 
 		private void Update_View()

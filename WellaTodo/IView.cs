@@ -18,8 +18,6 @@ namespace WellaTodo
     public interface IView
     {
         event ViewHandler<IView> View_Changed_Event;
-        event ViewHandler<IView> Add_Task_Event;
-        event ViewHandler<IView> Delete_Task_Event;
 
         //IController Controller { get; set; }
         //string ViewName { get; set; }

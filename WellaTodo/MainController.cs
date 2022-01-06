@@ -50,51 +50,48 @@ namespace WellaTodo
 			return m_model;
         }
 
-		public void Perform_Add_Task(string listName, string taskTitle)
+		public void Perform_Add_Task(CDataCell dc)
         {
-			Console.WriteLine(">MainController::PerformAddTask");
-			m_model.Add_Task(listName, taskTitle);
+			m_model.Add_Task(dc);
         }
+
+		public void Perform_Delete_Task(CDataCell dc)
+        {
+			m_model.Delete_Task(dc);
+		}
 
 		public void Perform_Modify_Task(CDataCell dc, string listName, string taskTitle, bool comp, bool impo)
         {
-			IEnumerable<CDataCell> dataset = from CDataCell data in m_model.GetDataCollection() 
-											 where dc.Equals(data) select data;
-			Console.WriteLine("Perform_Modify_Task:" + dataset.Count());
-			foreach (CDataCell data in dataset)
-            {
-				data.DC_listName = listName;
-				data.DC_title = taskTitle;
-				data.DC_complete = comp;
-				data.DC_important = impo;
-            }
+			CDataCell data = Find(dc);
+			data.DC_listName = listName;
+			data.DC_title = taskTitle;
+			data.DC_complete = comp;
+			data.DC_important = impo;
 		}
 
 		public void Perform_Modify_MyToday(CDataCell dc, bool myToday, DateTime dt)
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell data in m_model.GetDataCollection()
-											 where dc.Equals(data)
-											 select data;
-			Console.WriteLine("Perform_Modify_Task_MyToday:" + dataset.Count());
-			foreach (CDataCell data in dataset)
-			{
-				data.DC_myToday = myToday;
-				data.DC_myTodayTime = dt;
-			}
+			CDataCell data = Find(dc);
+			data.DC_myToday = myToday;
+			data.DC_myTodayTime = dt;
 		}
 
 		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
 		{
+			CDataCell data = Find(dc);
+			data.DC_deadlineType = type;
+			data.DC_deadlineTime = dt;
+		}
+
+		private CDataCell Find(CDataCell dc)
+        {
 			IEnumerable<CDataCell> dataset = from CDataCell data in m_model.GetDataCollection()
 											 where dc.Equals(data)
 											 select data;
-			Console.WriteLine("Perform_Modify_Planned:" + dataset.Count());
-			foreach (CDataCell data in dataset)
-			{
-				data.DC_deadlineType = type;
-				data.DC_deadlineTime = dt;
-			}
+			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
+			return dataset.First();
 		}
+
 	}
 }
 

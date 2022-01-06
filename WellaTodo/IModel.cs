@@ -21,6 +21,7 @@ namespace WellaTodo
         void ModelObserver_Event_method(IModel model, ModelEventArgs e);
         void Update_View_Event_method(IModel model, ModelEventArgs e);
         void Update_Add_Task(IModel model, ModelEventArgs e);
+        void Update_Delete_Task(IModel model, ModelEventArgs e);
     }
 
     public interface IModel
