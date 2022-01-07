@@ -563,17 +563,32 @@ namespace WellaTodo
             }
         }
 
+        //--------------------------------------------------------------
+        // Model 이벤트
+        //--------------------------------------------------------------
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
         {
             Console.WriteLine(">MainFrame::ModelObserver_Event_method");
             // Model에서 온 데이타로 View를 업데이트
         }
 
-        public void Update_View_Event_method(IModel m, ModelEventArgs e)
+        public void Update_View(IModel m, ModelEventArgs e)
         {
             Console.WriteLine(">MainFrame::Update_View_Event_method");
             MainModel model = (MainModel)m;
-            Console.WriteLine("Task_Item_Storage.Count:" + model.Task_Item_Storage.Count);
+            WParam param = e.Param;
+            switch (param)
+            {
+                case WParam.WM_COMPLETE_PROCESS:
+                    Console.WriteLine(">WM_COMPLETE_PROCESS");
+                    break;
+                case WParam.WM_IMPORTANT_PROCESS:
+                    Console.WriteLine(">WM_IMPORTANT_PROCESS");
+                    break;
+                default:
+                    break;
+            }
+
         }
 
         private void Invoke_View_Event()
@@ -1579,12 +1594,12 @@ namespace WellaTodo
             switch (me.Button)
             {
                 case MouseButtons.Left:
-                    //Task_Left_Click(sender, me);
-                    TodoItem_Left_Click(sender, me);
+                    Task_Left_Click(sender, me);
+                    //TodoItem_Left_Click(sender, me);
                     break;
                 case MouseButtons.Right:
-                    //Task_Right_Click(sender, me);
-                    TodoItem_Right_Click(sender, me);
+                    Task_Right_Click(sender, me);
+                    //TodoItem_Right_Click(sender, me);
                     break;
             }
 
@@ -1594,7 +1609,18 @@ namespace WellaTodo
         private void Task_Left_Click(object sender, EventArgs e)
         {
             Todo_Item sd = (Todo_Item)sender;
-            m_Controller.Perform_Task_Left_Click(sd.TD_DataCell);
+
+            if (sd.IsCompleteClicked) //완료됨 클릭시
+            {
+                m_Controller.Perform_Complete_Process(sd.TD_DataCell);
+                sd.IsCompleteClicked = false;
+            }
+
+            if (sd.IsImportantClicked)  // 중요 항목 클릭시
+            {
+                m_Controller.Perform_Important_Process(sd.TD_DataCell);
+                sd.IsImportantClicked = false;
+            }
         }
 
         private void Task_Right_Click(object sender, EventArgs e)

@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace WellaTodo
 {
+	public enum WParam
+	{
+		WM_COMPLETE_PROCESS = 1,
+		WM_IMPORTANT_PROCESS = 2,
+	}
+
 	public class MainModel : IModel
 	{
-		public event ModelHandler<MainModel> Model_Changed_Event;
-		public event ModelHandler<MainModel> Update_View_Event;
+		public event ModelHandler<MainModel> Update_View;
 		public event ModelHandler<MainModel> Update_Add_Task;
 		public event ModelHandler<MainModel> Update_Delete_Task;
 
@@ -28,8 +33,7 @@ namespace WellaTodo
 
 		public void Add_Observer(IModelObserver imo)
         {
-			Model_Changed_Event += new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
-			Update_View_Event += new ModelHandler<MainModel>(imo.Update_View_Event_method);
+			Update_View += new ModelHandler<MainModel>(imo.Update_View);
 			Update_Add_Task += new ModelHandler<MainModel>(imo.Update_Add_Task);
 			Update_Delete_Task += new ModelHandler<MainModel>(imo.Update_Delete_Task);
 
@@ -38,8 +42,7 @@ namespace WellaTodo
 
 		public void Remove_Observer(IModelObserver imo)
         {
-			Model_Changed_Event -= new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
-			Update_View_Event -= new ModelHandler<MainModel>(imo.Update_View_Event_method);
+			Update_View -= new ModelHandler<MainModel>(imo.Update_View);
 			Update_Add_Task -= new ModelHandler<MainModel>(imo.Update_Add_Task);
 			Update_Delete_Task -= new ModelHandler<MainModel>(imo.Update_Delete_Task);
 
@@ -50,7 +53,7 @@ namespace WellaTodo
         {
 			foreach (IModelObserver imo in ObserverList)
 			{
-				imo.ModelObserver_Event_method(this, new ModelEventArgs());
+				imo.Update_View(this, new ModelEventArgs());
 			}
 		}
 
@@ -103,10 +106,20 @@ namespace WellaTodo
 			Update_Delete_Task.Invoke(this, new ModelEventArgs(dc));
 		}
 
-		private void Update_View()
-        {
-			Console.WriteLine(">MainModel::Update_View");
-			Update_View_Event.Invoke(this, new ModelEventArgs(new CDataCell()));
+		public void Important_Process(CDataCell dc)
+		{
+			Console.WriteLine(">MainModel::Important_Process");
+
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_IMPORTANT_PROCESS));
+		}
+
+		public void Complete_Process(CDataCell dc)
+		{
+			Console.WriteLine(">MainModel::Complete_Process");
+
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_COMPLETE_PROCESS));
 		}
 	}
 }

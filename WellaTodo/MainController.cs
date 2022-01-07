@@ -83,9 +83,16 @@ namespace WellaTodo
 			data.DC_deadlineTime = dt;
 		}
 
-		public void Perform_Task_Left_Click(CDataCell dc)
+		public void Perform_Important_Process(CDataCell dc)
+		{
+			Console.WriteLine(">MainController::Perform_Important_Process:" + dc.DC_title);
+			m_model.Important_Process(dc);
+		}
+
+		public void Perform_Complete_Process(CDataCell dc)
         {
-			Console.WriteLine(">MainController::Perform_Task_Left_Click:"+dc.DC_title);
+			Console.WriteLine(">MainController::Perform_Complete_Process:" + dc.DC_title);
+			m_model.Complete_Process(dc);
 		}
 
 		public void Perform_Task_Right_Click(CDataCell dc)
