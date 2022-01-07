@@ -20,7 +20,7 @@ namespace WellaTodo
 
 			m_view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
 
-			m_model.Attach_Model_Event((IModelObserver)m_view);
+			m_model.Add_Observer((IModelObserver)m_view);
 		}
 
 		public MainController(IView v, MainModel m)
@@ -81,6 +81,16 @@ namespace WellaTodo
 			CDataCell data = Find(dc);
 			data.DC_deadlineType = type;
 			data.DC_deadlineTime = dt;
+		}
+
+		public void Perform_Task_Left_Click(CDataCell dc)
+        {
+			Console.WriteLine(">MainController::Perform_Task_Left_Click:"+dc.DC_title);
+		}
+
+		public void Perform_Task_Right_Click(CDataCell dc)
+		{
+			Console.WriteLine(">MainController::Perform_Task_Right_Click:" + dc.DC_title);
 		}
 
 		private CDataCell Find(CDataCell dc)

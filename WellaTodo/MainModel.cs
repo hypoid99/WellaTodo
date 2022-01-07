@@ -17,21 +17,43 @@ namespace WellaTodo
 
 		List<CDataCell> m_Task_Items = new List<CDataCell>();
 
-        public List<CDataCell> Task_Item_Storage { get => m_Task_Items; set => m_Task_Items = value; }
+		List<IModelObserver> ObserverList = new List<IModelObserver>();
+
+		public List<CDataCell> Task_Item_Storage { get => m_Task_Items; set => m_Task_Items = value; }
 
         public MainModel()
 		{
 			Initialize();
 		}
 
-		public void Attach_Model_Event(IModelObserver imo)
+		public void Add_Observer(IModelObserver imo)
         {
 			Model_Changed_Event += new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
 			Update_View_Event += new ModelHandler<MainModel>(imo.Update_View_Event_method);
 			Update_Add_Task += new ModelHandler<MainModel>(imo.Update_Add_Task);
 			Update_Delete_Task += new ModelHandler<MainModel>(imo.Update_Delete_Task);
+
+			ObserverList.Add(imo);
 		}
-		
+
+		public void Remove_Observer(IModelObserver imo)
+        {
+			Model_Changed_Event -= new ModelHandler<MainModel>(imo.ModelObserver_Event_method);
+			Update_View_Event -= new ModelHandler<MainModel>(imo.Update_View_Event_method);
+			Update_Add_Task -= new ModelHandler<MainModel>(imo.Update_Add_Task);
+			Update_Delete_Task -= new ModelHandler<MainModel>(imo.Update_Delete_Task);
+
+			ObserverList.Remove(imo);
+		}
+
+		public void Notify_Observer()
+        {
+			foreach (IModelObserver imo in ObserverList)
+			{
+				imo.ModelObserver_Event_method(this, new ModelEventArgs());
+			}
+		}
+
 		public void Update_Model()
 		{
 			// Model 데이타를 변경한다

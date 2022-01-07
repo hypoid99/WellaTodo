@@ -102,6 +102,7 @@ namespace WellaTodo
         bool isTextbox_Task_Clicked = false;
         bool isTextbox_List_Clicked = false;
 
+        Todo_Item m_Pre_Selected_Item;
         int m_selected_position;
         int m_selected_menu = (int)MenuList.TODO_ITEM_MENU; // 초기 작업 메뉴 설정
         string m_selected_listname;
@@ -1559,19 +1560,47 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void TodoItem_UserControl_Click(object sender, EventArgs e)
         {
-            MouseEventArgs me = (MouseEventArgs)e;
+            Todo_Item sd = (Todo_Item)sender;
 
+            if (m_Pre_Selected_Item == null) m_Pre_Selected_Item = sd;
+
+            if (m_Pre_Selected_Item.Equals(sd))
+            {
+                if (isDetailWindowOpen) Close_DetailWindow(); else Open_DetailWindow();
+            }
+            else
+            {
+                m_Pre_Selected_Item.IsItemSelected = false;
+            }
+            m_Pre_Selected_Item = sd;
+            sd.IsItemSelected = true;
+
+            MouseEventArgs me = (MouseEventArgs)e;
             switch (me.Button)
             {
                 case MouseButtons.Left:
+                    //Task_Left_Click(sender, me);
                     TodoItem_Left_Click(sender, me);
                     break;
                 case MouseButtons.Right:
+                    //Task_Right_Click(sender, me);
                     TodoItem_Right_Click(sender, me);
                     break;
             }
 
             //Display_Menu_Status();
+        }
+
+        private void Task_Left_Click(object sender, EventArgs e)
+        {
+            Todo_Item sd = (Todo_Item)sender;
+            m_Controller.Perform_Task_Left_Click(sd.TD_DataCell);
+        }
+
+        private void Task_Right_Click(object sender, EventArgs e)
+        {
+            Todo_Item sd = (Todo_Item)sender;
+            m_Controller.Perform_Task_Right_Click(sd.TD_DataCell);
         }
 
         private void TodoItem_Left_Click(object sender, MouseEventArgs e)
@@ -1581,15 +1610,18 @@ namespace WellaTodo
             m_selected_position = m_Data.IndexOf(sd.TD_DataCell);
             SendDataCellToDetailWindow(sd.TD_DataCell);
 
-            if (sd.IsCompleteClicked) Complete_Process(sd);  //완료됨 클릭시
-            else if (sd.IsImportantClicked) Improtant_Process(sd);  // 중요항목 클릭시
-            else if (isDetailWindowOpen && sd.IsItemSelected) Close_DetailWindow(); else Open_DetailWindow(); // 항목 클릭시
+            if (sd.IsCompleteClicked) //완료됨 클릭시
+            {
+                Complete_Process(sd);  
+                sd.IsCompleteClicked = false;
+            }
 
-            foreach (Todo_Item item in flowLayoutPanel2.Controls) item.IsItemSelected = false;
-            foreach (Todo_Item item in m_Task) item.IsItemSelected = false;  // m_Task도 false 해줘야함
+            if (sd.IsImportantClicked)  // 중요 항목 클릭시
+            {
+                Improtant_Process(sd);  
+                sd.IsImportantClicked = false;
+            }
 
-            sd.IsCompleteClicked = false;
-            sd.IsImportantClicked = false;
             sd.IsItemSelected = true;
 
             Update_Task_Width();
@@ -1603,12 +1635,10 @@ namespace WellaTodo
             m_selected_position = m_Data.IndexOf(sd.TD_DataCell);
             SendDataCellToDetailWindow(sd.TD_DataCell);
 
-            foreach (Todo_Item item in flowLayoutPanel2.Controls) item.IsItemSelected = false;
-            foreach (Todo_Item item in m_Task) item.IsItemSelected = false; // m_Task도 false 해줘야함
-
-            sd.IsCompleteClicked = false;
-            sd.IsImportantClicked = false;
             sd.IsItemSelected = true;
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
 
             TodoItem_Right_Click_ContextMenu();
         }

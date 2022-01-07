@@ -13,6 +13,7 @@ namespace WellaTodo
         public CDataCell Item { get; private set; }
         public List<Object> Data { get; set; }
 
+        public ModelEventArgs() { Item = null; }
         public ModelEventArgs(CDataCell dc) { Item = dc; }
     }
 
@@ -26,6 +27,9 @@ namespace WellaTodo
 
     public interface IModel
 	{
-        void Attach_Model_Event(IModelObserver imo);
+        //List<IModelObserver> ObserverList { get; set; }
+        void Add_Observer(IModelObserver imo);
+        void Remove_Observer(IModelObserver imo);
+        void Notify_Observer();
 	}
 }
