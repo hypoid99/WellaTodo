@@ -8,8 +8,12 @@ namespace WellaTodo
 {
 	public enum WParam
 	{
-		WM_COMPLETE_PROCESS = 1,
-		WM_IMPORTANT_PROCESS = 2,
+		WM_COMPLETE_PROCESS,
+		WM_IMPORTANT_PROCESS,
+		WM_MODIFY_TASK_TITLE,
+		WM_MODIFY_TASK_MEMO,
+		WM_TASK_MOVE_UP,
+		WM_TASK_MOVE_DOWN
 	}
 
 	public class MainModel : IModel
@@ -108,18 +112,108 @@ namespace WellaTodo
 
 		public void Important_Process(CDataCell dc)
 		{
-			Console.WriteLine(">MainModel::Important_Process");
+			Console.WriteLine(">MainModel::Important_Process:"+dc.DC_important);
 
+			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
+			{
+				myTaskItems.Remove(dc); // 삭제
+				myTaskItems.Insert(0, dc); //삽입
+			}
 
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_IMPORTANT_PROCESS));
 		}
 
 		public void Complete_Process(CDataCell dc)
 		{
-			Console.WriteLine(">MainModel::Complete_Process");
+			Console.WriteLine(">MainModel::Complete_Process:" + dc.DC_complete);
 
+			if (dc.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
+			{
+				myTaskItems.Remove(dc); // 삭제
+				myTaskItems.Insert(myTaskItems.Count, dc); // 맨밑에 삽입
+			}
+			else
+			{
+				myTaskItems.Remove(dc); // 삭제
+				myTaskItems.Insert(0, dc); // 맨위에 삽입
+			}
 
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_COMPLETE_PROCESS));
+		}
+
+		public void Modify_Task_Title(CDataCell dc)
+        {
+			Find(dc).DC_title =  dc.DC_title;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_TITLE));
+		}
+
+		public void Modify_Task_Memo(CDataCell dc)
+		{
+			Find(dc).DC_memo = dc.DC_memo;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_MEMO));
+		}
+
+		public void Task_Move_Up(CDataCell dc)
+		{
+			CDataCell data = Find(dc);
+
+			int pos = myTaskItems.IndexOf(data);
+			if ( pos == 0) return;
+
+			if (!myTaskItems[pos].DC_complete)
+			{
+				for (int i = pos - 1; i >= 0; i--)  // 상향 탐색
+				{
+					if (myTaskItems[i].DC_listName == myTaskItems[pos].DC_listName)
+					{
+						CDataCell temp = myTaskItems[pos]; //추출
+						myTaskItems.RemoveAt(pos); //삭제
+						myTaskItems.Insert(i, temp); // 삽입
+						break;
+					}
+				}
+			}
+			else return;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TASK_MOVE_UP));
+		}
+
+		public void Task_Move_Down(CDataCell dc)
+		{
+			CDataCell data = Find(dc);
+
+			int pos = myTaskItems.IndexOf(data);
+
+			if (pos == (myTaskItems.Count - 1)) return;
+
+			if (!myTaskItems[pos].DC_complete)
+			{
+				for (int i = pos + 1; i <= myTaskItems.Count - 1; i++)
+				{
+					if (myTaskItems[i].DC_complete) return;
+					if (myTaskItems[i].DC_listName == myTaskItems[pos].DC_listName)
+					{
+						CDataCell temp = myTaskItems[pos]; //추출
+						myTaskItems.RemoveAt(pos); //삭제
+						myTaskItems.Insert(i, temp); // 삽입
+						break;
+					}
+				}
+			}
+			else return;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TASK_MOVE_DOWN));
+		}
+
+		private CDataCell Find(CDataCell dc)
+		{
+			IEnumerable<CDataCell> dataset = from CDataCell data in myTaskItems
+											 where dc.Equals(data)
+											 select data;
+			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
+			return dataset.First();
 		}
 	}
 }

@@ -41,7 +41,6 @@ namespace WellaTodo
 
 		public void Update_Model()
         {
-			Console.WriteLine(">MainController::Update_Model");
 			m_model.Update_Model();
         }
 
@@ -85,19 +84,35 @@ namespace WellaTodo
 
 		public void Perform_Important_Process(CDataCell dc)
 		{
-			Console.WriteLine(">MainController::Perform_Important_Process:" + dc.DC_title);
+			dc.DC_important = !dc.DC_important;
 			m_model.Important_Process(dc);
 		}
 
 		public void Perform_Complete_Process(CDataCell dc)
         {
-			Console.WriteLine(">MainController::Perform_Complete_Process:" + dc.DC_title);
+			dc.DC_complete = !dc.DC_complete;
 			m_model.Complete_Process(dc);
 		}
 
-		public void Perform_Task_Right_Click(CDataCell dc)
+		public void Perform_Modify_Task_Title(CDataCell dc)
 		{
-			Console.WriteLine(">MainController::Perform_Task_Right_Click:" + dc.DC_title);
+			m_model.Modify_Task_Title(dc);
+		}
+
+		public void Perform_Modify_Task_Memo(CDataCell dc)
+		{
+			m_model.Modify_Task_Memo(dc);
+		}
+
+
+		public void Perform_Task_Move_Up(CDataCell dc)
+		{
+			m_model.Task_Move_Up(dc);
+		}
+
+		public void Perform_Task_Move_Down(CDataCell dc)
+		{
+			m_model.Task_Move_Down(dc);
 		}
 
 		private CDataCell Find(CDataCell dc)

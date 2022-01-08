@@ -1,4 +1,6 @@
-﻿// copyright honeysoft v0.14 -> v0.7 -> v0.8
+﻿//
+// copyright honeysoft v0.14 -> v0.7 -> v0.8 -> 0.95
+//
 
 using System;
 using System.Collections.Generic;
@@ -103,6 +105,7 @@ namespace WellaTodo
         bool isTextbox_List_Clicked = false;
 
         Todo_Item m_Pre_Selected_Item;
+        Todo_Item m_Selected_Item;
         int m_selected_position;
         int m_selected_menu = (int)MenuList.TODO_ITEM_MENU; // 초기 작업 메뉴 설정
         string m_selected_listname;
@@ -574,21 +577,38 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
-            Console.WriteLine(">MainFrame::Update_View_Event_method");
+            Console.WriteLine(">MainFrame::Update_View");
             MainModel model = (MainModel)m;
+            CDataCell dc = e.Item;
             WParam param = e.Param;
             switch (param)
             {
                 case WParam.WM_COMPLETE_PROCESS:
                     Console.WriteLine(">WM_COMPLETE_PROCESS");
+                    Update_Complete_Process(dc);
                     break;
                 case WParam.WM_IMPORTANT_PROCESS:
                     Console.WriteLine(">WM_IMPORTANT_PROCESS");
+                    Update_Important_Process(dc);
+                    break;
+                case WParam.WM_MODIFY_TASK_TITLE:
+                    Console.WriteLine(">WM_MODIFY_TASK_TITLE");
+                    Update_Modify_Task_Title(dc);
+                    break;
+                case WParam.WM_MODIFY_TASK_MEMO:
+                    Console.WriteLine(">WM_MODIFY_TASK_MEMO");
+                    break;
+                case WParam.WM_TASK_MOVE_UP:
+                    Console.WriteLine(">WM_TASK_MOVE_UP");
+                    Update_Task_Move_Up(dc);
+                    break;
+                case WParam.WM_TASK_MOVE_DOWN:
+                    Console.WriteLine(">WM_TASK_MOVE_DOWN");
+                    Update_Task_Move_Down(dc);
                     break;
                 default:
                     break;
             }
-
         }
 
         private void Invoke_View_Event()
@@ -1587,179 +1607,120 @@ namespace WellaTodo
             {
                 m_Pre_Selected_Item.IsItemSelected = false;
             }
+
             m_Pre_Selected_Item = sd;
-            sd.IsItemSelected = true;
+            m_Selected_Item = sd;
+            m_Selected_Item.IsItemSelected = true;
+
+            SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
+            Update_Task_Width();
 
             MouseEventArgs me = (MouseEventArgs)e;
             switch (me.Button)
             {
                 case MouseButtons.Left:
-                    Task_Left_Click(sender, me);
-                    //TodoItem_Left_Click(sender, me);
+                    if (sd.IsCompleteClicked) //완료됨 클릭시
+                    {
+                        m_Controller.Perform_Complete_Process(sd.TD_DataCell);
+                        sd.IsCompleteClicked = false;
+                    }
+                    if (sd.IsImportantClicked)  // 중요 항목 클릭시
+                    {
+                        m_Controller.Perform_Important_Process(sd.TD_DataCell);
+                        sd.IsImportantClicked = false;
+                    }
                     break;
                 case MouseButtons.Right:
-                    Task_Right_Click(sender, me);
-                    //TodoItem_Right_Click(sender, me);
+                    Task_ContextMenu();
                     break;
             }
-
-            //Display_Menu_Status();
         }
 
-        private void Task_Left_Click(object sender, EventArgs e)
-        {
-            Todo_Item sd = (Todo_Item)sender;
-
-            if (sd.IsCompleteClicked) //완료됨 클릭시
-            {
-                m_Controller.Perform_Complete_Process(sd.TD_DataCell);
-                sd.IsCompleteClicked = false;
-            }
-
-            if (sd.IsImportantClicked)  // 중요 항목 클릭시
-            {
-                m_Controller.Perform_Important_Process(sd.TD_DataCell);
-                sd.IsImportantClicked = false;
-            }
-        }
-
-        private void Task_Right_Click(object sender, EventArgs e)
-        {
-            Todo_Item sd = (Todo_Item)sender;
-            m_Controller.Perform_Task_Right_Click(sd.TD_DataCell);
-        }
-
-        private void TodoItem_Left_Click(object sender, MouseEventArgs e)
-        {
-            Todo_Item sd = (Todo_Item)sender;
-
-            m_selected_position = m_Data.IndexOf(sd.TD_DataCell);
-            SendDataCellToDetailWindow(sd.TD_DataCell);
-
-            if (sd.IsCompleteClicked) //완료됨 클릭시
-            {
-                Complete_Process(sd);  
-                sd.IsCompleteClicked = false;
-            }
-
-            if (sd.IsImportantClicked)  // 중요 항목 클릭시
-            {
-                Improtant_Process(sd);  
-                sd.IsImportantClicked = false;
-            }
-
-            sd.IsItemSelected = true;
-
-            Update_Task_Width();
-            Update_Menu_Metadata();
-        }
-
-        private void TodoItem_Right_Click(object sender, MouseEventArgs e)
-        {
-            Todo_Item sd = (Todo_Item)sender;
-
-            m_selected_position = m_Data.IndexOf(sd.TD_DataCell);
-            SendDataCellToDetailWindow(sd.TD_DataCell);
-
-            sd.IsItemSelected = true;
-
-            Update_Task_Width();
-            Update_Menu_Metadata();
-
-            TodoItem_Right_Click_ContextMenu();
-        }
-
-        private void Improtant_Process(Todo_Item item)
+        private void Update_Complete_Process(CDataCell dc)
         {
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
-            if (item.TD_important && !item.TD_complete)
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                flowLayoutPanel2.Controls.SetChildIndex(item, 0); // 리스트 상위로 이동
-                flowLayoutPanel2.VerticalScroll.Value = 0;
+                if (dc.Equals(item.TD_DataCell))
+                {
+                    if (item.TD_complete)
+                    {
+                        if ((m_Task.Count / m_thumbsPerPage) < 1                            // 한 페이지 보다 작을 경우
+                            || m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1)      // 전체 페이지가 출력된 경우
+                            || m_currentPage == m_Task.Count / m_thumbsPerPage)             // 딱 맞게 20개 단위로 출력된 경우
+                        {
+                            flowLayoutPanel2.Controls.SetChildIndex(item, flowLayoutPanel2.Controls.Count);
+                        }
+                        else
+                        {
+                            flowLayoutPanel2.Controls.Remove(item);  // 전체 페이지가 출력 안된 경우는 한개만 추가함
+                            flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage]);
+                        }
 
-                int pos = m_Task.IndexOf(item);
-                Todo_Item td = m_Task[pos]; //추출
-                m_Task.RemoveAt(pos); //삭제
-                m_Task.Insert(0, td); //삽입
+                        int pos = m_Task.IndexOf(item);
+                        Todo_Item td = m_Task[pos]; //추출
+                        m_Task.RemoveAt(pos); //삭제
+                        m_Task.Insert(m_Task.Count, td); //삽입
+                    }
+                    else
+                    {
+                        flowLayoutPanel2.Controls.SetChildIndex(item, 0);
 
-                m_Data[m_selected_position].DC_important = true;
-
-                CDataCell dc = m_Data[m_selected_position]; //추출
-                m_Data.RemoveAt(m_selected_position); //삭제
-                m_Data.Insert(0, dc); //삽입
-
-                m_selected_position = 0;
+                        int pos = m_Task.IndexOf(item);
+                        Todo_Item td = m_Task[pos]; //추출
+                        m_Task.RemoveAt(pos); //삭제
+                        m_Task.Insert(0, td); //삽입
+                    }
+                    item.Refresh();
+                    break;
+                }
             }
-            else if (item.TD_important && item.TD_complete) m_Data[m_selected_position].DC_important = true;
-            else if (!item.TD_important) m_Data[m_selected_position].DC_important = false;
-
-            SendDataCellToDetailWindow(m_Data[m_selected_position]);
 
             if (m_selected_menu == (int)MenuList.MYTODAY_MENU) Menu_MyToday(); // 오늘할일 메뉴에서 실행
             if (m_selected_menu == (int)MenuList.IMPORTANT_MENU) Menu_Important(); // 중요 메뉴에서 실행
             if (m_selected_menu == (int)MenuList.DEADLINE_MENU) Menu_Planned(); // 계획된 일정에서 실행
             if (m_selected_menu == (int)MenuList.COMPLETE_MENU) Menu_Completed(); // 완료됨에서 실행
+
+            SendDataCellToDetailWindow(dc);
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
         }
 
-        private void Complete_Process(Todo_Item item)
+        private void Update_Important_Process(CDataCell dc)
         {
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
-            if (item.TD_complete)
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if ((m_Task.Count / m_thumbsPerPage) < 1                            // 한 페이지 보다 작을 경우
-                    || m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1)      // 전체 페이지가 출력된 경우
-                    || m_currentPage == m_Task.Count / m_thumbsPerPage)             // 딱 맞게 20개 단위로 출력된 경우
+                if (dc.Equals(item.TD_DataCell))
                 {
-                    flowLayoutPanel2.Controls.SetChildIndex(item, flowLayoutPanel2.Controls.Count);
+                    if (item.TD_important && !item.TD_complete)  // 중요 & 미완료시 맨위로 이동
+                    {
+                        flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+                        flowLayoutPanel2.VerticalScroll.Value = 0;
+
+                        int pos = m_Task.IndexOf(item);
+                        Todo_Item td = m_Task[pos]; //추출
+                        m_Task.RemoveAt(pos); //삭제
+                        m_Task.Insert(0, td); //삽입
+
+                    }
+                    item.Refresh();
+                    break;
                 }
-                else
-                {
-                    flowLayoutPanel2.Controls.Remove(item);  // 전체 페이지가 출력 안된 경우는 한개만 추가함
-                    flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage]);
-                }
-
-                int pos = m_Task.IndexOf(item);
-                Todo_Item td = m_Task[pos]; //추출
-                m_Task.RemoveAt(pos); //삭제
-                m_Task.Insert(m_Task.Count, td); //삽입
-
-                m_Data[m_selected_position].DC_complete = true;
-
-                CDataCell dc = m_Data[m_selected_position]; //추출
-                m_Data.RemoveAt(m_selected_position); //삭제
-                m_Data.Insert(m_Data.Count, dc); //삽입
-
-                m_selected_position = m_Data.Count - 1;
-            }
-            else
-            {
-                flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-
-                int pos = m_Task.IndexOf(item);
-                Todo_Item td = m_Task[pos]; //추출
-                m_Task.RemoveAt(pos); //삭제
-                m_Task.Insert(0, td); //삽입
-
-                m_Data[m_selected_position].DC_complete = false;
-
-                CDataCell dc = m_Data[m_selected_position]; //추출
-                m_Data.RemoveAt(m_selected_position); //삭제
-                m_Data.Insert(0, dc); //삽입
-
-                m_selected_position = 0;
             }
 
-            SendDataCellToDetailWindow(m_Data[m_selected_position]);
+            if (m_selected_menu == (int)MenuList.IMPORTANT_MENU) Menu_Important(); // 중요 메뉴에서는 재실행
 
-            if (m_selected_menu == (int)MenuList.MYTODAY_MENU) Menu_MyToday(); // 오늘할일 메뉴에서 실행
-            if (m_selected_menu == (int)MenuList.IMPORTANT_MENU) Menu_Important(); // 중요 메뉴에서 실행
-            if (m_selected_menu == (int)MenuList.DEADLINE_MENU) Menu_Planned(); // 계획된 일정에서 실행
-            if (m_selected_menu == (int)MenuList.COMPLETE_MENU) Menu_Completed(); // 완료됨에서 실행
+            SendDataCellToDetailWindow(dc);
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
         }
 
-        private void TodoItem_Right_Click_ContextMenu()
+        private void Task_ContextMenu()
         {
             ContextMenu todoItemContextMenu = new ContextMenu();
             todoItemContextMenu.Popup += new EventHandler(OnTodoItemPopupEvent);
@@ -1802,31 +1763,31 @@ namespace WellaTodo
         private void OnTodoItemPopupEvent(object sender, EventArgs e)
         {
             ContextMenu ctm = (ContextMenu)sender;
-
-            ctm.MenuItems[0].Text = m_Data[m_selected_position].DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
-            ctm.MenuItems[1].Text = m_Data[m_selected_position].DC_important ? "중요도 제거" : "중요로 표시";
-            ctm.MenuItems[2].Text = m_Data[m_selected_position].DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
-            ctm.MenuItems[4].Enabled = m_Data[m_selected_position].DC_deadlineType != 1;
-            ctm.MenuItems[5].Enabled = m_Data[m_selected_position].DC_deadlineType != 2;
-            ctm.MenuItems[7].Enabled = m_Data[m_selected_position].DC_deadlineType > 0;
+            
+            ctm.MenuItems[0].Text = m_Selected_Item.TD_DataCell.DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
+            ctm.MenuItems[1].Text = m_Selected_Item.TD_DataCell.DC_important ? "중요도 제거" : "중요로 표시";
+            ctm.MenuItems[2].Text = m_Selected_Item.TD_DataCell.DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
+            ctm.MenuItems[4].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 1;
+            ctm.MenuItems[5].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 2;
+            ctm.MenuItems[7].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType > 0;
         }
 
         private void OnImportantMenuItem_Click(object sender, EventArgs e)
         {
-            Todo_Item item = Find_Task();
-            starCheckbox1.Checked = !m_Data[m_selected_position].DC_important;
-            item.TD_important = starCheckbox1.Checked;
-            Improtant_Process(item);
+            starCheckbox1.Checked = !starCheckbox1.Checked;
+
+            m_Selected_Item.TD_important = starCheckbox1.Checked;
+            m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
         }
 
         private void OnCompleteMenuItem_Click(object sender, EventArgs e)
         {
-            Todo_Item item = Find_Task();
-            roundCheckbox1.Checked = !m_Data[m_selected_position].DC_complete;
-            item.TD_complete = roundCheckbox1.Checked;
-            Complete_Process(item);
+            roundCheckbox1.Checked = !roundCheckbox1.Checked;
+
+            m_Selected_Item.TD_complete = roundCheckbox1.Checked;
+            m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
         }
@@ -1856,10 +1817,7 @@ namespace WellaTodo
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
         {
-            Delete_Task(m_Data[m_selected_position]);
-
-            m_selected_position--;
-            if (m_selected_position < 0) m_selected_position = 0;  // m_selected_position 재설정
+            Delete_Task(m_Selected_Item.TD_DataCell);
         }
 
         private void SendDataCellToDetailWindow(CDataCell dc)
@@ -2034,14 +1992,12 @@ namespace WellaTodo
 
                 if (textBox3.Text.Trim().Length == 0)
                 {
-                    textBox3.Text = m_Data[m_selected_position].DC_title;
+                    textBox3.Text = m_Selected_Item.TD_DataCell.DC_title;
                     return;
                 }
 
-                m_Data[m_selected_position].DC_title = textBox3.Text;  // 입력 사항에 오류가 있는지 체크할 것
-
-                Todo_Item item = Find_Task();
-                item.TD_title = textBox3.Text;
+                m_Selected_Item.TD_DataCell.DC_title = textBox3.Text;  // 입력 사항에 오류가 있는지 체크할 것
+                m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
             }
         }
 
@@ -2058,26 +2014,39 @@ namespace WellaTodo
         {
             if (textBox3.Text.Trim().Length == 0)
             {
-                textBox3.Text = m_Data[m_selected_position].DC_title;
+                textBox3.Text = m_Selected_Item.TD_DataCell.DC_title;
                 return;
             }
 
-            m_Data[m_selected_position].DC_title = textBox3.Text;
+            m_Selected_Item.TD_DataCell.DC_title = textBox3.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
+        }
 
-            Todo_Item item = Find_Task();
-            item.TD_title = textBox3.Text;
+        private void Update_Modify_Task_Title(CDataCell dc)
+        {
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.Equals(item.TD_DataCell))
+                {
+                    item.TD_title = dc.DC_title;
+                    break;
+                }
+            }
+            SendDataCellToDetailWindow(dc);
         }
 
         // 상세창 메모 커서 벗어남
         private void textBox1_Leave(object sender, EventArgs e)
         {
             //메모 내용에 변경이 있는지 확인(?)
-            m_Data[m_selected_position].DC_memo = textBox1.Text;
+            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
         private void textBox1_MouseLeave(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_memo = textBox1.Text;
+            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
         // 상세창 메모 컨텍스트 메뉴
@@ -2134,16 +2103,14 @@ namespace WellaTodo
         private void button1_Click(object sender, EventArgs e)
         {
             if (isDetailWindowOpen) Close_DetailWindow();
+
             Update_Task_Width();
         }
 
         //상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
-            Delete_Task(m_Data[m_selected_position]);
-
-            m_selected_position--;
-            if (m_selected_position < 0) m_selected_position = 0;  // m_selected_position 재설정
+            Delete_Task(m_Selected_Item.TD_DataCell);
         }
 
         //
@@ -2151,9 +2118,8 @@ namespace WellaTodo
         //
         private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
-            Todo_Item item = Find_Task();
-            item.TD_complete = roundCheckbox1.Checked;
-            Complete_Process(item);
+            m_Selected_Item.TD_complete = roundCheckbox1.Checked;
+            m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
         }
@@ -2173,9 +2139,8 @@ namespace WellaTodo
         //
         private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
-            Todo_Item item = Find_Task();
-            item.TD_important = starCheckbox1.Checked;
-            Improtant_Process(item);
+            m_Selected_Item.TD_important = starCheckbox1.Checked;
+            m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
         }
@@ -2779,30 +2744,15 @@ namespace WellaTodo
         private void upArrow_Click(object sender, EventArgs e)
         {
             upArrow.Focus();
+            m_Controller.Perform_Task_Move_Up(m_Selected_Item.TD_DataCell);
+        }
 
-            int pos = m_selected_position;
-            if (pos == 0) return;
-            if (!m_Data[pos].DC_complete)
-            {
-                for (int i = pos - 1; i >= 0; i--)  // 상향 탐색
-                {
-                    if (m_Data[i].DC_listName == m_Data[pos].DC_listName)
-                    {
-                        CDataCell dc = m_Data[pos]; //추출
-                        m_Data.RemoveAt(pos); //삭제
-                        m_Data.Insert(i, dc); // 삽입
-
-                        m_selected_position = i;
-                        break;
-                    }
-                }
-            }
-            else return;
-
-            pos = 0;
+        private void Update_Task_Move_Up(CDataCell dc)
+        {
+            int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (m_Data[m_selected_position].Equals(item.TD_DataCell))
+                if (dc.Equals(item.TD_DataCell))
                 {
                     if (pos == 0) break;
                     flowLayoutPanel2.Controls.SetChildIndex(item, pos - 1);
@@ -2810,8 +2760,6 @@ namespace WellaTodo
                 }
                 pos++;
             }
-
-            //Display_Menu_Status();
         }
 
         //
@@ -2830,33 +2778,15 @@ namespace WellaTodo
         private void downArrow_Click(object sender, EventArgs e)
         {
             downArrow.Focus();
+            m_Controller.Perform_Task_Move_Down(m_Selected_Item.TD_DataCell);
+        }
 
-            int pos = m_selected_position;
-
-            if (pos == (m_Data.Count - 1)) return;
-
-            if (!m_Data[pos].DC_complete)
-            {
-                for (int i = pos + 1; i <= m_Data.Count - 1; i++)
-                {
-                    if (m_Data[i].DC_complete) return;
-                    if (m_Data[i].DC_listName == m_Data[pos].DC_listName)
-                    {
-                        CDataCell dc = m_Data[pos]; //추출
-                        m_Data.RemoveAt(pos); //삭제
-                        m_Data.Insert(i, dc); // 삽입
-
-                        m_selected_position = i;
-                        break;
-                    }
-                }
-            }
-            else return;
-
-            pos = 0;
+        private void Update_Task_Move_Down(CDataCell dc)
+        {
+            int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (m_Data[m_selected_position].Equals(item.TD_DataCell))
+                if (dc.Equals(item.TD_DataCell))
                 {
                     if (pos == flowLayoutPanel2.Controls.Count) break;
                     flowLayoutPanel2.Controls.SetChildIndex(item, pos + 1);
