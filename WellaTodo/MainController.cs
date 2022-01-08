@@ -75,6 +75,14 @@ namespace WellaTodo
 			data.DC_myTodayTime = dt;
 		}
 
+		public void Perform_Modify_Remind(CDataCell dc, int type, DateTime dt)
+		{
+			CDataCell data = Find(dc);
+			data.DC_remindType = type;
+			data.DC_remindTime = dt;
+			m_model.Modifiy_Remind(dc);
+		}
+
 		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
 		{
 			CDataCell data = Find(dc);
@@ -113,6 +121,23 @@ namespace WellaTodo
 		public void Perform_Task_Move_Down(CDataCell dc)
 		{
 			m_model.Task_Move_Down(dc);
+		}
+
+		public void Perform_MyToday_Process(CDataCell dc)
+        {
+			DateTime dt = DateTime.Now;
+
+			if (dc.DC_myToday)
+			{
+				dc.DC_myToday = false;  // 해제
+				dc.DC_myTodayTime = default;
+			}
+			else
+			{
+				dc.DC_myToday = true; // 설정
+				dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+			}
+			m_model.Modifiy_MyToday(dc);
 		}
 
 		private CDataCell Find(CDataCell dc)

@@ -584,27 +584,27 @@ namespace WellaTodo
             switch (param)
             {
                 case WParam.WM_COMPLETE_PROCESS:
-                    Console.WriteLine(">WM_COMPLETE_PROCESS");
                     Update_Complete_Process(dc);
                     break;
                 case WParam.WM_IMPORTANT_PROCESS:
-                    Console.WriteLine(">WM_IMPORTANT_PROCESS");
                     Update_Important_Process(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_TITLE:
-                    Console.WriteLine(">WM_MODIFY_TASK_TITLE");
                     Update_Modify_Task_Title(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_MEMO:
-                    Console.WriteLine(">WM_MODIFY_TASK_MEMO");
                     break;
                 case WParam.WM_TASK_MOVE_UP:
-                    Console.WriteLine(">WM_TASK_MOVE_UP");
                     Update_Task_Move_Up(dc);
                     break;
                 case WParam.WM_TASK_MOVE_DOWN:
-                    Console.WriteLine(">WM_TASK_MOVE_DOWN");
                     Update_Task_Move_Down(dc);
+                    break;
+                case WParam.WM_MODIFY_MYTODAY:
+                    Update_Modify_MyToday(dc);
+                    break;
+                case WParam.WM_MODIFY_REMIND:
+                    Update_Modify_Remind(dc);
                     break;
                 default:
                     break;
@@ -1493,6 +1493,7 @@ namespace WellaTodo
             }
         }
 
+        // 할일 추가 화면 갱신
         public void Update_Add_Task(IModel m, ModelEventArgs e)
         {
             CDataCell dc = e.Item;
@@ -1529,6 +1530,7 @@ namespace WellaTodo
             m_Controller.Perform_Delete_Task(dc);
         }
 
+        // 항목 삭제 화면 갱신
         public void Update_Delete_Task(IModel m, ModelEventArgs e)
         {
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
@@ -1770,6 +1772,11 @@ namespace WellaTodo
             ctm.MenuItems[4].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 1;
             ctm.MenuItems[5].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 2;
             ctm.MenuItems[7].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType > 0;
+        }
+
+        private void OnMyToday_Click(object sender, EventArgs e)
+        {
+            m_Controller.Perform_MyToday_Process(m_Selected_Item.TD_DataCell);
         }
 
         private void OnImportantMenuItem_Click(object sender, EventArgs e)
@@ -2107,21 +2114,19 @@ namespace WellaTodo
             Update_Task_Width();
         }
 
-        //상세창 삭제 버튼
+        // 상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
             Delete_Task(m_Selected_Item.TD_DataCell);
         }
 
-        //
-        //상세창 완료 체크시
-        //
+        // -------------------------------------------------
+        // 상세창 완료 체크시
+        // -------------------------------------------------
         private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
             m_Selected_Item.TD_complete = roundCheckbox1.Checked;
             m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
-
-            Update_Menu_Metadata();
         }
 
         private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -2134,15 +2139,13 @@ namespace WellaTodo
             roundCheckbox1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        // 
-        //상세창 중요 체크시
-        //
+        // -------------------------------------------------
+        // 상세창 중요 체크시
+        // -------------------------------------------------
         private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
             m_Selected_Item.TD_important = starCheckbox1.Checked;
             m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
-
-            Update_Menu_Metadata();
         }
 
         private void starCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -2160,41 +2163,7 @@ namespace WellaTodo
         // -------------------------------------------------
         private void roundLabel1_Click(object sender, MouseEventArgs e)
         {
-            roundLabel1.Focus();
-            if (e.Button != MouseButtons.Left) return;
-            OnMyToday_Click(sender, e);
-        }
-
-        private void OnMyToday_Click(object sender, EventArgs e)
-        {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(1);
-
-            if (m_Data[m_selected_position].DC_myToday)
-            {
-                m_Data[m_selected_position].DC_myToday = false;  // 해제
-                m_Data[m_selected_position].DC_myTodayTime = default;
-                roundLabel1.Text = "나의 하루에 추가";
-                roundLabel1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
-
-                if (m_selected_menu == (int)MenuList.MYTODAY_MENU) // 나의하루 메뉴에서 해제시 처리
-                {
-                    Todo_Item item = Find_Task();
-                    flowLayoutPanel2.Controls.Remove(item);
-                    Close_DetailWindow();
-                    Update_Task_Width();
-                }
-            }
-            else
-            {
-                m_Data[m_selected_position].DC_myToday = true; // 설정
-                m_Data[m_selected_position].DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                roundLabel1.Text = "나의 하루에 추가됨";
-                roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
-            }
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_MyToday_Process(m_Selected_Item.TD_DataCell);
         }
 
         private void roundLabel1_MouseEnter(object sender, EventArgs e)
@@ -2204,12 +2173,36 @@ namespace WellaTodo
 
         private void roundLabel1_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel1.BackColor = m_Data[m_selected_position].DC_myToday ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel1.BackColor = m_Selected_Item.TD_DataCell.DC_myToday ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
-        //
-        // 상세창 - 미리 알림 메뉴
-        //
+        private void Update_Modify_MyToday(CDataCell dc)
+        {
+            if (!dc.DC_myToday)
+            {
+                roundLabel1.Text = "나의 하루에 추가";
+                roundLabel1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+
+                if (m_selected_menu == (int)MenuList.MYTODAY_MENU) // 나의하루 메뉴에서 해제시 처리
+                {
+                    flowLayoutPanel2.Controls.Remove(m_Selected_Item);
+                    Close_DetailWindow();
+                    Update_Task_Width();
+                }
+            }
+            else
+            {
+                roundLabel1.Text = "나의 하루에 추가됨";
+                roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+
+            Update_Task_Infomation(dc);
+            Update_Menu_Metadata();
+        }
+
+        // -------------------------------------------------
+        // 상세창 - 미리 알림
+        // -------------------------------------------------
         private void roundLabel2_MouseEnter(object sender, EventArgs e)
         {
             roundLabel2.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -2217,7 +2210,7 @@ namespace WellaTodo
 
         private void roundLabel2_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel2.BackColor = m_Data[m_selected_position].DC_remindType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel2.BackColor = m_Selected_Item.TD_DataCell.DC_remindType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel2_Click(object sender, MouseEventArgs e)
@@ -2242,40 +2235,39 @@ namespace WellaTodo
             remindMenu.Show(this, new Point(px, py));
         }
 
+        private void Update_Modify_Remind(CDataCell dc)
+        {
+            if (dc.DC_remindType == 0)
+            {
+                roundLabel2.Text = "미리 알림";
+                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+            else
+            {
+                roundLabel2.Text = "알림 설정됨";
+                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+
+            Update_Task_Infomation(dc);
+            Update_Menu_Metadata();
+        }
+
         private void OnTodayRemind_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_remindType = 1;
-
             DateTime dt = DateTime.Now;
             dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
-            m_Data[m_selected_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0);
-           
-            roundLabel2.Text = "알림 설정됨";
-            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 1, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_remindType = 2;
-
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
-            m_Data[m_selected_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            
-            roundLabel2.Text = "알림 설정됨";
-            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 2, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_remindType = 3;
-
             DateTime dt = DateTime.Now;
             DayOfWeek dw = dt.DayOfWeek;
             switch (dw)
@@ -2302,13 +2294,7 @@ namespace WellaTodo
                     dt = dt.AddDays(1);
                     break;
             }
-            m_Data[m_selected_position].DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            
-            roundLabel2.Text = "알림 설정됨";
-            roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 3, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
@@ -2317,33 +2303,18 @@ namespace WellaTodo
             carendar.ShowDialog();
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {
-                m_Data[m_selected_position].DC_remindType = 4;
-                m_Data[m_selected_position].DC_remindTime = carendar.SelectedDateTime;
-                roundLabel2.Text = "알림 설정됨";
-                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
                 carendar.IsSelected = false;
+                m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 4, carendar.SelectedDateTime);
             }
             else
             {
-                m_Data[m_selected_position].DC_remindType = 0;
-                m_Data[m_selected_position].DC_remindTime = default;
-                roundLabel2.Text = "미리 알림";
-                roundLabel2.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+                m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 0, default);
             }
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
         }
 
         private void OnDeleteRemind_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_remindType = 0;
-            m_Data[m_selected_position].DC_remindTime = default;
-            roundLabel2.Text = "미리 알림";
-            roundLabel2.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 0, default);
         }
 
         //
@@ -2356,7 +2327,7 @@ namespace WellaTodo
 
         private void roundLabel3_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel3.BackColor = m_Data[m_selected_position].DC_deadlineType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel3.BackColor = m_Selected_Item.TD_DataCell.DC_deadlineType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel3_Click(object sender, MouseEventArgs e)
@@ -2513,7 +2484,7 @@ namespace WellaTodo
 
         private void roundLabel4_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel4.BackColor = m_Data[m_selected_position].DC_repeatType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel4.BackColor = m_Selected_Item.TD_DataCell.DC_repeatType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel4_Click(object sender, MouseEventArgs e)

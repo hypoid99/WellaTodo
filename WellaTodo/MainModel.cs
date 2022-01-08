@@ -13,7 +13,9 @@ namespace WellaTodo
 		WM_MODIFY_TASK_TITLE,
 		WM_MODIFY_TASK_MEMO,
 		WM_TASK_MOVE_UP,
-		WM_TASK_MOVE_DOWN
+		WM_TASK_MOVE_DOWN,
+		WM_MODIFY_MYTODAY,
+		WM_MODIFY_REMIND
 	}
 
 	public class MainModel : IModel
@@ -205,6 +207,20 @@ namespace WellaTodo
 			else return;
 
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TASK_MOVE_DOWN));
+		}
+
+		public void Modifiy_MyToday(CDataCell dc)
+        {
+			CDataCell data = Find(dc);
+			data.DC_myToday = dc.DC_myToday;
+			data.DC_myTodayTime = dc.DC_myTodayTime;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_MYTODAY));
+		}
+
+		public void Modifiy_Remind(CDataCell dc)
+        {
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_REMIND));
 		}
 
 		private CDataCell Find(CDataCell dc)
