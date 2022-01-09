@@ -106,9 +106,11 @@ namespace WellaTodo
 
         Todo_Item m_Pre_Selected_Item;
         Todo_Item m_Selected_Item;
-        int m_selected_position;
+        TwoLineList m_Pre_Selected_Menulist;
+        TwoLineList m_Selected_Menulist;
         int m_selected_menu = (int)MenuList.TODO_ITEM_MENU; // 초기 작업 메뉴 설정
         string m_selected_listname;
+
         int m_currentPage = 1;
         int m_thumbsPerPage = 20;
 
@@ -547,13 +549,12 @@ namespace WellaTodo
             if (outputForm.Visible)
             {
                 pos = 0;
-                foreach (CDataCell data in m_Data)
+                foreach (CDataCell data in m_Controller.Get_Model().GetDataCollection())
                 {
                     txt = ">Data DC:[" + pos + "] " + data.DC_listName + "--" + data.DC_title + "\r\n";
                     outputForm.TextBoxString = txt;
                     pos++;
                 }
-                outputForm.TextBoxString = ">Data Selected Position:[" + m_selected_position + "]--" + m_Data[m_selected_position].DC_title + "\r\n";
                 
                 foreach (TwoLineList data in m_ListName)
                 {
@@ -578,7 +579,6 @@ namespace WellaTodo
         public void Update_View(IModel m, ModelEventArgs e)
         {
             Console.WriteLine(">MainFrame::Update_View");
-            MainModel model = (MainModel)m;
             CDataCell dc = e.Item;
             WParam param = e.Param;
             switch (param)
@@ -605,6 +605,21 @@ namespace WellaTodo
                     break;
                 case WParam.WM_MODIFY_REMIND:
                     Update_Modify_Remind(dc);
+                    break;
+                case WParam.WM_MODIFY_PLANNED:
+                    Update_Modify_Planned(dc);
+                    break;
+                case WParam.WM_MODIFY_REPEAT:
+                    Update_Modify_Repeat(dc);
+                    break;
+                case WParam.WM_MENULIST_RENAME:
+                    Update_Menulist_Rename(dc);
+                    break;
+                case WParam.WM_MENULIST_DELETE:
+                    Update_Menulist_Delete(dc);
+                    break;
+                case WParam.WM_TRANSFER_TASK:
+                    Update_Transfer_Task(dc);
                     break;
                 default:
                     break;
@@ -703,16 +718,8 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Load_Data_File()
         {
-            Stream rs = new FileStream("task.dat", FileMode.Open);
-            BinaryFormatter deserializer = new BinaryFormatter();
+            m_Controller.Load_Data_File();
 
-            List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
-            foreach (CDataCell dt in todo_data)
-            {
-                m_Data.Insert(m_Data.Count, dt);  // add를 안하고 insert를 할까?
-            }
-            rs.Close();
-            
             Stream rs_list = new FileStream("list.dat", FileMode.Open);
             BinaryFormatter deserializer_list = new BinaryFormatter();
             List<string> list_name = (List<string>)deserializer_list.Deserialize(rs_list);
@@ -723,6 +730,7 @@ namespace WellaTodo
                 m_ListName_stringData.Add(list);
             }
             rs_list.Close();
+
         }
 
         //--------------------------------------------------------------
@@ -730,13 +738,8 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Save_Data_File()
         {
-            
-            Stream ws = new FileStream("task.dat", FileMode.Create);
-            BinaryFormatter serializer = new BinaryFormatter();
+            m_Controller.Save_Data_File();
 
-            serializer.Serialize(ws, m_Data);
-            ws.Close();
-           
             Stream ws_list = new FileStream("list.dat", FileMode.Create);
             BinaryFormatter serializer_list = new BinaryFormatter();
 
@@ -1056,40 +1059,33 @@ namespace WellaTodo
         {
             TwoLineList sd = (TwoLineList)sender;
 
-            int pos = 0;
-            foreach (CDataCell item in m_Data)  // 데이터내 목록명 변경
-            {
-                if (sd.PrimaryText == item.DC_listName)
-                {
-                    m_Data[pos].DC_listName = sd.PrimaryText_Renamed;
-                }
-                pos++;
-            }
-            
-            /*
-            pos = 0;
-            for (int i = 0; i < m_ListName_stringData.Count; i++)  // 목록 리스트 문자 데이터 변경
-            {
-                string item = m_ListName_stringData[i];
-                if (sd.PrimaryText == item)
-                {
-                    m_ListName_stringData[pos] = sd.PrimaryText_Renamed;
-                }
-                pos++;
-            }
-            */
+            string source = sd.PrimaryText;
+            string target = sd.PrimaryText_Renamed;
 
-            pos = 0;
+            int pos = 0;
             foreach (TwoLineList item in m_ListName)  // 목록 리스트내 이름 변경
             {
                 if (sd.PrimaryText == item.PrimaryText)
                 {
-                    m_ListName[pos].PrimaryText = sd.PrimaryText_Renamed;
+                    m_ListName[pos].PrimaryText = target;
                 }
                 pos++;
             }
 
-            Menu_List(sd);  // 목록 리스트 다시 표시
+            m_Controller.Perform_Menulist_Rename(source, target);
+        }
+
+        private void Update_Menulist_Rename(CDataCell dc)
+        {
+            foreach (TwoLineList item in m_ListName)
+            {
+                if (dc.DC_listName == item.PrimaryText)
+                {
+                    Menu_List(item);  // 목록 리스트 다시 표시
+                    break;
+                }
+            }
+            
             Update_Task_Width();
             Update_Menu_Metadata();
         }
@@ -1098,7 +1094,6 @@ namespace WellaTodo
         {
             if (MessageBox.Show("목록을 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
-            TwoLineList before_list = null;
             foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
             {
                 if (list.PrimaryText == m_selected_listname)
@@ -1106,31 +1101,21 @@ namespace WellaTodo
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
-
                     m_ListName.Remove(list); // 리스트 이름 제거
 
-                    int pos = 0;
-                    while (pos < m_Data.Count) // 리스트 제거
-                    {
-                        CDataCell dc = m_Data[pos];
-                        if (dc.DC_listName == m_selected_listname)
-                        {
-                            m_Data.RemoveAt(pos);
-                        }
-                        else
-                        {
-                            ++pos;
-                        }
-                    }
+                    m_Controller.Perform_Menulist_Delete(m_selected_listname);
                     break;
                 }
                 else
                 {
-                    before_list = list;
+                    m_Pre_Selected_Menulist = list;
                 }
             }
+        }
 
-            Menu_List(before_list);
+        private void Update_Menulist_Delete(CDataCell dc)
+        {
+            Menu_List(m_Pre_Selected_Menulist);
             Update_Task_Width();
             Update_Menu_Metadata();
         }
@@ -1146,7 +1131,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + "오늘 할 일";
             m_selected_listname = "오늘 할 일";
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where dt.DC_myToday && !dt.DC_complete select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_MyToday());
         }
 
         private void Menu_Important()
@@ -1157,7 +1142,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + "중요";
             m_selected_listname = "중요";
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where dt.DC_important && !dt.DC_complete select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_Important());
         }
 
         private void Menu_Planned()
@@ -1168,7 +1153,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + "계획된 일정";
             m_selected_listname = "계획된 일정";
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where (dt.DC_deadlineType > 0 || dt.DC_repeatType > 0) && !dt.DC_complete select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_Planned());
         }
 
         private void Menu_Completed()
@@ -1179,7 +1164,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + "완료됨";
             m_selected_listname = "완료됨";
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where dt.DC_complete == true select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_Complete());
         }
 
         private void Menu_Task()
@@ -1190,7 +1175,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + "작업";
             m_selected_listname = "작업";
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where dt.DC_listName == "작업" select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_Task("작업"));
         }
 
         private void Menu_List(TwoLineList list)
@@ -1201,7 +1186,7 @@ namespace WellaTodo
             label_ListName.Text = "   " + list.PrimaryText;
             m_selected_listname = list.PrimaryText;
 
-            Add_Task_To_Panel_Paging(from CDataCell dt in m_Data where dt.DC_listName == list.PrimaryText select dt);
+            Add_Task_To_Panel_Paging(m_Controller.Query_Task(m_selected_listname));
         }
 
         private void Add_Task_To_Panel_Paging(IEnumerable<CDataCell> dataset)
@@ -1248,16 +1233,6 @@ namespace WellaTodo
                 }
                 m_currentPage++;
             }
-
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // 판넬 내부에 선택 항목이 있을시 select 표기
-            {
-                if (item.TD_DataCell.Equals(m_Data[m_selected_position]))
-                {
-                    item.IsItemSelected = true;
-                    item.Refresh();
-                }
-            }
-            // 판넬 내부에 선택 항목이 없을시 맨 처음 항목을 선택한다 (구현할 것) -> 안해도 됨
         }
 
         private void Add_Task_To_Panel_ScrollDown()
@@ -1296,24 +1271,22 @@ namespace WellaTodo
                 switch (item.PrimaryText)
                 {
                     case "오늘 할 일":
-                        cnt = (from CDataCell data in m_Data where data.DC_myToday && !data.DC_complete select data).Count();
+                        cnt = m_Controller.Query_MyToday().Count();
                         break;
                     case "중요":
-                        cnt = (from CDataCell data in m_Data where data.DC_important && !data.DC_complete select data).Count();
+                        cnt = m_Controller.Query_Important().Count();
                         break;
                     case "계획된 일정":
-                        cnt = (from CDataCell data in m_Data
-                               where (data.DC_deadlineType > 0 || data.DC_repeatType > 0) && !data.DC_complete
-                               select data).Count();
+                        cnt = m_Controller.Query_Planned().Count();
                         break;
                     case "완료됨":
-                        cnt = (from CDataCell data in m_Data where data.DC_complete select data).Count();
+                        cnt = m_Controller.Query_Complete().Count();
                         break;
                     case "작업":
-                        cnt = (from CDataCell data in m_Data where data.DC_listName == "작업" select data).Count();
+                        cnt = m_Controller.Query_Task("작업").Count();
                         break;
                     default:
-                        cnt = (from CDataCell data in m_Data where data.DC_listName == item.PrimaryText select data).Count();
+                        cnt = m_Controller.Query_Task(item.PrimaryText).Count();
                         break;
                 }
                 item.MetadataText = cnt.ToString();
@@ -1570,26 +1543,15 @@ namespace WellaTodo
             memoForm.StartPosition = FormStartPosition.Manual;
             memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
             memoForm.TextBoxString = textBox1.Text;
-            memoForm.Text = m_Data[m_selected_position].DC_title;
+            memoForm.Text = m_Selected_Item.TD_DataCell.DC_title;
             memoForm.ShowDialog();
+
             textBox1.Text = memoForm.TextBoxString;
             textBox1.SelectionStart = textBox1.Text.Length;
 
-            m_Data[m_selected_position].DC_memo = textBox1.Text;
-        }
-
-        //--------------------------------------------------------------
-        // 할일 항목 탐색  -> m_selected_position을 활용시에만 가능
-        //--------------------------------------------------------------
-        private Todo_Item Find_Task()
-        {
-            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
-            {
-                if (m_Data[m_selected_position].Equals(item.TD_DataCell)) return item;
-            }
-
-            MessageBox.Show("Find_Task : Task item finding ERROR [" + m_selected_position + "]");
-            return (Todo_Item)flowLayoutPanel2.Controls[0];
+            //메모 내용에 변경이 있는지 확인(?)
+            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
         //--------------------------------------------------------------
@@ -1754,7 +1716,7 @@ namespace WellaTodo
 
             foreach (TwoLineList item in m_ListName)
             {
-                moveItem.MenuItems.Add(new MenuItem(item.PrimaryText, new EventHandler(OnMoveItem_Click)));
+                moveItem.MenuItems.Add(new MenuItem(item.PrimaryText, new EventHandler(OnTransferItem_Click)));
             }
 
             int px = Control.MousePosition.X - Location.X;
@@ -1804,22 +1766,28 @@ namespace WellaTodo
             Edit_Task_Memo();
         }
 
-        private void OnMoveItem_Click(object sender, EventArgs e)
+        private void Update_Transfer_Task(CDataCell dc)
+        {
+            labelUserName.Focus();  // 레이아웃 유지용 포커싱
+
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.Equals(item.TD_DataCell))
+                {
+                    flowLayoutPanel2.Controls.Remove(item); // 제거
+                    m_Task.Remove(item); //삭제
+                }
+            }
+
+            Update_Menu_Metadata();
+        }
+
+        private void OnTransferItem_Click(object sender, EventArgs e)
         {
             MenuItem list = (MenuItem)sender;
             if (list.Text == m_selected_listname) return;
 
-            labelUserName.Focus();  // 레이아웃 유지용 포커싱
-
-            Todo_Item item = Find_Task();
-            flowLayoutPanel2.Controls.Remove(item); // 제거
-
-            int pos = m_Task.IndexOf(item);
-            m_Task.RemoveAt(pos); //삭제
-
-            m_Data[m_selected_position].DC_listName = list.Text;  // 목록명 변경
-
-            Update_Menu_Metadata();
+            m_Controller.Perform_Trasnfer_Task(m_Selected_Item.TD_DataCell, list.Text);
         }
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
@@ -1880,7 +1848,7 @@ namespace WellaTodo
                 roundLabel4.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
             }
 
-            createDateLabel.Text = dc.DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") + "생성됨["+m_selected_position+"]";
+            createDateLabel.Text = dc.DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") + "생성됨";
         }
 
         // -----------------------------------------------------------
@@ -2178,23 +2146,18 @@ namespace WellaTodo
 
         private void Update_Modify_MyToday(CDataCell dc)
         {
-            if (!dc.DC_myToday)
-            {
-                roundLabel1.Text = "나의 하루에 추가";
-                roundLabel1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
-
-                if (m_selected_menu == (int)MenuList.MYTODAY_MENU) // 나의하루 메뉴에서 해제시 처리
-                {
-                    flowLayoutPanel2.Controls.Remove(m_Selected_Item);
-                    Close_DetailWindow();
-                    Update_Task_Width();
-                }
-            }
-            else
+            if (dc.DC_myToday)
             {
                 roundLabel1.Text = "나의 하루에 추가됨";
                 roundLabel1.BackColor = PSEUDO_SELECTED_COLOR;
             }
+            else
+            {
+                roundLabel1.Text = "나의 하루에 추가";
+                roundLabel1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+            }
+
+            if (m_selected_menu == (int)MenuList.MYTODAY_MENU) Menu_MyToday();  // 나의하루 메뉴에서 실행시
 
             Update_Task_Infomation(dc);
             Update_Menu_Metadata();
@@ -2237,15 +2200,15 @@ namespace WellaTodo
 
         private void Update_Modify_Remind(CDataCell dc)
         {
-            if (dc.DC_remindType == 0)
+            if (dc.DC_remindType > 0)
             {
-                roundLabel2.Text = "미리 알림";
+                roundLabel2.Text = "알림 설정됨";
                 roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
             }
             else
             {
-                roundLabel2.Text = "알림 설정됨";
-                roundLabel2.BackColor = PSEUDO_SELECTED_COLOR;
+                roundLabel2.Text = "미리 알림";
+                roundLabel2.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
             }
 
             Update_Task_Infomation(dc);
@@ -2269,31 +2232,7 @@ namespace WellaTodo
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
         {
             DateTime dt = DateTime.Now;
-            DayOfWeek dw = dt.DayOfWeek;
-            switch (dw)
-            {
-                case DayOfWeek.Monday:
-                    dt = dt.AddDays(7);
-                    break;
-                case DayOfWeek.Tuesday:
-                    dt = dt.AddDays(6);
-                    break;
-                case DayOfWeek.Wednesday:
-                    dt = dt.AddDays(5);
-                    break;
-                case DayOfWeek.Thursday:
-                    dt = dt.AddDays(4);
-                    break;
-                case DayOfWeek.Friday:
-                    dt = dt.AddDays(3);
-                    break;
-                case DayOfWeek.Saturday:
-                    dt = dt.AddDays(2);
-                    break;
-                case DayOfWeek.Sunday:
-                    dt = dt.AddDays(1);
-                    break;
-            }
+            dt = dt.AddDays(8-(int)dt.DayOfWeek);
             m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 3, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
         }
 
@@ -2317,9 +2256,9 @@ namespace WellaTodo
             m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 0, default);
         }
 
-        //
+        // -------------------------------------------------
         // 상세창 - 기한 설정 메뉴
-        //
+        // -------------------------------------------------
         private void roundLabel3_MouseEnter(object sender, EventArgs e)
         {
             roundLabel3.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -2352,75 +2291,43 @@ namespace WellaTodo
             deadlineMenu.Show(this, new Point(px, py));
         }
 
+        private void Update_Modify_Planned(CDataCell dc)
+        {
+            if (dc.DC_deadlineType > 0)
+            {
+                roundLabel3.Text = "기한 설정됨";
+                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+            else
+            {
+                roundLabel3.Text = "기한 설정";
+                roundLabel3.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+            }
+
+            if (m_selected_menu == (int)MenuList.DEADLINE_MENU) Menu_Planned(); // 기한 설정 메뉴에서 실행
+
+            Update_Task_Infomation(dc);
+            Update_Menu_Metadata();
+        }
+
         private void OnTodayDeadline_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_deadlineType = 1;
-
             DateTime dt = DateTime.Now;
-
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-            
-            roundLabel3.Text = "기한 설정됨";
-            roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 1, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
         }
 
         private void OnTomorrowDeadline_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_deadlineType = 2;
-
             DateTime dt = DateTime.Now;
-
             dt = dt.AddDays(1);
-
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-            
-            roundLabel3.Text = "기한 설정됨";
-            roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 2, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
         }
 
         private void OnNextWeekDeadline_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_deadlineType = 3;
-
             DateTime dt = DateTime.Now;
-            DayOfWeek dw = dt.DayOfWeek;
-            switch (dw)
-            {
-                case DayOfWeek.Monday:
-                    dt = dt.AddDays(7);
-                    break;
-                case DayOfWeek.Tuesday:
-                    dt = dt.AddDays(6);
-                    break;
-                case DayOfWeek.Wednesday:
-                    dt = dt.AddDays(5);
-                    break;
-                case DayOfWeek.Thursday:
-                    dt = dt.AddDays(4);
-                    break;
-                case DayOfWeek.Friday:
-                    dt = dt.AddDays(3);
-                    break;
-                case DayOfWeek.Saturday:
-                    dt = dt.AddDays(2);
-                    break;
-                case DayOfWeek.Sunday:
-                    dt = dt.AddDays(1);
-                    break;
-            }
-            m_Data[m_selected_position].DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-            
-            roundLabel3.Text = "기한 설정됨";
-            roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            dt = dt.AddDays(8 - (int)dt.DayOfWeek);
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 3, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
         }
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
@@ -2430,53 +2337,32 @@ namespace WellaTodo
             DateTime dt = carendar.SelectedDateTime;
             if (carendar.IsSelected && (carendar.SelectedDateTime != default))
             {
-                m_Data[m_selected_position].DC_deadlineType = 4;
                 if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
                 {
                     dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
                 }
-                m_Data[m_selected_position].DC_deadlineTime = dt;
-               
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
                 carendar.IsSelected = false;
+                m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 4, dt);
             }
             else
             {
-                m_Data[m_selected_position].DC_deadlineType = 0;
-                m_Data[m_selected_position].DC_deadlineTime = default;
-                roundLabel3.Text = "기한 설정";
-                roundLabel3.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+                m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 0, default);
             }
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
         }
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_deadlineType = 0;
-            m_Data[m_selected_position].DC_deadlineTime = default;
-            roundLabel3.Text = "기한 설정";
-            roundLabel3.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 0, default);
 
-            if (m_Data[m_selected_position].DC_repeatType > 0) // 반복이 되어 있을때
+            if (m_Selected_Item.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때
             {
-                m_Data[m_selected_position].DC_repeatType = 0;
-                m_Data[m_selected_position].DC_repeatTime = default;
-                roundLabel4.Text = "반복";
-                roundLabel4.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+                OnDeleteRepeat_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
-
-            if (m_selected_menu == (int)MenuList.DEADLINE_MENU) Menu_Planned(); // 기한 설정 메뉴에서 실행
         }
 
-        //
+        // -------------------------------------------------
         // 상세창 - 반복 메뉴
-        //
+        // -------------------------------------------------
         private void roundLabel4_MouseEnter(object sender, EventArgs e)
         {
             roundLabel4.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -2511,46 +2397,46 @@ namespace WellaTodo
             repeatMenu.Show(this, new Point(px, py));
         }
 
+        private void Update_Modify_Repeat(CDataCell dc)
+        {
+            if (dc.DC_repeatType > 0)
+            {
+                roundLabel4.Text = "반복 설정됨";
+                roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
+            }
+            else
+            {
+                roundLabel4.Text = "반복";
+                roundLabel4.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+            }
+
+            Update_Task_Infomation(dc);
+            Update_Menu_Metadata();
+        }
+
         private void OnEveryDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryDay(m_Data[m_selected_position]);
+            Repeat_EveryDay(m_Selected_Item.TD_DataCell);
         }
 
         private void Repeat_EveryDay(CDataCell data)
         {
-            data.DC_repeatType = 1;
-
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
-
-            data.DC_repeatTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            //Console.WriteLine("매일 반복 설정됨 : " + data.DC_repeatTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            roundLabel4.Text = "반복 설정됨";
-            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 내일 9시까지로 설정
+            m_Controller.Perform_Modify_Repeat(data, 1, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
-                data.DC_deadlineType = 1;
-                data.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                OnTodayDeadline_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(data);
-            Update_Menu_Metadata();
         }
 
         private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_WorkingDay(m_Data[m_selected_position]);
+            Repeat_WorkingDay(m_Selected_Item.TD_DataCell);
         }
 
         private void Repeat_WorkingDay(CDataCell data)
         {
-            data.DC_repeatType = 2;
-
             DateTime dt = DateTime.Now;
             DayOfWeek dw = dt.DayOfWeek;
             switch (dw)
@@ -2577,126 +2463,64 @@ namespace WellaTodo
                     dt = dt.AddDays(1);
                     break;
             }
-            data.DC_repeatTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            //Console.WriteLine("평일 반복 설정됨 : " + data.DC_repeatTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            roundLabel4.Text = "반복 설정됨";
-            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 내일 9시까지로 설정 -> 평일인지 확인할 것
+            m_Controller.Perform_Modify_Repeat(data, 2, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
-                data.DC_deadlineType = 1;
-                data.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                OnTodayDeadline_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(data);
-            Update_Menu_Metadata();
         }
 
         private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryWeek(m_Data[m_selected_position]);
+            Repeat_EveryWeek(m_Selected_Item.TD_DataCell);
         }
 
         private void Repeat_EveryWeek(CDataCell data)
         {
-            data.DC_repeatType = 3;
-
             DateTime dt = DateTime.Now;
-
             dt = dt.AddDays(7);
-
-            data.DC_repeatTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            //Console.WriteLine("매주 반복 설정됨 : " + data.DC_repeatTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            roundLabel4.Text = "반복 설정됨";
-            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 내일 9시까지로 설정
+            m_Controller.Perform_Modify_Repeat(data, 3, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
-                data.DC_deadlineType = 1;
-                data.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                OnTodayDeadline_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(data);
-            Update_Menu_Metadata();
         }
 
         private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryMonth(m_Data[m_selected_position]);
+            Repeat_EveryMonth(m_Selected_Item.TD_DataCell);
         }
 
         private void Repeat_EveryMonth(CDataCell data)
         {
-            data.DC_repeatType = 4;
-
             DateTime dt = DateTime.Now;
-
             dt = dt.AddMonths(1); // 매달 말일 계산 필요 - 28/29/30/31일 경우
-
-            data.DC_repeatTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            //Console.WriteLine("매달 반복 설정됨 : " + data.DC_repeatTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
-
-            roundLabel4.Text = "반복 설정됨";
-            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
+            m_Controller.Perform_Modify_Repeat(data, 4, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
-                data.DC_deadlineType = 1;
-                data.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                OnTodayDeadline_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(data);
-            Update_Menu_Metadata();
         }
 
         private void OnEveryYearRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryYear(m_Data[m_selected_position]);
+            Repeat_EveryYear(m_Selected_Item.TD_DataCell);
         }
 
         private void Repeat_EveryYear(CDataCell data)
         {
-            data.DC_repeatType = 5;
-
             DateTime dt = DateTime.Now;
-
             dt = dt.AddYears(1);  // 윤년 계산 필요 2월29일
-
-            data.DC_repeatTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-            //Console.WriteLine("매년 반복 설정됨 : " + m_Data[m_selected_position].DC_repeatTime.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            roundLabel4.Text = "반복 설정됨";
-            roundLabel4.BackColor = PSEUDO_SELECTED_COLOR;
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때
+            m_Controller.Perform_Modify_Repeat(data, 5, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
-                data.DC_deadlineType = 1;
-                data.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
-                roundLabel3.Text = "기한 설정됨";
-                roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                OnTodayDeadline_Click(this, new EventArgs());
             }
-
-            Update_Task_Infomation(data);
-            Update_Menu_Metadata();
         }
 
         private void OnDeleteRepeat_Click(object sender, EventArgs e)
         {
-            m_Data[m_selected_position].DC_repeatType = 0;
-            m_Data[m_selected_position].DC_repeatTime = default;
-            roundLabel4.Text = "반복";
-            roundLabel4.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
-
-            Update_Task_Infomation(m_Data[m_selected_position]);
-            Update_Menu_Metadata();
+            m_Controller.Perform_Modify_Repeat(m_Selected_Item.TD_DataCell, 0, default);
         }
 
         //
@@ -2844,7 +2668,7 @@ namespace WellaTodo
             DateTime tt;
 
             int pos = 0;
-            foreach (CDataCell data in m_Data)
+            foreach (CDataCell data in m_Controller.Get_Model().GetDataCollection())
             {
                 // 오늘할 일 체크
                 if (data.DC_myToday) //if (!data.DC_complete && data.DC_myToday)
@@ -3015,10 +2839,6 @@ namespace WellaTodo
 
         private void Update_Task_Infomation(CDataCell dc)
         {
-            //Todo_Item item = Find_Task();
-            //item.TD_infomation = MakeInfoTextFromDataCell(dc);
-            //item.Refresh();
-
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
                 if (dc.Equals(item.TD_DataCell))

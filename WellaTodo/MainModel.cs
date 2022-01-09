@@ -15,7 +15,12 @@ namespace WellaTodo
 		WM_TASK_MOVE_UP,
 		WM_TASK_MOVE_DOWN,
 		WM_MODIFY_MYTODAY,
-		WM_MODIFY_REMIND
+		WM_MODIFY_REMIND,
+		WM_MODIFY_PLANNED,
+		WM_MODIFY_REPEAT,
+		WM_MENULIST_RENAME,
+		WM_MENULIST_DELETE,
+		WM_TRANSFER_TASK
 	}
 
 	public class MainModel : IModel
@@ -25,16 +30,10 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Update_Delete_Task;
 
 		List<CDataCell> myTaskItems = new List<CDataCell>();
-
-		List<CDataCell> m_Task_Items = new List<CDataCell>();
-
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
-
-		public List<CDataCell> Task_Item_Storage { get => m_Task_Items; set => m_Task_Items = value; }
 
         public MainModel()
 		{
-			Initialize();
 		}
 
 		public void Add_Observer(IModelObserver imo)
@@ -76,9 +75,52 @@ namespace WellaTodo
 			return myTaskItems;
         }
 
-		private void Initialize()
+		public void SetDataCollection (List<CDataCell> dataset)
         {
+			myTaskItems = dataset;
+		}
 
+		public void Menulist_Rename(string source, string target)
+        {
+			int pos = 0;
+			foreach (CDataCell dc in myTaskItems)  // 데이터내 목록명 변경
+			{
+				if (source == dc.DC_listName)
+				{
+					myTaskItems[pos].DC_listName = target;
+				}
+				pos++;
+			}
+
+			CDataCell rename = new CDataCell();
+			rename.DC_listName = target;
+			Update_View.Invoke(this, new ModelEventArgs(rename, WParam.WM_MENULIST_RENAME));
+		}
+
+		public void Menulist_Delete(string target)
+        {
+			int pos = 0;
+			CDataCell dc = null;
+			while (pos < myTaskItems.Count) // 리스트 제거
+			{
+				dc = myTaskItems[pos];
+				if (dc.DC_listName == target)
+				{
+					myTaskItems.RemoveAt(pos);
+				}
+				else
+				{
+					++pos;
+				}
+			}
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MENULIST_DELETE));
+		}
+
+		public void Transfer_Task(CDataCell dc, string target)
+        {
+			Find(dc).DC_listName = target;
+
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TRANSFER_TASK));
 		}
 
 		public void Add_Task(string list, string title)
@@ -90,7 +132,7 @@ namespace WellaTodo
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
 
-			Update_Add_Task.Invoke (this, new ModelEventArgs(dc));
+			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));
 		}
 
 		public void Add_Task(CDataCell dc)
@@ -145,8 +187,9 @@ namespace WellaTodo
 
 		public void Modify_Task_Title(CDataCell dc)
         {
+			Console.WriteLine("Befor title : " + Find(dc).DC_title);
+			Console.WriteLine("After title : " + dc.DC_title);
 			Find(dc).DC_title =  dc.DC_title;
-
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_TITLE));
 		}
 
@@ -221,6 +264,16 @@ namespace WellaTodo
 		public void Modifiy_Remind(CDataCell dc)
         {
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_REMIND));
+		}
+
+		public void Modifiy_Planned(CDataCell dc)
+		{
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_PLANNED));
+		}
+
+		public void Modifiy_Repeat(CDataCell dc)
+		{
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_REPEAT));
 		}
 
 		private CDataCell Find(CDataCell dc)

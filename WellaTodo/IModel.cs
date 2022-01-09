@@ -16,6 +16,7 @@ namespace WellaTodo
 
         public ModelEventArgs() { Item = null; }
         public ModelEventArgs(CDataCell dc) { Item = dc; }
+        public ModelEventArgs(WParam param) { Param = param; }
         public ModelEventArgs(CDataCell dc, WParam param ) { Item = dc; Param = param; }
     }
 

@@ -13,7 +13,6 @@ namespace WellaTodo
     public partial class TaskEditForm : Form
     {
         static readonly int PANEL_SX = 10;
-        static readonly int PANEL_SY = 10;
         static readonly int PANEL_WIDTH = 300;
         static readonly int PANEL_HEIGHT = 350;
 

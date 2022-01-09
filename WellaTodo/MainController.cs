@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace WellaTodo
 {
 	public class MainController : IController
@@ -49,6 +52,37 @@ namespace WellaTodo
 			return m_model;
         }
 
+		public void Load_Data_File()
+        {
+			Stream rs = new FileStream("task.dat", FileMode.Open);
+			BinaryFormatter deserializer = new BinaryFormatter();
+
+			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+			rs.Close();
+
+			m_model.SetDataCollection(todo_data);
+		}
+
+		public void Save_Data_File()
+        {
+			Stream ws = new FileStream("task.dat", FileMode.Create);
+			BinaryFormatter serializer = new BinaryFormatter();
+
+			serializer.Serialize(ws, m_model.GetDataCollection());
+			ws.Close();
+
+		}
+
+		public void Perform_Menulist_Rename(string source, string target)
+        {
+			m_model.Menulist_Rename(source, target);
+        }
+
+		public void Perform_Menulist_Delete(string target)
+        {
+			m_model.Menulist_Delete(target);
+		}
+
 		public void Perform_Add_Task(CDataCell dc)
         {
 			m_model.Add_Task(dc);
@@ -88,6 +122,15 @@ namespace WellaTodo
 			CDataCell data = Find(dc);
 			data.DC_deadlineType = type;
 			data.DC_deadlineTime = dt;
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
+		{
+			CDataCell data = Find(dc);
+			data.DC_repeatType = type;
+			data.DC_repeatTime = dt;
+			m_model.Modifiy_Repeat(dc);
 		}
 
 		public void Perform_Important_Process(CDataCell dc)
@@ -123,6 +166,11 @@ namespace WellaTodo
 			m_model.Task_Move_Down(dc);
 		}
 
+		public void Perform_Trasnfer_Task(CDataCell dc, string listname)
+        {
+			m_model.Transfer_Task(dc, listname);
+        }
+
 		public void Perform_MyToday_Process(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
@@ -138,6 +186,36 @@ namespace WellaTodo
 				dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 			}
 			m_model.Modifiy_MyToday(dc);
+		}
+
+		public IEnumerable<CDataCell> Query_MyToday()
+        {
+			return from CDataCell dt in m_model.GetDataCollection() 
+				   where dt.DC_myToday && !dt.DC_complete select dt;
+		}
+
+		public IEnumerable<CDataCell> Query_Important()
+		{
+			return from CDataCell dt in m_model.GetDataCollection() 
+				   where dt.DC_important && !dt.DC_complete select dt;
+		}
+
+		public IEnumerable<CDataCell> Query_Planned()
+		{
+			return from CDataCell dt in m_model.GetDataCollection() 
+				   where (dt.DC_deadlineType > 0 || dt.DC_repeatType > 0) && !dt.DC_complete select dt;
+		}
+
+		public IEnumerable<CDataCell> Query_Complete()
+		{
+			return from CDataCell dt in m_model.GetDataCollection() 
+				   where dt.DC_complete == true select dt;
+		}
+
+		public IEnumerable<CDataCell> Query_Task(string listname)
+		{
+			return from CDataCell dt in m_model.GetDataCollection() 
+				   where dt.DC_listName == listname select dt;
 		}
 
 		private CDataCell Find(CDataCell dc)
