@@ -36,20 +36,20 @@
             this.labelUserName = new System.Windows.Forms.Label();
             this.textBox_Task = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panel_Calendar = new System.Windows.Forms.Panel();
             this.panel_Header = new System.Windows.Forms.Panel();
             this.label_ListName = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox_Title = new System.Windows.Forms.TextBox();
+            this.textBox_Memo = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
-            this.panel_Calendar = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -150,13 +150,22 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.button2);
             this.splitContainer2.Panel2.Controls.Add(this.button1);
-            this.splitContainer2.Panel2.Controls.Add(this.textBox3);
-            this.splitContainer2.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer2.Panel2.Controls.Add(this.textBox_Title);
+            this.splitContainer2.Panel2.Controls.Add(this.textBox_Memo);
             this.splitContainer2.Panel2MinSize = 1;
             this.splitContainer2.Size = new System.Drawing.Size(600, 340);
             this.splitContainer2.SplitterDistance = 306;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
+            // 
+            // panel_Calendar
+            // 
+            this.panel_Calendar.Location = new System.Drawing.Point(14, 256);
+            this.panel_Calendar.Name = "panel_Calendar";
+            this.panel_Calendar.Size = new System.Drawing.Size(280, 68);
+            this.panel_Calendar.TabIndex = 3;
+            this.panel_Calendar.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Calendar_Paint);
+            this.panel_Calendar.Resize += new System.EventHandler(this.panel_Calendar_Resize);
             // 
             // panel_Header
             // 
@@ -210,30 +219,29 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox3
+            // textBox_Title
             // 
-            this.textBox3.Location = new System.Drawing.Point(40, 11);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(211, 25);
-            this.textBox3.TabIndex = 7;
-            this.textBox3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox3_KeyDown);
-            this.textBox3.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox3_KeyUp);
-            this.textBox3.Leave += new System.EventHandler(this.textBox3_Leave);
-            this.textBox3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox3_MouseDown);
+            this.textBox_Title.Location = new System.Drawing.Point(40, 11);
+            this.textBox_Title.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox_Title.Name = "textBox_Title";
+            this.textBox_Title.Size = new System.Drawing.Size(211, 25);
+            this.textBox_Title.TabIndex = 7;
+            this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
+            this.textBox_Title.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyUp);
+            this.textBox_Title.Leave += new System.EventHandler(this.textBox_Title_Leave);
+            this.textBox_Title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Title_MouseDown);
             // 
-            // textBox1
+            // textBox_Memo
             // 
-            this.textBox1.Location = new System.Drawing.Point(15, 173);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(260, 118);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
-            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
-            this.textBox1.MouseLeave += new System.EventHandler(this.textBox1_MouseLeave);
+            this.textBox_Memo.Location = new System.Drawing.Point(15, 173);
+            this.textBox_Memo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox_Memo.Multiline = true;
+            this.textBox_Memo.Name = "textBox_Memo";
+            this.textBox_Memo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox_Memo.Size = new System.Drawing.Size(260, 118);
+            this.textBox_Memo.TabIndex = 6;
+            this.textBox_Memo.Leave += new System.EventHandler(this.textBox_Memo_Leave);
+            this.textBox_Memo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Memo_MouseDown);
             // 
             // openFileDialog1
             // 
@@ -261,15 +269,6 @@
             // printDialog1
             // 
             this.printDialog1.UseEXDialog = true;
-            // 
-            // panel_Calendar
-            // 
-            this.panel_Calendar.Location = new System.Drawing.Point(14, 256);
-            this.panel_Calendar.Name = "panel_Calendar";
-            this.panel_Calendar.Size = new System.Drawing.Size(280, 68);
-            this.panel_Calendar.TabIndex = 3;
-            this.panel_Calendar.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Calendar_Paint);
-            this.panel_Calendar.Resize += new System.EventHandler(this.panel_Calendar_Resize);
             // 
             // MainFrame
             // 
@@ -308,8 +307,8 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox textBox_Task;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox_Memo;
+        private System.Windows.Forms.TextBox textBox_Title;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;

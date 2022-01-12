@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace WellaTodo
 {
     [Serializable]
-    public class CDataCell
+    public class CDataCell : ICloneable 
     {
+        private int _task_ID;
         private string _listName;
         private string _title;
         private bool _complete;
@@ -24,6 +25,7 @@ namespace WellaTodo
         private int _repeatType;
         private DateTime _repeatTime;
 
+        public int DC_task_ID { get => _task_ID; set => _task_ID = value; }
         public string DC_listName { get => _listName; set => _listName = value; }
         public string DC_title { get => _title; set => _title = value; }
         public bool DC_complete { get => _complete; set => _complete = value; }
@@ -41,6 +43,7 @@ namespace WellaTodo
 
         public CDataCell()
         {
+            _task_ID = 0;
             _listName = "작업";
             _title = "입력하세요";
             _complete = false;
@@ -57,8 +60,9 @@ namespace WellaTodo
             _repeatTime = default;
         }
 
-        public CDataCell(string list, string title)
+        public CDataCell(int id, string list, string title)
         {
+            _task_ID = id;
             _listName = list.Length == 0 ? "작업" : list;
             _title = title;
             _complete = false;
@@ -73,6 +77,25 @@ namespace WellaTodo
             _deadlineTime = DateTime.MinValue; // 1/1/0001 12:00:00 AM.
             _repeatType = 0;
             _repeatTime = default;
+        }
+
+        public CDataCell ShallowCopy()
+        {
+            return (CDataCell)MemberwiseClone();
+        }
+
+        public CDataCell DeepCopy()
+        {
+            CDataCell deepCopy = new CDataCell();
+            deepCopy.DC_listName = "작업";
+            return deepCopy;
+        }
+
+        public object Clone()
+        {
+            CDataCell clone = new CDataCell();
+            clone.DC_listName = "작업";
+            return clone;
         }
 
         public override String ToString()

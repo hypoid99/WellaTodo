@@ -1,4 +1,14 @@
-﻿using System;
+﻿// ----------------------------------------------------------
+// Main Controller
+// ----------------------------------------------------------
+// 1. 사용자 요청을 분석한다
+// 2. 뷰를 통해 입력된 데이터 가져오기
+// 3. 프레임 이동
+// 4. 유효성 검사
+// 5. 모델 객체 생성
+// ----------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +23,8 @@ namespace WellaTodo
 	{
 		IView m_view;
 		MainModel m_model;
+
+		int m_Task_ID_Num = 0;
 
 		public MainController(IView v, IModel m)
 		{
@@ -60,6 +72,14 @@ namespace WellaTodo
 			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
 			rs.Close();
 
+			m_Task_ID_Num = todo_data.Count - 1;
+			int pos = 0;
+			for (int i = m_Task_ID_Num; i >= 0; i--)
+            {
+				todo_data[i].DC_task_ID = pos;
+				pos++;
+            }
+
 			m_model.SetDataCollection(todo_data);
 		}
 
@@ -85,6 +105,8 @@ namespace WellaTodo
 
 		public void Perform_Add_Task(CDataCell dc)
         {
+			m_Task_ID_Num++;
+			dc.DC_task_ID = m_Task_ID_Num;
 			m_model.Add_Task(dc);
         }
 
@@ -226,6 +248,11 @@ namespace WellaTodo
 			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
 			return dataset.First();
 		}
+
+		public void Perform_Display_Data()
+        {
+			m_model.Display_Data();
+        }
 
 	}
 }

@@ -1,4 +1,12 @@
-﻿using System;
+﻿// ----------------------------------------------------------
+// Main Model
+// ----------------------------------------------------------
+// 1. 데이터 저장, 수정, 삭제
+// 2. 데이터 가공 처리
+// 3. DB Access
+// ----------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -75,9 +83,9 @@ namespace WellaTodo
 			return myTaskItems;
         }
 
-		public void SetDataCollection (List<CDataCell> dataset)
+		public void SetDataCollection (List<CDataCell> data_collections)
         {
-			myTaskItems = dataset;
+			myTaskItems = data_collections;
 		}
 
 		public void Menulist_Rename(string source, string target)
@@ -123,27 +131,25 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TRANSFER_TASK));
 		}
 
-		public void Add_Task(string list, string title)
+		public void Add_Task(int id, string list, string title)
         {
-			Console.WriteLine(">MainModel::Add_Task");
 			DateTime dt = DateTime.Now;
 
-			CDataCell dc = new CDataCell(list, title);  // DataCell 생성
+			CDataCell dc = new CDataCell(id, list, title);  // DataCell 생성
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
 
-			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));
+			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));  // deep copy 할 것!
 		}
 
 		public void Add_Task(CDataCell dc)
 		{
-			Console.WriteLine(">MainModel::Add_Task");
 			DateTime dt = DateTime.Now;
 
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
-
-			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));
+			Display_Data();
+			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));  // deep copy 할 것!
 		}
 
 		public void Delete_Task(CDataCell dc)
@@ -156,7 +162,7 @@ namespace WellaTodo
 
 		public void Important_Process(CDataCell dc)
 		{
-			Console.WriteLine(">MainModel::Important_Process:"+dc.DC_important);
+			Console.WriteLine(">MainModel::Important_Process:" + dc.DC_important);
 
 			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
 			{
@@ -187,8 +193,6 @@ namespace WellaTodo
 
 		public void Modify_Task_Title(CDataCell dc)
         {
-			Console.WriteLine("Befor title : " + Find(dc).DC_title);
-			Console.WriteLine("After title : " + dc.DC_title);
 			Find(dc).DC_title =  dc.DC_title;
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_TITLE));
 		}
@@ -196,7 +200,6 @@ namespace WellaTodo
 		public void Modify_Task_Memo(CDataCell dc)
 		{
 			Find(dc).DC_memo = dc.DC_memo;
-
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_MEMO));
 		}
 
@@ -284,6 +287,14 @@ namespace WellaTodo
 			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
 			return dataset.First();
 		}
+
+		public void Display_Data()
+        {
+			foreach (CDataCell dc in myTaskItems)
+            {
+				Console.WriteLine("<"+dc.DC_task_ID+">"+"[" + dc.DC_listName + "]" + dc.DC_title);
+            }
+        }
 	}
 }
 

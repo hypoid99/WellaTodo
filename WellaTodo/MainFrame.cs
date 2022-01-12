@@ -264,9 +264,9 @@ namespace WellaTodo
             roundCheckbox1.Size = new Size(25, 25);
             splitContainer2.Panel2.Controls.Add(roundCheckbox1);
 
-            textBox3.Location = new Point(DETAIL_WINDOW_X1 + 30, 8);
-            textBox3.Size = new Size(DETAIL_WINDOW_WIDTH - 78, 25);
-            textBox3.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
+            textBox_Title.Location = new Point(DETAIL_WINDOW_X1 + 30, 8);
+            textBox_Title.Size = new Size(DETAIL_WINDOW_WIDTH - 78, 25);
+            textBox_Title.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
 
             starCheckbox1.MouseEnter += new EventHandler(starCheckbox1_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(starCheckbox1_MouseLeave);
@@ -307,9 +307,9 @@ namespace WellaTodo
             roundLabel4.Size = new Size(DETAIL_WINDOW_WIDTH - 45, 30);
             splitContainer2.Panel2.Controls.Add(roundLabel4);
 
-            textBox1.Multiline = true;
-            textBox1.Location = new Point(DETAIL_WINDOW_X1 + 5, 185);
-            textBox1.Size = new Size(DETAIL_WINDOW_WIDTH - 25, 130);
+            textBox_Memo.Multiline = true;
+            textBox_Memo.Location = new Point(DETAIL_WINDOW_X1 + 5, 185);
+            textBox_Memo.Size = new Size(DETAIL_WINDOW_WIDTH - 25, 130);
 
             createDateLabel.Text = " 생성됨";
             createDateLabel.Location = new Point(DETAIL_WINDOW_X1 + 10, 325);
@@ -1159,7 +1159,7 @@ namespace WellaTodo
             }
             m_Task.Clear();
 
-            foreach (CDataCell data in dataset)  // m_Task에 저장
+            foreach (CDataCell data in dataset)  // Todo_Item 생성 및 m_Task에 저장
             {
                 Todo_Item item = new Todo_Item(data);
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
@@ -1167,7 +1167,6 @@ namespace WellaTodo
                 item.TD_infomation = MakeInfoTextFromDataCell(data);
                 m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
                 m_Task.Add(item);
-                //item.Display_Event_Status();
             }
 
             m_currentPage = 1;
@@ -1501,15 +1500,15 @@ namespace WellaTodo
         {
             memoForm.StartPosition = FormStartPosition.Manual;
             memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
-            memoForm.TextBoxString = textBox1.Text;
+            memoForm.TextBoxString = textBox_Memo.Text;
             memoForm.Text = m_Selected_Item.TD_DataCell.DC_title;
             memoForm.ShowDialog();
 
-            textBox1.Text = memoForm.TextBoxString;
-            textBox1.SelectionStart = textBox1.Text.Length;
+            textBox_Memo.Text = memoForm.TextBoxString;
+            textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
 
             //메모 내용에 변경이 있는지 확인(?)
-            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
@@ -1756,11 +1755,11 @@ namespace WellaTodo
 
         private void SendDataCellToDetailWindow(CDataCell dc)
         {
-            textBox3.Text = dc.DC_title;
+            textBox_Title.Text = dc.DC_title;
             roundCheckbox1.Checked = dc.DC_complete;
             starCheckbox1.Checked = dc.DC_important;
-            textBox1.Text = dc.DC_memo;
-            textBox1.SelectionStart = textBox1.Text.Length;
+            textBox_Memo.Text = dc.DC_memo;
+            textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
 
             if (dc.DC_myToday)
             {
@@ -1886,56 +1885,7 @@ namespace WellaTodo
         // --------------------------------------------------------------------------
 
         //상세창 제목 입력
-        private void textBox3_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextMenu textboxMenu = new ContextMenu();
-                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox3_Click));
-                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox3_Click));
-                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox3_Click));
-
-                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox3);
-                textboxMenu.MenuItems.Add(copyMenu);
-                textboxMenu.MenuItems.Add(cutMenu);
-                textboxMenu.MenuItems.Add(pasteMenu);
-                textBox3.ContextMenu = textboxMenu;
-
-                textBox3.ContextMenu.Show(textBox3, new Point(e.X, e.Y));
-            }
-        }
-
-        private void OnPopupEvent_textBox3(object sender, EventArgs e)
-        {
-            ContextMenu ctm = (ContextMenu)sender;
-            ctm.MenuItems[0].Enabled = textBox3.SelectedText.Length != 0; // copy
-            ctm.MenuItems[1].Enabled = textBox3.SelectedText.Length != 0; // cut
-            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
-        }
-
-        private void OnCopyMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Copy(); }
-        private void OnCutMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Cut(); }
-        private void OnPasteMenu_textBox3_Click(object sender, EventArgs e) { textBox3.Paste(); }
-
-        private void textBox3_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
-
-                if (textBox3.Text.Trim().Length == 0)
-                {
-                    textBox3.Text = m_Selected_Item.TD_DataCell.DC_title;
-                    return;
-                }
-
-                m_Selected_Item.TD_DataCell.DC_title = textBox3.Text;  // 입력 사항에 오류가 있는지 체크할 것
-                m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
-            }
-        }
-
-        private void textBox3_KeyDown(object sender, KeyEventArgs e)
+        private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -1944,17 +1894,66 @@ namespace WellaTodo
             }
         }
 
-        private void textBox3_Leave(object sender, EventArgs e)
+        private void textBox_Title_KeyUp(object sender, KeyEventArgs e)
         {
-            if (textBox3.Text.Trim().Length == 0)
+            if (e.KeyCode == Keys.Enter)
             {
-                textBox3.Text = m_Selected_Item.TD_DataCell.DC_title;
+                e.Handled = false;
+                e.SuppressKeyPress = false;
+
+                if (textBox_Title.Text.Trim().Length == 0)
+                {
+                    textBox_Title.Text = m_Selected_Item.TD_DataCell.DC_title;
+                    return;
+                }
+
+                m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+                m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
+            }
+        }
+
+        private void textBox_Title_Leave(object sender, EventArgs e)
+        {
+            if (textBox_Title.Text.Trim().Length == 0)
+            {
+                textBox_Title.Text = m_Selected_Item.TD_DataCell.DC_title;
                 return;
             }
 
-            m_Selected_Item.TD_DataCell.DC_title = textBox3.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
             m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
         }
+
+        private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_Title_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_Title_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_Title_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_Title);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox_Title.ContextMenu = textboxMenu;
+
+                textBox_Title.ContextMenu.Show(textBox_Title, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox_Title(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox_Title.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox_Title.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+
+        private void OnCopyMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Copy(); }
+        private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
+        private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
 
         private void Update_Modify_Task_Title(CDataCell dc)
         {
@@ -1970,33 +1969,27 @@ namespace WellaTodo
         }
 
         // 상세창 메모 커서 벗어남
-        private void textBox1_Leave(object sender, EventArgs e)
+        private void textBox_Memo_Leave(object sender, EventArgs e)
         {
             //메모 내용에 변경이 있는지 확인(?)
-            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
-            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
-        }
-
-        private void textBox1_MouseLeave(object sender, EventArgs e)
-        {
-            m_Selected_Item.TD_DataCell.DC_memo = textBox1.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
         // 상세창 메모 컨텍스트 메뉴
-        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        private void textBox_Memo_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 ContextMenu textboxMenu = new ContextMenu();
-                MenuItem extendMemo = new MenuItem("메모확장", new EventHandler(OnExtendMemo_textBox1_Click));
-                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox1_Click));
-                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox1_Click));
-                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox1_Click));
-                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_textBox1_Click));
-                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_textBox1_Click));
+                MenuItem extendMemo = new MenuItem("메모확장", new EventHandler(OnExtendMemo_textBox_Memo_Click));
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_Memo_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_Memo_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_Memo_Click));
+                MenuItem selectAllMenu = new MenuItem("전체 선택", new EventHandler(OnSelectAllMenu_textBox_Memo_Click));
+                MenuItem undoMenu = new MenuItem("실행 취소", new EventHandler(OnUndoMenu_textBox_Memo_Click));
 
-                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox1);
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_Memo);
                 textboxMenu.MenuItems.Add(extendMemo);
                 textboxMenu.MenuItems.Add("-");
                 textboxMenu.MenuItems.Add(copyMenu);
@@ -2005,33 +1998,33 @@ namespace WellaTodo
                 textboxMenu.MenuItems.Add(selectAllMenu);
                 textboxMenu.MenuItems.Add("-");
                 textboxMenu.MenuItems.Add(undoMenu);
-                textBox1.ContextMenu = textboxMenu;
+                textBox_Memo.ContextMenu = textboxMenu;
 
-                textBox1.ContextMenu.Show(textBox1, new Point(e.X, e.Y));
+                textBox_Memo.ContextMenu.Show(textBox_Memo, new Point(e.X, e.Y));
             }
         }
 
-        private void OnPopupEvent_textBox1(object sender, EventArgs e)
+        private void OnPopupEvent_textBox_Memo(object sender, EventArgs e)
         {
             ContextMenu ctm = (ContextMenu)sender;
 
-            ctm.MenuItems[2].Enabled = textBox1.SelectedText.Length != 0; // copy
-            ctm.MenuItems[3].Enabled = textBox1.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = textBox_Memo.SelectedText.Length != 0; // copy
+            ctm.MenuItems[3].Enabled = textBox_Memo.SelectedText.Length != 0; // cut
             ctm.MenuItems[4].Enabled = Clipboard.ContainsText(); // paste
-            ctm.MenuItems[5].Enabled = textBox1.Text.Length != 0; // selectAll
-            ctm.MenuItems[7].Enabled = textBox1.CanUndo; // undo
+            ctm.MenuItems[5].Enabled = textBox_Memo.Text.Length != 0; // selectAll
+            ctm.MenuItems[7].Enabled = textBox_Memo.CanUndo; // undo
         }
 
-        private void OnExtendMemo_textBox1_Click(object sender, EventArgs e)
+        private void OnExtendMemo_textBox_Memo_Click(object sender, EventArgs e)
         {
             Edit_Task_Memo();
         }
 
-        private void OnCopyMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Copy(); }
-        private void OnCutMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Cut(); }
-        private void OnPasteMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Paste(); }
-        private void OnSelectAllMenu_textBox1_Click(object sender, EventArgs e) { textBox1.SelectAll(); }
-        private void OnUndoMenu_textBox1_Click(object sender, EventArgs e) { textBox1.Undo(); }
+        private void OnCopyMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Copy(); }
+        private void OnCutMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Cut(); }
+        private void OnPasteMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Paste(); }
+        private void OnSelectAllMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.SelectAll(); }
+        private void OnUndoMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Undo(); }
 
         // 상세창 닫기 버튼
         private void button1_Click(object sender, EventArgs e)
