@@ -31,11 +31,7 @@ namespace WellaTodo
 			m_view = v;
 			m_model = (MainModel)m;
 
-			m_view.SetController(this);
-
-			m_view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
-
-			m_model.Add_Observer((IModelObserver)m_view);
+			Initiate();
 		}
 
 		public MainController(IView v, MainModel m)
@@ -43,7 +39,16 @@ namespace WellaTodo
 			m_view = v;
 			m_model = m;
 
+			Initiate();
+		}
+
+		public void Initiate()
+        {
 			m_view.SetController(this);
+			m_view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
+			m_model.Add_Observer((IModelObserver)m_view);
+
+			Load_Data_File();
 		}
 
 		public void View_Changed_Event_method(IView v, ViewEventArgs e)
@@ -81,6 +86,7 @@ namespace WellaTodo
             }
 
 			m_model.SetDataCollection(todo_data);
+			m_model.Load_Data();
 		}
 
 		public void Save_Data_File()
@@ -236,15 +242,22 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Task(string listname)
 		{
-			return from CDataCell dt in m_model.GetDataCollection() 
-				   where dt.DC_listName == listname select dt;
+			IEnumerable < CDataCell > dataset = from CDataCell dt in m_model.GetDataCollection() 
+												where dt.DC_listName == listname select dt;
+			// 리턴시 Deep Copy 할 것 !!!
+			List<CDataCell> deepCopy = new List<CDataCell>();
+			foreach (CDataCell dc in dataset)
+            {
+				deepCopy.Add((CDataCell)dc.Clone());
+            }
+			return deepCopy;
 		}
 
 		private CDataCell Find(CDataCell dc)
         {
 			IEnumerable<CDataCell> dataset = from CDataCell data in m_model.GetDataCollection()
-											 where dc.Equals(data)
-											 select data;
+											 where dc.Equals(data) select data;
+
 			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
 			return dataset.First();
 		}

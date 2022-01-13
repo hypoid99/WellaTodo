@@ -93,9 +93,7 @@ namespace WellaTodo
 
         public object Clone()
         {
-            CDataCell clone = new CDataCell();
-            clone.DC_listName = "작업";
-            return clone;
+            return MemberwiseClone();
         }
 
         public override String ToString()

@@ -549,7 +549,7 @@ namespace WellaTodo
                 pos = 0;
                 foreach (CDataCell data in m_Controller.Get_Model().GetDataCollection())
                 {
-                    txt = ">Data DC:[" + pos + "] " + data.DC_listName + "--" + data.DC_title + "\r\n";
+                    txt = ">Data DC:[" + data.DC_task_ID + "] " + data.DC_listName + "--" + data.DC_title + "\r\n";
                     outputForm.TextBoxString = txt;
                     pos++;
                 }
@@ -578,6 +578,12 @@ namespace WellaTodo
             WParam param = e.Param;
             switch (param)
             {
+                case WParam.WM_LOAD_DATA:
+                    Update_Load_Data();
+                    break;
+                case WParam.WM_SAVE_DATA:
+                    Update_Save_Data();
+                    break;
                 case WParam.WM_COMPLETE_PROCESS:
                     Update_Complete_Process(dc);
                     break;
@@ -705,8 +711,6 @@ namespace WellaTodo
             m_Selected_Menu.IsSelected = true;
             enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
 
-            // 할일 항목 초기 표시
-            Menu_Task();
             Update_Task_Width();
             Update_Menu_Metadata();
         }
@@ -716,7 +720,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Load_Data_File()
         {
-            m_Controller.Load_Data_File();
+            //m_Controller.Load_Data_File(); // -> controller로 이동
 
             Stream rs_list = new FileStream("list.dat", FileMode.Open);
             BinaryFormatter deserializer_list = new BinaryFormatter();
@@ -728,7 +732,12 @@ namespace WellaTodo
                 m_ListName_stringData.Add(list);
             }
             rs_list.Close();
+        }
 
+        private void Update_Load_Data()
+        {
+            // 할일 항목 초기 표시
+            Menu_Task();
         }
 
         //--------------------------------------------------------------
@@ -749,6 +758,11 @@ namespace WellaTodo
             }
             serializer_list.Serialize(ws_list, m_ListName_stringData);
             ws_list.Close();
+        }
+
+        private void Update_Save_Data()
+        {
+            Console.WriteLine("Update_Save_Data");
         }
 
         //--------------------------------------------------------------
@@ -1381,7 +1395,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 항목 추가
         //--------------------------------------------------------------
-        private void Add_Task(string text)
+        private void Task_Add(string text)
         {
             CDataCell dc = new CDataCell();
             DateTime dt = DateTime.Now;
@@ -1453,7 +1467,7 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // 할일 항목 삭제
         //--------------------------------------------------------------
-        private void Delete_Task(CDataCell dc)
+        private void Task_Delete(CDataCell dc)
         {
             string txt = "항목 삭제? [" + dc.DC_title + "]";
             if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
@@ -1564,7 +1578,7 @@ namespace WellaTodo
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     if (item.TD_complete)
                     {
@@ -1616,7 +1630,7 @@ namespace WellaTodo
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     if (item.TD_important && !item.TD_complete)  // 중요 & 미완료시 맨위로 이동
                     {
@@ -1750,7 +1764,7 @@ namespace WellaTodo
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
         {
-            Delete_Task(m_Selected_Item.TD_DataCell);
+            Task_Delete(m_Selected_Item.TD_DataCell);
         }
 
         private void SendDataCellToDetailWindow(CDataCell dc)
@@ -1806,7 +1820,7 @@ namespace WellaTodo
                 roundLabel4.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
             }
 
-            createDateLabel.Text = dc.DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") + "생성됨";
+            createDateLabel.Text = dc.DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") + "생성됨[" + dc.DC_task_ID + "]";
         }
 
         // -----------------------------------------------------------
@@ -1821,7 +1835,7 @@ namespace WellaTodo
                 //textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
                 if (textBox_Task.Text.Trim().Length == 0) return;
 
-                Add_Task(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
+                Task_Add(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
 
                 textBox_Task.Text = "";
             }
@@ -1906,7 +1920,6 @@ namespace WellaTodo
                     textBox_Title.Text = m_Selected_Item.TD_DataCell.DC_title;
                     return;
                 }
-
                 m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
                 m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
             }
@@ -2037,7 +2050,7 @@ namespace WellaTodo
         // 상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
-            Delete_Task(m_Selected_Item.TD_DataCell);
+            Task_Delete(m_Selected_Item.TD_DataCell);
         }
 
         // -------------------------------------------------
@@ -2793,7 +2806,7 @@ namespace WellaTodo
         {
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     item.TD_infomation = MakeInfoTextFromDataCell(dc);
                     item.Refresh();
