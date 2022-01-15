@@ -27,12 +27,17 @@ namespace WellaTodo
 
             Application.Run(mainFrame);
             */
+
+            /*
             MainFrame view = new MainFrame();
             IModel model = new MainModel();
             IController controller = new MainController(view, model);
 
             Application.Run(view);
-            
+            */
+
+            WellaForm form = new WellaForm();
+            Application.Run(form);
         }
     }
 }

@@ -230,8 +230,8 @@ namespace WellaTodo
 
             // 태스크 항목
             flowLayoutPanel2.AllowDrop = true;
-            flowLayoutPanel2.DragOver += new DragEventHandler(Task_DragOver);
-            flowLayoutPanel2.DragDrop += new DragEventHandler(Task_DragDrop);
+            flowLayoutPanel2.DragOver += new DragEventHandler(DragDrop_Task_DragOver);
+            flowLayoutPanel2.DragDrop += new DragEventHandler(DragDrop_Task_DragDrop);
 
             flowLayoutPanel2.AutoScroll = false;
             flowLayoutPanel2.HorizontalScroll.Maximum = 0;
@@ -540,14 +540,19 @@ namespace WellaTodo
             }
         }
 
+        //
+        // Display Data -> controller로 이동할 것
+        //
         private void Display_Data()
         {
             int pos;
             string txt;
+
+            IEnumerable<CDataCell> dataset = m_Controller.Query_All_Task();
             if (outputForm.Visible)
             {
                 pos = 0;
-                foreach (CDataCell data in m_Controller.Get_Model().GetDataCollection())
+                foreach (CDataCell data in dataset)
                 {
                     txt = ">Data DC:[" + data.DC_task_ID + "] " + data.DC_listName + "--" + data.DC_title + "\r\n";
                     outputForm.TextBoxString = txt;
@@ -573,7 +578,7 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
-            Console.WriteLine(">MainFrame::Update_View");
+            //Console.WriteLine(">MainFrame::Update_View");
             CDataCell dc = e.Item;
             WParam param = e.Param;
             switch (param)
@@ -594,6 +599,13 @@ namespace WellaTodo
                     Update_Modify_Task_Title(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_MEMO:
+                    Update_Modify_Task_Memo(dc);
+                    break;
+                case WParam.WM_TASK_ADD:
+                    Update_Add_Task(dc);
+                    break;
+                case WParam.WM_TASK_DELETE:
+                    Update_Delete_Task(dc);
                     break;
                 case WParam.WM_TASK_MOVE_UP:
                     Update_Task_Move_Up(dc);
@@ -847,6 +859,31 @@ namespace WellaTodo
                     break;
                 case MouseButtons.Middle:
                     Menulist_Rename(sender, me);  // 목록명 변경되어 실행됨
+                    break;
+            }
+        }
+
+        private void Update_Selected_Menu()
+        {
+            switch (m_Selected_Menu.PrimaryText)
+            {
+                case "오늘 할 일":
+                    Menu_MyToday();
+                    break;
+                case "중요":
+                    Menu_Important();
+                    break;
+                case "계획된 일정":
+                    Menu_Planned();
+                    break;
+                case "완료됨":
+                    Menu_Completed();
+                    break;
+                case "작업":
+                    Menu_Task();
+                    break;
+                default:
+                    Menu_List(m_Selected_Menu);
                     break;
             }
         }
@@ -1439,9 +1476,8 @@ namespace WellaTodo
         }
 
         // 할일 추가 화면 갱신
-        public void Update_Add_Task(IModel m, ModelEventArgs e)
+        public void Update_Add_Task(CDataCell dc)
         {
-            CDataCell dc = e.Item;
             Todo_Item item = new Todo_Item(dc);  // Task 생성
 
             m_Task.Insert(0, item);
@@ -1476,14 +1512,13 @@ namespace WellaTodo
         }
 
         // 항목 삭제 화면 갱신
-        public void Update_Delete_Task(IModel m, ModelEventArgs e)
+        public void Update_Delete_Task(CDataCell dc)
         {
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
-            CDataCell dc = e.Item;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     m_Task.Remove(item);  //m_Task 에서 항목 삭제해야함, 
 
@@ -1523,6 +1558,7 @@ namespace WellaTodo
 
             //메모 내용에 변경이 있는지 확인(?)
             m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            Console.WriteLine("1>MainFrame::Edit_Task_Memo -> Memo :" + m_Selected_Item.TD_DataCell.DC_memo);
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
@@ -1557,11 +1593,15 @@ namespace WellaTodo
                 case MouseButtons.Left:
                     if (sd.IsCompleteClicked) //완료됨 클릭시
                     {
+                        Console.WriteLine("1>MainFrame::TodoItem_UserControl_Click -> Complete :" + sd.TD_complete);
+                        sd.TD_DataCell.DC_complete = sd.TD_complete;
                         m_Controller.Perform_Complete_Process(sd.TD_DataCell);
                         sd.IsCompleteClicked = false;
                     }
                     if (sd.IsImportantClicked)  // 중요 항목 클릭시
                     {
+                        Console.WriteLine("1>MainFrame::TodoItem_UserControl_Click -> Important :" + sd.TD_important);
+                        sd.TD_DataCell.DC_important = sd.TD_important;
                         m_Controller.Perform_Important_Process(sd.TD_DataCell);
                         sd.IsImportantClicked = false;
                     }
@@ -1574,6 +1614,7 @@ namespace WellaTodo
 
         private void Update_Complete_Process(CDataCell dc)
         {
+            Console.WriteLine("4>MainFrame::Update_Complete_Process");
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
@@ -1618,6 +1659,8 @@ namespace WellaTodo
             if (enum_Selected_Menu == MenuList.DEADLINE_MENU) Menu_Planned(); // 계획된 일정에서 실행
             if (enum_Selected_Menu == MenuList.COMPLETE_MENU) Menu_Completed(); // 완료됨에서 실행
 
+            if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU) Menu_Task(); // 작업에서 실행
+
             SendDataCellToDetailWindow(dc);
 
             Update_Task_Width();
@@ -1626,6 +1669,7 @@ namespace WellaTodo
 
         private void Update_Important_Process(CDataCell dc)
         {
+            Console.WriteLine("4>MainFrame::Update_Complete_Process");
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
@@ -1649,6 +1693,8 @@ namespace WellaTodo
             }
 
             if (enum_Selected_Menu == MenuList.IMPORTANT_MENU) Menu_Important(); // 중요 메뉴에서는 재실행
+
+            if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU) Menu_Task(); // 작업에서 실행
 
             SendDataCellToDetailWindow(dc);
 
@@ -1718,6 +1764,8 @@ namespace WellaTodo
             starCheckbox1.Checked = !starCheckbox1.Checked;
 
             m_Selected_Item.TD_important = starCheckbox1.Checked;
+            m_Selected_Item.TD_DataCell.DC_important = starCheckbox1.Checked;
+            Console.WriteLine("1>MainFrame::OnImportantMenuItem_Click -> Important :" + m_Selected_Item.TD_DataCell.DC_important);
             m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
@@ -1728,6 +1776,8 @@ namespace WellaTodo
             roundCheckbox1.Checked = !roundCheckbox1.Checked;
 
             m_Selected_Item.TD_complete = roundCheckbox1.Checked;
+            m_Selected_Item.TD_DataCell.DC_complete = roundCheckbox1.Checked;
+            Console.WriteLine("1>MainFrame::OnCompleteMenuItem_Click -> Complete :" + m_Selected_Item.TD_DataCell.DC_complete);
             m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
 
             Update_Menu_Metadata();
@@ -1744,7 +1794,7 @@ namespace WellaTodo
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     flowLayoutPanel2.Controls.Remove(item); // 제거
                     m_Task.Remove(item); //삭제
@@ -1921,6 +1971,7 @@ namespace WellaTodo
                     return;
                 }
                 m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+                Console.WriteLine("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Item.TD_DataCell.DC_title);
                 m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
             }
         }
@@ -1934,6 +1985,7 @@ namespace WellaTodo
             }
 
             m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            Console.WriteLine("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Item.TD_DataCell.DC_title);
             m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
         }
 
@@ -1970,9 +2022,10 @@ namespace WellaTodo
 
         private void Update_Modify_Task_Title(CDataCell dc)
         {
+            Console.WriteLine("4>MainFrame::Update_Modify_Task_Title");
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     item.TD_title = dc.DC_title;
                     break;
@@ -1980,6 +2033,23 @@ namespace WellaTodo
             }
             SendDataCellToDetailWindow(dc);
         }
+
+        private void Update_Modify_Task_Memo(CDataCell dc)
+        {
+            Console.WriteLine("4>MainFrame::Update_Modify_Task_Memo");
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
+                {
+                    // tooltip 변경할 것
+                    break;
+                }
+            }
+            SendDataCellToDetailWindow(dc);
+
+            Update_Selected_Menu();
+        }
+
 
         // 상세창 메모 커서 벗어남
         private void textBox_Memo_Leave(object sender, EventArgs e)
@@ -2059,6 +2129,8 @@ namespace WellaTodo
         private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
             m_Selected_Item.TD_complete = roundCheckbox1.Checked;
+            m_Selected_Item.TD_DataCell.DC_complete = roundCheckbox1.Checked;
+            Console.WriteLine("1>MainFrame::roundCheckbox1_MouseClick -> Complete :" + m_Selected_Item.TD_DataCell.DC_complete);
             m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
         }
 
@@ -2078,6 +2150,8 @@ namespace WellaTodo
         private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
             m_Selected_Item.TD_important = starCheckbox1.Checked;
+            m_Selected_Item.TD_DataCell.DC_important = starCheckbox1.Checked;
+            Console.WriteLine("1>MainFrame::starCheckbox1_MouseClick -> Important :" + m_Selected_Item.TD_DataCell.DC_important);
             m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
         }
 
@@ -2512,7 +2586,7 @@ namespace WellaTodo
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     if (pos == 0) break;
                     flowLayoutPanel2.Controls.SetChildIndex(item, pos - 1);
@@ -2546,7 +2620,7 @@ namespace WellaTodo
             int pos = 0;
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
             {
-                if (dc.Equals(item.TD_DataCell))
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     if (pos == flowLayoutPanel2.Controls.Count) break;
                     flowLayoutPanel2.Controls.SetChildIndex(item, pos + 1);
@@ -2622,7 +2696,7 @@ namespace WellaTodo
         }
 
         // ------------------------------------------------------------------
-        // 알람 체크
+        // 알람 체크  -> controller로 이동할 것
         // ------------------------------------------------------------------
         private void AlarmCheck()
         {
@@ -2632,8 +2706,9 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             DateTime tt;
 
+            IEnumerable<CDataCell> dataset = m_Controller.Query_All_Task();
             int pos = 0;
-            foreach (CDataCell data in m_Controller.Get_Model().GetDataCollection())
+            foreach (CDataCell data in dataset)
             {
                 // 오늘할 일 체크
                 if (data.DC_myToday) //if (!data.DC_complete && data.DC_myToday)
@@ -2863,7 +2938,7 @@ namespace WellaTodo
             return infoText;
         }
 
-        private void Task_MouseDown(object sender, MouseEventArgs e)
+        private void DragDrop_Task_MouseDown(object sender, MouseEventArgs e)
         {
             //isTaskDragging = false;
             //pointDragStart = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
@@ -2874,7 +2949,7 @@ namespace WellaTodo
             //sd.DoDragDrop(sd, DragDropEffects.Move);
         }
 
-        private void Task_MouseUp(object sender, MouseEventArgs e)
+        private void DragDrop_Task_MouseUp(object sender, MouseEventArgs e)
         {
             /*
             if (isTaskDragging)
@@ -2889,7 +2964,7 @@ namespace WellaTodo
             */
         }
 
-        private void Task_MouseMove(object sender, MouseEventArgs e)
+        private void DragDrop_Task_MouseMove(object sender, MouseEventArgs e)
         {
             /*
             int threshold = 10;
@@ -2910,14 +2985,14 @@ namespace WellaTodo
             */
         }
 
-        private void Task_DragOver(object sender, DragEventArgs e)
+        private void DragDrop_Task_DragOver(object sender, DragEventArgs e)
         {
             //Console.WriteLine("Task_DragOver");
             //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
             //e.Effect = DragDropEffects.Move;
         }
 
-        private void Task_DragDrop(object sender, DragEventArgs e)
+        private void DragDrop_Task_DragDrop(object sender, DragEventArgs e)
         {
             //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
             //Control c = e.Data.GetData(e.Data.GetFormats()[0]) as Control;
@@ -3084,7 +3159,6 @@ namespace WellaTodo
         private void panel_Calendar_Paint(object sender, PaintEventArgs e)
         {
             //Console.WriteLine("panel_Calendar_Paint");
-            //MessageBox.Show("panel_Calendar_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -3218,10 +3292,7 @@ namespace WellaTodo
             curDate = startDate.AddDays(-preDays);
             for (int i = 0; i < dayPanel.Length; i++)
             {
-                IEnumerable<CDataCell> dataset = from CDataCell dc 
-                                                 in m_Controller.Get_Model().GetDataCollection() 
-                                                 where dc.DC_deadlineType > 0 
-                                                 && (curDate.Date == dc.DC_deadlineTime.Date) select dc;
+                IEnumerable<CDataCell> dataset = m_Controller.Query_Month_Calendar(curDate);
                 foreach (CDataCell dc in dataset)
                 {
                     Calendar_Item label_planned = new Calendar_Item(dc);
@@ -3277,57 +3348,7 @@ namespace WellaTodo
 
         private void Calendar_Item_Click(object sender, EventArgs e)
         {
-            Calendar_Item sd = (Calendar_Item)sender;
-
-            taskEditForm.StartPosition = FormStartPosition.Manual;
-            taskEditForm.Location = new Point(Location.X + (Width - taskEditForm.Width) / 2, Location.Y + (Height - taskEditForm.Height) / 2);
-
-            IEnumerable<CDataCell> dataset = from CDataCell dc 
-                                             in m_Controller.Get_Model().GetDataCollection() 
-                                             where dc.Equals(sd.CD_DataCell) select dc;
-
-            CDataCell cd = dataset.First();
-
-            taskEditForm.TE_DataCell = cd;
-            taskEditForm.IsChanged = false;
-
-            taskEditForm.ShowDialog();
-
-            if (taskEditForm.IsChanged)  // Complete인지 Important인지 확인해서 Process 실행할 것
-            {
-                int cnt = 0;
-                /*
-                for (int i = 0; i < m_Data.Count; i++)
-                {
-                    if (m_Data[i].Equals(taskEditForm.TE_DataCell))
-                    {
-                        m_Data[i] = taskEditForm.TE_DataCell;
-                        taskEditForm.IsChanged = false;
-                        cnt++;
-
-                        SetDate(m_dtValue);  // 달력창 Update -> 필요한 항목만 변경 가능(?)
-                        
-                        foreach (Todo_Item item in m_Task)  // Task창에 있는 항목 Update
-                        {
-                            if (item.TD_DataCell.Equals(taskEditForm.TE_DataCell))
-                            {
-                                item.TD_title = taskEditForm.TE_DataCell.DC_title;
-                                item.TD_complete = taskEditForm.TE_DataCell.DC_complete;
-                                item.TD_important = taskEditForm.TE_DataCell.DC_important;
-                            }
-                        }
-                        break;
-                    }
-                }
-                */
-                if (cnt == 0) MessageBox.Show("No match Data exist!!");
-            }
-
-            if (taskEditForm.IsDeleted) // 목록 삭제
-            {
-                // Delete_Task();  -> 재작성할 것
-                taskEditForm.IsDeleted = false;
-            }
+            
         }
     }
 }

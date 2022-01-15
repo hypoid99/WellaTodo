@@ -22,6 +22,7 @@ namespace WellaTodo
 	public class MainController : IController
 	{
 		IView m_view;
+		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
 		int m_Task_ID_Num = 0;
@@ -46,10 +47,19 @@ namespace WellaTodo
         {
 			m_view.SetController(this);
 			m_view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
+
 			m_model.Add_Observer((IModelObserver)m_view);
 
 			Load_Data_File();
 		}
+
+		public void Add_View(IView view)
+        {
+			view.SetController(this);
+			view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
+
+			m_model.Add_Observer((IModelObserver)view);
+        }
 
 		public void View_Changed_Event_method(IView v, ViewEventArgs e)
 		{
@@ -62,11 +72,6 @@ namespace WellaTodo
 		public void Update_Model()
         {
 			m_model.Update_Model();
-        }
-
-		public MainModel Get_Model()
-        {
-			return m_model;
         }
 
 		public void Load_Data_File()
@@ -97,6 +102,7 @@ namespace WellaTodo
 			serializer.Serialize(ws, m_model.GetDataCollection());
 			ws.Close();
 
+			m_model.Save_Data();
 		}
 
 		public void Perform_Menulist_Rename(string source, string target)
@@ -121,65 +127,55 @@ namespace WellaTodo
 			m_model.Delete_Task(dc);
 		}
 
-		public void Perform_Modify_Task(CDataCell dc, string listName, string taskTitle, bool comp, bool impo)
-        {
-			CDataCell data = Find(dc);
-			data.DC_listName = listName;
-			data.DC_title = taskTitle;
-			data.DC_complete = comp;
-			data.DC_important = impo;
-		}
-
 		public void Perform_Modify_MyToday(CDataCell dc, bool myToday, DateTime dt)
 		{
-			CDataCell data = Find(dc);
-			data.DC_myToday = myToday;
-			data.DC_myTodayTime = dt;
+			dc.DC_myToday = myToday;
+			dc.DC_myTodayTime = dt;
+			m_model.Modifiy_MyToday(dc);
 		}
 
 		public void Perform_Modify_Remind(CDataCell dc, int type, DateTime dt)
 		{
-			CDataCell data = Find(dc);
-			data.DC_remindType = type;
-			data.DC_remindTime = dt;
+			dc.DC_remindType = type;
+			dc.DC_remindTime = dt;
 			m_model.Modifiy_Remind(dc);
 		}
 
 		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
 		{
-			CDataCell data = Find(dc);
-			data.DC_deadlineType = type;
-			data.DC_deadlineTime = dt;
+			dc.DC_deadlineType = type;
+			dc.DC_deadlineTime = dt;
 			m_model.Modifiy_Planned(dc);
 		}
 
 		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
 		{
-			CDataCell data = Find(dc);
-			data.DC_repeatType = type;
-			data.DC_repeatTime = dt;
+			dc.DC_repeatType = type;
+			dc.DC_repeatTime = dt;
 			m_model.Modifiy_Repeat(dc);
+		}
+
+		public void Perform_Complete_Process(CDataCell dc)
+		{
+			Console.WriteLine("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
+			m_model.Complete_Process(dc);
 		}
 
 		public void Perform_Important_Process(CDataCell dc)
 		{
-			dc.DC_important = !dc.DC_important;
+			Console.WriteLine("2>MainController::Perform_Important_Process : " + dc.DC_important);
 			m_model.Important_Process(dc);
-		}
-
-		public void Perform_Complete_Process(CDataCell dc)
-        {
-			dc.DC_complete = !dc.DC_complete;
-			m_model.Complete_Process(dc);
 		}
 
 		public void Perform_Modify_Task_Title(CDataCell dc)
 		{
+			Console.WriteLine("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
 		}
 
 		public void Perform_Modify_Task_Memo(CDataCell dc)
 		{
+			Console.WriteLine("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
 			m_model.Modify_Task_Memo(dc);
 		}
 
@@ -218,48 +214,81 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_MyToday()
         {
-			return from CDataCell dt in m_model.GetDataCollection() 
-				   where dt.DC_myToday && !dt.DC_complete select dt;
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetDataCollection() 
+											 where dt.DC_myToday && !dt.DC_complete select dt;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
 		}
 
 		public IEnumerable<CDataCell> Query_Important()
 		{
-			return from CDataCell dt in m_model.GetDataCollection() 
-				   where dt.DC_important && !dt.DC_complete select dt;
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+											 where dc.DC_important && !dc.DC_complete select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
 		}
 
 		public IEnumerable<CDataCell> Query_Planned()
 		{
-			return from CDataCell dt in m_model.GetDataCollection() 
-				   where (dt.DC_deadlineType > 0 || dt.DC_repeatType > 0) && !dt.DC_complete select dt;
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+											 where (dc.DC_deadlineType > 0 || dc.DC_repeatType > 0) && !dc.DC_complete select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
 		}
 
 		public IEnumerable<CDataCell> Query_Complete()
 		{
-			return from CDataCell dt in m_model.GetDataCollection() 
-				   where dt.DC_complete == true select dt;
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+											 where dc.DC_complete == true select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
 		}
 
 		public IEnumerable<CDataCell> Query_Task(string listname)
 		{
-			IEnumerable < CDataCell > dataset = from CDataCell dt in m_model.GetDataCollection() 
-												where dt.DC_listName == listname select dt;
-			// 리턴시 Deep Copy 할 것 !!!
-			List<CDataCell> deepCopy = new List<CDataCell>();
-			foreach (CDataCell dc in dataset)
-            {
-				deepCopy.Add((CDataCell)dc.Clone());
-            }
+			IEnumerable < CDataCell > dataset = from CDataCell dc in m_model.GetDataCollection() 
+												where dc.DC_listName == listname select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			return deepCopy;
 		}
 
-		private CDataCell Find(CDataCell dc)
+		public IEnumerable<CDataCell> Query_Month_Calendar(DateTime curDate)
         {
-			IEnumerable<CDataCell> dataset = from CDataCell data in m_model.GetDataCollection()
-											 where dc.Equals(data) select data;
+			IEnumerable<CDataCell> dataset = from CDataCell dc
+											 in m_model.GetDataCollection()
+											 where dc.DC_deadlineType > 0
+											 && (curDate.Date == dc.DC_deadlineTime.Date)
+											 select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
+		}
 
-			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
-			return dataset.First();
+		public IEnumerable<CDataCell> Query_Task_Calendar(CDataCell sd)
+        {
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection()
+											 where dc.DC_task_ID == sd.DC_task_ID
+											 select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
+		}
+
+		public IEnumerable<CDataCell> Query_All_Task()
+        {
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection()
+											 where true
+											 select dc;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			return deepCopy;
+		}
+
+		private List<CDataCell> List_DeepCopy(IEnumerable<CDataCell> dataset)
+        {
+			List<CDataCell> deepCopy = new List<CDataCell>();
+			foreach (CDataCell dc in dataset)
+			{
+				deepCopy.Add((CDataCell)dc.Clone());
+			}
+			return deepCopy;
 		}
 
 		public void Perform_Display_Data()

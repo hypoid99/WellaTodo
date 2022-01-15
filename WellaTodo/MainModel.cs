@@ -20,10 +20,12 @@ namespace WellaTodo
 		WM_SAVE_DATA,
 		WM_COMPLETE_PROCESS,
 		WM_IMPORTANT_PROCESS,
-		WM_MODIFY_TASK_TITLE,
-		WM_MODIFY_TASK_MEMO,
+		WM_TASK_ADD,
+		WM_TASK_DELETE,
 		WM_TASK_MOVE_UP,
 		WM_TASK_MOVE_DOWN,
+		WM_MODIFY_TASK_TITLE,
+		WM_MODIFY_TASK_MEMO,
 		WM_MODIFY_MYTODAY,
 		WM_MODIFY_REMIND,
 		WM_MODIFY_PLANNED,
@@ -36,8 +38,6 @@ namespace WellaTodo
 	public class MainModel : IModel
 	{
 		public event ModelHandler<MainModel> Update_View;
-		public event ModelHandler<MainModel> Update_Add_Task;
-		public event ModelHandler<MainModel> Update_Delete_Task;
 
 		List<CDataCell> myTaskItems = new List<CDataCell>();
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
@@ -50,8 +50,6 @@ namespace WellaTodo
 		public void Add_Observer(IModelObserver imo)
         {
 			Update_View += new ModelHandler<MainModel>(imo.Update_View);
-			Update_Add_Task += new ModelHandler<MainModel>(imo.Update_Add_Task);
-			Update_Delete_Task += new ModelHandler<MainModel>(imo.Update_Delete_Task);
 
 			ObserverList.Add(imo);
 		}
@@ -59,8 +57,6 @@ namespace WellaTodo
 		public void Remove_Observer(IModelObserver imo)
         {
 			Update_View -= new ModelHandler<MainModel>(imo.Update_View);
-			Update_Add_Task -= new ModelHandler<MainModel>(imo.Update_Add_Task);
-			Update_Delete_Task -= new ModelHandler<MainModel>(imo.Update_Delete_Task);
 
 			ObserverList.Remove(imo);
 		}
@@ -135,14 +131,14 @@ namespace WellaTodo
 					++pos;
 				}
 			}
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MENULIST_DELETE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MENULIST_DELETE));
 		}
 
 		public void Transfer_Task(CDataCell dc, string target)
         {
 			Find(dc).DC_listName = target;
-
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TRANSFER_TASK));
+			dc.DC_listName = target;
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TRANSFER_TASK));
 		}
 
 		public void Add_Task(int id, string list, string title)
@@ -153,7 +149,7 @@ namespace WellaTodo
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
 
-			Update_Add_Task.Invoke(this, new ModelEventArgs(dc));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
 		public void Add_Task(CDataCell dc)
@@ -162,7 +158,7 @@ namespace WellaTodo
 
 			myTaskItems.Insert(0, dc);
 			myTaskItems[0].DC_dateCreated = dt;
-			Update_Add_Task.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone()));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
 		public void Delete_Task(CDataCell dc)
@@ -173,25 +169,12 @@ namespace WellaTodo
 				Console.WriteLine("Data No matched!!");
             }
 
-			Update_Delete_Task.Invoke(this, new ModelEventArgs(dc));
-		}
-
-		public void Important_Process(CDataCell dc)
-		{
-			Console.WriteLine(">MainModel::Important_Process:" + dc.DC_important);
-
-			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
-			{
-				myTaskItems.Remove(dc); // 삭제
-				myTaskItems.Insert(0, dc); //삽입
-			}
-
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_IMPORTANT_PROCESS));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_DELETE));
 		}
 
 		public void Complete_Process(CDataCell dc)
 		{
-			Console.WriteLine(">MainModel::Complete_Process:" + dc.DC_complete);
+			Console.WriteLine("3>MainModel::Complete_Process : " + dc.DC_complete);
 
 			if (dc.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
 			{
@@ -207,18 +190,31 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_COMPLETE_PROCESS));
 		}
 
+		public void Important_Process(CDataCell dc)
+		{
+			Console.WriteLine("3>MainModel::Important_Process : " + dc.DC_important);
+
+			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
+			{
+				myTaskItems.Remove(dc); // 삭제
+				myTaskItems.Insert(0, dc); //삽입
+			}
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_IMPORTANT_PROCESS));
+		}
+
 		public void Modify_Task_Title(CDataCell dc)
         {
-			Console.WriteLine("before: "+Find(dc).DC_title);
-			Console.WriteLine("after: "+dc.DC_title);
+			Console.WriteLine("3>MainModel::Modify_Task_Title : " + dc.DC_title);
 			Find(dc).DC_title =  dc.DC_title;
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_TITLE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_TASK_TITLE));
 		}
 
 		public void Modify_Task_Memo(CDataCell dc)
 		{
+			Console.WriteLine("3>MainModel::Modify_Task_Memo : " + dc.DC_title);
 			Find(dc).DC_memo = dc.DC_memo;
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_TASK_MEMO));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_TASK_MEMO));
 		}
 
 		public void Task_Move_Up(CDataCell dc)
@@ -243,7 +239,7 @@ namespace WellaTodo
 			}
 			else return;
 
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TASK_MOVE_UP));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_UP));
 		}
 
 		public void Task_Move_Down(CDataCell dc)
@@ -270,7 +266,7 @@ namespace WellaTodo
 			}
 			else return;
 
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_TASK_MOVE_DOWN));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_DOWN));
 		}
 
 		public void Modifiy_MyToday(CDataCell dc)
@@ -284,24 +280,36 @@ namespace WellaTodo
 
 		public void Modifiy_Remind(CDataCell dc)
         {
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_REMIND));
+			CDataCell data = Find(dc);
+			data.DC_remindType = dc.DC_remindType;
+			data.DC_remindTime = dc.DC_remindTime;
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_REMIND));
 		}
 
 		public void Modifiy_Planned(CDataCell dc)
 		{
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_PLANNED));
+			CDataCell data = Find(dc);
+			data.DC_deadlineType = dc.DC_deadlineType;
+			data.DC_deadlineTime = dc.DC_deadlineTime;
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_PLANNED));
 		}
 
 		public void Modifiy_Repeat(CDataCell dc)
 		{
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_MODIFY_REPEAT));
+			CDataCell data = Find(dc);
+			data.DC_repeatType = dc.DC_repeatType;
+			data.DC_repeatTime = dc.DC_repeatTime;
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_REPEAT));
 		}
 
 		private CDataCell Find(CDataCell dc)
 		{
 			IEnumerable<CDataCell> dataset = from CDataCell data in myTaskItems
 											 where dc.DC_task_ID == data.DC_task_ID select data;
-			if (dataset.Count() != 1) Console.WriteLine("Not Found Item!!");  // 에러 출력
+			if (dataset.Count() != 1) Console.WriteLine("?>MainModel::Find -> Not Found Item!!");  // 에러 출력
 			return dataset.First();
 		}
 

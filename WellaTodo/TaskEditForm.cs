@@ -30,8 +30,18 @@ namespace WellaTodo
         private CDataCell m_DataCell;
         public CDataCell TE_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
-        private bool isChanged = false;
-        public bool IsChanged { get => isChanged; set => isChanged = value; }
+        private bool isCompleteChanged = false;
+        public bool IsCompleteChanged { get => isCompleteChanged; set => isCompleteChanged = value; }
+        private bool isTitleChanged = false;
+        public bool IsTitleChanged { get => isTitleChanged; set => isTitleChanged = value; }
+        private bool isImportantChanged = false;
+        public bool IsImportantChanged { get => isImportantChanged; set => isImportantChanged = value; }
+        private bool isPlannedChanged = false;
+        public bool IsPlannedChanged { get => isPlannedChanged; set => isPlannedChanged = value; }
+        private bool isRepeatChanged = false;
+        public bool IsRepeatChanged { get => isRepeatChanged; set => isRepeatChanged = value; }
+        private bool isMemoChanged = false;
+        public bool IsMemoChanged { get => isMemoChanged; set => isMemoChanged = value; }
 
         private bool isDeleted = false;
         public bool IsDeleted { get => isDeleted; set => isDeleted = value; }
@@ -42,8 +52,6 @@ namespace WellaTodo
         {
             InitializeComponent();
 
-            IsChanged = false;
-            IsDeleted = false;
             TE_DataCell = null;
         }
 
@@ -90,7 +98,6 @@ namespace WellaTodo
 
             textBox_Memo.MouseDown += new MouseEventHandler(textBox_Memo_MouseDown);
             textBox_Memo.Leave += new EventHandler(textBox_Memo_Leave);
-            textBox_Memo.MouseLeave += new EventHandler(textBox_Memo_MouseLeave);
             textBox_Memo.Multiline = true;
             textBox_Memo.Location = new Point(PANEL_SX + 5, 115);
             textBox_Memo.Size = new Size(PANEL_WIDTH - 50, 130);
@@ -124,10 +131,6 @@ namespace WellaTodo
 
         private void button_Close_Click(object sender, EventArgs e)
         {
-            if (isChanged)
-            {
-
-            }
             Close();
         }
 
@@ -140,13 +143,13 @@ namespace WellaTodo
         private void roundCheckbox_MouseClick(object sender, EventArgs e)
         {
             TE_DataCell.DC_complete = roundCheckbox.Checked;
-            isChanged = true;
+            isCompleteChanged = true;
         }
 
         private void starCheckbox_MouseClick(object sender, EventArgs e)
         {
             TE_DataCell.DC_important = starCheckbox.Checked;
-            isChanged = true;
+            isImportantChanged = true;
         }
 
         private void TaskEdit_MouseEnter(object sender, EventArgs e)
@@ -202,7 +205,7 @@ namespace WellaTodo
             }
 
             TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-            isChanged = true;
+            isTitleChanged = true;
         }
 
         private void textBox_Title_KeyUp(object sender, KeyEventArgs e)
@@ -219,7 +222,7 @@ namespace WellaTodo
                 }
 
                 TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-                isChanged = true;
+                isTitleChanged = true;
 
                 Close();
             }
@@ -348,13 +351,7 @@ namespace WellaTodo
         {
             //메모 내용에 변경이 있는지 확인(?)
             TE_DataCell.DC_memo = textBox_Memo.Text;
-            isChanged = true;
-        }
-
-        private void textBox_Memo_MouseLeave(object sender, EventArgs e)
-        {
-            TE_DataCell.DC_memo = textBox_Memo.Text;
-            isChanged = true;
+            isMemoChanged = true;
         }
 
         private void textBox_Memo_MouseDown(object sender, MouseEventArgs e)

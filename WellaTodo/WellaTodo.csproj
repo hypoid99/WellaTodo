@@ -61,6 +61,12 @@
     <Compile Include="CalculatorForm.Designer.cs">
       <DependentUpon>CalculatorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CalendarForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarForm.Designer.cs">
+      <DependentUpon>CalendarForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Calendar_Item.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -145,6 +151,12 @@
     <Compile Include="TwoLineList.Designer.cs">
       <DependentUpon>TwoLineList.cs</DependentUpon>
     </Compile>
+    <Compile Include="WellaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WellaForm.Designer.cs">
+      <DependentUpon>WellaForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WellaTodo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AlarmForm.resx">
@@ -152,6 +164,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CalculatorForm.resx">
       <DependentUpon>CalculatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarForm.resx">
+      <DependentUpon>CalendarForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Calendar_Item.resx">
       <DependentUpon>Calendar_Item.cs</DependentUpon>
@@ -192,6 +207,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TwoLineList.resx">
       <DependentUpon>TwoLineList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WellaForm.resx">
+      <DependentUpon>WellaForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
