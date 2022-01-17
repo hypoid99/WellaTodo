@@ -16,6 +16,7 @@ namespace WellaTodo
 {
 	public enum WParam
 	{
+		WM_LOG_MESSAGE,
 		WM_LOAD_DATA,
 		WM_SAVE_DATA,
 		WM_COMPLETE_PROCESS,
@@ -98,6 +99,13 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_SAVE_DATA));
 		}
 
+		public void Notify_Log_Message(string msg)
+		{
+			CDataCell dc = new CDataCell();
+			dc.DC_title = msg;
+			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_LOG_MESSAGE));
+		}
+
 		public void Menulist_Rename(string source, string target)
         {
 			int pos = 0;
@@ -163,10 +171,10 @@ namespace WellaTodo
 
 		public void Delete_Task(CDataCell dc)
         {
-
+			Console.WriteLine("3>MainModel::Delete_Task : " + dc.DC_title);
 			if (!myTaskItems.Remove(Find(dc)))
             {
-				Console.WriteLine("Data No matched!!");
+				Console.WriteLine("3>MainModel::Delete_Task -> Data No matched!!");
             }
 
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_DELETE));
@@ -175,7 +183,7 @@ namespace WellaTodo
 		public void Complete_Process(CDataCell dc)
 		{
 			Console.WriteLine("3>MainModel::Complete_Process : " + dc.DC_complete);
-
+			//Notify_Log_Message("3>MainModel::Complete_Process : " + dc.DC_complete);
 			if (dc.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
 			{
 				myTaskItems.Remove(Find(dc)); // 삭제
@@ -193,12 +201,14 @@ namespace WellaTodo
 		public void Important_Process(CDataCell dc)
 		{
 			Console.WriteLine("3>MainModel::Important_Process : " + dc.DC_important);
-
+			//Notify_Log_Message("3>MainModel::Important_Process : " + dc.DC_important);
+			CDataCell data = Find(dc);
+			data.DC_important = dc.DC_important;
 			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
 			{
-				myTaskItems.Remove(dc); // 삭제
-				myTaskItems.Insert(0, dc); //삽입
-			}
+				myTaskItems.Remove(data); // 삭제
+				myTaskItems.Insert(0, data); //삽입
+            }
 
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_IMPORTANT_PROCESS));
 		}
@@ -289,6 +299,8 @@ namespace WellaTodo
 
 		public void Modifiy_Planned(CDataCell dc)
 		{
+			Console.WriteLine("3>MainModel::Modifiy_Planned : type " + dc.DC_deadlineType);
+
 			CDataCell data = Find(dc);
 			data.DC_deadlineType = dc.DC_deadlineType;
 			data.DC_deadlineTime = dc.DC_deadlineTime;

@@ -37,6 +37,7 @@ namespace WellaTodo
             this.toDoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.달력ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.계산기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.출력창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.캐스케이드ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.수직정렬ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,7 +45,6 @@ namespace WellaTodo
             this.아이콘화ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.도움말ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.정보ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.출력창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,23 +98,30 @@ namespace WellaTodo
             // toDoToolStripMenuItem
             // 
             this.toDoToolStripMenuItem.Name = "toDoToolStripMenuItem";
-            this.toDoToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.toDoToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.toDoToolStripMenuItem.Text = "할일";
             this.toDoToolStripMenuItem.Click += new System.EventHandler(this.toDoToolStripMenuItem_Click);
             // 
             // 달력ToolStripMenuItem
             // 
             this.달력ToolStripMenuItem.Name = "달력ToolStripMenuItem";
-            this.달력ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.달력ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.달력ToolStripMenuItem.Text = "달력";
             this.달력ToolStripMenuItem.Click += new System.EventHandler(this.달력ToolStripMenuItem_Click);
             // 
             // 계산기ToolStripMenuItem
             // 
             this.계산기ToolStripMenuItem.Name = "계산기ToolStripMenuItem";
-            this.계산기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.계산기ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.계산기ToolStripMenuItem.Text = "계산기";
             this.계산기ToolStripMenuItem.Click += new System.EventHandler(this.계산기ToolStripMenuItem_Click);
+            // 
+            // 출력창ToolStripMenuItem
+            // 
+            this.출력창ToolStripMenuItem.Name = "출력창ToolStripMenuItem";
+            this.출력창ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
+            this.출력창ToolStripMenuItem.Text = "출력창";
+            this.출력창ToolStripMenuItem.Click += new System.EventHandler(this.출력창ToolStripMenuItem_Click);
             // 
             // 창ToolStripMenuItem
             // 
@@ -170,13 +177,6 @@ namespace WellaTodo
             this.정보ToolStripMenuItem.Text = "정보";
             this.정보ToolStripMenuItem.Click += new System.EventHandler(this.정보ToolStripMenuItem_Click);
             // 
-            // 출력창ToolStripMenuItem
-            // 
-            this.출력창ToolStripMenuItem.Name = "출력창ToolStripMenuItem";
-            this.출력창ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.출력창ToolStripMenuItem.Text = "출력창";
-            this.출력창ToolStripMenuItem.Click += new System.EventHandler(this.출력창ToolStripMenuItem_Click);
-            // 
             // WellaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -196,13 +196,16 @@ namespace WellaTodo
 
         #endregion
 
+
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 파일ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 저장ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 종료ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 보기ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toDoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 달력ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 계산기ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 출력창ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 창ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 캐스케이드ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 수직정렬ToolStripMenuItem;
@@ -210,7 +213,5 @@ namespace WellaTodo
         private System.Windows.Forms.ToolStripMenuItem 아이콘화ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 도움말ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 정보ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 저장ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 출력창ToolStripMenuItem;
     }
 }

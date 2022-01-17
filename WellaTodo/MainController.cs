@@ -74,6 +74,11 @@ namespace WellaTodo
 			m_model.Update_Model();
         }
 
+		public void Notify_Log_Message(string msg)
+        {
+			m_model.Notify_Log_Message(msg);
+        }
+
 		public void Load_Data_File()
         {
 			Stream rs = new FileStream("task.dat", FileMode.Open);
@@ -124,6 +129,7 @@ namespace WellaTodo
 
 		public void Perform_Delete_Task(CDataCell dc)
         {
+			Console.WriteLine("2>MainController::Perform_Delete_Task : " + dc.DC_title);
 			m_model.Delete_Task(dc);
 		}
 
@@ -143,6 +149,7 @@ namespace WellaTodo
 
 		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
 		{
+			Console.WriteLine("2>MainController::Perform_Modify_Planned : type " + type);
 			dc.DC_deadlineType = type;
 			dc.DC_deadlineTime = dt;
 			m_model.Modifiy_Planned(dc);
@@ -158,12 +165,14 @@ namespace WellaTodo
 		public void Perform_Complete_Process(CDataCell dc)
 		{
 			Console.WriteLine("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
+			//m_model.Notify_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
 			m_model.Complete_Process(dc);
 		}
 
 		public void Perform_Important_Process(CDataCell dc)
 		{
 			Console.WriteLine("2>MainController::Perform_Important_Process : " + dc.DC_important);
+			//m_model.Notify_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
 			m_model.Important_Process(dc);
 		}
 

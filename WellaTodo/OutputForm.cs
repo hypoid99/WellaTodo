@@ -10,14 +10,37 @@ using System.Windows.Forms;
 
 namespace WellaTodo
 {
-    public partial class OutputForm : Form
+    public partial class OutputForm : Form, IView, IModelObserver
     {
+        public event ViewHandler<IView> View_Changed_Event;
+
+        MainController m_Controller;
+
         private string _textBoxString;
         public string TextBoxString { get => _textBoxString; set { _textBoxString = value; OutputText(value); } }
 
         public OutputForm()
         {
             InitializeComponent();
+        }
+        public void SetController(MainController controller)
+        {
+            m_Controller = controller;
+        }
+
+        public void Update_View(IModel m, ModelEventArgs e)
+        {
+            CDataCell dc = e.Item;
+            WParam param = e.Param;
+            switch (param)
+            {
+                case WParam.WM_LOG_MESSAGE:
+                    Console.WriteLine("4>OutputForm::Update_View -> Log Message");
+                    OutputText(dc.DC_title);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void OutputText(string txt)

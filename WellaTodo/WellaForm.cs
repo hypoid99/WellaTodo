@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Runtime.InteropServices;
+
 namespace WellaTodo
 {
     public partial class WellaForm : Form
@@ -32,6 +34,7 @@ namespace WellaTodo
         {
             MainController controller = new MainController(view, model);
             controller.Add_View(calen);
+            controller.Add_View(outputForm);
 
             view.TopLevel = false;
             calc.TopLevel = false;
@@ -46,7 +49,8 @@ namespace WellaTodo
 
             view.Activate();
             this.LayoutMdi(MdiLayout.TileVertical);
-        }
+
+    }
 
         private Form ShowActiveForm(Form form, Type t)
         {
