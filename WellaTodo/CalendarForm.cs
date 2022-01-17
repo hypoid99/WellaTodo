@@ -392,87 +392,39 @@ namespace WellaTodo
         {
             Console.WriteLine("4>CalendarForm::Update_Complete_Process");
 
-            // 해당 화면에 task가 있으면 화면을 갱신한다
-            for (int i = 0; i < dayPanel.Length; i++)
+            if (FindCalendarItem(dc))
             {
-                foreach (Control ctr in dayPanel[i].Controls)
-                {
-                    if (ctr is Calendar_Item)
-                    {
-                        Calendar_Item item = (Calendar_Item)ctr;
-                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
-                        {
-                            Console.WriteLine("4>CalendarForm::Update_Complete_Process -> find matching item : " + dc.DC_title);
-                            item.Font = dc.DC_complete
-                                        ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
-                                        : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
-                            break;
-                        }
-                    }
-                    
-                }
+                Console.WriteLine("4>CalendarForm::Update_Complete_Process -> Find matching item : " + dc.DC_title);
+                m_Find_Result_Item.Font = dc.DC_complete
+                                       ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
+                                       : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
             }
         }
 
         private void Update_Important_Process(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Important_Process");
-
-            // 해당 화면에 task가 있으면 화면을 갱신한다
-            for (int i = 0; i < dayPanel.Length; i++)
-            {
-                foreach (Control ctr in dayPanel[i].Controls)
-                {
-                    if (ctr is Calendar_Item)
-                    {
-                        Calendar_Item item = (Calendar_Item)ctr;
-                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
-                        {
-                            Console.WriteLine("4>CalendarForm::Update_Important_Process -> find matching item : " + dc.DC_title);
-                            break;
-                        }
-                    }
-
-                }
-            }
+            Console.WriteLine("4>CalendarForm::Update_Important_Process" + dc.DC_title);
         }
 
         private void Update_Modify_Task_Title(CDataCell dc)
         {
             Console.WriteLine("4>CalendarForm::Update_Modify_Task_Title");
-            // 해당 화면에 task가 있으면 화면을 갱신한다
-            for (int i = 0; i < dayPanel.Length; i++)
-            {
-                foreach (Control ctr in dayPanel[i].Controls)
-                {
-                    if (ctr is Calendar_Item)
-                    {
-                        Calendar_Item item = (Calendar_Item)ctr;
-                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
-                        {
-                            Console.WriteLine("4>CalendarForm::Update_Modify_Task_Title -> find matching item : " + dc.DC_title);
-                            item.PrimaryText = dc.DC_title;
-                            break;
-                        }
-                    }
 
-                }
+            if (FindCalendarItem(dc))
+            {
+                Console.WriteLine("4>CalendarForm::Update_Modify_Task_Title -> Find matching item : " + dc.DC_title);
+                m_Find_Result_Item.PrimaryText = dc.DC_title;
             }
         }
 
         private void Update_Delete_Task(CDataCell dc)
         {
             Console.WriteLine("4>CalendarForm::Update_Delete_Task");
-            // 해당 화면에 task가 있으면 화면을 갱신한다
 
             if (FindCalendarItem(dc))
             {
-                Console.WriteLine("4>CalendarForm::Update_Delete_Task -> find matching item : " + dc.DC_title);
+                Console.WriteLine("4>CalendarForm::Update_Delete_Task -> Find matching item : " + dc.DC_title);
                 dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);
-            }
-            else
-            {
-                Console.WriteLine("4>CalendarForm::Update_Delete_Task -> No matching data : " + dc.DC_title);
             }
         }
 
@@ -480,23 +432,18 @@ namespace WellaTodo
         {
             Console.WriteLine("4>CalendarForm::Update_Modify_Planned");
 
-            for (int i = 0; i < dayPanel.Length; i++)
-            {
-                foreach (Control ctr in dayPanel[i].Controls)
-                {
-                    if (ctr is Calendar_Item)
-                    {
-                        Calendar_Item item = (Calendar_Item)ctr;
-                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
-                        {
-                            Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> find matching item : " + dc.DC_title);
-                            dayPanel[i].Controls.Remove(item);  // 변경전 항목 제거
-                            break;
-                        }
-                    }
-                }
+            int day;
+            DateTime dt = dc.DC_deadlineTime;
+            DateTime startDate = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
+            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
+            DateTime curDate = startDate.AddDays(-preDays);
+            day = (dt - curDate).Days;
+            Console.WriteLine("4>CalendarForm::날짜차이 : " + day);
 
-                // 변경된 날짜에 calendar item 추가할 것
+            if (FindCalendarItem(dc))
+            {
+                dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);  // 변경전 항목 제거
+                dayPanel[day].Controls.Add(m_Find_Result_Item);  // 변경된 날짜에 항목을 추가한다
             }
         }
 
@@ -516,7 +463,6 @@ namespace WellaTodo
                             return true;
                         }
                     }
-
                 }
             }
             return false;
