@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "CalendarForm";
             this.Text = "CalendarForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CalendarForm_FormClosing);
             this.Load += new System.EventHandler(this.CalendarForm_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.CalendarForm_Paint);
             this.Resize += new System.EventHandler(this.CalendarForm_Resize);

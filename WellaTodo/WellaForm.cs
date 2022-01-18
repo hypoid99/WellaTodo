@@ -8,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using System.Runtime.InteropServices;
-
 namespace WellaTodo
 {
     public partial class WellaForm : Form
@@ -100,6 +98,11 @@ namespace WellaTodo
             calen = (CalendarForm)ShowActiveForm(calen, typeof(CalendarForm));
         }
 
+        private void 메모ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void 출력창ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             outputForm = (OutputForm)ShowActiveForm(outputForm, typeof(OutputForm));
@@ -132,11 +135,54 @@ namespace WellaTodo
 
         private void 정보ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (var child in MdiChildren)
-            {
-                Console.WriteLine("ActiveMdiChild: " + child.Text);
-                child.Activate();
-            }
+            LoginSettingForm info = new LoginSettingForm();
+            info.StartPosition = FormStartPosition.CenterParent;
+            info.ShowDialog();
+        }
+
+        private void button_Todo_Click(object sender, EventArgs e)
+        {
+            view = (MainFrame)ShowActiveForm(view, typeof(MainFrame));
+        }
+
+        private void button_Calendar_Click(object sender, EventArgs e)
+        {
+            calen = (CalendarForm)ShowActiveForm(calen, typeof(CalendarForm));
+        }
+
+        private void button_Calculator_Click(object sender, EventArgs e)
+        {
+            calc = (CalculatorForm)ShowActiveForm(calc, typeof(CalculatorForm));
+        }
+
+        private void button_Memo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_Output_Click(object sender, EventArgs e)
+        {
+            outputForm = (OutputForm)ShowActiveForm(outputForm, typeof(OutputForm));
+        }
+
+        private void button_Cascade_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.Cascade);
+        }
+
+        private void button_Vertical_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileVertical);
+        }
+
+        private void button_Horizontal_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileHorizontal);
+        }
+
+        private void button_Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

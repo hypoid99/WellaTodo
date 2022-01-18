@@ -354,28 +354,28 @@ namespace WellaTodo
 
             if (taskEditForm.IsCompleteChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Complete : " + dc.DC_complete);
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Complete Changed : " + dc.DC_complete);
                 m_Controller.Perform_Complete_Process(dc);
                 taskEditForm.IsCompleteChanged = false;
             }
 
             if (taskEditForm.IsImportantChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Important : " + dc.DC_important);
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Important Changed : " + dc.DC_important);
                 m_Controller.Perform_Important_Process(dc);
                 taskEditForm.IsImportantChanged = false;
             }
 
             if (taskEditForm.IsTitleChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Title : " + dc.DC_title);
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
                 m_Controller.Perform_Modify_Task_Title(dc);
                 taskEditForm.IsTitleChanged = false;
             }
 
             if (taskEditForm.IsMemoChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Memo : " + dc.DC_title);
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Memo Changed : " + dc.DC_title);
                 m_Controller.Perform_Modify_Task_Memo(dc);
                 taskEditForm.IsMemoChanged = false;
             }
@@ -385,6 +385,20 @@ namespace WellaTodo
                 Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Task Delete");
                 m_Controller.Perform_Delete_Task(dc);
                 taskEditForm.IsDeleted = false;
+            }
+
+            if (taskEditForm.IsPlannedChanged) // 기한 설정 변경
+            {
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
+                m_Controller.Perform_Modify_Planned(dc, 4, dc.DC_deadlineTime);
+                taskEditForm.IsPlannedChanged = false;
+            }
+
+            if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
+            {
+                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
+                m_Controller.Perform_Modify_Planned(dc, 0, default);
+                taskEditForm.IsPlannedDeleted = false;
             }
         }
 
@@ -431,19 +445,49 @@ namespace WellaTodo
         private void Update_Modify_Planned(CDataCell dc)
         {
             Console.WriteLine("4>CalendarForm::Update_Modify_Planned");
+            int day = 0;
+            DateTime dt = dc.DC_deadlineTime;    // 변경후 날짜
 
-            int day;
-            DateTime dt = dc.DC_deadlineTime;
-            DateTime startDate = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
-            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
-            DateTime curDate = startDate.AddDays(-preDays);
-            day = (dt - curDate).Days;
-            Console.WriteLine("4>CalendarForm::날짜차이 : " + day);
+            bool cond_1 = FindCalendarItem(dc);  // 변경전이 현재 화면에 있나?
+            bool cond_2 = IsCurrentPage(dt);     // 변경후가 현재 화면에 있나?
 
-            if (FindCalendarItem(dc))
+            if (cond_2)
             {
+                DateTime startDate = new DateTime(m_dtValue.Year, m_dtValue.Month, 1, 0, 0, 0);
+                int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
+                startDate = startDate.AddDays(-preDays);
+                day = (dt - startDate).Days;
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> startDay : " + startDate .ToShortDateString());
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> dt : " + dt.ToShortDateString());
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 날짜차이(42이내) : " + day);
+            }
+
+            m_Find_Result_Item.Font = dc.DC_complete
+                            ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
+                            : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
+            m_Find_Result_Item.BackColor = DateTime.Compare(dc.DC_deadlineTime.Date, DateTime.Today.Date) < 0
+                ? PSEUDO_HIGHLIGHT_COLOR
+                : PSEUDO_SELECTED_COLOR;
+
+            if (cond_1 == true && cond_2 == true)  // 삭제후 표기
+            {
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 삭제후 표기 :" + day);
                 dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);  // 변경전 항목 제거
                 dayPanel[day].Controls.Add(m_Find_Result_Item);  // 변경된 날짜에 항목을 추가한다
+            }
+            else if (cond_1 == true && cond_2 == false)  // 삭제
+            {
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 삭제");
+                dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);  // 변경전 항목 제거
+            }
+            else if (cond_1 == false && cond_2 == true)  // 표기
+            {
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 표기:" + day);
+                dayPanel[day].Controls.Add(m_Find_Result_Item);  // 변경된 날짜에 항목을 추가한다
+            }
+            else
+            {
+                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 변경없음");
             }
         }
 
@@ -465,7 +509,42 @@ namespace WellaTodo
                     }
                 }
             }
+
+            // 없을 경우 신규 아이템 생성후 리턴
+            Calendar_Item newItem = new Calendar_Item(dc);
+            newItem.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
+            newItem.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
+            newItem.AutoSize = false;
+
+            newItem.Width = dayPanel[0].Width;
+            newItem.Height = CALENDAR_TASK_TEXT_HEIGHT;
+            m_TaskToolTip.SetToolTip(newItem, dc.DC_title);
+
+            m_Find_Result_Item = newItem;
             return false;
+        }
+
+        private bool IsCurrentPage(DateTime dt)
+        {
+            DateTime startDate = new DateTime(m_dtValue.Year, m_dtValue.Month, 1, 0, 0, 0);
+            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
+            startDate = startDate.AddDays(-preDays);
+            DateTime endDate = startDate.AddDays(42);
+
+            if (dt.CompareTo (startDate ) >= 0 && dt.CompareTo (endDate ) <= 0) 
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void CalendarForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
         }
     }
 }

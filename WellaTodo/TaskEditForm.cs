@@ -38,6 +38,8 @@ namespace WellaTodo
         public bool IsImportantChanged { get => isImportantChanged; set => isImportantChanged = value; }
         private bool isPlannedChanged = false;
         public bool IsPlannedChanged { get => isPlannedChanged; set => isPlannedChanged = value; }
+        private bool isPlannedDeleted = false;
+        public bool IsPlannedDeleted { get => isPlannedDeleted; set => isPlannedDeleted = value; }
         private bool isRepeatChanged = false;
         public bool IsRepeatChanged { get => isRepeatChanged; set => isRepeatChanged = value; }
         private bool isMemoChanged = false;
@@ -136,18 +138,21 @@ namespace WellaTodo
 
         private void button_Delete_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task Delete");
             IsDeleted = true;
             Close();
         }
 
         private void roundCheckbox_MouseClick(object sender, EventArgs e)
         {
+            Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Complete Changed");
             TE_DataCell.DC_complete = roundCheckbox.Checked;
             isCompleteChanged = true;
         }
 
         private void starCheckbox_MouseClick(object sender, EventArgs e)
         {
+            Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Important Changed");
             TE_DataCell.DC_important = starCheckbox.Checked;
             isImportantChanged = true;
         }
@@ -204,6 +209,7 @@ namespace WellaTodo
                 return;
             }
 
+            Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
             TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
             isTitleChanged = true;
         }
@@ -221,6 +227,7 @@ namespace WellaTodo
                     return;
                 }
 
+                Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
                 TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
                 isTitleChanged = true;
 
@@ -270,11 +277,46 @@ namespace WellaTodo
         {
             DateTimePickerForm carendar = new DateTimePickerForm();
             carendar.ShowDialog();
+
+            DateTime dt = carendar.SelectedDateTime;
+            if (carendar.IsSelected && (carendar.SelectedDateTime != default))
+            {
+                if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+                {
+                    dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+                }
+                carendar.IsSelected = false;
+                Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 설정 type 4");
+                TE_DataCell.DC_deadlineType = 4;
+                TE_DataCell.DC_deadlineTime = dt;
+            }
+            else
+            {
+                Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 해제 type 0");
+                TE_DataCell.DC_deadlineType = 0;
+                TE_DataCell.DC_deadlineTime = default;
+            }
+
+            if (TE_DataCell.DC_deadlineType > 0)
+            {
+                roundLabel_Planned.Text = "기한 : " + TE_DataCell.DC_deadlineTime.ToString();
+            }
+            else
+            {
+                roundLabel_Planned.Text = "기한 해제";
+            }
+
+            IsPlannedChanged = true;
         }
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("1>TaskEditForm::OnDeleteDeadline_Click -> 기한 해제");
+            TE_DataCell.DC_deadlineType = 0;
+            TE_DataCell.DC_deadlineTime = default;
+            roundLabel_Planned.Text = "기한 해제";
 
+            IsPlannedDeleted = true;
         }
 
         //
@@ -349,6 +391,7 @@ namespace WellaTodo
         //
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
+            Console.WriteLine("1>TaskEditForm::textBox_Memo_Leave -> Memo Changed");
             //메모 내용에 변경이 있는지 확인(?)
             TE_DataCell.DC_memo = textBox_Memo.Text;
             isMemoChanged = true;

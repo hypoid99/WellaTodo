@@ -382,5 +382,14 @@ namespace WellaTodo
 
             Update_Calc_Display(textBox_Result.Text);
         }
+
+        private void CalculatorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+        }
     }
 }

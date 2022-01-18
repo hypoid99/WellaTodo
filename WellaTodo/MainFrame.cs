@@ -152,6 +152,12 @@ namespace WellaTodo
             {
                 Save_Data_File();
             }
+
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
         }
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
@@ -1507,7 +1513,7 @@ namespace WellaTodo
         {
             string txt = "항목 삭제? [" + dc.DC_title + "]";
             if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
-
+            Console.WriteLine("1>MainFrame::Task_Delete :" + dc.DC_title);
             m_Controller.Perform_Delete_Task(dc);
         }
 
@@ -1575,7 +1581,10 @@ namespace WellaTodo
 
             if (m_Pre_Selected_Item.Equals(sd))
             {
-                if (isDetailWindowOpen) Close_DetailWindow(); else Open_DetailWindow();
+                if (!(sd.IsCompleteClicked || sd.IsImportantClicked))
+                {
+                    if (isDetailWindowOpen) Close_DetailWindow(); else Open_DetailWindow();
+                }
             }
             else
             {
@@ -1726,7 +1735,7 @@ namespace WellaTodo
 
         private void Update_Important_Process(CDataCell dc)
         {
-            //m_Controller.Notify_Log_Message("4>MainFrame::Update_Complete_Process");
+            //m_Controller.Notify_Log_Message("4>MainFrame::Update_Important_Process");
             labelUserName.Focus();  // 레이아웃 유지용 포커싱
 
             foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
@@ -1741,11 +1750,11 @@ namespace WellaTodo
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
                             flowLayoutPanel2.VerticalScroll.Value = 0;
-                            Console.WriteLine("4>MainFrame::Update_Complete_Process -> 중요설정 (미완료시) / 일반메뉴 / 맨위로 이동");
+                            Console.WriteLine("4>MainFrame::Update_Important_Process -> 중요설정 (미완료시) / 일반메뉴 / 맨위로 이동");
                         }
                         else
                         {
-                            Console.WriteLine("4>MainFrame::Update_Complete_Process -> 중요설정 (미완료시) / 중요메뉴 (해당없음)");
+                            Console.WriteLine("4>MainFrame::Update_Important_Process -> 중요설정 (미완료시) / 중요메뉴 (해당없음)");
                         }
 
                         int pos = m_Task.IndexOf(item);
@@ -1757,12 +1766,12 @@ namespace WellaTodo
                     {
                         if (enum_Selected_Menu != MenuList.IMPORTANT_MENU)
                         {
-                            Console.WriteLine("4>MainFrame::Update_Complete_Process -> 중요설정or해제 / 일반메뉴 / 그대로 ");
+                            Console.WriteLine("4>MainFrame::Update_Important_Process -> 중요설정or해제 / 일반메뉴 / 그대로 ");
                         }
                         else
                         {
                             flowLayoutPanel2.Controls.Remove(item);
-                            Console.WriteLine("4>MainFrame::Update_Complete_Process -> 중요설정or해제 / 중요메뉴 / 삭제됨");
+                            Console.WriteLine("4>MainFrame::Update_Important_Process -> 중요설정or해제 / 중요메뉴 / 삭제됨");
                         }
                     }
                     SendDataCellToDetailWindow(dc);
@@ -1887,6 +1896,7 @@ namespace WellaTodo
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("1>MainFrame::OnDeleteItem_Click");
             Task_Delete(m_Selected_Item.TD_DataCell);
         }
 
@@ -2194,6 +2204,7 @@ namespace WellaTodo
         // 상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
+            Console.WriteLine("1>MainFrame::button2_Click_1 -> Delete Task");
             Task_Delete(m_Selected_Item.TD_DataCell);
         }
 
@@ -2468,6 +2479,7 @@ namespace WellaTodo
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("1>MainFrame::OnDeleteDeadline_Click -> 기한 해제");
             m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 0, default);
 
             if (m_Selected_Item.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때

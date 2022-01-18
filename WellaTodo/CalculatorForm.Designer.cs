@@ -458,8 +458,11 @@ namespace WellaTodo
             this.Controls.Add(this.textBox_Result);
             this.Controls.Add(this.textBox_Exp);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "CalculatorForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "계산기";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CalculatorForm_FormClosing);
             this.Load += new System.EventHandler(this.CalculatorForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CalculatorForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.CalculatorForm_KeyUp);

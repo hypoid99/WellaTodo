@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Runtime.InteropServices;
+
 namespace WellaTodo
 {
     static class WellaTodo
@@ -20,19 +22,16 @@ namespace WellaTodo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             /*
             MainFrame mainFrame = new MainFrame();
             MainModel mainModel = new MainModel();
             new MainController(mainFrame, mainModel);
-
             Application.Run(mainFrame);
-            */
 
-            /*
             MainFrame view = new MainFrame();
             IModel model = new MainModel();
             IController controller = new MainController(view, model);
-
             Application.Run(view);
             */
 

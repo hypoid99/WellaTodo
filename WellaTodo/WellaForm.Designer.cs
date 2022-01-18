@@ -29,6 +29,7 @@ namespace WellaTodo
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WellaForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.파일ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.저장ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,6 +38,7 @@ namespace WellaTodo
             this.toDoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.달력ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.계산기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.메모ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.출력창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.캐스케이드ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +47,31 @@ namespace WellaTodo
             this.아이콘화ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.도움말ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.정보ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.새로만들기ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.열기ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.저장ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.인쇄ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.잘라내기ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.복사ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.붙여넣기ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.도움말ToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.button_Todo = new System.Windows.Forms.ToolStripButton();
+            this.button_Calendar = new System.Windows.Forms.ToolStripButton();
+            this.button_Calculator = new System.Windows.Forms.ToolStripButton();
+            this.button_Memo = new System.Windows.Forms.ToolStripButton();
+            this.button_Output = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.button_Cascade = new System.Windows.Forms.ToolStripButton();
+            this.button_Vertical = new System.Windows.Forms.ToolStripButton();
+            this.button_Horizontal = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.button_Exit = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -90,6 +116,7 @@ namespace WellaTodo
             this.toDoToolStripMenuItem,
             this.달력ToolStripMenuItem,
             this.계산기ToolStripMenuItem,
+            this.메모ToolStripMenuItem,
             this.출력창ToolStripMenuItem});
             this.보기ToolStripMenuItem.Name = "보기ToolStripMenuItem";
             this.보기ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
@@ -115,6 +142,13 @@ namespace WellaTodo
             this.계산기ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.계산기ToolStripMenuItem.Text = "계산기";
             this.계산기ToolStripMenuItem.Click += new System.EventHandler(this.계산기ToolStripMenuItem_Click);
+            // 
+            // 메모ToolStripMenuItem
+            // 
+            this.메모ToolStripMenuItem.Name = "메모ToolStripMenuItem";
+            this.메모ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
+            this.메모ToolStripMenuItem.Text = "메모";
+            this.메모ToolStripMenuItem.Click += new System.EventHandler(this.메모ToolStripMenuItem_Click);
             // 
             // 출력창ToolStripMenuItem
             // 
@@ -177,18 +211,241 @@ namespace WellaTodo
             this.정보ToolStripMenuItem.Text = "정보";
             this.정보ToolStripMenuItem.Click += new System.EventHandler(this.정보ToolStripMenuItem_Click);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.새로만들기ToolStripButton,
+            this.열기ToolStripButton,
+            this.저장ToolStripButton,
+            this.인쇄ToolStripButton,
+            this.toolStripSeparator,
+            this.잘라내기ToolStripButton,
+            this.복사ToolStripButton,
+            this.붙여넣기ToolStripButton,
+            this.toolStripSeparator1,
+            this.도움말ToolStripButton,
+            this.toolStripSeparator2,
+            this.button_Todo,
+            this.button_Calendar,
+            this.button_Calculator,
+            this.button_Memo,
+            this.button_Output,
+            this.toolStripSeparator3,
+            this.button_Cascade,
+            this.button_Vertical,
+            this.button_Horizontal,
+            this.toolStripSeparator4,
+            this.button_Exit});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 28);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(782, 27);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // 새로만들기ToolStripButton
+            // 
+            this.새로만들기ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.새로만들기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("새로만들기ToolStripButton.Image")));
+            this.새로만들기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.새로만들기ToolStripButton.Name = "새로만들기ToolStripButton";
+            this.새로만들기ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.새로만들기ToolStripButton.Text = "새로 만들기";
+            // 
+            // 열기ToolStripButton
+            // 
+            this.열기ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.열기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("열기ToolStripButton.Image")));
+            this.열기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.열기ToolStripButton.Name = "열기ToolStripButton";
+            this.열기ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.열기ToolStripButton.Text = "열기";
+            // 
+            // 저장ToolStripButton
+            // 
+            this.저장ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.저장ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("저장ToolStripButton.Image")));
+            this.저장ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.저장ToolStripButton.Name = "저장ToolStripButton";
+            this.저장ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.저장ToolStripButton.Text = "저장";
+            // 
+            // 인쇄ToolStripButton
+            // 
+            this.인쇄ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.인쇄ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("인쇄ToolStripButton.Image")));
+            this.인쇄ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.인쇄ToolStripButton.Name = "인쇄ToolStripButton";
+            this.인쇄ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.인쇄ToolStripButton.Text = "인쇄";
+            // 
+            // toolStripSeparator
+            // 
+            this.toolStripSeparator.Name = "toolStripSeparator";
+            this.toolStripSeparator.Size = new System.Drawing.Size(6, 27);
+            // 
+            // 잘라내기ToolStripButton
+            // 
+            this.잘라내기ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.잘라내기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("잘라내기ToolStripButton.Image")));
+            this.잘라내기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.잘라내기ToolStripButton.Name = "잘라내기ToolStripButton";
+            this.잘라내기ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.잘라내기ToolStripButton.Text = "잘라내기";
+            // 
+            // 복사ToolStripButton
+            // 
+            this.복사ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.복사ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("복사ToolStripButton.Image")));
+            this.복사ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.복사ToolStripButton.Name = "복사ToolStripButton";
+            this.복사ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.복사ToolStripButton.Text = "복사";
+            // 
+            // 붙여넣기ToolStripButton
+            // 
+            this.붙여넣기ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.붙여넣기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("붙여넣기ToolStripButton.Image")));
+            this.붙여넣기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.붙여넣기ToolStripButton.Name = "붙여넣기ToolStripButton";
+            this.붙여넣기ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.붙여넣기ToolStripButton.Text = "붙여넣기";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            // 
+            // 도움말ToolStripButton
+            // 
+            this.도움말ToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.도움말ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("도움말ToolStripButton.Image")));
+            this.도움말ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.도움말ToolStripButton.Name = "도움말ToolStripButton";
+            this.도움말ToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.도움말ToolStripButton.Text = "도움말";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            // 
+            // button_Todo
+            // 
+            this.button_Todo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Todo.Image = ((System.Drawing.Image)(resources.GetObject("button_Todo.Image")));
+            this.button_Todo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Todo.Name = "button_Todo";
+            this.button_Todo.Size = new System.Drawing.Size(29, 24);
+            this.button_Todo.Text = "toolStripButton1";
+            this.button_Todo.Click += new System.EventHandler(this.button_Todo_Click);
+            // 
+            // button_Calendar
+            // 
+            this.button_Calendar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Calendar.Image = ((System.Drawing.Image)(resources.GetObject("button_Calendar.Image")));
+            this.button_Calendar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Calendar.Name = "button_Calendar";
+            this.button_Calendar.Size = new System.Drawing.Size(29, 24);
+            this.button_Calendar.Text = "toolStripButton2";
+            this.button_Calendar.Click += new System.EventHandler(this.button_Calendar_Click);
+            // 
+            // button_Calculator
+            // 
+            this.button_Calculator.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Calculator.Image = ((System.Drawing.Image)(resources.GetObject("button_Calculator.Image")));
+            this.button_Calculator.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Calculator.Name = "button_Calculator";
+            this.button_Calculator.Size = new System.Drawing.Size(29, 24);
+            this.button_Calculator.Text = "toolStripButton3";
+            this.button_Calculator.Click += new System.EventHandler(this.button_Calculator_Click);
+            // 
+            // button_Memo
+            // 
+            this.button_Memo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Memo.Image = ((System.Drawing.Image)(resources.GetObject("button_Memo.Image")));
+            this.button_Memo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Memo.Name = "button_Memo";
+            this.button_Memo.Size = new System.Drawing.Size(29, 24);
+            this.button_Memo.Text = "toolStripButton4";
+            this.button_Memo.Click += new System.EventHandler(this.button_Memo_Click);
+            // 
+            // button_Output
+            // 
+            this.button_Output.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Output.Image = ((System.Drawing.Image)(resources.GetObject("button_Output.Image")));
+            this.button_Output.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Output.Name = "button_Output";
+            this.button_Output.Size = new System.Drawing.Size(29, 24);
+            this.button_Output.Text = "toolStripButton5";
+            this.button_Output.Click += new System.EventHandler(this.button_Output_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
+            // 
+            // button_Cascade
+            // 
+            this.button_Cascade.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Cascade.Image = ((System.Drawing.Image)(resources.GetObject("button_Cascade.Image")));
+            this.button_Cascade.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Cascade.Name = "button_Cascade";
+            this.button_Cascade.Size = new System.Drawing.Size(29, 24);
+            this.button_Cascade.Text = "toolStripButton6";
+            this.button_Cascade.Click += new System.EventHandler(this.button_Cascade_Click);
+            // 
+            // button_Vertical
+            // 
+            this.button_Vertical.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Vertical.Image = ((System.Drawing.Image)(resources.GetObject("button_Vertical.Image")));
+            this.button_Vertical.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Vertical.Name = "button_Vertical";
+            this.button_Vertical.Size = new System.Drawing.Size(29, 24);
+            this.button_Vertical.Text = "toolStripButton7";
+            this.button_Vertical.Click += new System.EventHandler(this.button_Vertical_Click);
+            // 
+            // button_Horizontal
+            // 
+            this.button_Horizontal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Horizontal.Image = ((System.Drawing.Image)(resources.GetObject("button_Horizontal.Image")));
+            this.button_Horizontal.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Horizontal.Name = "button_Horizontal";
+            this.button_Horizontal.Size = new System.Drawing.Size(29, 24);
+            this.button_Horizontal.Text = "toolStripButton8";
+            this.button_Horizontal.Click += new System.EventHandler(this.button_Horizontal_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 27);
+            // 
+            // button_Exit
+            // 
+            this.button_Exit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_Exit.Image = ((System.Drawing.Image)(resources.GetObject("button_Exit.Image")));
+            this.button_Exit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_Exit.Name = "button_Exit";
+            this.button_Exit.Size = new System.Drawing.Size(29, 24);
+            this.button_Exit.Text = "toolStripButton9";
+            this.button_Exit.Click += new System.EventHandler(this.button_Exit_Click);
+            // 
             // WellaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 423);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "WellaForm";
             this.Text = "WellaForm";
             this.Load += new System.EventHandler(this.WellaForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -213,5 +470,29 @@ namespace WellaTodo
         private System.Windows.Forms.ToolStripMenuItem 아이콘화ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 도움말ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 정보ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 메모ToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton 새로만들기ToolStripButton;
+        private System.Windows.Forms.ToolStripButton 열기ToolStripButton;
+        private System.Windows.Forms.ToolStripButton 저장ToolStripButton;
+        private System.Windows.Forms.ToolStripButton 인쇄ToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
+        private System.Windows.Forms.ToolStripButton 잘라내기ToolStripButton;
+        private System.Windows.Forms.ToolStripButton 복사ToolStripButton;
+        private System.Windows.Forms.ToolStripButton 붙여넣기ToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton 도움말ToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton button_Todo;
+        private System.Windows.Forms.ToolStripButton button_Calendar;
+        private System.Windows.Forms.ToolStripButton button_Calculator;
+        private System.Windows.Forms.ToolStripButton button_Memo;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton button_Output;
+        private System.Windows.Forms.ToolStripButton button_Cascade;
+        private System.Windows.Forms.ToolStripButton button_Vertical;
+        private System.Windows.Forms.ToolStripButton button_Horizontal;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton button_Exit;
     }
 }
