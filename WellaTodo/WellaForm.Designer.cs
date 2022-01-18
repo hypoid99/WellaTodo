@@ -338,6 +338,7 @@ namespace WellaTodo
             this.button_Todo.Name = "button_Todo";
             this.button_Todo.Size = new System.Drawing.Size(29, 24);
             this.button_Todo.Text = "toolStripButton1";
+            this.button_Todo.ToolTipText = "할일";
             this.button_Todo.Click += new System.EventHandler(this.button_Todo_Click);
             // 
             // button_Calendar
@@ -348,6 +349,7 @@ namespace WellaTodo
             this.button_Calendar.Name = "button_Calendar";
             this.button_Calendar.Size = new System.Drawing.Size(29, 24);
             this.button_Calendar.Text = "toolStripButton2";
+            this.button_Calendar.ToolTipText = "달력";
             this.button_Calendar.Click += new System.EventHandler(this.button_Calendar_Click);
             // 
             // button_Calculator
@@ -358,6 +360,7 @@ namespace WellaTodo
             this.button_Calculator.Name = "button_Calculator";
             this.button_Calculator.Size = new System.Drawing.Size(29, 24);
             this.button_Calculator.Text = "toolStripButton3";
+            this.button_Calculator.ToolTipText = "계산기";
             this.button_Calculator.Click += new System.EventHandler(this.button_Calculator_Click);
             // 
             // button_Memo
@@ -368,6 +371,7 @@ namespace WellaTodo
             this.button_Memo.Name = "button_Memo";
             this.button_Memo.Size = new System.Drawing.Size(29, 24);
             this.button_Memo.Text = "toolStripButton4";
+            this.button_Memo.ToolTipText = "메모";
             this.button_Memo.Click += new System.EventHandler(this.button_Memo_Click);
             // 
             // button_Output
@@ -378,6 +382,7 @@ namespace WellaTodo
             this.button_Output.Name = "button_Output";
             this.button_Output.Size = new System.Drawing.Size(29, 24);
             this.button_Output.Text = "toolStripButton5";
+            this.button_Output.ToolTipText = "출력창";
             this.button_Output.Click += new System.EventHandler(this.button_Output_Click);
             // 
             // toolStripSeparator3
@@ -393,6 +398,7 @@ namespace WellaTodo
             this.button_Cascade.Name = "button_Cascade";
             this.button_Cascade.Size = new System.Drawing.Size(29, 24);
             this.button_Cascade.Text = "toolStripButton6";
+            this.button_Cascade.ToolTipText = "계단식정렬";
             this.button_Cascade.Click += new System.EventHandler(this.button_Cascade_Click);
             // 
             // button_Vertical
@@ -403,6 +409,7 @@ namespace WellaTodo
             this.button_Vertical.Name = "button_Vertical";
             this.button_Vertical.Size = new System.Drawing.Size(29, 24);
             this.button_Vertical.Text = "toolStripButton7";
+            this.button_Vertical.ToolTipText = "수직정렬";
             this.button_Vertical.Click += new System.EventHandler(this.button_Vertical_Click);
             // 
             // button_Horizontal
@@ -413,6 +420,7 @@ namespace WellaTodo
             this.button_Horizontal.Name = "button_Horizontal";
             this.button_Horizontal.Size = new System.Drawing.Size(29, 24);
             this.button_Horizontal.Text = "toolStripButton8";
+            this.button_Horizontal.ToolTipText = "수평정렬";
             this.button_Horizontal.Click += new System.EventHandler(this.button_Horizontal_Click);
             // 
             // toolStripSeparator4
@@ -428,6 +436,7 @@ namespace WellaTodo
             this.button_Exit.Name = "button_Exit";
             this.button_Exit.Size = new System.Drawing.Size(29, 24);
             this.button_Exit.Text = "toolStripButton9";
+            this.button_Exit.ToolTipText = "끝내기";
             this.button_Exit.Click += new System.EventHandler(this.button_Exit_Click);
             // 
             // WellaForm
