@@ -227,15 +227,31 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_TASK_MEMO));
 		}
 
-		public void Task_Move_Up(CDataCell dc)
+		public bool Task_Move_Up(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Up -> Find() Not Found Item!!");
+				return false;
+			}
 
 			int pos = myTaskItems.IndexOf(data);
-			if ( pos == 0) return;
+			if (pos == -1)
+            {
+				Notify_Log_Message("Warning>MainModel::Task_Move_Up -> IndexOf() Not Found Item!!");
+				return false;
+			}
+
+			if (pos == 0)
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Up -> List Poistion is Top, Can't move!");
+				return false;
+			}
 
 			if (!myTaskItems[pos].DC_complete)
 			{
+				int counter = 0;
 				for (int i = pos - 1; i >= 0; i--)  // 상향 탐색
 				{
 					if (myTaskItems[i].DC_listName == myTaskItems[pos].DC_listName)
@@ -243,40 +259,85 @@ namespace WellaTodo
 						CDataCell temp = myTaskItems[pos]; //추출
 						myTaskItems.RemoveAt(pos); //삭제
 						myTaskItems.Insert(i, temp); // 삽입
+						dc = myTaskItems[i];
+						counter++;
+						Notify_Log_Message("3>MainModel::Task_Move_Up -> Move Up Completed! " + dc.DC_title);
 						break;
 					}
 				}
+				if (counter == 0)
+				{
+					Notify_Log_Message("Warning>MainModel::Task_Move_Up -> Top position of ListName, Can't move!");
+					return false;
+				}
 			}
-			else return;
+			else 
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Up -> Task is complete, Can't move!");
+				return false;
+			}
 
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_UP));
+			return true;
 		}
 
-		public void Task_Move_Down(CDataCell dc)
+		public bool Task_Move_Down(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
+			if (data == null)
+            {
+				Notify_Log_Message("Warning>MainModel::Task_Move_Down -> Find() Not Found Item!!");
+				return false;
+            }
 
 			int pos = myTaskItems.IndexOf(data);
+			if (pos == -1)
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Down -> IndexOf() Not Found Item!!");
+				return false;
+			}
 
-			if (pos == (myTaskItems.Count - 1)) return;
+			if (pos == (myTaskItems.Count - 1))
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Down -> List Poistion is Bottom, Can't move!");
+				return false;
+			}
 
 			if (!myTaskItems[pos].DC_complete)
 			{
-				for (int i = pos + 1; i <= myTaskItems.Count - 1; i++)
+				int counter = 0;
+				for (int i = pos + 1; i <= myTaskItems.Count - 1; i++)  // 하향 탐색
 				{
-					if (myTaskItems[i].DC_complete) return;
+					if (myTaskItems[i].DC_complete)  // 아래 항목이 complete이면 맨 밑임
+					{
+						Notify_Log_Message("Warning>MainModel::Task_Move_Down -> Top position of complete tasks, Can't move!");
+						return false;
+					}
 					if (myTaskItems[i].DC_listName == myTaskItems[pos].DC_listName)
 					{
 						CDataCell temp = myTaskItems[pos]; //추출
 						myTaskItems.RemoveAt(pos); //삭제
 						myTaskItems.Insert(i, temp); // 삽입
+						dc = myTaskItems[i];
+						counter++;
+						Notify_Log_Message("3>MainModel::Task_Move_Down -> Move Down Completed! " + dc.DC_title);
 						break;
 					}
 				}
+				if (counter == 0)
+				{
+					Notify_Log_Message("Warning>MainModel::Task_Move_Down -> Bottom position of ListName, Can't move!");
+					return false;
+				}
 			}
-			else return;
+			else 
+			{
+				Notify_Log_Message("Warning>MainModel::Task_Move_Down -> Task is complete, Can't move!");
+				return false; 
+			}
 
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_DOWN));
+			return true;
 		}
 
 		public void Modifiy_MyToday(CDataCell dc)
@@ -319,9 +380,14 @@ namespace WellaTodo
 
 		private CDataCell Find(CDataCell dc)
 		{
+			int task_ID = dc.DC_task_ID;
 			IEnumerable<CDataCell> dataset = from CDataCell data in myTaskItems
-											 where dc.DC_task_ID == data.DC_task_ID select data;
-			if (dataset.Count() != 1) Console.WriteLine("?>MainModel::Find -> Not Found Item!!");  // 에러 출력
+											 where data.DC_task_ID == task_ID select data;
+			if (dataset.Count() != 1)
+			{
+				Console.WriteLine("Error>MainModel::Find -> Not Found Item!!");  // 에러 출력
+				return null;
+			}
 			return dataset.First();
 		}
 

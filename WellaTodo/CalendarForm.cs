@@ -230,9 +230,22 @@ namespace WellaTodo
             panel_Calendar.Refresh();
         }
 
+        private void Send_Log_Message(string msg)
+        {
+            try
+            {
+                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please enter a valid number");
+            }
+        }
+
         private void SetDate(DateTime dt)
         {
             //Console.WriteLine("SetDate");
+            Send_Log_Message(">CalendarForm::SetDate");
             m_dtValue = dt;
             DateTime startDate = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
             int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);

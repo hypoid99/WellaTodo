@@ -36,7 +36,6 @@
             this.labelUserName = new System.Windows.Forms.Label();
             this.textBox_Task = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panel_Calendar = new System.Windows.Forms.Panel();
             this.panel_Header = new System.Windows.Forms.Panel();
             this.label_ListName = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -82,8 +81,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.textBox_Task);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2MinSize = 200;
-            this.splitContainer1.Size = new System.Drawing.Size(982, 403);
-            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.Size = new System.Drawing.Size(785, 403);
+            this.splitContainer1.SplitterDistance = 159;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
@@ -94,14 +93,14 @@
             // 
             this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 43);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
-            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(197, 329);
+            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(153, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
             // 
             // textBox_AddList
             // 
             this.textBox_AddList.Location = new System.Drawing.Point(0, 378);
             this.textBox_AddList.Name = "textBox_AddList";
-            this.textBox_AddList.Size = new System.Drawing.Size(204, 25);
+            this.textBox_AddList.Size = new System.Drawing.Size(156, 25);
             this.textBox_AddList.TabIndex = 5;
             this.textBox_AddList.Enter += new System.EventHandler(this.textBox_AddList_Enter);
             this.textBox_AddList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyDown);
@@ -113,7 +112,7 @@
             // 
             this.labelUserName.Location = new System.Drawing.Point(0, 0);
             this.labelUserName.Name = "labelUserName";
-            this.labelUserName.Size = new System.Drawing.Size(204, 40);
+            this.labelUserName.Size = new System.Drawing.Size(156, 40);
             this.labelUserName.TabIndex = 1;
             this.labelUserName.Text = "      계정";
             this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -126,7 +125,7 @@
             this.textBox_Task.Location = new System.Drawing.Point(10, 354);
             this.textBox_Task.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Task.Name = "textBox_Task";
-            this.textBox_Task.Size = new System.Drawing.Size(329, 25);
+            this.textBox_Task.Size = new System.Drawing.Size(600, 25);
             this.textBox_Task.TabIndex = 0;
             this.textBox_Task.Enter += new System.EventHandler(this.textBox_Task_Enter);
             this.textBox_Task.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Task_KeyUp);
@@ -141,7 +140,6 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.panel_Calendar);
             this.splitContainer2.Panel1.Controls.Add(this.panel_Header);
             this.splitContainer2.Panel1.Controls.Add(this.flowLayoutPanel2);
             this.splitContainer2.Panel1MinSize = 200;
@@ -157,15 +155,6 @@
             this.splitContainer2.SplitterDistance = 306;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
-            // 
-            // panel_Calendar
-            // 
-            this.panel_Calendar.Location = new System.Drawing.Point(14, 256);
-            this.panel_Calendar.Name = "panel_Calendar";
-            this.panel_Calendar.Size = new System.Drawing.Size(280, 68);
-            this.panel_Calendar.TabIndex = 3;
-            this.panel_Calendar.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Calendar_Paint);
-            this.panel_Calendar.Resize += new System.EventHandler(this.panel_Calendar_Resize);
             // 
             // panel_Header
             // 
@@ -189,10 +178,10 @@
             // 
             this.flowLayoutPanel2.AutoScroll = true;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(12, 85);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(12, 69);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(283, 166);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(283, 256);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
             this.flowLayoutPanel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel2_Scroll);
@@ -274,7 +263,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(982, 403);
+            this.ClientSize = new System.Drawing.Size(785, 403);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(400, 47);
@@ -322,7 +311,6 @@
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Windows.Forms.PrintDialog printDialog1;
         private System.Windows.Forms.Panel panel_Header;
-        private System.Windows.Forms.Panel panel_Calendar;
     }
 }
 

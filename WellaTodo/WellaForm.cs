@@ -12,13 +12,11 @@ namespace WellaTodo
 {
     public partial class WellaForm : Form
     {
-        MainFrame view = new MainFrame();
-        IModel model = new MainModel();
-        //IController controller;
-
-        CalculatorForm calc = new CalculatorForm();
-        CalendarForm calen = new CalendarForm();
-        OutputForm outputForm = new OutputForm();
+        MainFrame toDoList = new MainFrame();
+        CalendarForm calendar = new CalendarForm();
+        CalculatorForm calculator = new CalculatorForm();
+        OutputForm output = new OutputForm();
+        MainModel model = new MainModel();
 
         public WellaForm()
         {
@@ -30,24 +28,26 @@ namespace WellaTodo
 
         private void WellaForm_Load(object sender, EventArgs e)
         {
-            MainController controller = new MainController(view, model);
-            controller.Add_View(calen);
-            controller.Add_View(outputForm);
+            MainController controller = new MainController(model);
+            controller.Add_View(toDoList);
+            controller.Add_View(calendar);
+            controller.Add_View(output);
 
-            view.TopLevel = false;
-            calc.TopLevel = false;
-            calen.TopLevel = false;
+            controller.Load_Data_File();
 
-            view.MdiParent = this;
-            calen.MdiParent = this;
-            calc.MdiParent = this;
+            toDoList.TopLevel = false;
+            calculator.TopLevel = false;
+            calendar.TopLevel = false;
 
-            calen.Show();
-            view.Show();
+            toDoList.MdiParent = this;
+            calendar.MdiParent = this;
+            calculator.MdiParent = this;
 
-            view.Activate();
-            this.LayoutMdi(MdiLayout.TileVertical);
+            calendar.Show();
+            toDoList.Show();
 
+            toDoList.Activate();
+            LayoutMdi(MdiLayout.TileVertical);
     }
 
         private Form ShowActiveForm(Form form, Type t)
@@ -85,17 +85,17 @@ namespace WellaTodo
 
         private void toDoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            view = (MainFrame)ShowActiveForm(view, typeof(MainFrame));
+            toDoList = (MainFrame)ShowActiveForm(toDoList, typeof(MainFrame));
         }
 
         private void 계산기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            calc = (CalculatorForm)ShowActiveForm(calc, typeof(CalculatorForm));
+            calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
         }
 
         private void 달력ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            calen = (CalendarForm)ShowActiveForm(calen, typeof(CalendarForm));
+            calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
         }
 
         private void 메모ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -105,7 +105,7 @@ namespace WellaTodo
 
         private void 출력창ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            outputForm = (OutputForm)ShowActiveForm(outputForm, typeof(OutputForm));
+            output = (OutputForm)ShowActiveForm(output, typeof(OutputForm));
         }
 
         private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -142,17 +142,17 @@ namespace WellaTodo
 
         private void button_Todo_Click(object sender, EventArgs e)
         {
-            view = (MainFrame)ShowActiveForm(view, typeof(MainFrame));
+            toDoList = (MainFrame)ShowActiveForm(toDoList, typeof(MainFrame));
         }
 
         private void button_Calendar_Click(object sender, EventArgs e)
         {
-            calen = (CalendarForm)ShowActiveForm(calen, typeof(CalendarForm));
+            calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
         }
 
         private void button_Calculator_Click(object sender, EventArgs e)
         {
-            calc = (CalculatorForm)ShowActiveForm(calc, typeof(CalculatorForm));
+            calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
         }
 
         private void button_Memo_Click(object sender, EventArgs e)
@@ -162,7 +162,7 @@ namespace WellaTodo
 
         private void button_Output_Click(object sender, EventArgs e)
         {
-            outputForm = (OutputForm)ShowActiveForm(outputForm, typeof(OutputForm));
+            output = (OutputForm)ShowActiveForm(output, typeof(OutputForm));
         }
 
         private void button_Cascade_Click(object sender, EventArgs e)

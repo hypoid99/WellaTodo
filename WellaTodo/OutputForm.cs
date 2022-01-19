@@ -36,11 +36,37 @@ namespace WellaTodo
             {
                 case WParam.WM_LOG_MESSAGE:
                     Console.WriteLine("4>OutputForm::Update_View -> Log Message");
-                    OutputText(dc.DC_title);
+                    Output_Message(dc.DC_title);
                     break;
                 default:
                     break;
             }
+        }
+
+        private void Send_Log_Message(string msg)
+        {
+            try
+            {
+                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please enter a valid number");
+            }
+        }
+
+        private void Output_Message(string msg)
+        {
+            if (msg.Length == 0) return;
+
+            if ((msg.Length + textBox1.TextLength) > textBox1.MaxLength)
+            {
+                textBox1.Clear();
+                TextBoxString = "문자열이 너무 깁니다";
+                textBox1.AppendText(TextBoxString);
+            }
+            else
+                textBox1.AppendText(msg+"\r\n");
         }
 
         private void OutputText(string txt)
@@ -61,14 +87,9 @@ namespace WellaTodo
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                this.Hide();
+                Hide();
                 e.Cancel = true;
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            textBox1.Text = "";
         }
     }
 }

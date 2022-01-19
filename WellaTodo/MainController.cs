@@ -3,7 +3,7 @@
 // ----------------------------------------------------------
 // 1. 사용자 요청을 분석한다
 // 2. 뷰를 통해 입력된 데이터 가져오기
-// 3. 프레임 이동
+// 3. 프레임(뷰) 이동
 // 4. 유효성 검사
 // 5. 모델 객체 생성
 // ----------------------------------------------------------
@@ -27,30 +27,21 @@ namespace WellaTodo
 
 		int m_Task_ID_Num = 0;
 
+		public MainController(MainModel m)
+        {
+			m_model = m;
+		}
+
 		public MainController(IView v, IModel m)
 		{
 			m_view = v;
 			m_model = (MainModel)m;
-
-			Initiate();
 		}
 
 		public MainController(IView v, MainModel m)
 		{
 			m_view = v;
 			m_model = m;
-
-			Initiate();
-		}
-
-		public void Initiate()
-        {
-			m_view.SetController(this);
-			m_view.View_Changed_Event += new ViewHandler<IView>(View_Changed_Event_method);
-
-			m_model.Add_Observer((IModelObserver)m_view);
-
-			Load_Data_File();
 		}
 
 		public void Add_View(IView view)
@@ -63,9 +54,9 @@ namespace WellaTodo
 
 		public void View_Changed_Event_method(IView v, ViewEventArgs e)
 		{
-			Console.WriteLine(">MainController::Changed_View_Event_method");
-			Console.WriteLine("listName:" + e.Item.DC_listName);
-			Console.WriteLine("title:" + e.Item.DC_title);
+			Console.WriteLine(">MainController::Changed_View_Event_method -> Received Message from View : " + e.Msg);
+			m_model.Notify_Log_Message(e.Msg);
+
 			//m_model.SetValue(e.value);
 		}
 
@@ -191,11 +182,13 @@ namespace WellaTodo
 
 		public void Perform_Task_Move_Up(CDataCell dc)
 		{
+			m_model.Notify_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
 			m_model.Task_Move_Up(dc);
 		}
 
 		public void Perform_Task_Move_Down(CDataCell dc)
 		{
+			m_model.Notify_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
 			m_model.Task_Move_Down(dc);
 		}
 
