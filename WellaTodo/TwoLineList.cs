@@ -217,6 +217,12 @@ namespace WellaTodo
                     return;
                 }
 
+                if (textBox_Rename.Text == PrimaryText)
+                {
+                    isTextboxClicked = false;
+                    return;
+                }
+
                 // Change PrimaryText
                 PrimaryText_Renamed = textBox_Rename.Text;
 
@@ -270,7 +276,7 @@ namespace WellaTodo
 
         }
 
-        public void RenamePrimaryText()
+        public void Rename_Process()
         {
             textBox_Rename.Visible = true;
             label_PrimaryText.Visible = false;

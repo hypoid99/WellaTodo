@@ -120,7 +120,10 @@ namespace WellaTodo
 
 			CDataCell rename = new CDataCell();
 			rename.DC_listName = target;
-			Update_View.Invoke(this, new ModelEventArgs(rename, WParam.WM_MENULIST_RENAME));
+
+			Notify_Log_Message("3>MainModel::Menulist_Rename -> from " + source + " to " + rename.DC_listName);
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)rename.Clone(), WParam.WM_MENULIST_RENAME));
 		}
 
 		public void Menulist_Delete(string target)
@@ -162,22 +165,40 @@ namespace WellaTodo
 
 		public void Add_Task(CDataCell dc)
 		{
-			DateTime dt = DateTime.Now;
+			CDataCell newData = new CDataCell();
+			newData = (CDataCell)dc.Clone();
 
-			myTaskItems.Insert(0, dc);
-			myTaskItems[0].DC_dateCreated = dt;
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
+			DateTime dt = DateTime.Now;
+			newData.DC_dateCreated = dt;
+			myTaskItems.Insert(0, newData);
+
+			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + newData.DC_task_ID + "]" + newData.DC_title);
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)newData.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
-		public void Delete_Task(CDataCell dc)
+		public bool Delete_Task(CDataCell dc)
         {
-			Console.WriteLine("3>MainModel::Delete_Task : " + dc.DC_title);
-			if (!myTaskItems.Remove(Find(dc)))
-            {
-				Console.WriteLine("3>MainModel::Delete_Task -> Data No matched!!");
-            }
+			CDataCell deleteData = new CDataCell();
+			deleteData = Find(dc);
+			if (deleteData == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Delete_Task -> Find() Not Found Item!!");
+				return false;
+			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_DELETE));
+			if (myTaskItems.Remove(deleteData))
+            {
+				Notify_Log_Message("3>MainModel::Delete_Task -> Data is Deleted!! [" + deleteData.DC_task_ID + "]" + deleteData.DC_title);
+            }
+            else
+            {
+				Notify_Log_Message("Warning>MainModel::Delete_Task -> Remove() Not Found Item!!");
+				return false;
+			}
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)deleteData.Clone(), WParam.WM_TASK_DELETE));
+			return true;
 		}
 
 		public void Complete_Process(CDataCell dc)
