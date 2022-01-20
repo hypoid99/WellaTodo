@@ -104,11 +104,14 @@ namespace WellaTodo
 		public void Perform_Menulist_Rename(string source, string target)
         {
 			m_model.Notify_Log_Message("2>MainController::Perform_Menulist_Rename : from " + source + " to " + target);
+			
 			m_model.Menulist_Rename(source, target);
         }
 
 		public void Perform_Menulist_Delete(string target)
         {
+			m_model.Notify_Log_Message("2>MainController::Perform_Menulist_Delete : " + target);
+			
 			m_model.Menulist_Delete(target);
 		}
 

@@ -57,6 +57,13 @@ namespace WellaTodo
             set => label_Metadata.Text = value;
         }
 
+        private bool isDivider = false;
+        public bool IsDivider
+        {
+            get => isDivider;
+            set => isDivider = value;
+        }
+
         private bool isSelected = false;
         public bool IsSelected
         {
@@ -77,9 +84,7 @@ namespace WellaTodo
         }
 
         bool isTextboxClicked = false;
-        bool isDivider = false;
         
-
         public TwoLineList()
         {
             InitializeComponent();

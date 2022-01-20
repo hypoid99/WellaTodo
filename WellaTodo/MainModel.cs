@@ -128,20 +128,25 @@ namespace WellaTodo
 
 		public void Menulist_Delete(string target)
         {
-			int pos = 0;
 			CDataCell dc = null;
+
+			int pos = 0;
 			while (pos < myTaskItems.Count) // 리스트 제거
 			{
 				dc = myTaskItems[pos];
+
 				if (dc.DC_listName == target)
 				{
 					myTaskItems.RemoveAt(pos);
 				}
 				else
 				{
-					++pos;
+					pos++;
 				}
 			}
+
+			Notify_Log_Message("3>MainModel::Menulist_Delete : " + target);
+
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MENULIST_DELETE));
 		}
 

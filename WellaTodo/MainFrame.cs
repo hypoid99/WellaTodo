@@ -736,6 +736,8 @@ namespace WellaTodo
             m_Selected_Menu.IsSelected = true;
             m_Pre_Selected_Menu = m_Selected_Menu;
 
+            Close_DetailWindow();
+
             switch (me.Button)
             {
                 case MouseButtons.Left:
@@ -745,20 +747,18 @@ namespace WellaTodo
                 case MouseButtons.Right:
                     Send_Log_Message("1>MainFrame::TwoLineList_Click -> Right Button : " + m_Selected_Menu.PrimaryText);
                     Update_Selected_Menu();
-                    MenuList_Right_Click_ContextMenu();
+                    MenuList_Right_Click_ContextMenu();  // 컨텍스트 메뉴
                     break;
                 case MouseButtons.Middle:
                     Send_Log_Message("1-2>MainFrame::TwoLineList_Click -> Middle Button : " + m_Selected_Menu.PrimaryText);
                     Menulist_Rename_Process(sender, me);  // 목록명 변경되어 실행됨
                     break;
             }
-
-            Update_Task_Width();
         }
 
         private void Update_Selected_Menu()
         {
-            Close_DetailWindow();
+            Send_Log_Message("1>MainFrame::Update_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
 
             switch (m_Selected_Menu.PrimaryText)
             {
@@ -781,8 +781,6 @@ namespace WellaTodo
                     Menu_List(m_Selected_Menu);
                     break;
             }
-
-            Send_Log_Message("1>MainFrame::Update_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
         }
 
         private void MenuList_Right_Click_ContextMenu()
@@ -851,6 +849,7 @@ namespace WellaTodo
                 outputForm.Hide();
             else
                 outputForm.Show();
+
             Display_Data();
         }
 
@@ -882,12 +881,17 @@ namespace WellaTodo
             int pos = 0;
             for(int i = 0; i < m_ListName.Count; i++)
             {
-                if (m_ListName[i].PrimaryText == m_Current_MenuName)
+                if (m_Selected_Menu.PrimaryText == m_ListName[i].PrimaryText)
                 {
                     pos = i;
                 }
             }
-            if (pos == 1) return;  // 작업 이상은 UP 불가
+
+            if (pos == 1)  // 작업 메뉴 위로 UP 불가
+            {
+                Send_Log_Message("Warning>MainFrame::OnMenuListUp_Click -> Can't move Up");
+                return;
+            }  
 
             TwoLineList dc = m_ListName[pos]; //추출
             m_ListName.RemoveAt(pos); //삭제
@@ -896,13 +900,15 @@ namespace WellaTodo
             pos = 0;
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
-                if (item.PrimaryText == m_Current_MenuName)
+                if (m_Selected_Menu.PrimaryText == item.PrimaryText)
                 {
                     flowLayoutPanel_Menulist.Controls.SetChildIndex(item, pos - 1);
                     break;
                 }
                 pos++;
             }
+
+            Send_Log_Message(">MainFrame::OnMenuListUp_Click -> MenuList move Up Completed!!");
 
             Update_Task_Width();
             Update_Menu_Metadata();
@@ -913,27 +919,34 @@ namespace WellaTodo
             int pos = 0;
             for (int i = 0; i < m_ListName.Count; i++)
             {
-                if (m_ListName[i].PrimaryText == m_Current_MenuName)
+                if (m_Selected_Menu.PrimaryText == m_ListName[i].PrimaryText)
                 {
                     pos = i;
                 }
             }
-            if (pos == m_ListName.Count - 1) return;
+
+            if (pos == m_ListName.Count - 1)
+            {
+                Send_Log_Message("Warning>MainFrame::OnMenuListDown_Click -> Can't move Down");
+                return;
+            }
 
             TwoLineList dc = m_ListName[pos]; //추출
-            m_ListName.RemoveAt(pos); //삭제
+            m_ListName.RemoveAt(pos); //삭제  
             m_ListName.Insert(pos + 1, dc); // 삽입
 
             pos = 0;
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
-                if (item.PrimaryText == m_Current_MenuName)
+                if (m_Selected_Menu.PrimaryText == item.PrimaryText)
                 {
                     flowLayoutPanel_Menulist.Controls.SetChildIndex(item, pos + 1);
                     break;
                 }
                 pos++;
             }
+
+            Send_Log_Message(">MainFrame::OnMenuListDown_Click -> MenuList move Down Completed!!");
 
             Update_Task_Width();
             Update_Menu_Metadata();
@@ -979,6 +992,7 @@ namespace WellaTodo
                     break;
                 }
             }
+
             Update_Task_Width();
             Update_Menu_Metadata();
         }
@@ -989,26 +1003,36 @@ namespace WellaTodo
 
             foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
             {
-                if (list.PrimaryText == m_Current_MenuName)
+                if (m_Selected_Menu.PrimaryText == list.PrimaryText)
                 {
+                    m_ListName.Remove(list); // 리스트 이름 제거
+
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
-                    m_ListName.Remove(list); // 리스트 이름 제거
 
+                    Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete");
                     m_Controller.Perform_Menulist_Delete(m_Current_MenuName);
                     break;
                 }
                 else
                 {
-                    m_Pre_Selected_Menu = list;
+                    if (!list.IsDivider)
+                    {
+                        m_Pre_Selected_Menu = list;
+                        Send_Log_Message(">MainFrame::OnDeleteMenuList_Click -> m_Pre_Selected_Menu is " + list.PrimaryText);
+                    }
                 }
             }
         }
 
         private void Update_Menulist_Delete(CDataCell dc)
         {
-            Menu_List(m_Pre_Selected_Menu);
+            Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> Delete MenuList is Complete!!");
+
+            m_Selected_Menu = m_Pre_Selected_Menu;
+            Menu_List(m_Selected_Menu);
+
             Update_Task_Width();
             Update_Menu_Metadata();
         }
