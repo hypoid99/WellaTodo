@@ -392,8 +392,10 @@ namespace WellaTodo
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
             Console.WriteLine("1>TaskEditForm::textBox_Memo_Leave -> Memo Changed");
+
             //메모 내용에 변경이 있는지 확인(?)
             TE_DataCell.DC_memo = textBox_Memo.Text;
+
             isMemoChanged = true;
         }
 

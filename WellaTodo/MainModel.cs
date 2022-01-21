@@ -70,14 +70,6 @@ namespace WellaTodo
 			}
 		}
 
-		public void Update_Model()
-		{
-			// Model 데이타를 변경한다
-			Console.WriteLine(">MainModel::Invoke Changed_Model_Event");
-			//CDataCell dc1 = new CDataCell();
-			//Model_Changed_Event.Invoke(this, new ModelEventArgs(dc1));
-		}
-
 		public List<CDataCell> GetDataCollection()
         {
 			return myTaskItems;
@@ -90,6 +82,7 @@ namespace WellaTodo
 
 		public void Load_Data()
         {
+			Notify_Log_Message(">MainModel::Load_Data -> Data Loading Completed!!");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
 		}
 
@@ -103,6 +96,7 @@ namespace WellaTodo
 		{
 			CDataCell dc = new CDataCell();
 			dc.DC_title = msg;
+
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_LOG_MESSAGE));
 		}
 
@@ -122,20 +116,19 @@ namespace WellaTodo
 			rename.DC_listName = target;
 
 			Notify_Log_Message("3>MainModel::Menulist_Rename -> from " + source + " to " + rename.DC_listName);
-
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)rename.Clone(), WParam.WM_MENULIST_RENAME));
 		}
 
 		public void Menulist_Delete(string target)
         {
-			CDataCell dc = null;
+			CDataCell data = null;
 
 			int pos = 0;
 			while (pos < myTaskItems.Count) // 리스트 제거
 			{
-				dc = myTaskItems[pos];
+				data = myTaskItems[pos];
 
-				if (dc.DC_listName == target)
+				if (data.DC_listName == target)
 				{
 					myTaskItems.RemoveAt(pos);
 				}
@@ -146,55 +139,63 @@ namespace WellaTodo
 			}
 
 			Notify_Log_Message("3>MainModel::Menulist_Delete : " + target);
-
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MENULIST_DELETE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_DELETE));
 		}
 
 		public void Transfer_Task(CDataCell dc, string target)
         {
-			Find(dc).DC_listName = target;
-			dc.DC_listName = target;
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TRANSFER_TASK));
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Transfer_Task -> Find() Not Found Item!!");
+				return;
+			}
+
+			string source = data.DC_listName;
+			data.DC_listName = target;
+
+			Notify_Log_Message("3>MainModel::Transfer_Task : from " + source + " to " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TRANSFER_TASK));
 		}
 
 		public void Add_Task(int id, string list, string title)
         {
-			DateTime dt = DateTime.Now;
+			CDataCell data = new CDataCell(id, list, title);  // DataCell 생성
 
-			CDataCell dc = new CDataCell(id, list, title);  // DataCell 생성
-			myTaskItems.Insert(0, dc);
-			myTaskItems[0].DC_dateCreated = dt;
+			data.DC_dateCreated = DateTime.Now;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
+			myTaskItems.Insert(0, data);
+
+			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
 		public void Add_Task(CDataCell dc)
 		{
-			CDataCell newData = new CDataCell();
-			newData = (CDataCell)dc.Clone();
+			CDataCell data = (CDataCell)dc.Clone();
 
-			DateTime dt = DateTime.Now;
-			newData.DC_dateCreated = dt;
-			myTaskItems.Insert(0, newData);
+			data.DC_dateCreated = DateTime.Now;
 
-			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + newData.DC_task_ID + "]" + newData.DC_title);
+			myTaskItems.Insert(0, data);
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)newData.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
+			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
 		public bool Delete_Task(CDataCell dc)
         {
-			CDataCell deleteData = new CDataCell();
-			deleteData = Find(dc);
-			if (deleteData == null)
+			CDataCell data = Find(dc);
+
+			if (data == null)
 			{
 				Notify_Log_Message("Warning>MainModel::Delete_Task -> Find() Not Found Item!!");
 				return false;
 			}
 
-			if (myTaskItems.Remove(deleteData))
+			if (myTaskItems.Remove(data))
             {
-				Notify_Log_Message("3>MainModel::Delete_Task -> Data is Deleted!! [" + deleteData.DC_task_ID + "]" + deleteData.DC_title);
+				Notify_Log_Message("3>MainModel::Delete_Task -> Data is Deleted!! [" + data.DC_task_ID + "]" + data.DC_title);
             }
             else
             {
@@ -202,60 +203,96 @@ namespace WellaTodo
 				return false;
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)deleteData.Clone(), WParam.WM_TASK_DELETE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_DELETE));
 			return true;
 		}
 
 		public void Complete_Process(CDataCell dc)
 		{
-			Console.WriteLine("3>MainModel::Complete_Process : " + dc.DC_complete);
-			//Notify_Log_Message("3>MainModel::Complete_Process : " + dc.DC_complete);
-			if (dc.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
+			CDataCell data = Find(dc);
+
+			if (data == null)
 			{
-				myTaskItems.Remove(Find(dc)); // 삭제
-				myTaskItems.Insert(myTaskItems.Count, dc); // 맨밑에 삽입
+				Notify_Log_Message("Warning>MainModel::Complete_Process -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_complete = dc.DC_complete;
+
+			if (data.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
+			{
+				myTaskItems.Remove(data); // 삭제
+				myTaskItems.Insert(myTaskItems.Count, data); // 맨밑에 삽입
+				Notify_Log_Message("3>MainModel::Complete_Process -> Set Complete to Bottom : " + data.DC_complete);
 			}
 			else
 			{
-				myTaskItems.Remove(Find(dc)); // 삭제
-				myTaskItems.Insert(0, dc); // 맨위에 삽입
+				myTaskItems.Remove(data); // 삭제
+				myTaskItems.Insert(0, data); // 맨위에 삽입
+				Notify_Log_Message("3>MainModel::Complete_Process -> Reset Complete to Top " + data.DC_complete);
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_COMPLETE_PROCESS));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_COMPLETE_PROCESS));
 		}
 
 		public void Important_Process(CDataCell dc)
 		{
-			Console.WriteLine("3>MainModel::Important_Process : " + dc.DC_important);
-			//Notify_Log_Message("3>MainModel::Important_Process : " + dc.DC_important);
 			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Important_Process -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_important = dc.DC_important;
-			if (dc.DC_important && !dc.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
+
+			if (data.DC_important && !data.DC_complete)  // 중요 & 미완료시 -> 맨위로 이동
 			{
 				myTaskItems.Remove(data); // 삭제
 				myTaskItems.Insert(0, data); //삽입
             }
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_IMPORTANT_PROCESS));
+			Notify_Log_Message("3>MainModel::Important_Process : " + data.DC_important);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_IMPORTANT_PROCESS));
 		}
 
 		public void Modify_Task_Title(CDataCell dc)
         {
-			Console.WriteLine("3>MainModel::Modify_Task_Title : " + dc.DC_title);
-			Find(dc).DC_title =  dc.DC_title;
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_TASK_TITLE));
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Task_Title -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_title = dc.DC_title;
+
+			Notify_Log_Message("3>MainModel::Modify_Task_Title : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_TASK_TITLE));
 		}
 
 		public void Modify_Task_Memo(CDataCell dc)
 		{
-			Console.WriteLine("3>MainModel::Modify_Task_Memo : " + dc.DC_title);
-			Find(dc).DC_memo = dc.DC_memo;
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_TASK_MEMO));
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Task_Memo -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_memo = dc.DC_memo;
+
+			Notify_Log_Message("3>MainModel::Modify_Task_Memo : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_TASK_MEMO));
 		}
 
 		public bool Task_Move_Up(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
+
 			if (data == null)
 			{
 				Notify_Log_Message("Warning>MainModel::Task_Move_Up -> Find() Not Found Item!!");
@@ -303,13 +340,14 @@ namespace WellaTodo
 				return false;
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_UP));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_MOVE_UP));
 			return true;
 		}
 
 		public bool Task_Move_Down(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
+
 			if (data == null)
             {
 				Notify_Log_Message("Warning>MainModel::Task_Move_Down -> Find() Not Found Item!!");
@@ -362,46 +400,76 @@ namespace WellaTodo
 				return false; 
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_TASK_MOVE_DOWN));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_MOVE_DOWN));
 			return true;
 		}
 
 		public void Modifiy_MyToday(CDataCell dc)
         {
 			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_MyToday -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_myToday = dc.DC_myToday;
 			data.DC_myTodayTime = dc.DC_myTodayTime;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_MYTODAY));
+			Notify_Log_Message("3>MainModel::Modifiy_MyToday : type " + data.DC_myToday);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MYTODAY));
 		}
 
 		public void Modifiy_Remind(CDataCell dc)
         {
 			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_Remind -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_remindType = dc.DC_remindType;
 			data.DC_remindTime = dc.DC_remindTime;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_REMIND));
+			Notify_Log_Message("3>MainModel::Modifiy_Remind : type " + data.DC_remindType);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REMIND));
 		}
 
 		public void Modifiy_Planned(CDataCell dc)
 		{
-			Console.WriteLine("3>MainModel::Modifiy_Planned : type " + dc.DC_deadlineType);
-
 			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_Planned -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_deadlineType = dc.DC_deadlineType;
 			data.DC_deadlineTime = dc.DC_deadlineTime;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_PLANNED));
+			Notify_Log_Message("3>MainModel::Modifiy_Planned : type " + data.DC_deadlineType);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_PLANNED));
 		}
 
 		public void Modifiy_Repeat(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_Repeat -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_repeatType = dc.DC_repeatType;
 			data.DC_repeatTime = dc.DC_repeatTime;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MODIFY_REPEAT));
+			Notify_Log_Message("3>MainModel::Modifiy_Repeat : type " + data.DC_repeatType);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REPEAT));
 		}
 
 		private CDataCell Find(CDataCell dc)
@@ -411,7 +479,7 @@ namespace WellaTodo
 											 where data.DC_task_ID == task_ID select data;
 			if (dataset.Count() != 1)
 			{
-				Console.WriteLine("Error>MainModel::Find -> Not Found Item!!");  // 에러 출력
+				Notify_Log_Message("Error>MainModel::Find -> Not Found Item!!");  // 에러 출력
 				return null;
 			}
 			return dataset.First();
@@ -424,6 +492,7 @@ namespace WellaTodo
 				Console.WriteLine("<"+dc.DC_task_ID+">"+"[" + dc.DC_listName + "]" + dc.DC_title);
             }
         }
+
 	}
 }
 

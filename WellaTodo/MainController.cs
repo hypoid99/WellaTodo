@@ -54,18 +54,10 @@ namespace WellaTodo
 
 		public void View_Changed_Event_method(IView v, ViewEventArgs e)
 		{
-			Console.WriteLine(">MainController::Changed_View_Event_method -> Received Message from View : " + e.Msg);
-			m_model.Notify_Log_Message(e.Msg);
-
-			//m_model.SetValue(e.value);
+			Send_Log_Message(e.Msg);
 		}
 
-		public void Update_Model()
-        {
-			m_model.Update_Model();
-        }
-
-		public void Notify_Log_Message(string msg)
+		public void Send_Log_Message(string msg)
         {
 			m_model.Notify_Log_Message(msg);
         }
@@ -79,6 +71,7 @@ namespace WellaTodo
 			rs.Close();
 
 			m_Task_ID_Num = todo_data.Count - 1;
+
 			int pos = 0;
 			for (int i = m_Task_ID_Num; i >= 0; i--)
             {
@@ -86,6 +79,7 @@ namespace WellaTodo
 				pos++;
             }
 
+			Send_Log_Message(">MainController::Load_Data_File -> form 0 to " + m_Task_ID_Num);
 			m_model.SetDataCollection(todo_data);
 			m_model.Load_Data();
 		}
@@ -98,20 +92,19 @@ namespace WellaTodo
 			serializer.Serialize(ws, m_model.GetDataCollection());
 			ws.Close();
 
+			Send_Log_Message("2>MainController::Save_Data_File");
 			m_model.Save_Data();
 		}
 
 		public void Perform_Menulist_Rename(string source, string target)
         {
-			m_model.Notify_Log_Message("2>MainController::Perform_Menulist_Rename : from " + source + " to " + target);
-			
+			Send_Log_Message("2>MainController::Perform_Menulist_Rename : from " + source + " to " + target);
 			m_model.Menulist_Rename(source, target);
         }
 
 		public void Perform_Menulist_Delete(string target)
         {
-			m_model.Notify_Log_Message("2>MainController::Perform_Menulist_Delete : " + target);
-			
+			Send_Log_Message("2>MainController::Perform_Menulist_Delete : " + target);
 			m_model.Menulist_Delete(target);
 		}
 
@@ -120,13 +113,13 @@ namespace WellaTodo
 			m_Task_ID_Num++;
 			dc.DC_task_ID = m_Task_ID_Num;
 
-			m_model.Notify_Log_Message("2>MainController::Perform_Add_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Add_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
 			m_model.Add_Task(dc);
         }
 
 		public void Perform_Delete_Task(CDataCell dc)
         {
-			m_model.Notify_Log_Message("2>MainController::Perform_Delete_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Delete_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
 			m_model.Delete_Task(dc);
 		}
 
@@ -134,6 +127,8 @@ namespace WellaTodo
 		{
 			dc.DC_myToday = myToday;
 			dc.DC_myTodayTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Modify_MyToday : type [" + myToday + "]" + dc.DC_title);
 			m_model.Modifiy_MyToday(dc);
 		}
 
@@ -141,14 +136,17 @@ namespace WellaTodo
 		{
 			dc.DC_remindType = type;
 			dc.DC_remindTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Remind : type [" + type + "]" + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
 		}
 
 		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Modify_Planned : type " + type);
 			dc.DC_deadlineType = type;
 			dc.DC_deadlineTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Planned : type [" + type + "]" + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
 		}
 
@@ -156,51 +154,52 @@ namespace WellaTodo
 		{
 			dc.DC_repeatType = type;
 			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Repeat : type [" + type + "]" + dc.DC_title);
 			m_model.Modifiy_Repeat(dc);
 		}
 
 		public void Perform_Complete_Process(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
-			//m_model.Notify_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
+			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
 			m_model.Complete_Process(dc);
 		}
 
 		public void Perform_Important_Process(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
-			//m_model.Notify_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
+			Send_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
 			m_model.Important_Process(dc);
 		}
 
 		public void Perform_Modify_Task_Title(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
 		}
 
 		public void Perform_Modify_Task_Memo(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
 			m_model.Modify_Task_Memo(dc);
 		}
 
 
 		public void Perform_Task_Move_Up(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
 			m_model.Task_Move_Up(dc);
 		}
 
 		public void Perform_Task_Move_Down(CDataCell dc)
 		{
-			m_model.Notify_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
 			m_model.Task_Move_Down(dc);
 		}
 
-		public void Perform_Trasnfer_Task(CDataCell dc, string listname)
+		public void Perform_Trasnfer_Task(CDataCell dc, string target)
         {
-			m_model.Transfer_Task(dc, listname);
+			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
+			m_model.Transfer_Task(dc, target);
         }
 
 		public void Perform_MyToday_Process(CDataCell dc)
@@ -217,6 +216,8 @@ namespace WellaTodo
 				dc.DC_myToday = true; // 설정
 				dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 			}
+
+			Send_Log_Message("2>MainController::Perform_MyToday_Process : " + dc.DC_title);
 			m_model.Modifiy_MyToday(dc);
 		}
 
@@ -225,6 +226,7 @@ namespace WellaTodo
 			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetDataCollection() 
 											 where dt.DC_myToday && !dt.DC_complete select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_MyToday -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -233,6 +235,7 @@ namespace WellaTodo
 			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
 											 where dc.DC_important && !dc.DC_complete select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Important -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -241,6 +244,7 @@ namespace WellaTodo
 			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
 											 where (dc.DC_deadlineType > 0 || dc.DC_repeatType > 0) && !dc.DC_complete select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Planned -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -249,6 +253,7 @@ namespace WellaTodo
 			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
 											 where dc.DC_complete == true select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Complete -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -257,6 +262,7 @@ namespace WellaTodo
 			IEnumerable < CDataCell > dataset = from CDataCell dc in m_model.GetDataCollection() 
 												where dc.DC_listName == listname select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Task -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -268,6 +274,7 @@ namespace WellaTodo
 											 && (curDate.Date == dc.DC_deadlineTime.Date)
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Month_Calendar -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -277,6 +284,7 @@ namespace WellaTodo
 											 where dc.DC_task_ID == sd.DC_task_ID
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_Task_Calendar -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 
@@ -286,6 +294,7 @@ namespace WellaTodo
 											 where true
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_All_Task -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 

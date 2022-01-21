@@ -35,7 +35,6 @@ namespace WellaTodo
             switch (param)
             {
                 case WParam.WM_LOG_MESSAGE:
-                    Console.WriteLine("4>OutputForm::Update_View -> Log Message");
                     Output_Message(dc.DC_title);
                     break;
                 default:

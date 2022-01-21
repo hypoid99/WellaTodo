@@ -73,16 +73,14 @@
             this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel_Menulist);
             this.splitContainer1.Panel1.Controls.Add(this.textBox_AddList);
             this.splitContainer1.Panel1.Controls.Add(this.labelUserName);
-            this.splitContainer1.Panel1MinSize = 100;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel2.Controls.Add(this.textBox_Task);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Panel2MinSize = 200;
-            this.splitContainer1.Size = new System.Drawing.Size(785, 403);
-            this.splitContainer1.SplitterDistance = 159;
+            this.splitContainer1.Size = new System.Drawing.Size(1073, 403);
+            this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
@@ -93,14 +91,14 @@
             // 
             this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 43);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
-            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(153, 329);
+            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(244, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
             // 
             // textBox_AddList
             // 
             this.textBox_AddList.Location = new System.Drawing.Point(0, 378);
             this.textBox_AddList.Name = "textBox_AddList";
-            this.textBox_AddList.Size = new System.Drawing.Size(156, 25);
+            this.textBox_AddList.Size = new System.Drawing.Size(247, 25);
             this.textBox_AddList.TabIndex = 5;
             this.textBox_AddList.Enter += new System.EventHandler(this.textBox_AddList_Enter);
             this.textBox_AddList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyDown);
@@ -110,9 +108,9 @@
             // 
             // labelUserName
             // 
-            this.labelUserName.Location = new System.Drawing.Point(0, 0);
+            this.labelUserName.Location = new System.Drawing.Point(3, 9);
             this.labelUserName.Name = "labelUserName";
-            this.labelUserName.Size = new System.Drawing.Size(156, 40);
+            this.labelUserName.Size = new System.Drawing.Size(244, 31);
             this.labelUserName.TabIndex = 1;
             this.labelUserName.Text = "      계정";
             this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -125,9 +123,10 @@
             this.textBox_Task.Location = new System.Drawing.Point(10, 354);
             this.textBox_Task.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Task.Name = "textBox_Task";
-            this.textBox_Task.Size = new System.Drawing.Size(600, 25);
+            this.textBox_Task.Size = new System.Drawing.Size(793, 25);
             this.textBox_Task.TabIndex = 0;
             this.textBox_Task.Enter += new System.EventHandler(this.textBox_Task_Enter);
+            this.textBox_Task.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Task_KeyDown);
             this.textBox_Task.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Task_KeyUp);
             this.textBox_Task.Leave += new System.EventHandler(this.textBox_Task_Leave);
             this.textBox_Task.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Task_MouseDown);
@@ -142,7 +141,6 @@
             // 
             this.splitContainer2.Panel1.Controls.Add(this.panel_Header);
             this.splitContainer2.Panel1.Controls.Add(this.flowLayoutPanel2);
-            this.splitContainer2.Panel1MinSize = 200;
             // 
             // splitContainer2.Panel2
             // 
@@ -150,9 +148,9 @@
             this.splitContainer2.Panel2.Controls.Add(this.button1);
             this.splitContainer2.Panel2.Controls.Add(this.textBox_Title);
             this.splitContainer2.Panel2.Controls.Add(this.textBox_Memo);
-            this.splitContainer2.Panel2MinSize = 1;
-            this.splitContainer2.Size = new System.Drawing.Size(600, 340);
-            this.splitContainer2.SplitterDistance = 306;
+            this.splitContainer2.Panel2MinSize = 0;
+            this.splitContainer2.Size = new System.Drawing.Size(793, 340);
+            this.splitContainer2.SplitterDistance = 500;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
             // 
@@ -161,7 +159,7 @@
             this.panel_Header.Controls.Add(this.label_ListName);
             this.panel_Header.Location = new System.Drawing.Point(12, 11);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(283, 55);
+            this.panel_Header.Size = new System.Drawing.Size(473, 55);
             this.panel_Header.TabIndex = 2;
             // 
             // label_ListName
@@ -181,7 +179,7 @@
             this.flowLayoutPanel2.Location = new System.Drawing.Point(12, 69);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(283, 256);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(473, 256);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
             this.flowLayoutPanel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel2_Scroll);
@@ -229,6 +227,7 @@
             this.textBox_Memo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox_Memo.Size = new System.Drawing.Size(260, 118);
             this.textBox_Memo.TabIndex = 6;
+            this.textBox_Memo.TextChanged += new System.EventHandler(this.textBox_Memo_TextChanged);
             this.textBox_Memo.Leave += new System.EventHandler(this.textBox_Memo_Leave);
             this.textBox_Memo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Memo_MouseDown);
             // 
@@ -263,7 +262,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(785, 403);
+            this.ClientSize = new System.Drawing.Size(1073, 403);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(400, 47);

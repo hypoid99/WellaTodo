@@ -23,13 +23,10 @@ namespace WellaTodo
     public interface IModelObserver
     {
         void Update_View(IModel model, ModelEventArgs e);
-        //void Update_Add_Task(IModel model, ModelEventArgs e);
-        //void Update_Delete_Task(IModel model, ModelEventArgs e);
     }
 
     public interface IModel
 	{
-        //List<IModelObserver> ObserverList { get; set; }
         void Add_Observer(IModelObserver imo);
         void Remove_Observer(IModelObserver imo);
         void Notify_Observer();
