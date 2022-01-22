@@ -30,6 +30,8 @@ namespace WellaTodo
         private CDataCell m_DataCell;
         public CDataCell TE_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
+        private bool isNewTask = false;
+        public bool IsNewTask { get => isNewTask; set => isNewTask = value; }
         private bool isCompleteChanged = false;
         public bool IsCompleteChanged { get => isCompleteChanged; set => isCompleteChanged = value; }
         private bool isTitleChanged = false;
@@ -44,9 +46,11 @@ namespace WellaTodo
         public bool IsRepeatChanged { get => isRepeatChanged; set => isRepeatChanged = value; }
         private bool isMemoChanged = false;
         public bool IsMemoChanged { get => isMemoChanged; set => isMemoChanged = value; }
-
+        private bool isCreated = false;
+        public bool IsCreated { get => isCreated; set => isCreated = value; }
         private bool isDeleted = false;
         public bool IsDeleted { get => isDeleted; set => isDeleted = value; }
+
 
         private string[] repeatType = new string[]{"없음", "매일", "평일", "매주", "매월", "매년"};
 
@@ -109,7 +113,19 @@ namespace WellaTodo
             button_Close.Location = new Point(PANEL_SX + 20, 255);
             button_Close.Size = new Size(75, 25);
 
-            // 삭제 버튼
+            // 생성 또는 삭제 버튼
+            if (IsNewTask)
+            {
+                Text = "할 일 생성";
+                roundCheckbox.Enabled = false;
+                button_Delete.Text = "생성";
+            }
+            else
+            {
+                Text = "할 일 수정";
+                roundCheckbox.Enabled = true;
+                button_Delete.Text = "삭제";
+            }
             button_Delete.Location = new Point(PANEL_SX + 160, 255);
             button_Delete.Size = new Size(75, 25);
         }
@@ -133,14 +149,33 @@ namespace WellaTodo
 
         private void button_Close_Click(object sender, EventArgs e)
         {
-            Close();
+            if (IsNewTask)
+            {
+                Console.WriteLine("1>TaskEditForm::button_Close_Click -> Task Create is Canceled!!");
+                IsCreated = false;
+                Close();
+            }
+            else
+            {
+                IsDeleted = false;
+                Close();
+            }
         }
 
         private void button_Delete_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task Delete");
-            IsDeleted = true;
-            Close();
+            if (IsNewTask)
+            {
+                Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task is Created!!");
+                IsCreated = true;
+                Close();
+            }
+            else
+            {
+                Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task Delete");
+                IsDeleted = true;
+                Close();
+            }
         }
 
         private void roundCheckbox_MouseClick(object sender, EventArgs e)
@@ -170,6 +205,66 @@ namespace WellaTodo
         //
         // 제목창
         //
+        private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void textBox_Title_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = false;
+                e.SuppressKeyPress = false;
+
+                if (textBox_Title.Text.Trim().Length == 0)
+                {
+                    textBox_Title.Text = TE_DataCell.DC_title;
+                    return;
+                }
+
+                TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+
+                if (IsNewTask)
+                {
+                    Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task is Created");
+                    IsCreated = true;
+                }
+                else
+                {
+                    Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
+                    IsTitleChanged = true;
+                }
+                Close();
+            }
+        }
+
+        private void textBox_Title_Leave(object sender, EventArgs e)
+        {
+            if (textBox_Title.Text.Trim().Length == 0)
+            {
+                textBox_Title.Text = TE_DataCell.DC_title;
+                return;
+            }
+
+            TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+
+            if (IsNewTask)
+            {
+                Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task is Created");
+                IsCreated = true;
+            }
+            else
+            {
+                Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task Title Changed");
+                IsTitleChanged = true;
+            }
+        }
+
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -196,53 +291,9 @@ namespace WellaTodo
             ctm.MenuItems[1].Enabled = textBox_Title.SelectedText.Length != 0; // cut
             ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
         }
-
         private void OnCopyMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Copy(); }
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
-
-        private void textBox_Title_Leave(object sender, EventArgs e)
-        {
-            if (textBox_Title.Text.Trim().Length == 0)
-            {
-                textBox_Title.Text = TE_DataCell.DC_title;
-                return;
-            }
-
-            Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
-            TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-            isTitleChanged = true;
-        }
-
-        private void textBox_Title_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
-
-                if (textBox_Title.Text.Trim().Length == 0)
-                {
-                    textBox_Title.Text = TE_DataCell.DC_title;
-                    return;
-                }
-
-                Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
-                TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-                isTitleChanged = true;
-
-                Close();
-            }
-        }
-
-        private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
 
         //
         // 기한 설정

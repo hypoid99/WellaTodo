@@ -78,6 +78,7 @@ namespace WellaTodo
                 case WParam.WM_MODIFY_TASK_MEMO:
                     break;
                 case WParam.WM_TASK_ADD:
+                    Update_Add_Task(dc);
                     break;
                 case WParam.WM_TASK_DELETE:
                     Update_Delete_Task(dc);
@@ -139,15 +140,55 @@ namespace WellaTodo
                 dayPanel[i] = new FlowLayoutPanel();
                 dayPanel[i].Size = new Size(1, 1);
                 dayPanel[i].BackColor = Color.White;
+                dayPanel[i].MouseDoubleClick += new MouseEventHandler(DayPanel_MouseDoubleClick);
                 panel_Calendar.Controls.Add(dayPanel[i]);
             }
 
             SetDate(m_dtValue); // 현재 날짜로 달력 열기
         }
 
+        private void DayPanel_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            FlowLayoutPanel dayPanel = (FlowLayoutPanel)sender;
+            DateTime dt = DateTime.Now;
+
+            foreach (Control ctr in dayPanel.Controls)
+            {
+                if (ctr is Calendar_Day)
+                {
+                    Calendar_Day item = (Calendar_Day)ctr;
+                    dt = item.Present_Day;
+                }
+            }
+
+            taskEditForm.StartPosition = FormStartPosition.CenterParent;
+
+            taskEditForm.TE_DataCell = new CDataCell();
+            taskEditForm.TE_DataCell.DC_deadlineType = 4;
+            taskEditForm.TE_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+            taskEditForm.IsNewTask = true;
+
+            taskEditForm.ShowDialog();
+
+            if (taskEditForm.IsCreated)
+            {
+                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> New Task Created : " + taskEditForm.TE_DataCell.DC_title
+                    + "[" + taskEditForm.TE_DataCell.DC_deadlineTime.ToLongDateString() + "]");
+
+                m_Controller.Perform_Add_Task(taskEditForm.TE_DataCell);
+            }
+            else
+            {
+                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> Create New Task is Canceled!!");
+            }
+
+            taskEditForm.IsNewTask = false;
+            taskEditForm.IsCreated = false;
+        }
+
         private void CalendarForm_Paint(object sender, PaintEventArgs e)
         {
-            //Console.WriteLine("CalendarForm_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -218,7 +259,10 @@ namespace WellaTodo
                     }
                     dayPanel[pos].Location = new Point(line_sx + 1 + i * w_gap, line_sy + 1 + j * h_gap);
                     dayPanel[pos].Size = new Size(w_gap - 2, h_gap - 2);
-                    foreach (Control ctr in dayPanel[pos].Controls) ctr.Width = dayPanel[pos].Width;  // TASK 폭 조정
+                    foreach (Control ctr in dayPanel[pos].Controls)  // TASK 폭 조정
+                    { 
+                        ctr.Width = dayPanel[pos].Width; 
+                    } 
                     pos++;
                 }
             }
@@ -226,7 +270,6 @@ namespace WellaTodo
 
         private void CalendarForm_Resize(object sender, EventArgs e)
         {
-            //Console.WriteLine("panel_Calendar_Resize");
             panel_Calendar.Refresh();
         }
 
@@ -244,9 +287,10 @@ namespace WellaTodo
 
         private void SetDate(DateTime dt)
         {
-            //Console.WriteLine("SetDate");
-            Send_Log_Message(">CalendarForm::SetDate");
+            Send_Log_Message(">CalendarForm::SetDate -> m_dtValue : " + dt.ToLongDateString());
+
             m_dtValue = dt;
+
             DateTime startDate = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
             int num_DaysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
             int num_DayOfWeek = (int)startDate.DayOfWeek;
@@ -272,20 +316,43 @@ namespace WellaTodo
             DateTime curDate = startDate.AddDays(-preDays);
             for (int i = 0; i < dayPanel.Length; i++)
             {
-                Label label_Day = new Label();
-                if (curDate.Day == 1) // 매월 1일 표기
-                    label_Day.Text = curDate.Month.ToString() + "/" + curDate.Day.ToString();
+                Calendar_Day label_Day = new Calendar_Day();
+
+                label_Day.Present_Day = curDate;
+
+                if (curDate.Day == 1) // 매월 1일은 월과 함께 표기
+                { 
+                    label_Day.Text = curDate.Month.ToString() + "/" + curDate.Day.ToString(); 
+                }
                 else
-                    label_Day.Text = curDate.Day.ToString();
-                if (curDate.Month == startDate.Month) // 이전달 & 다음달 배경색
+                { 
+                    label_Day.Text = curDate.Day.ToString(); 
+                }
+
+                if (curDate.Month == startDate.Month) // 이전달 & 다음달 배경색 변경
+                {
                     dayPanel[i].BackColor = Color.White;
+                }
                 else
+                {
                     dayPanel[i].BackColor = Color.LightGray;
+                }
+
+                if (curDate == DateTime.Today) // 오늘은 Violet 색상으로 변경
+                {
+                    label_Day.BackColor = Color.Violet;
+                }
+
+                if ((i % 7) == 0) // 일요일은 RED 색상으로 변경
+                {
+                    label_Day.ForeColor = Color.Red;
+                }
+
                 label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
                 label_Day.Height = CALENDAR_DAY_TEXT_HEIGHT;
-                if (curDate == DateTime.Today) label_Day.BackColor = Color.Violet; // 오늘은 BLUE
-                if ((i % 7) == 0) label_Day.ForeColor = Color.Red;  // 일요일은 RED
+
                 dayPanel[i].Controls.Add(label_Day);
+
                 curDate = curDate.AddDays(1);
             }
 
@@ -367,49 +434,49 @@ namespace WellaTodo
 
             if (taskEditForm.IsCompleteChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Complete Changed : " + dc.DC_complete);
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Complete Changed : " + dc.DC_complete);
                 m_Controller.Perform_Complete_Process(dc);
                 taskEditForm.IsCompleteChanged = false;
             }
 
             if (taskEditForm.IsImportantChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Important Changed : " + dc.DC_important);
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Important Changed : " + dc.DC_important);
                 m_Controller.Perform_Important_Process(dc);
                 taskEditForm.IsImportantChanged = false;
             }
 
             if (taskEditForm.IsTitleChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
                 m_Controller.Perform_Modify_Task_Title(dc);
                 taskEditForm.IsTitleChanged = false;
             }
 
             if (taskEditForm.IsMemoChanged)
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Memo Changed : " + dc.DC_title);
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Memo Changed : " + dc.DC_title);
                 m_Controller.Perform_Modify_Task_Memo(dc);
                 taskEditForm.IsMemoChanged = false;
             }
 
             if (taskEditForm.IsDeleted) // 목록 삭제
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Task Delete");
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Task Delete");
                 m_Controller.Perform_Delete_Task(dc);
                 taskEditForm.IsDeleted = false;
             }
 
             if (taskEditForm.IsPlannedChanged) // 기한 설정 변경
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
                 m_Controller.Perform_Modify_Planned(dc, 4, dc.DC_deadlineTime);
                 taskEditForm.IsPlannedChanged = false;
             }
 
             if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
             {
-                Console.WriteLine("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
                 m_Controller.Perform_Modify_Planned(dc, 0, default);
                 taskEditForm.IsPlannedDeleted = false;
             }
@@ -417,11 +484,11 @@ namespace WellaTodo
 
         private void Update_Complete_Process(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Complete_Process");
+            Send_Log_Message("4>CalendarForm::Update_Complete_Process");
 
             if (FindCalendarItem(dc))
             {
-                Console.WriteLine("4>CalendarForm::Update_Complete_Process -> Find matching item : " + dc.DC_title);
+                Send_Log_Message("4>CalendarForm::Update_Complete_Process -> Find matching item : " + dc.DC_title);
                 m_Find_Result_Item.Font = dc.DC_complete
                                        ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                                        : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
@@ -430,34 +497,85 @@ namespace WellaTodo
 
         private void Update_Important_Process(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Important_Process" + dc.DC_title);
+            Send_Log_Message("4>CalendarForm::Update_Important_Process" + dc.DC_title);
         }
 
         private void Update_Modify_Task_Title(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Modify_Task_Title");
+            Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title");
 
             if (FindCalendarItem(dc))
             {
-                Console.WriteLine("4>CalendarForm::Update_Modify_Task_Title -> Find matching item : " + dc.DC_title);
+                Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title -> Find matching item : " + dc.DC_title);
                 m_Find_Result_Item.PrimaryText = dc.DC_title;
+            }
+        }
+
+        private void Update_Add_Task(CDataCell dc)
+        {
+            Send_Log_Message("4>CalendarForm::Update_Add_Task : " + dc.DC_title);
+
+            DateTime dt = dc.DC_deadlineTime;
+
+            if (IsCurrentPage(dt))  // New Task가 현재 화면에 있나?
+            {
+                Calendar_Item label_planned = new Calendar_Item(dc);
+                label_planned.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
+                label_planned.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
+                label_planned.Font = dc.DC_complete
+                    ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
+                    : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
+                label_planned.BackColor = DateTime.Compare(dt.Date, DateTime.Today.Date) < 0
+                    ? PSEUDO_HIGHLIGHT_COLOR
+                    : PSEUDO_SELECTED_COLOR;
+                label_planned.AutoSize = false;
+
+                int pos = 0;
+                int counter = 0;
+                for (int i = 0; i < dayPanel.Length; i++)
+                {
+                    foreach (Control ctr in dayPanel[i].Controls)
+                    {
+                        if (ctr is Calendar_Day)
+                        {
+                            Calendar_Day item = (Calendar_Day)ctr;
+                            if (dt.Date  == item.Present_Day.Date)
+                            {
+                                pos = i;
+                                counter++;
+                            }
+                        }
+                    }
+                }
+
+                if (counter == 0)
+                {
+                    Send_Log_Message("Warning>CalendarForm::Update_Add_Task -> Can not Found Item");
+                }
+
+                label_planned.Width = dayPanel[pos].Width;
+                label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
+                m_TaskToolTip.SetToolTip(label_planned, dc.DC_title);
+                dayPanel[pos].Controls.Add(label_planned);
+
+                Send_Log_Message("4>CalendarForm::Update_Add_Task -> Current Month Calendar " + dt.ToLongDateString());
             }
         }
 
         private void Update_Delete_Task(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Delete_Task");
+            Send_Log_Message("4>CalendarForm::Update_Delete_Task");
 
             if (FindCalendarItem(dc))
             {
-                Console.WriteLine("4>CalendarForm::Update_Delete_Task -> Find matching item : " + dc.DC_title);
+                Send_Log_Message("4>CalendarForm::Update_Delete_Task -> Find matching item : " + dc.DC_title);
                 dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);
             }
         }
 
         private void Update_Modify_Planned(CDataCell dc)
         {
-            Console.WriteLine("4>CalendarForm::Update_Modify_Planned");
+            Send_Log_Message("4>CalendarForm::Update_Modify_Planned");
             int day = 0;
             DateTime dt = dc.DC_deadlineTime;    // 변경후 날짜
 
@@ -470,9 +588,9 @@ namespace WellaTodo
                 int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
                 startDate = startDate.AddDays(-preDays);
                 day = (dt - startDate).Days;
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> startDay : " + startDate .ToShortDateString());
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> dt : " + dt.ToShortDateString());
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 날짜차이(42이내) : " + day);
+                //Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> startDay : " + startDate .ToShortDateString());
+                //Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> dt : " + dt.ToShortDateString());
+                //Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 날짜차이(42이내) : " + day);
             }
 
             m_Find_Result_Item.Font = dc.DC_complete
@@ -484,23 +602,23 @@ namespace WellaTodo
 
             if (cond_1 == true && cond_2 == true)  // 삭제후 표기
             {
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 삭제후 표기 :" + day);
+                Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 삭제후 표기 :" + day);
                 dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);  // 변경전 항목 제거
                 dayPanel[day].Controls.Add(m_Find_Result_Item);  // 변경된 날짜에 항목을 추가한다
             }
             else if (cond_1 == true && cond_2 == false)  // 삭제
             {
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 삭제");
+                Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 삭제");
                 dayPanel[m_Find_Result_Day].Controls.Remove(m_Find_Result_Item);  // 변경전 항목 제거
             }
             else if (cond_1 == false && cond_2 == true)  // 표기
             {
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 표기:" + day);
+                Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 표기:" + day);
                 dayPanel[day].Controls.Add(m_Find_Result_Item);  // 변경된 날짜에 항목을 추가한다
             }
             else
             {
-                Console.WriteLine("4>CalendarForm::Update_Modify_Planned -> 변경없음");
+                Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 변경없음");
             }
         }
 

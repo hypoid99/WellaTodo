@@ -70,6 +70,12 @@
     <Compile Include="CalendarForm.Designer.cs">
       <DependentUpon>CalendarForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Calendar_Day.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Calendar_Day.Designer.cs">
+      <DependentUpon>Calendar_Day.cs</DependentUpon>
+    </Compile>
     <Compile Include="Calendar_Item.cs">
       <SubType>UserControl</SubType>
     </Compile>

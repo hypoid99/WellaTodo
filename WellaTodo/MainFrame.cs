@@ -28,7 +28,7 @@ namespace WellaTodo
         static readonly string WINDOW_CAPTION = "Wella Todo v0.95";
         static readonly int WINDOW_WIDTH = 1200;
         static readonly int WINDOW_HEIGHT = 700;
-        static readonly int MENU_WINDOW_WIDTH = 350;
+        static readonly int MENU_WINDOW_WIDTH = 300;
         static readonly int DETAIL_WINDOW_WIDTH = 260;
         static readonly int DETAIL_WINDOW_X1 = 5;
         static readonly int TASK_HEIGHT = 40;
@@ -160,6 +160,16 @@ namespace WellaTodo
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
+            }
+
+            if (WindowState == FormWindowState.Normal) 
+            { 
+                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH; 
+            }
+
             Update_Display();
         }
 
@@ -414,10 +424,19 @@ namespace WellaTodo
 
         private int Calc_SplitterDistance()
         {
-            Send_Log_Message("Form size (WxH) :" + Size.Width +"x" + Size.Height);
-            Send_Log_Message("SplitterDistance-1 :" + splitContainer1.SplitterDistance);
-            Send_Log_Message("SplitterDistance-2 :" + splitContainer2.SplitterDistance);
-            return 0;
+            //Send_Log_Message("Form size (WxH) :" + Size.Width +"x" + Size.Height);
+            //Send_Log_Message("SplitterDistance-1 :" + splitContainer1.SplitterDistance);
+            //Send_Log_Message("SplitterDistance-2 :" + splitContainer2.SplitterDistance);
+
+            int distance;
+            if (Size.Width > 800)
+            {
+                distance = MENU_WINDOW_WIDTH;
+            } else
+            {
+                distance = (int)(MENU_WINDOW_WIDTH * 0.75);
+            }
+            return distance;
         }
 
         private void Change_ColorTheme()
@@ -1418,6 +1437,12 @@ namespace WellaTodo
         // 할일 추가 화면 갱신
         public void Update_Add_Task(CDataCell dc)
         {
+            if (dc.DC_listName != m_Selected_Menu.PrimaryText)
+            {
+                Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Anothor List");
+                return;
+            }
+
             Todo_Item item = new Todo_Item(dc);  // Task 생성
 
             m_Task.Insert(0, item);
@@ -1540,7 +1565,6 @@ namespace WellaTodo
             m_Selected_Item.IsItemSelected = true;
 
             Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
-            Calc_SplitterDistance();
 
             SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
             Update_Task_Width();
