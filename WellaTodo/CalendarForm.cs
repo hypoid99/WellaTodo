@@ -92,6 +92,15 @@ namespace WellaTodo
                     break;
                 case WParam.WM_MODIFY_REPEAT:
                     break;
+                case WParam.WM_MENULIST_RENAME:
+                    Update_Menulist_Rename(dc);
+                    break;
+                case WParam.WM_MENULIST_DELETE:
+                    Update_Menulist_Delete(dc);
+                    break;
+                case WParam.WM_TRANSFER_TASK:
+                    Update_Transfer_Task(dc);
+                    break;
                 default:
                     break;
             }
@@ -620,6 +629,22 @@ namespace WellaTodo
             {
                 Send_Log_Message("4>CalendarForm::Update_Modify_Planned -> 변경없음");
             }
+        }
+
+        private void Update_Menulist_Rename(CDataCell dc)
+        {
+
+        }
+
+        private void Update_Menulist_Delete(CDataCell dc)
+        {
+            Send_Log_Message("4>CalendarForm::Update_Menulist_Delete -> SetDate(m_dtValue)");
+            SetDate(m_dtValue);
+        }
+
+        private void Update_Transfer_Task(CDataCell dc)
+        {
+
         }
 
         private bool FindCalendarItem(CDataCell dc)
