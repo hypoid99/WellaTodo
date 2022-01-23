@@ -1030,15 +1030,17 @@ namespace WellaTodo
             {
                 if (m_Selected_Menu.PrimaryText == list.PrimaryText)
                 {
+                    string target = m_Selected_Menu.PrimaryText;
+
                     m_ListName.Remove(list); // 리스트 이름 제거
 
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
 
-                    Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete");
+                    Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + target);
 
-                    m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
+                    m_Controller.Perform_Menulist_Delete(target);
                     break;
                 }
                 else
@@ -1057,6 +1059,8 @@ namespace WellaTodo
             Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> Delete MenuList is Complete!!");
 
             m_Selected_Menu = m_Pre_Selected_Menu;
+            m_Selected_Menu.IsSelected = true;
+
             Menu_List(m_Selected_Menu);
 
             Update_Task_Width();
