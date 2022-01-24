@@ -70,8 +70,6 @@ namespace WellaTodo
 
         MainController m_Controller;
 
-        List<TwoLineList> m_ListName = new List<TwoLineList>();
-        List<string> m_ListName_stringData = new List<string>();
         List<Todo_Item> m_Task = new List<Todo_Item>();
         ToolTip m_TaskToolTip = new ToolTip();
 
@@ -128,8 +126,6 @@ namespace WellaTodo
             Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
 
-            Load_List_Data_File();
-
             Initiate_View();
             Initiate_MenuList();
 
@@ -143,7 +139,7 @@ namespace WellaTodo
         {
             if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Save_Data_File();
+                m_Controller.Save_Data_File();
             }
 
             if (e.CloseReason == CloseReason.UserClosing)
@@ -480,28 +476,24 @@ namespace WellaTodo
             isDetailWindowOpen = false;
         }
 
-        //
-        // Display Data -> controller로 이동할 것
-        //
         private void Display_Data()
         {
             int pos;
             string txt;
 
-            IEnumerable<CDataCell> dataset = m_Controller.Query_All_Task();
             if (outputForm.Visible)
             {
                 pos = 0;
-                foreach (CDataCell data in dataset)
+                foreach (CDataCell task in m_Controller.Query_All_Task())
                 {
-                    txt = ">Data DC:[" + data.DC_task_ID + "] " + data.DC_listName + "--" + data.DC_title + "\r\n";
+                    txt = ">myTaskItems : [" + task.DC_task_ID + "] " + task.DC_listName + "--" + task.DC_title + "\r\n";
                     outputForm.TextBoxString = txt;
                     pos++;
                 }
-                
-                foreach (TwoLineList data in m_ListName)
+
+                foreach (string list in m_Controller.Query_ListName())
                 {
-                    txt = ">m_ListName: " + data.ToString () + "\r\n";
+                    txt = ">myListNames : " + list + "\r\n";
                     outputForm.TextBoxString = txt;
                 }
             }
@@ -565,11 +557,20 @@ namespace WellaTodo
                 case WParam.WM_MODIFY_REPEAT:
                     Update_Modify_Repeat(dc);
                     break;
+                case WParam.WM_MENULIST_ADD:
+                    Update_Menulist_Add(dc);
+                    break;
                 case WParam.WM_MENULIST_RENAME:
                     Update_Menulist_Rename(dc);
                     break;
                 case WParam.WM_MENULIST_DELETE:
                     Update_Menulist_Delete(dc);
+                    break;
+                case WParam.WM_MENULIST_UP:
+                    Update_Menulist_Up(dc);
+                    break;
+                case WParam.WM_MENULIST_DOWN:
+                    Update_Menulist_Down(dc);
                     break;
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
@@ -630,10 +631,8 @@ namespace WellaTodo
             flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu4);
             flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu5);
             flowLayoutPanel_Menulist.Controls.Add(divider2);
-            
-            m_ListName.Add(twolinelist_Menu5); // "작업" 리스트를 등록한다
-            
-            foreach (string list_name in m_ListName_stringData) // 목록 리스트를 등록한다
+
+            foreach (string list_name in m_Controller.Query_ListName()) // 목록 리스트를 등록한다
             {
                 if (list_name != "작업")
                 {
@@ -641,8 +640,6 @@ namespace WellaTodo
                     list = new TwoLineList(new Bitmap(ICON_LIST), list_name, "", "");
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-
-                    m_ListName.Add(list);  // 목록 리스트에 저장
 
                     flowLayoutPanel_Menulist.Controls.Add(list);  // 판넬에 목록 저장
                 }
@@ -669,52 +666,16 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 할일 파일 로딩 -> controller로 이동할 것
+        // 할일/목록 파일 로딩 & 세이빙
         //--------------------------------------------------------------
-        private void Load_List_Data_File()
-        {
-            //m_Controller.Load_Data_File(); // -> controller로 이동
-
-            Stream rs_list = new FileStream("list.dat", FileMode.Open);
-            BinaryFormatter deserializer_list = new BinaryFormatter();
-            List<string> list_name = (List<string>)deserializer_list.Deserialize(rs_list);
-
-            m_ListName_stringData.Clear();
-            foreach (string list in list_name)
-            {
-                m_ListName_stringData.Add(list);
-            }
-            rs_list.Close();
-        }
-
         private void Update_Load_Data()
         {
-            Send_Log_Message(">MainFrame::Update_Load_Data -> Data Loading Completed!!");
-        }
-
-        //--------------------------------------------------------------
-        // 할일 파일 세이브
-        //--------------------------------------------------------------
-        private void Save_Data_File()
-        {
-            m_Controller.Save_Data_File();
-
-            Stream ws_list = new FileStream("list.dat", FileMode.Create);
-            BinaryFormatter serializer_list = new BinaryFormatter();
-
-            m_ListName_stringData.Clear();
-            for (int i = 0; i < m_ListName.Count; i++)  // 목록 리스트 이름을 저장한다
-            {
-                TwoLineList item = m_ListName[i];
-                m_ListName_stringData.Add(item.PrimaryText);
-            }
-            serializer_list.Serialize(ws_list, m_ListName_stringData);
-            ws_list.Close();
+            Send_Log_Message("4>MainFrame::Update_Load_Data -> Data Loading Completed!!");
         }
 
         private void Update_Save_Data()
         {
-            Console.WriteLine("Update_Save_Data");
+            Send_Log_Message("4>MainFrame::Update_Save_Data -> Data Saving Completed!!");
         }
 
         //--------------------------------------------------------------
@@ -860,7 +821,7 @@ namespace WellaTodo
         {
             if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Save_Data_File();
+                m_Controller.Save_Data_File();
             }
         }
 
@@ -902,26 +863,14 @@ namespace WellaTodo
 
         private void OnMenuListUp_Click(object sender, EventArgs e)
         {
+            Send_Log_Message("1>MainFrame::OnMenuListUp_Click -> Menulist UP : " + m_Selected_Menu.PrimaryText);
+
+            m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText);
+        }
+
+        private void Update_Menulist_Up(CDataCell dc)
+        {
             int pos = 0;
-            for(int i = 0; i < m_ListName.Count; i++)
-            {
-                if (m_Selected_Menu.PrimaryText == m_ListName[i].PrimaryText)
-                {
-                    pos = i;
-                }
-            }
-
-            if (pos == 1)  // 작업 메뉴 위로 UP 불가
-            {
-                Send_Log_Message("Warning>MainFrame::OnMenuListUp_Click -> Can't move Up");
-                return;
-            }  
-
-            TwoLineList dc = m_ListName[pos]; //추출
-            m_ListName.RemoveAt(pos); //삭제
-            m_ListName.Insert(pos - 1, dc); // 삽입
-
-            pos = 0;
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
                 if (m_Selected_Menu.PrimaryText == item.PrimaryText)
@@ -932,7 +881,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            Send_Log_Message(">MainFrame::OnMenuListUp_Click -> MenuList move Up Completed!!");
+            Send_Log_Message("4>MainFrame::OnMenuListUp_Click -> MenuList move Up Completed!!");
 
             Update_Task_Width();
             Update_Menu_Metadata();
@@ -940,26 +889,14 @@ namespace WellaTodo
 
         private void OnMenuListDown_Click(object sender, EventArgs e)
         {
+            Send_Log_Message("1>MainFrame::OnMenuListDown_Click -> Menulist DOWN : " + m_Selected_Menu.PrimaryText);
+
+            m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText);
+        }
+
+        private void Update_Menulist_Down(CDataCell dc)
+        {
             int pos = 0;
-            for (int i = 0; i < m_ListName.Count; i++)
-            {
-                if (m_Selected_Menu.PrimaryText == m_ListName[i].PrimaryText)
-                {
-                    pos = i;
-                }
-            }
-
-            if (pos == m_ListName.Count - 1)
-            {
-                Send_Log_Message("Warning>MainFrame::OnMenuListDown_Click -> Can't move Down");
-                return;
-            }
-
-            TwoLineList dc = m_ListName[pos]; //추출
-            m_ListName.RemoveAt(pos); //삭제  
-            m_ListName.Insert(pos + 1, dc); // 삽입
-
-            pos = 0;
             foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
                 if (m_Selected_Menu.PrimaryText == item.PrimaryText)
@@ -970,7 +907,7 @@ namespace WellaTodo
                 pos++;
             }
 
-            Send_Log_Message(">MainFrame::OnMenuListDown_Click -> MenuList move Down Completed!!");
+            Send_Log_Message("4>MainFrame::Update_Menulist_Down -> MenuList move Down Completed!!");
 
             Update_Task_Width();
             Update_Menu_Metadata();
@@ -990,30 +927,26 @@ namespace WellaTodo
             string source = sd.PrimaryText;
             string target = sd.PrimaryText_Renamed;
 
-            int pos = 0;
-            foreach (TwoLineList item in m_ListName)  // 목록 리스트내 이름 변경
-            {
-                if (source == item.PrimaryText)
-                {
-                    m_ListName[pos].PrimaryText = target;
-                }
-                pos++;
-            }
-
-            Send_Log_Message("1-3>MainFrame::Menulist_Rename_Process -> Change Menu list in m_ListName");
+            Send_Log_Message("1-3>MainFrame::Menulist_Rename_Process -> Rename from " + source + " to " + target);
 
             m_Controller.Perform_Menulist_Rename(source, target);
         }
 
         private void Update_Menulist_Rename(CDataCell dc)
         {
-            foreach (TwoLineList item in m_ListName)
-            {
-                if (dc.DC_listName == item.PrimaryText)
-                {
-                    Send_Log_Message("4>MainFrame::Update_Menulist_Rename -> Display MenuList Renamed is Complete!!");
+            string source = dc.DC_title;
+            string target = dc.DC_listName;
 
-                    Menu_List(item);  // 목록 리스트 다시 표시
+            foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
+            {
+                if (source == list.PrimaryText)
+                {
+                    list.PrimaryText = target;
+                    list.Refresh();
+
+                    Send_Log_Message("4>MainFrame::Menulist_Rename_Process -> Rename Completed from " + source + " to " + target);
+
+                    Menu_List(list);  // 목록 리스트 다시 표시
                     break;
                 }
             }
@@ -1026,21 +959,24 @@ namespace WellaTodo
         {
             if (MessageBox.Show("목록을 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
+            Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + m_Selected_Menu.PrimaryText);
+            
+            m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
+        }
+
+        private void Update_Menulist_Delete(CDataCell dc)
+        {
+            string target = dc.DC_listName;
             foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
             {
-                if (m_Selected_Menu.PrimaryText == list.PrimaryText)
+                if (list.PrimaryText == target)
                 {
-                    string target = m_Selected_Menu.PrimaryText;
-
-                    m_ListName.Remove(list); // 리스트 이름 제거
+                    Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_ListName Deleted is : " + target + "-" + list.PrimaryText);
 
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
 
-                    Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + target);
-
-                    m_Controller.Perform_Menulist_Delete(target);
                     break;
                 }
                 else
@@ -1048,14 +984,11 @@ namespace WellaTodo
                     if (!list.IsDivider)
                     {
                         m_Pre_Selected_Menu = list;
-                        Send_Log_Message(">MainFrame::OnDeleteMenuList_Click -> m_Pre_Selected_Menu is " + list.PrimaryText);
+                        Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_Pre_Selected_Menu is " + list.PrimaryText);
                     }
                 }
             }
-        }
 
-        private void Update_Menulist_Delete(CDataCell dc)
-        {
             Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> Delete MenuList is Complete!!");
 
             m_Selected_Menu = m_Pre_Selected_Menu;
@@ -1274,12 +1207,16 @@ namespace WellaTodo
                 return;
             }
 
+            Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
+            m_Controller.Perform_Menulist_Add(txt);
+        }
+
+        private void Update_Menulist_Add(CDataCell dc)
+        {
             // 신규 목록 등록하기
-            TwoLineList list = new TwoLineList(new Bitmap(ICON_LIST), txt, "", "");
+            TwoLineList list = new TwoLineList(new Bitmap(ICON_LIST), dc.DC_listName, "", "");
             list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
             list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-
-            m_ListName.Add(list); // 이름 목록에 저장
 
             flowLayoutPanel_Menulist.Controls.Add(list); // 판넬 컨렉션에 저장
 
@@ -1297,7 +1234,7 @@ namespace WellaTodo
             m_Pre_Selected_Menu = m_Selected_Menu;
             enum_Selected_Menu = MenuList.LIST_MENU;
 
-            Send_Log_Message("1>MainFrame::Add_NewList -> Add New List Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message("4>MainFrame::Update_Menulist_Add -> Add New List Menu : " + m_Selected_Menu.PrimaryText);
 
             Menu_List(m_Selected_Menu);
             Update_Menu_Metadata();
@@ -1311,7 +1248,7 @@ namespace WellaTodo
                 return false;
             }
 
-            foreach (TwoLineList item in m_ListName)
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
                 if (item.PrimaryText == txt)
                 {
@@ -1441,10 +1378,28 @@ namespace WellaTodo
         // 할일 추가 화면 갱신
         public void Update_Add_Task(CDataCell dc)
         {
-            if (dc.DC_listName != m_Selected_Menu.PrimaryText)
+            switch (enum_Selected_Menu)
             {
-                Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Anothor List");
-                return;
+                case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
+                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to MYTODAY_MENU");
+                    break;
+                case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
+                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to IMPORTANT_MENU");
+                    break;
+                case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
+                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to PLANNED_MENU");
+                    break;
+                default:
+                    if (dc.DC_listName != m_Selected_Menu.PrimaryText)
+                    {
+                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Anothor List");
+                        return;
+                    }
+                    else
+                    {
+                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to LIST_MENU");
+                    }
+                    break;
             }
 
             Todo_Item item = new Todo_Item(dc);  // Task 생성
@@ -1791,9 +1746,9 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add(moveItem);
             todoItemContextMenu.MenuItems.Add(deleteItem);
 
-            foreach (TwoLineList item in m_ListName)
+            foreach (string list in m_Controller.Query_ListName())
             {
-                moveItem.MenuItems.Add(new MenuItem(item.PrimaryText, new EventHandler(OnTransferItem_Click)));
+                moveItem.MenuItems.Add(new MenuItem(list, new EventHandler(OnTransferItem_Click)));
             }
 
             Point cursor = PointToClient(Cursor.Position);

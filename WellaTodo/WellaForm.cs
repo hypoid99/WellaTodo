@@ -17,6 +17,7 @@ namespace WellaTodo
         CalculatorForm calculator = new CalculatorForm();
         OutputForm output = new OutputForm();
         MainModel model = new MainModel();
+        MainController controller;
 
         public WellaForm()
         {
@@ -28,7 +29,7 @@ namespace WellaTodo
 
         private void WellaForm_Load(object sender, EventArgs e)
         {
-            MainController controller = new MainController(model);
+            controller = new MainController(model);
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
             controller.Add_View(output);
@@ -183,6 +184,16 @@ namespace WellaTodo
         private void button_Exit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 저장ToolStripButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

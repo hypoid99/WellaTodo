@@ -12,6 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace WellaTodo
 {
 	public enum WParam
@@ -31,8 +34,11 @@ namespace WellaTodo
 		WM_MODIFY_REMIND,
 		WM_MODIFY_PLANNED,
 		WM_MODIFY_REPEAT,
+		WM_MENULIST_ADD,
 		WM_MENULIST_RENAME,
 		WM_MENULIST_DELETE,
+		WM_MENULIST_UP,
+		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK
 	}
 
@@ -41,6 +47,9 @@ namespace WellaTodo
 		public event ModelHandler<MainModel> Update_View;
 
 		List<CDataCell> myTaskItems = new List<CDataCell>();
+		List<string> myListNames = new List<string>();
+		int m_Task_ID_Num = 0;
+
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
 
         public MainModel()
@@ -70,25 +79,78 @@ namespace WellaTodo
 			}
 		}
 
-		public List<CDataCell> GetDataCollection()
+		public List<CDataCell> GetTaskCollection()
         {
 			return myTaskItems;
         }
 
-		public void SetDataCollection (List<CDataCell> data_collections)
+		private void SetTaskCollection (List<CDataCell> task_collections)
         {
-			myTaskItems = data_collections;
+			// 중요 데이터 set
+			myTaskItems = task_collections;
 		}
+
+		public List<string> GetListCollection()
+		{
+			return myListNames;
+		}
+
+		private void SetListCollection(List<string> list_collections)
+		{
+			// 중요 데이터 set
+			myListNames = list_collections;
+		}
+
 
 		public void Load_Data()
         {
-			Notify_Log_Message(">MainModel::Load_Data -> Data Loading Completed!!");
+			// Loading Task File
+			Stream rs = new FileStream("task.dat", FileMode.Open);
+			BinaryFormatter deserializer = new BinaryFormatter();
+
+			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+			rs.Close();
+
+			// Loading List File
+			Stream rs_list = new FileStream("list.dat", FileMode.Open);
+			BinaryFormatter deserializer_list = new BinaryFormatter();
+
+			List<string> list_name = (List<string>)deserializer_list.Deserialize(rs_list);
+			rs_list.Close();
+
+			m_Task_ID_Num = todo_data.Count - 1;
+
+			int pos = 0;
+			for (int i = m_Task_ID_Num; i >= 0; i--)
+			{
+				todo_data[i].DC_task_ID = pos;
+				pos++;
+			}
+
+			SetTaskCollection(todo_data); // deep copy로 변경할 것
+			SetListCollection(list_name);
+
+			Notify_Log_Message(">MainModel::Load_Data -> Data Loading Completed!! form 0 to " + m_Task_ID_Num);
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
 		}
 
-
 		public void Save_Data()
 		{
+			// Saving Task File
+			Stream ws = new FileStream("task.dat", FileMode.Create);
+			BinaryFormatter serializer = new BinaryFormatter();
+
+			serializer.Serialize(ws, GetTaskCollection());
+			ws.Close();
+
+			// Saving List File
+			Stream ws_list = new FileStream("list.dat", FileMode.Create);
+			BinaryFormatter serializer_list = new BinaryFormatter();
+
+			serializer_list.Serialize(ws_list, GetListCollection());
+			ws_list.Close();
+
+			Notify_Log_Message(">MainModel::Save_Data -> Data Saving Completed!! form 0 to " + m_Task_ID_Num);
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_SAVE_DATA));
 		}
 
@@ -98,6 +160,17 @@ namespace WellaTodo
 			dc.DC_title = msg;
 
 			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_LOG_MESSAGE));
+		}
+
+		public void Menulist_Add(string target)
+        {
+			myListNames.Add(target);
+
+			CDataCell list = new CDataCell();
+			list.DC_listName = target;
+
+			Notify_Log_Message("3>MainModel::Menulist_Add -> Created New Menulist : " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)list.Clone(), WParam.WM_MENULIST_ADD));  // deep copy 할 것!
 		}
 
 		public void Menulist_Rename(string source, string target)
@@ -112,10 +185,22 @@ namespace WellaTodo
 				pos++;
 			}
 
+			pos = 0;
+            for (int i = 0; i < myListNames.Count; i++)  // 목록 리스트내 목록 이름 변경
+			{
+                string str = myListNames[i];
+                if (source == str)
+				{
+					myListNames[pos] = target;
+				}
+				pos++;
+			}
+
 			CDataCell rename = new CDataCell();
 			rename.DC_listName = target;
+			rename.DC_title = source;
 
-			Notify_Log_Message("3>MainModel::Menulist_Rename -> from " + source + " to " + rename.DC_listName);
+			Notify_Log_Message("3>MainModel::Menulist_Rename -> from " + rename.DC_title + " to " + rename.DC_listName);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)rename.Clone(), WParam.WM_MENULIST_RENAME));
 		}
 
@@ -130,6 +215,7 @@ namespace WellaTodo
 
 				if (data.DC_listName == target)
 				{
+					data.DC_listName = target;
 					myTaskItems.RemoveAt(pos);
 				}
 				else
@@ -138,8 +224,76 @@ namespace WellaTodo
 				}
 			}
 
-			Notify_Log_Message("3>MainModel::Menulist_Delete : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_DELETE));
+			pos = 0;
+			while (pos < myListNames.Count) // 목록 제거
+			{
+				if (myListNames[pos] == target)
+				{
+					myListNames.RemoveAt(pos);
+					break;
+				}
+				pos++;
+			}
+
+			CDataCell dc = new CDataCell();
+			dc.DC_listName = target;
+
+			Notify_Log_Message("3>MainModel::Menulist_Delete -> Delete Task & Menu : " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MENULIST_DELETE));
+		}
+
+		public void Menulist_Up(string target)
+        {
+			int pos = 0;
+			for (int i = 0; i < myListNames.Count; i++)
+			{
+				if (myListNames[i] == target)
+				{
+					pos = i;
+				}
+			}
+
+			if (pos == 1)  // 작업 메뉴 위로 UP 불가
+			{
+				Notify_Log_Message("Warning>MainModel::Menulist_Up -> Can't move Up");
+				return;
+			}
+
+			string str = myListNames[pos]; //추출
+			myListNames.RemoveAt(pos); //삭제
+			myListNames.Insert(pos - 1, str); // 삽입
+
+			CDataCell data = new CDataCell();
+
+			Notify_Log_Message("3>MainModel::Menulist_Up : " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_UP));
+		}
+
+		public void Menulist_Down(string target)
+        {
+			int pos = 0;
+			for (int i = 0; i < myListNames.Count; i++)
+			{
+				if (myListNames[i] == target)
+				{
+					pos = i;
+				}
+			}
+
+			if (pos == myListNames.Count - 1)
+			{
+				Notify_Log_Message("Warning>MainModel::Menulist_Down -> Can't move Down");
+				return;
+			}
+
+			string str = myListNames[pos]; //추출
+			myListNames.RemoveAt(pos); //삭제  
+			myListNames.Insert(pos + 1, str); // 삽입
+
+			CDataCell data = new CDataCell();
+
+			Notify_Log_Message("3>MainModel::Menulist_Down : " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_DOWN));
 		}
 
 		public void Transfer_Task(CDataCell dc, string target)
@@ -159,22 +313,13 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TRANSFER_TASK));
 		}
 
-		public void Add_Task(int id, string list, string title)
-        {
-			CDataCell data = new CDataCell(id, list, title);  // DataCell 생성
-
-			data.DC_dateCreated = DateTime.Now;
-
-			myTaskItems.Insert(0, data);
-
-			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
-		}
-
 		public void Add_Task(CDataCell dc)
 		{
 			CDataCell data = (CDataCell)dc.Clone();
 
+			m_Task_ID_Num++;
+
+			data.DC_task_ID = m_Task_ID_Num;
 			data.DC_dateCreated = DateTime.Now;
 
 			myTaskItems.Insert(0, data);
@@ -491,7 +636,12 @@ namespace WellaTodo
             {
 				Console.WriteLine("<"+dc.DC_task_ID+">"+"[" + dc.DC_listName + "]" + dc.DC_title);
             }
-        }
+
+			foreach (string list in myListNames)
+			{
+				Console.WriteLine("<List Name : " + list);
+			}
+		}
 
 	}
 }

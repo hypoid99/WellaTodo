@@ -84,7 +84,7 @@ namespace WellaTodo
             this.도움말ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(782, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(782, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -94,19 +94,20 @@ namespace WellaTodo
             this.저장ToolStripMenuItem,
             this.종료ToolStripMenuItem});
             this.파일ToolStripMenuItem.Name = "파일ToolStripMenuItem";
-            this.파일ToolStripMenuItem.Size = new System.Drawing.Size(53, 26);
+            this.파일ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.파일ToolStripMenuItem.Text = "파일";
             // 
             // 저장ToolStripMenuItem
             // 
             this.저장ToolStripMenuItem.Name = "저장ToolStripMenuItem";
-            this.저장ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.저장ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.저장ToolStripMenuItem.Text = "저장";
+            this.저장ToolStripMenuItem.Click += new System.EventHandler(this.저장ToolStripMenuItem_Click);
             // 
             // 종료ToolStripMenuItem
             // 
             this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
-            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
+            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.종료ToolStripMenuItem.Text = "종료";
             this.종료ToolStripMenuItem.Click += new System.EventHandler(this.종료ToolStripMenuItem_Click);
             // 
@@ -119,7 +120,7 @@ namespace WellaTodo
             this.메모ToolStripMenuItem,
             this.출력창ToolStripMenuItem});
             this.보기ToolStripMenuItem.Name = "보기ToolStripMenuItem";
-            this.보기ToolStripMenuItem.Size = new System.Drawing.Size(53, 26);
+            this.보기ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.보기ToolStripMenuItem.Text = "보기";
             // 
             // toDoToolStripMenuItem
@@ -165,7 +166,7 @@ namespace WellaTodo
             this.수평정렬ToolStripMenuItem,
             this.아이콘화ToolStripMenuItem});
             this.창ToolStripMenuItem.Name = "창ToolStripMenuItem";
-            this.창ToolStripMenuItem.Size = new System.Drawing.Size(38, 26);
+            this.창ToolStripMenuItem.Size = new System.Drawing.Size(38, 24);
             this.창ToolStripMenuItem.Text = "창";
             // 
             // 캐스케이드ToolStripMenuItem
@@ -201,7 +202,7 @@ namespace WellaTodo
             this.도움말ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.정보ToolStripMenuItem});
             this.도움말ToolStripMenuItem.Name = "도움말ToolStripMenuItem";
-            this.도움말ToolStripMenuItem.Size = new System.Drawing.Size(68, 26);
+            this.도움말ToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
             this.도움말ToolStripMenuItem.Text = "도움말";
             // 
             // 정보ToolStripMenuItem
@@ -237,9 +238,9 @@ namespace WellaTodo
             this.button_Horizontal,
             this.toolStripSeparator4,
             this.button_Exit});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 30);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(782, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(782, 27);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -249,7 +250,7 @@ namespace WellaTodo
             this.새로만들기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("새로만들기ToolStripButton.Image")));
             this.새로만들기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.새로만들기ToolStripButton.Name = "새로만들기ToolStripButton";
-            this.새로만들기ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.새로만들기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.새로만들기ToolStripButton.Text = "새로 만들기";
             // 
             // 열기ToolStripButton
@@ -258,7 +259,7 @@ namespace WellaTodo
             this.열기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("열기ToolStripButton.Image")));
             this.열기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.열기ToolStripButton.Name = "열기ToolStripButton";
-            this.열기ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.열기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.열기ToolStripButton.Text = "열기";
             // 
             // 저장ToolStripButton
@@ -267,8 +268,9 @@ namespace WellaTodo
             this.저장ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("저장ToolStripButton.Image")));
             this.저장ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.저장ToolStripButton.Name = "저장ToolStripButton";
-            this.저장ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.저장ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.저장ToolStripButton.Text = "저장";
+            this.저장ToolStripButton.Click += new System.EventHandler(this.저장ToolStripButton_Click);
             // 
             // 인쇄ToolStripButton
             // 
@@ -276,13 +278,13 @@ namespace WellaTodo
             this.인쇄ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("인쇄ToolStripButton.Image")));
             this.인쇄ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.인쇄ToolStripButton.Name = "인쇄ToolStripButton";
-            this.인쇄ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.인쇄ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.인쇄ToolStripButton.Text = "인쇄";
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator.Size = new System.Drawing.Size(6, 27);
             // 
             // 잘라내기ToolStripButton
             // 
@@ -290,7 +292,7 @@ namespace WellaTodo
             this.잘라내기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("잘라내기ToolStripButton.Image")));
             this.잘라내기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.잘라내기ToolStripButton.Name = "잘라내기ToolStripButton";
-            this.잘라내기ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.잘라내기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.잘라내기ToolStripButton.Text = "잘라내기";
             // 
             // 복사ToolStripButton
@@ -299,7 +301,7 @@ namespace WellaTodo
             this.복사ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("복사ToolStripButton.Image")));
             this.복사ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.복사ToolStripButton.Name = "복사ToolStripButton";
-            this.복사ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.복사ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.복사ToolStripButton.Text = "복사";
             // 
             // 붙여넣기ToolStripButton
@@ -308,13 +310,13 @@ namespace WellaTodo
             this.붙여넣기ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("붙여넣기ToolStripButton.Image")));
             this.붙여넣기ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.붙여넣기ToolStripButton.Name = "붙여넣기ToolStripButton";
-            this.붙여넣기ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.붙여넣기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.붙여넣기ToolStripButton.Text = "붙여넣기";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
             // 
             // 도움말ToolStripButton
             // 
@@ -322,13 +324,13 @@ namespace WellaTodo
             this.도움말ToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("도움말ToolStripButton.Image")));
             this.도움말ToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.도움말ToolStripButton.Name = "도움말ToolStripButton";
-            this.도움말ToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.도움말ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.도움말ToolStripButton.Text = "도움말";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
             // 
             // button_Todo
             // 
@@ -336,7 +338,7 @@ namespace WellaTodo
             this.button_Todo.Image = ((System.Drawing.Image)(resources.GetObject("button_Todo.Image")));
             this.button_Todo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Todo.Name = "button_Todo";
-            this.button_Todo.Size = new System.Drawing.Size(29, 28);
+            this.button_Todo.Size = new System.Drawing.Size(29, 24);
             this.button_Todo.Text = "toolStripButton1";
             this.button_Todo.ToolTipText = "할일";
             this.button_Todo.Click += new System.EventHandler(this.button_Todo_Click);
@@ -347,7 +349,7 @@ namespace WellaTodo
             this.button_Calendar.Image = ((System.Drawing.Image)(resources.GetObject("button_Calendar.Image")));
             this.button_Calendar.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Calendar.Name = "button_Calendar";
-            this.button_Calendar.Size = new System.Drawing.Size(29, 28);
+            this.button_Calendar.Size = new System.Drawing.Size(29, 24);
             this.button_Calendar.Text = "toolStripButton2";
             this.button_Calendar.ToolTipText = "달력";
             this.button_Calendar.Click += new System.EventHandler(this.button_Calendar_Click);
@@ -358,7 +360,7 @@ namespace WellaTodo
             this.button_Calculator.Image = ((System.Drawing.Image)(resources.GetObject("button_Calculator.Image")));
             this.button_Calculator.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Calculator.Name = "button_Calculator";
-            this.button_Calculator.Size = new System.Drawing.Size(29, 28);
+            this.button_Calculator.Size = new System.Drawing.Size(29, 24);
             this.button_Calculator.Text = "toolStripButton3";
             this.button_Calculator.ToolTipText = "계산기";
             this.button_Calculator.Click += new System.EventHandler(this.button_Calculator_Click);
@@ -369,7 +371,7 @@ namespace WellaTodo
             this.button_Memo.Image = ((System.Drawing.Image)(resources.GetObject("button_Memo.Image")));
             this.button_Memo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Memo.Name = "button_Memo";
-            this.button_Memo.Size = new System.Drawing.Size(29, 28);
+            this.button_Memo.Size = new System.Drawing.Size(29, 24);
             this.button_Memo.Text = "toolStripButton4";
             this.button_Memo.ToolTipText = "메모";
             this.button_Memo.Click += new System.EventHandler(this.button_Memo_Click);
@@ -380,7 +382,7 @@ namespace WellaTodo
             this.button_Output.Image = ((System.Drawing.Image)(resources.GetObject("button_Output.Image")));
             this.button_Output.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Output.Name = "button_Output";
-            this.button_Output.Size = new System.Drawing.Size(29, 28);
+            this.button_Output.Size = new System.Drawing.Size(29, 24);
             this.button_Output.Text = "toolStripButton5";
             this.button_Output.ToolTipText = "출력창";
             this.button_Output.Click += new System.EventHandler(this.button_Output_Click);
@@ -388,7 +390,7 @@ namespace WellaTodo
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
             // 
             // button_Cascade
             // 
@@ -396,7 +398,7 @@ namespace WellaTodo
             this.button_Cascade.Image = ((System.Drawing.Image)(resources.GetObject("button_Cascade.Image")));
             this.button_Cascade.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Cascade.Name = "button_Cascade";
-            this.button_Cascade.Size = new System.Drawing.Size(29, 28);
+            this.button_Cascade.Size = new System.Drawing.Size(29, 24);
             this.button_Cascade.Text = "toolStripButton6";
             this.button_Cascade.ToolTipText = "계단식정렬";
             this.button_Cascade.Click += new System.EventHandler(this.button_Cascade_Click);
@@ -407,7 +409,7 @@ namespace WellaTodo
             this.button_Vertical.Image = ((System.Drawing.Image)(resources.GetObject("button_Vertical.Image")));
             this.button_Vertical.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Vertical.Name = "button_Vertical";
-            this.button_Vertical.Size = new System.Drawing.Size(29, 28);
+            this.button_Vertical.Size = new System.Drawing.Size(29, 24);
             this.button_Vertical.Text = "toolStripButton7";
             this.button_Vertical.ToolTipText = "수직정렬";
             this.button_Vertical.Click += new System.EventHandler(this.button_Vertical_Click);
@@ -418,7 +420,7 @@ namespace WellaTodo
             this.button_Horizontal.Image = ((System.Drawing.Image)(resources.GetObject("button_Horizontal.Image")));
             this.button_Horizontal.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Horizontal.Name = "button_Horizontal";
-            this.button_Horizontal.Size = new System.Drawing.Size(29, 28);
+            this.button_Horizontal.Size = new System.Drawing.Size(29, 24);
             this.button_Horizontal.Text = "toolStripButton8";
             this.button_Horizontal.ToolTipText = "수평정렬";
             this.button_Horizontal.Click += new System.EventHandler(this.button_Horizontal_Click);
@@ -426,7 +428,7 @@ namespace WellaTodo
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 27);
             // 
             // button_Exit
             // 
@@ -434,7 +436,7 @@ namespace WellaTodo
             this.button_Exit.Image = ((System.Drawing.Image)(resources.GetObject("button_Exit.Image")));
             this.button_Exit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_Exit.Name = "button_Exit";
-            this.button_Exit.Size = new System.Drawing.Size(29, 28);
+            this.button_Exit.Size = new System.Drawing.Size(29, 24);
             this.button_Exit.Text = "toolStripButton9";
             this.button_Exit.ToolTipText = "끝내기";
             this.button_Exit.Click += new System.EventHandler(this.button_Exit_Click);

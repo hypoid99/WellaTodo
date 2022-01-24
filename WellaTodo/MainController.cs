@@ -14,9 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-
 namespace WellaTodo
 {
 	public class MainController : IController
@@ -24,8 +21,6 @@ namespace WellaTodo
 		IView m_view;
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
-
-		int m_Task_ID_Num = 0;
 
 		public MainController(MainModel m)
         {
@@ -64,36 +59,20 @@ namespace WellaTodo
 
 		public void Load_Data_File()
         {
-			Stream rs = new FileStream("task.dat", FileMode.Open);
-			BinaryFormatter deserializer = new BinaryFormatter();
-
-			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
-			rs.Close();
-
-			m_Task_ID_Num = todo_data.Count - 1;
-
-			int pos = 0;
-			for (int i = m_Task_ID_Num; i >= 0; i--)
-            {
-				todo_data[i].DC_task_ID = pos;
-				pos++;
-            }
-
-			Send_Log_Message(">MainController::Load_Data_File -> form 0 to " + m_Task_ID_Num);
-			m_model.SetDataCollection(todo_data);
+			Send_Log_Message(">MainController::Load_Data_File");
 			m_model.Load_Data();
 		}
 
 		public void Save_Data_File()
         {
-			Stream ws = new FileStream("task.dat", FileMode.Create);
-			BinaryFormatter serializer = new BinaryFormatter();
-
-			serializer.Serialize(ws, m_model.GetDataCollection());
-			ws.Close();
-
 			Send_Log_Message("2>MainController::Save_Data_File");
 			m_model.Save_Data();
+		}
+
+		public void Perform_Menulist_Add(string target)
+        {
+			Send_Log_Message("2>MainController::Perform_Menulist_Add : " + target);
+			m_model.Menulist_Add(target);
 		}
 
 		public void Perform_Menulist_Rename(string source, string target)
@@ -108,12 +87,21 @@ namespace WellaTodo
 			m_model.Menulist_Delete(target);
 		}
 
+		public void Perform_Menulist_Up(string target)
+		{
+			Send_Log_Message("2>MainController::Perform_Menulist_Up : " + target);
+			m_model.Menulist_Up(target);
+		}
+
+		public void Perform_Menulist_Down(string target)
+        {
+			Send_Log_Message("2>MainController::Perform_Menulist_Down : " + target);
+			m_model.Menulist_Down(target);
+		}
+
 		public void Perform_Add_Task(CDataCell dc)
         {
-			m_Task_ID_Num++;
-			dc.DC_task_ID = m_Task_ID_Num;
-
-			Send_Log_Message("2>MainController::Perform_Add_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Add_Task : " + dc.DC_title);
 			m_model.Add_Task(dc);
         }
 
@@ -221,9 +209,32 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
+
+		public List<string> Query_ListName()
+		{
+			List<string> list = new List<string>();
+			IEnumerable<string> dataset = from string str in m_model.GetListCollection()
+											 where true
+											 select str;
+			if (dataset.Count() > 0)
+            {
+				foreach (string item in dataset)
+				{
+					list.Add(item);
+				}
+            }
+            else
+            {
+				Console.WriteLine("dataset.Count() is 0");
+            }
+
+			//Send_Log_Message("2>MainController::Query_ListName");
+			return list;
+		}
+
 		public IEnumerable<CDataCell> Query_MyToday()
         {
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetDataCollection() 
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection() 
 											 where dt.DC_myToday && !dt.DC_complete select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_MyToday -> Counter : " + deepCopy.Count);
@@ -232,7 +243,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Important()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection() 
 											 where dc.DC_important && !dc.DC_complete select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_Important -> Counter : " + deepCopy.Count);
@@ -241,7 +252,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Planned()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection() 
 											 where (dc.DC_deadlineType > 0 || dc.DC_repeatType > 0) && !dc.DC_complete select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_Planned -> Counter : " + deepCopy.Count);
@@ -250,7 +261,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Complete()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection() 
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection() 
 											 where dc.DC_complete == true select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_Complete -> Counter : " + deepCopy.Count);
@@ -259,7 +270,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Task(string listname)
 		{
-			IEnumerable < CDataCell > dataset = from CDataCell dc in m_model.GetDataCollection() 
+			IEnumerable < CDataCell > dataset = from CDataCell dc in m_model.GetTaskCollection() 
 												where dc.DC_listName == listname select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_Task -> Counter : " + deepCopy.Count);
@@ -269,7 +280,7 @@ namespace WellaTodo
 		public IEnumerable<CDataCell> Query_Month_Calendar(DateTime curDate)
         {
 			IEnumerable<CDataCell> dataset = from CDataCell dc
-											 in m_model.GetDataCollection()
+											 in m_model.GetTaskCollection()
 											 where dc.DC_deadlineType > 0
 											 && (curDate.Date == dc.DC_deadlineTime.Date)
 											 select dc;
@@ -280,7 +291,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Task_Calendar(CDataCell sd)
         {
-			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection()
 											 where dc.DC_task_ID == sd.DC_task_ID
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -290,7 +301,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_All_Task()
         {
-			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetDataCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection()
 											 where true
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
