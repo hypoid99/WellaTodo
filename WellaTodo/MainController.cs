@@ -59,7 +59,7 @@ namespace WellaTodo
 
 		public void Load_Data_File()
         {
-			Send_Log_Message(">MainController::Load_Data_File");
+			Send_Log_Message("2>MainController::Load_Data_File");
 			m_model.Load_Data();
 		}
 
@@ -67,6 +67,22 @@ namespace WellaTodo
         {
 			Send_Log_Message("2>MainController::Save_Data_File");
 			m_model.Save_Data();
+		}
+
+		public void Print_Data_File()
+        {
+			Send_Log_Message("2>MainController::Print_Data_File");
+			m_model.Print_Data();
+        }
+
+		public void New_Data_File()
+        {
+			Send_Log_Message("2>MainController::New_Data_File");
+		}
+
+		public void Open_Data_File(string filePath)
+        {
+			Send_Log_Message("2>MainController::Open_Data_File" + filePath);
 		}
 
 		public void Perform_Menulist_Add(string target)

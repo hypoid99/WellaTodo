@@ -269,6 +269,8 @@
             this.Name = "MainFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WellaTodo v0.15";
+            this.Activated += new System.EventHandler(this.MainFrame_Activated);
+            this.Deactivate += new System.EventHandler(this.MainFrame_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrame_FormClosing);
             this.Load += new System.EventHandler(this.MainFrame_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainFrame_Paint);

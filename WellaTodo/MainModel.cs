@@ -22,6 +22,7 @@ namespace WellaTodo
 		WM_LOG_MESSAGE,
 		WM_LOAD_DATA,
 		WM_SAVE_DATA,
+		WM_PRINT_DATA,
 		WM_COMPLETE_PROCESS,
 		WM_IMPORTANT_PROCESS,
 		WM_TASK_ADD,
@@ -109,14 +110,9 @@ namespace WellaTodo
 			BinaryFormatter deserializer = new BinaryFormatter();
 
 			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+			List<string> list_name = (List<string>)deserializer.Deserialize(rs);
+
 			rs.Close();
-
-			// Loading List File
-			Stream rs_list = new FileStream("list.dat", FileMode.Open);
-			BinaryFormatter deserializer_list = new BinaryFormatter();
-
-			List<string> list_name = (List<string>)deserializer_list.Deserialize(rs_list);
-			rs_list.Close();
 
 			m_Task_ID_Num = todo_data.Count - 1;
 
@@ -141,17 +137,18 @@ namespace WellaTodo
 			BinaryFormatter serializer = new BinaryFormatter();
 
 			serializer.Serialize(ws, GetTaskCollection());
+			serializer.Serialize(ws, GetListCollection());
+
 			ws.Close();
-
-			// Saving List File
-			Stream ws_list = new FileStream("list.dat", FileMode.Create);
-			BinaryFormatter serializer_list = new BinaryFormatter();
-
-			serializer_list.Serialize(ws_list, GetListCollection());
-			ws_list.Close();
 
 			Notify_Log_Message(">MainModel::Save_Data -> Data Saving Completed!! form 0 to " + m_Task_ID_Num);
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_SAVE_DATA));
+		}
+
+		public void Print_Data()
+        {
+			Notify_Log_Message(">MainModel::Print_Data");
+			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_PRINT_DATA));
 		}
 
 		public void Notify_Log_Message(string msg)

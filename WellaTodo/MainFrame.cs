@@ -91,6 +91,7 @@ namespace WellaTodo
 
         Color COLOR_DETAIL_WINDOW_BACK_COLOR = Color.PapayaWhip;
 
+        bool isActivated = false;
         bool isDetailWindowOpen = false;
         bool isTextbox_Task_Clicked = false;
         bool isTextbox_List_Clicked = false;
@@ -152,21 +153,26 @@ namespace WellaTodo
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
             Update_Display();
+            //Console.WriteLine("MainFrame_Paint");
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Maximized)
-            {
-                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
-            }
-
-            if (WindowState == FormWindowState.Normal) 
-            { 
-                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH; 
-            }
-
             Update_Display();
+            //Console.WriteLine("MainFrame_Resize");
+        }
+
+        private void MainFrame_Activated(object sender, EventArgs e)
+        {
+            isActivated = true;
+            Update_Display();
+            //Console.WriteLine("MainFrame_Activated");
+        }
+
+
+        private void MainFrame_Deactivate(object sender, EventArgs e)
+        {
+            isActivated = false;
         }
 
         private void Initiate_View()
@@ -327,6 +333,16 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
             //Console.WriteLine("splitContainer1.Panel1.Width [{0}]", splitContainer1.Panel1.Width);
             //Console.WriteLine("splitContainer1.Panel2.Width [{0}]", splitContainer1.Panel2.Width);
+
+            if (WindowState == FormWindowState.Maximized)
+            {
+                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
+            }
+
+            if (WindowState == FormWindowState.Normal)
+            {
+                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
+            }
 
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
             flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT;
@@ -520,6 +536,9 @@ namespace WellaTodo
                     break;
                 case WParam.WM_SAVE_DATA:
                     Update_Save_Data();
+                    break;
+                case WParam.WM_PRINT_DATA:
+                    Update_Print_Data();
                     break;
                 case WParam.WM_COMPLETE_PROCESS:
                     Update_Complete_Process(dc);
@@ -840,12 +859,25 @@ namespace WellaTodo
 
         private void OnPrintDataMenu_Click(object sender, EventArgs e)
         {
+            m_Controller.Print_Data_File();
+        }
+
+        private void Update_Print_Data()
+        {
+            Send_Log_Message("4>MainForm::Update_Print_Data");
+
+            if (!isActivated)
+            {
+                Send_Log_Message("4>MainForm::Update_Print_Data -> this form is not activated!!");
+                return;
+            }
 
             printPreviewDialog1.StartPosition = FormStartPosition.CenterParent;
             printPreviewDialog1.Document = printDocument1;
             //printPreviewDialog1.ClientSize = new Size(this.Width, this.Height);
             printPreviewDialog1.MinimumSize = new Size(800, 600);
             printPreviewDialog1.UseAntiAlias = true;
+
             if (printPreviewDialog1.ShowDialog() == DialogResult.Cancel)
             {
                 m_printCounter = 0;

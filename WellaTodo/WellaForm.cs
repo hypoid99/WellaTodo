@@ -12,6 +12,8 @@ namespace WellaTodo
 {
     public partial class WellaForm : Form
     {
+        static readonly string WM_WINDOW_CAPTION = "Wella Todo v0.95";
+
         MainFrame toDoList = new MainFrame();
         CalendarForm calendar = new CalendarForm();
         CalculatorForm calculator = new CalculatorForm();
@@ -188,12 +190,59 @@ namespace WellaTodo
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                controller.Save_Data_File();
+            }
         }
 
+        private void 새로만들기ToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                controller.Save_Data_File();
+            }
+
+            controller.New_Data_File();
+        }
+
+        private void 열기ToolStripButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1 = new OpenFileDialog()
+            {
+                FileName = "*.dat",
+                Filter = "Data files (*.dat)|*.dat",
+                Title = "Open Task Data file"
+            };
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog1.FileName;
+                controller.Open_Data_File(filePath);
+            }
+        }
         private void 저장ToolStripButton_Click(object sender, EventArgs e)
         {
-
+            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes) 
+            {
+                controller.Save_Data_File();
+            }
         }
+
+        private void 인쇄ToolStripButton_Click(object sender, EventArgs e)
+        {
+            Form activeChild = this.ActiveMdiChild;
+
+            if (activeChild == toDoList)
+            {
+                controller.Print_Data_File();
+            }
+
+            if (activeChild == calendar)
+            {
+                controller.Print_Data_File();
+            }
+        }
+
     }
 }
