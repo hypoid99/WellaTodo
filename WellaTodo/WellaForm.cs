@@ -188,6 +188,36 @@ namespace WellaTodo
             Application.Exit();
         }
 
+        // ------------------------------------------------------------
+        // 메뉴
+        // ------------------------------------------------------------
+
+        private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                controller.Save_Data_File();
+            }
+
+            controller.New_Data_File();
+        }
+
+        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog1 = new OpenFileDialog()
+            {
+                FileName = "*.dat",
+                Filter = "Data files (*.dat)|*.dat",
+                Title = "Open Task Data file"
+            };
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog1.FileName;
+                controller.Open_Data_File(filePath);
+            }
+        }
+
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -195,6 +225,75 @@ namespace WellaTodo
                 controller.Save_Data_File();
             }
         }
+
+        private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form activeChild = this.ActiveMdiChild;
+
+            if (activeChild == toDoList)
+            {
+                controller.Print_Data_File();
+            }
+
+            if (activeChild == calendar)
+            {
+                controller.Print_Data_File();
+            }
+        }
+
+        private void 잘라내기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                if (theBox.SelectedText != "")
+                {
+                    Clipboard.SetDataObject(theBox.SelectedText);
+                    theBox.SelectedText = "";
+                }
+            }
+        }
+
+        private void 복사ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                if (theBox.SelectedText != "")
+                {
+                    Clipboard.SetDataObject(theBox.SelectedText);
+                }
+            }
+        }
+
+        private void 붙여넣기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                IDataObject data = Clipboard.GetDataObject();
+                if (data.GetDataPresent(DataFormats.Text))
+                {
+                    theBox.SelectedText = data.GetData(DataFormats.Text).ToString();
+                }
+            }
+        }
+
+        // ------------------------------------------------------------
+        // 툴바
+        // ------------------------------------------------------------
 
         private void 새로만들기ToolStripButton_Click(object sender, EventArgs e)
         {
@@ -242,6 +341,79 @@ namespace WellaTodo
             {
                 controller.Print_Data_File();
             }
+        }
+
+        private Control FindFocus(Control control)
+        {
+            foreach (Control ctr in control.Controls)
+            {
+                if (ctr.Focused)
+                {
+                    return ctr;
+                }
+                else if (ctr.ContainsFocus)
+                {
+                    return FindFocus(ctr);
+                }
+            }
+            return null;
+        }
+
+        private void 잘라내기ToolStripButton_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                if (theBox.SelectedText != "")
+                {
+                    Clipboard.SetDataObject(theBox.SelectedText);
+                    theBox.SelectedText = "";
+                }
+            }
+        }
+
+        private void 복사ToolStripButton_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                if (theBox.SelectedText != "")
+                {
+                    Clipboard.SetDataObject(theBox.SelectedText);
+                }
+            }
+        }
+
+        private void 붙여넣기ToolStripButton_Click(object sender, EventArgs e)
+        {
+            Form childForm = this.ActiveMdiChild;
+            Control focusedControl = FindFocus(childForm.ActiveControl);
+
+            if (focusedControl is TextBox)
+            {
+                TextBox theBox = focusedControl as TextBox;
+
+                IDataObject data = Clipboard.GetDataObject();
+                if (data.GetDataPresent(DataFormats.Text))
+                {
+                    theBox.SelectedText = data.GetData(DataFormats.Text).ToString();
+                }
+            }
+        }
+
+        private void 도움말ToolStripButton_Click(object sender, EventArgs e)
+        {
+            LoginSettingForm info = new LoginSettingForm();
+            info.StartPosition = FormStartPosition.CenterParent;
+            info.ShowDialog();
         }
 
     }

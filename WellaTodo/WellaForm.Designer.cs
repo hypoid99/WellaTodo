@@ -71,6 +71,13 @@ namespace WellaTodo
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.button_Exit = new System.Windows.Forms.ToolStripButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.새로만들기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.열기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.인쇄ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.편집ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.잘라내기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.복사ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.붙여넣기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -80,6 +87,7 @@ namespace WellaTodo
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.파일ToolStripMenuItem,
+            this.편집ToolStripMenuItem,
             this.보기ToolStripMenuItem,
             this.창ToolStripMenuItem,
             this.도움말ToolStripMenuItem});
@@ -92,7 +100,10 @@ namespace WellaTodo
             // 파일ToolStripMenuItem
             // 
             this.파일ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.새로만들기ToolStripMenuItem,
+            this.열기ToolStripMenuItem,
             this.저장ToolStripMenuItem,
+            this.인쇄ToolStripMenuItem,
             this.종료ToolStripMenuItem});
             this.파일ToolStripMenuItem.Name = "파일ToolStripMenuItem";
             this.파일ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
@@ -298,6 +309,7 @@ namespace WellaTodo
             this.잘라내기ToolStripButton.Name = "잘라내기ToolStripButton";
             this.잘라내기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.잘라내기ToolStripButton.Text = "잘라내기";
+            this.잘라내기ToolStripButton.Click += new System.EventHandler(this.잘라내기ToolStripButton_Click);
             // 
             // 복사ToolStripButton
             // 
@@ -307,6 +319,7 @@ namespace WellaTodo
             this.복사ToolStripButton.Name = "복사ToolStripButton";
             this.복사ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.복사ToolStripButton.Text = "복사";
+            this.복사ToolStripButton.Click += new System.EventHandler(this.복사ToolStripButton_Click);
             // 
             // 붙여넣기ToolStripButton
             // 
@@ -316,6 +329,7 @@ namespace WellaTodo
             this.붙여넣기ToolStripButton.Name = "붙여넣기ToolStripButton";
             this.붙여넣기ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.붙여넣기ToolStripButton.Text = "붙여넣기";
+            this.붙여넣기ToolStripButton.Click += new System.EventHandler(this.붙여넣기ToolStripButton_Click);
             // 
             // toolStripSeparator1
             // 
@@ -330,6 +344,7 @@ namespace WellaTodo
             this.도움말ToolStripButton.Name = "도움말ToolStripButton";
             this.도움말ToolStripButton.Size = new System.Drawing.Size(29, 24);
             this.도움말ToolStripButton.Text = "도움말";
+            this.도움말ToolStripButton.Click += new System.EventHandler(this.도움말ToolStripButton_Click);
             // 
             // toolStripSeparator2
             // 
@@ -449,6 +464,58 @@ namespace WellaTodo
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // 새로만들기ToolStripMenuItem
+            // 
+            this.새로만들기ToolStripMenuItem.Name = "새로만들기ToolStripMenuItem";
+            this.새로만들기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.새로만들기ToolStripMenuItem.Text = "새로만들기";
+            this.새로만들기ToolStripMenuItem.Click += new System.EventHandler(this.새로만들기ToolStripMenuItem_Click);
+            // 
+            // 열기ToolStripMenuItem
+            // 
+            this.열기ToolStripMenuItem.Name = "열기ToolStripMenuItem";
+            this.열기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.열기ToolStripMenuItem.Text = "열기";
+            this.열기ToolStripMenuItem.Click += new System.EventHandler(this.열기ToolStripMenuItem_Click);
+            // 
+            // 인쇄ToolStripMenuItem
+            // 
+            this.인쇄ToolStripMenuItem.Name = "인쇄ToolStripMenuItem";
+            this.인쇄ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.인쇄ToolStripMenuItem.Text = "인쇄";
+            this.인쇄ToolStripMenuItem.Click += new System.EventHandler(this.인쇄ToolStripMenuItem_Click);
+            // 
+            // 편집ToolStripMenuItem
+            // 
+            this.편집ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.잘라내기ToolStripMenuItem,
+            this.복사ToolStripMenuItem,
+            this.붙여넣기ToolStripMenuItem});
+            this.편집ToolStripMenuItem.Name = "편집ToolStripMenuItem";
+            this.편집ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.편집ToolStripMenuItem.Text = "편집";
+            // 
+            // 잘라내기ToolStripMenuItem
+            // 
+            this.잘라내기ToolStripMenuItem.Name = "잘라내기ToolStripMenuItem";
+            this.잘라내기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.잘라내기ToolStripMenuItem.Text = "잘라내기";
+            this.잘라내기ToolStripMenuItem.Click += new System.EventHandler(this.잘라내기ToolStripMenuItem_Click);
+            // 
+            // 복사ToolStripMenuItem
+            // 
+            this.복사ToolStripMenuItem.Name = "복사ToolStripMenuItem";
+            this.복사ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.복사ToolStripMenuItem.Text = "복사";
+            this.복사ToolStripMenuItem.Click += new System.EventHandler(this.복사ToolStripMenuItem_Click);
+            // 
+            // 붙여넣기ToolStripMenuItem
+            // 
+            this.붙여넣기ToolStripMenuItem.Name = "붙여넣기ToolStripMenuItem";
+            this.붙여넣기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.붙여넣기ToolStripMenuItem.Text = "붙여넣기";
+            this.붙여넣기ToolStripMenuItem.Click += new System.EventHandler(this.붙여넣기ToolStripMenuItem_Click);
+            // 
             // WellaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -514,5 +581,12 @@ namespace WellaTodo
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton button_Exit;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem 새로만들기ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 열기ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 인쇄ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 편집ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 잘라내기ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 복사ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 붙여넣기ToolStripMenuItem;
     }
 }

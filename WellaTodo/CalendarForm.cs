@@ -282,6 +282,15 @@ namespace WellaTodo
             panel_Calendar.Refresh();
         }
 
+        private void CalendarForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+        }
+
         private void Send_Log_Message(string msg)
         {
             try
@@ -294,6 +303,9 @@ namespace WellaTodo
             }
         }
 
+        //
+        // Update_Calendar
+        //
         private void SetDate(DateTime dt)
         {
             Send_Log_Message(">CalendarForm::SetDate -> m_dtValue : " + dt.ToLongDateString());
@@ -320,7 +332,7 @@ namespace WellaTodo
                 dayPanel[i].Controls.Clear();
             }
 
-            // 날짜 표시
+            // 날짜 표시 -> 오늘/공휴일 표시할 것
             int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
             DateTime curDate = startDate.AddDays(-preDays);
             for (int i = 0; i < dayPanel.Length; i++)
@@ -355,6 +367,13 @@ namespace WellaTodo
                 if ((i % 7) == 0) // 일요일은 RED 색상으로 변경
                 {
                     label_Day.ForeColor = Color.Red;
+                }
+
+                string holiday = IsHoliDay(curDate);
+                if (holiday != "평일") // 공휴일은 RED 색상으로 변경
+                {
+                    label_Day.ForeColor = Color.Red;
+                    label_Day.Text += holiday;
                 }
 
                 label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
@@ -694,13 +713,100 @@ namespace WellaTodo
             return false;
         }
 
-        private void CalendarForm_FormClosing(object sender, FormClosingEventArgs e)
+        // --------------------------------------------------
+        // 양력을 음력 변환
+        // --------------------------------------------------
+        private DateTime ConvertSolarToLunar(int year, int month, int day)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            int LeapMonth;
+            int LanarYear, LanarMonth, LanarDay;
+            bool isLeapMonth = false;
+            DateTime dt = new DateTime(year, month, day);
+
+            System.Globalization.KoreanLunisolarCalendar LanarCalendar = new System.Globalization.KoreanLunisolarCalendar();
+
+            LanarYear = LanarCalendar.GetYear(dt);
+            LanarMonth = LanarCalendar.GetMonth(dt);
+            LanarDay = LanarCalendar.GetDayOfMonth(dt);
+            if (LanarCalendar.GetMonthsInYear(LanarYear) > 12)             //1년이 12이상이면 윤달이 있음..
             {
-                e.Cancel = true;
-                Hide();
+                isLeapMonth = LanarCalendar.IsLeapMonth(LanarYear, LanarMonth);     //윤월인지
+                LeapMonth = LanarCalendar.GetLeapMonth(LanarYear);             //년도의 윤달이 몇월인지?
+                if (LanarMonth >= LeapMonth)                           //달이 윤월보다 같거나 크면 -1을 함 즉 윤8은->9 이기때문
+                    LanarMonth--;
             }
+            return new DateTime(int.Parse(LanarYear.ToString()), int.Parse(LanarMonth.ToString()), int.Parse(LanarDay.ToString()));
         }
+
+        // --------------------------------------------------
+        // 음력을 양력 변환
+        // --------------------------------------------------
+        private DateTime ConvertLunarToSolar(int LanarYear, int LanarMonth, int LanarDay)
+        {
+            System.Globalization.KoreanLunisolarCalendar LanarCalendar = new System.Globalization.KoreanLunisolarCalendar();
+
+            bool isLeapMonth = LanarCalendar.IsLeapMonth(LanarYear, LanarMonth);
+            int LeapMonth;
+
+            if (LanarCalendar.GetMonthsInYear(LanarYear) > 12)
+            {
+                LeapMonth = LanarCalendar.GetLeapMonth(LanarYear);
+                if (isLeapMonth)
+                    LanarMonth++;
+                if (LanarMonth > LeapMonth)
+                    LanarMonth++;
+            }
+            try
+            {
+                LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarDay, 0, 0, 0, 0);
+            }
+            catch
+            {
+                return LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarCalendar.GetDaysInMonth(LanarYear, LanarMonth), 0, 0, 0, 0);//LanarCalendar은 마지막 날짜가 매달 다르기 때문에 예외 뜨면 그날 맨 마지막 날로 지정
+            }
+
+            return LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarDay, 0, 0, 0, 0);
+        }
+
+        // --------------------------------------------------
+        // 공휴일 Check
+        // --------------------------------------------------
+        private string IsHoliDay(DateTime dt)
+        {
+            string dayName = "평일";
+            int year = dt.Year;
+            int month = dt.Month;
+            int day = dt.Day;
+
+            // 양력 공휴일
+            if (month == 1 && day == 1) return "신정";
+            if (month == 3 && day == 1) return "삼일절";
+            if (month == 5 && day == 5) return "어린이날";
+            if (month == 6 && day == 6) return "현충일";
+            if (month == 8 && day == 15) return "광복절";
+            if (month == 10 && day == 3) return "개천절";
+            if (month == 10 && day == 9) return "한글날";
+            if (month == 12 && day == 25) return "크리스마스";
+
+            // 음력 공휴일
+            DateTime solar;
+            solar = ConvertLunarToSolar(year-1, 12, 30);
+            if (month == solar.Month && day == solar.Day) return "구정";
+            solar = ConvertLunarToSolar(year, 1, 1);
+            if (month == solar.Month && day == solar.Day) return "구정";
+            solar = ConvertLunarToSolar(year, 1, 2);
+            if (month == solar.Month && day == solar.Day) return "구정";
+            solar = ConvertLunarToSolar(year, 4, 8);
+            if (month == solar.Month && day == solar.Day) return "석가탄신일";
+            solar = ConvertLunarToSolar(year, 8, 14);
+            if (month == solar.Month && day == solar.Day) return "추석";
+            solar = ConvertLunarToSolar(year, 8, 15);
+            if (month == solar.Month && day == solar.Day) return "추석";
+            solar = ConvertLunarToSolar(year, 8, 16);
+            if (month == solar.Month && day == solar.Day) return "추석";
+
+            return dayName;
+        }
+
     }
 }
