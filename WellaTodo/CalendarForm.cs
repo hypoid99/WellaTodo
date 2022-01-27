@@ -373,7 +373,7 @@ namespace WellaTodo
                 if (holiday != "평일") // 공휴일은 RED 색상으로 변경
                 {
                     label_Day.ForeColor = Color.Red;
-                    label_Day.Text += holiday;
+                    label_Day.Text = label_Day.Text + " " + holiday;
                 }
 
                 label_Day.Font = new Font(FONT_NAME, FONT_SIZE_TEXT, FontStyle.Bold);
@@ -728,12 +728,11 @@ namespace WellaTodo
             LanarYear = LanarCalendar.GetYear(dt);
             LanarMonth = LanarCalendar.GetMonth(dt);
             LanarDay = LanarCalendar.GetDayOfMonth(dt);
-            if (LanarCalendar.GetMonthsInYear(LanarYear) > 12)             //1년이 12이상이면 윤달이 있음..
+            if (LanarCalendar.GetMonthsInYear(LanarYear) > 12) //1년이 12이상이면 윤달이 있음..
             {
-                isLeapMonth = LanarCalendar.IsLeapMonth(LanarYear, LanarMonth);     //윤월인지
-                LeapMonth = LanarCalendar.GetLeapMonth(LanarYear);             //년도의 윤달이 몇월인지?
-                if (LanarMonth >= LeapMonth)                           //달이 윤월보다 같거나 크면 -1을 함 즉 윤8은->9 이기때문
-                    LanarMonth--;
+                isLeapMonth = LanarCalendar.IsLeapMonth(LanarYear, LanarMonth); //윤월인지
+                LeapMonth = LanarCalendar.GetLeapMonth(LanarYear); //년도의 윤달이 몇월인지?
+                if (LanarMonth >= LeapMonth) LanarMonth--; //달이 윤월보다 같거나 크면 -1을 함 즉 윤8은->9 이기때문
             }
             return new DateTime(int.Parse(LanarYear.ToString()), int.Parse(LanarMonth.ToString()), int.Parse(LanarDay.ToString()));
         }
@@ -751,20 +750,20 @@ namespace WellaTodo
             if (LanarCalendar.GetMonthsInYear(LanarYear) > 12)
             {
                 LeapMonth = LanarCalendar.GetLeapMonth(LanarYear);
-                if (isLeapMonth)
-                    LanarMonth++;
-                if (LanarMonth > LeapMonth)
-                    LanarMonth++;
+                if (isLeapMonth) LanarMonth++;
+                if (LanarMonth > LeapMonth) LanarMonth++;
             }
+
+            //LanarCalendar은 마지막 날짜가 매달 다르기 때문에 예외 뜨면 그날 맨 마지막 날로 지정
             try
             {
                 LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarDay, 0, 0, 0, 0);
             }
             catch
             {
-                return LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarCalendar.GetDaysInMonth(LanarYear, LanarMonth), 0, 0, 0, 0);//LanarCalendar은 마지막 날짜가 매달 다르기 때문에 예외 뜨면 그날 맨 마지막 날로 지정
+                return LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarCalendar.GetDaysInMonth(LanarYear, LanarMonth), 0, 0, 0, 0);
             }
-
+            
             return LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarDay, 0, 0, 0, 0);
         }
 
@@ -790,7 +789,7 @@ namespace WellaTodo
 
             // 음력 공휴일
             DateTime solar;
-            solar = ConvertLunarToSolar(year-1, 12, 30);
+            solar = ConvertLunarToSolar(year-1, 12, 31);
             if (month == solar.Month && day == solar.Day) return "구정";
             solar = ConvertLunarToSolar(year, 1, 1);
             if (month == solar.Month && day == solar.Day) return "구정";

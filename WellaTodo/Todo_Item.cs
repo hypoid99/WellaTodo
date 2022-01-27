@@ -79,6 +79,9 @@ namespace WellaTodo
         GraphicsPath outerBorderPath = null;
         int cornerRadius = 10;
 
+        bool isDragging = false;
+        Point DragStartPoint;
+
         public Todo_Item(CDataCell dc)
         {
             InitializeComponent();
@@ -95,6 +98,8 @@ namespace WellaTodo
             Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
             BackColor = PSEUDO_BACK_COLOR;
             Margin = new Padding(3, 1, 3, 1);
+
+            AllowDrop = true;
 
             Initiate_View();
         }
@@ -293,47 +298,88 @@ namespace WellaTodo
             Todo_Item_Click(sender, e);
         }
 
+        // ---------------------------------------------------------------------------
+        // 드래그앤드롭 Drag & Drop - Source
+        // ---------------------------------------------------------------------------
         private void Todo_Item_MouseDown(object sender, MouseEventArgs e)
         {
-           // Console.WriteLine("Todo_Item_MouseDown");
-            //isDragging = false;
-            //pointStart = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
-            //Todo_Item sd = (Todo_Item)sender;
-            //sd.DoDragDrop(sd, DragDropEffects.Move);
-            //DoDragDrop(this, DragDropEffects.Move);
-        }
-
-        private void Todo_Item_MouseMove(object sender, MouseEventArgs e)
-        {
+            isDragging = false;
+            DragStartPoint = PointToScreen(new Point(e.X, e.Y));
+            Console.WriteLine("Todo_Item_MouseDown X: " + e.X + " Y: "+ e.Y);
             /*
-            int threshold = 10;
-            int deltaX;
-            int deltaY;
-            Point pointCurrent = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
-            deltaX = Math.Abs(pointCurrent.X - pointStart.X);
-            deltaY = Math.Abs(pointCurrent.Y - pointStart.Y);
-
-            if ((deltaX < threshold) && (deltaY < threshold ))
+            DragDropEffects dropEffect = DoDragDrop(this, DragDropEffects.All | DragDropEffects.Link);
+            if (dropEffect == DragDropEffects.Move)
             {
-                isDragging = true;
+
             }
             */
+            //DoDragDrop(this, DragDropEffects.Move);
         }
 
         private void Todo_Item_MouseUp(object sender, MouseEventArgs e)
         {
-            /*
             if (isDragging)
             {
-                Console.WriteLine("Todo_Item_MouseUp - Drag");
+                Console.WriteLine("Todo_Item_MouseUp - is Dragging");
             }
             else
             {
                 Console.WriteLine("Todo_Item_MouseUp - Click");
-                Todo_Item_Click(sender, e);  // click
+                //Todo_Item_Click(sender, e);  // click
             }
             isDragging = false;
-            */
+        }
+
+        private void Todo_Item_MouseMove(object sender, MouseEventArgs e)
+        {
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
+            deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
+
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                if ((deltaX < threshold) && (deltaY < threshold))
+                {
+                    isDragging = true;
+                    Console.WriteLine("Todo_Item_MouseMove -> Dragging is True");
+                }
+            }
+        }
+
+        private void Todo_Item_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            Console.WriteLine("Todo_Item_QueryContinueDrag");
+        }
+
+        private void Todo_Item_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            Console.WriteLine("Todo_Item_GiveFeedback");
+        }
+
+        // ---------------------------------------------------------------------------
+        // 드래그앤드롭 Drag & Drop - Target
+        // ---------------------------------------------------------------------------
+        private void Todo_Item_DragOver(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Todo_Item_DragOver");
+        }
+
+        private void Todo_Item_DragEnter(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Todo_Item_DragEnter");
+        }
+
+        private void Todo_Item_DragLeave(object sender, EventArgs e)
+        {
+            Console.WriteLine("Todo_Item_DragLeave");
+        }
+
+        private void Todo_Item_DragDrop(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Todo_Item_DragDrop");
         }
     }
 }

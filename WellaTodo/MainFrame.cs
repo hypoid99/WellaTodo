@@ -1166,6 +1166,36 @@ namespace WellaTodo
                 }
                 m_currentPage++;
             }
+
+            if (flowLayoutPanel2.Controls.Count < 1) return;
+
+            // 화면 맨위 항목을 선택한다
+            Todo_Item sd = null;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)
+            {
+                if (item is Todo_Item)
+                {
+                    sd = item;
+                    break;
+                }
+            }
+
+            if (m_Pre_Selected_Item == null) m_Pre_Selected_Item = sd;
+
+            if (m_Pre_Selected_Item.Equals(sd))
+            {
+
+            }
+            else
+            {
+                m_Pre_Selected_Item.IsItemSelected = false;
+            }
+
+            m_Pre_Selected_Item = sd;
+            m_Selected_Item = sd;
+            m_Selected_Item.IsItemSelected = true;
+
+            SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
         }
 
         private void Add_Task_To_Panel_ScrollDown()
