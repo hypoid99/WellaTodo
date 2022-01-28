@@ -131,6 +131,12 @@ namespace WellaTodo
             Margin = new Padding(1);
             BackColor = BACK_COLOR;
 
+            this.AllowDrop = true;
+            this.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+            this.DragOver += new DragEventHandler(TwoLineList_DragOver);
+            this.DragLeave += new EventHandler(TwoLineList_DragLeave);
+            this.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
+
             pictureBox_Icon.Size = new Size(24, 24);
             pictureBox_Icon.Location = new Point(5, 8);
 
@@ -307,6 +313,41 @@ namespace WellaTodo
         private void List_MouseClick(object sender, MouseEventArgs e)
         {
             Mouse_Clicked(sender, e);
+        }
+
+        //---------------------------------------------------------
+        // drag & drop
+        //---------------------------------------------------------
+        private void TwoLineList_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("TwoLineList_DragEnter");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void TwoLineList_DragOver(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("TwoLineList_DragOver" + PrimaryText);
+        }
+
+        private void TwoLineList_DragLeave(object sender, EventArgs e)
+        {
+            //Console.WriteLine("TwoLineList_DragLeave" + PrimaryText);
+        }
+
+        private void TwoLineList_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+                Console.WriteLine("TwoLineList_DragDrop" + item.TD_title);
+            }
         }
 
         public override String ToString()

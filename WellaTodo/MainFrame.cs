@@ -215,8 +215,10 @@ namespace WellaTodo
 
             // 태스크 항목
             flowLayoutPanel2.AllowDrop = true;
-            flowLayoutPanel2.DragOver += new DragEventHandler(DragDrop_Task_DragOver);
-            flowLayoutPanel2.DragDrop += new DragEventHandler(DragDrop_Task_DragDrop);
+            flowLayoutPanel2.DragEnter += new DragEventHandler(flowLayoutPanel2_DragEnter);
+            flowLayoutPanel2.DragOver += new DragEventHandler(flowLayoutPanel2_DragOver);
+            flowLayoutPanel2.DragLeave += new EventHandler(flowLayoutPanel2_DragLeave);
+            flowLayoutPanel2.DragDrop += new DragEventHandler(flowLayoutPanel2_DragDrop);
 
             flowLayoutPanel2.AutoScroll = false;
             flowLayoutPanel2.HorizontalScroll.Maximum = 0;
@@ -635,6 +637,12 @@ namespace WellaTodo
             flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
             flowLayoutPanel_Menulist.AutoScroll = true;
 
+            flowLayoutPanel_Menulist.AllowDrop = true;
+            flowLayoutPanel_Menulist.DragEnter += new DragEventHandler(flowLayoutPanel_Menulist_DragEnter);
+            flowLayoutPanel_Menulist.DragOver += new DragEventHandler(flowLayoutPanel_Menulist_DragOver);
+            flowLayoutPanel_Menulist.DragLeave += new EventHandler(flowLayoutPanel_Menulist_DragLeave);
+            flowLayoutPanel_Menulist.DragDrop += new DragEventHandler(flowLayoutPanel_Menulist_DragDrop);
+
             flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
             flowLayoutPanel_Menulist.Margin = new Padding(0);
             flowLayoutPanel_Menulist.FlowDirection = FlowDirection.TopDown;
@@ -1033,7 +1041,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 메뉴 처리
+        // 메뉴 Query 처리
         //--------------------------------------------------------------
         private void Menu_MyToday()
         {
@@ -1221,6 +1229,42 @@ namespace WellaTodo
         private void flowLayoutPanel2_Scroll(object sender, ScrollEventArgs e)
         {
             Add_Task_To_Panel_ScrollDown();
+        }
+
+        //--------------------------------------------------------------
+        // 메뉴 리스트 드래그 앤 드롭 (flowLayoutPanel_Menulist) - Target
+        //--------------------------------------------------------------
+        private void flowLayoutPanel_Menulist_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_DragEnter");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void flowLayoutPanel_Menulist_DragOver(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_DragOver");
+        }
+
+        private void flowLayoutPanel_Menulist_DragLeave(object sender, EventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_DragLeave");
+        }
+
+        private void flowLayoutPanel_Menulist_DragDrop(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_DragDrop");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+                Console.WriteLine("flowLayoutPanel_Menulist_DragDrop" + item.TD_title);
+            }
         }
 
         //--------------------------------------------------------------
@@ -2795,6 +2839,49 @@ namespace WellaTodo
             {
                 Send_Log_Message("Warning>MainFrame::Update_Task_Move_Down -> There is no matching item!");
             }
+        }
+
+        //--------------------------------------------------------------
+        // 태스크 리스트 드래그 앤 드롭 (flowLayoutPanel2) - Target
+        //--------------------------------------------------------------
+        private void flowLayoutPanel2_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel2_DragEnter");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void flowLayoutPanel2_DragOver(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel2_DragOver");
+        }
+
+        private void flowLayoutPanel2_DragLeave(object sender, EventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel2_DragLeave");
+        }
+
+        private void flowLayoutPanel2_DragDrop(object sender, DragEventArgs e)
+        {
+            Todo_Item data = null;
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                data = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+                Console.WriteLine("flowLayoutPanel2_DragDrop -> source :" + data.TD_title);
+            }
+
+            Point p = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
+            var item = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
+            int index = flowLayoutPanel2.Controls.GetChildIndex(item, false);
+            //Console.WriteLine("flowLayoutPanel2_DragDrop -> target :" + index + "--" + item.TD_title);
+            flowLayoutPanel2.Controls.SetChildIndex(data, index);
+            flowLayoutPanel2.Invalidate();
         }
 
         // ------------------------------------------------------------------

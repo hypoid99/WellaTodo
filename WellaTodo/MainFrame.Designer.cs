@@ -89,6 +89,7 @@
             // 
             // flowLayoutPanel_Menulist
             // 
+            this.flowLayoutPanel_Menulist.AllowDrop = true;
             this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 43);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
             this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(244, 329);

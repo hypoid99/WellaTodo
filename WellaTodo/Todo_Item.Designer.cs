@@ -33,6 +33,7 @@ namespace WellaTodo
             // 
             // Todo_Item
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
@@ -40,10 +41,6 @@ namespace WellaTodo
             this.Name = "Todo_Item";
             this.Size = new System.Drawing.Size(381, 35);
             this.Load += new System.EventHandler(this.Todo_Item_Load);
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Todo_Item_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Todo_Item_DragEnter);
-            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Todo_Item_DragOver);
-            this.DragLeave += new System.EventHandler(this.Todo_Item_DragLeave);
             this.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.Todo_Item_GiveFeedback);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Todo_Item_Paint);
             this.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.Todo_Item_QueryContinueDrag);
