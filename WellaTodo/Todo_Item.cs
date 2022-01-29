@@ -95,12 +95,6 @@ namespace WellaTodo
 
         private void Todo_Item_Load(object sender, EventArgs e)
         {
-            Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
-            BackColor = PSEUDO_BACK_COLOR;
-            Margin = new Padding(3, 1, 3, 1);
-
-            AllowDrop = true;
-
             Initiate_View();
         }
 
@@ -164,6 +158,15 @@ namespace WellaTodo
 
         private void Initiate_View()
         {
+            Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
+            BackColor = PSEUDO_BACK_COLOR;
+            Margin = new Padding(3, 1, 3, 1);
+
+            AllowDrop = true;
+            DragEnter += new DragEventHandler(Todo_Item_DragEnter);
+            DragOver += new DragEventHandler(Todo_Item_DragOver);
+            DragLeave += new EventHandler(Todo_Item_DragLeave);
+
             roundCheckbox1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
@@ -183,6 +186,8 @@ namespace WellaTodo
             label1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
             label1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             label1.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
+            label1.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
+            label1.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
             label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
             label1.Location = new Point(45, 13);
             label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
@@ -194,6 +199,8 @@ namespace WellaTodo
             label2.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
             label2.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             label2.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
+            label2.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
+            label2.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
             label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
@@ -254,7 +261,7 @@ namespace WellaTodo
         //---------------------------------------------------------
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
-            //Todo_Item_Click(sender, e);
+            Todo_Item_Click(sender, e);
         }
 
         private void Todo_Item_MouseEnter(object sender, EventArgs e)
@@ -303,10 +310,10 @@ namespace WellaTodo
         // ---------------------------------------------------------------------------
         private void Todo_Item_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Todo_Item_MouseDown X: " + e.X + " Y: " + e.Y);
+            //Console.WriteLine("Todo_Item_MouseDown X: " + e.X + " Y: " + e.Y);
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
-            Todo_Item_Click(sender, e);  // click
+            //Todo_Item_Click(sender, e);  // click
         }
 
         private void Todo_Item_MouseUp(object sender, MouseEventArgs e)
@@ -318,7 +325,6 @@ namespace WellaTodo
             else
             {
                 Console.WriteLine("Todo_Item_MouseUp - Click");
-                //Todo_Item_Click(sender, e);  // click
             }
             isDragging = false;
         }
@@ -338,6 +344,7 @@ namespace WellaTodo
                     if ((deltaX < threshold) && (deltaY < threshold))
                     {
                         //Console.WriteLine("Todo_Item_MouseMove -> DoDragDrop");
+                        Todo_Item_Click(sender, e);  // click
                         DoDragDrop(this, DragDropEffects.All);
                         isDragging = true;
                         return;
@@ -354,6 +361,25 @@ namespace WellaTodo
         private void Todo_Item_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
             //Console.WriteLine("Todo_Item_GiveFeedback");
+        }
+
+        private void Todo_Item_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("Todo_Item_DragEnter");
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void Todo_Item_DragOver(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("Todo_Item_DragOver");
+        }
+
+        private void Todo_Item_DragLeave(object sender, EventArgs e)
+        {
+            //Console.WriteLine("Todo_Item_DragLeave");
+            BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
     }
 }

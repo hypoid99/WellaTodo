@@ -187,6 +187,11 @@ namespace WellaTodo
 			m_model.Modify_Task_Memo(dc);
 		}
 
+		public void Perform_Task_Move_To(CDataCell source, CDataCell target)
+        {
+			Send_Log_Message("2>MainController::Perform_Task_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
+			m_model.Task_Move_To(source, target);
+		}
 
 		public void Perform_Task_Move_Up(CDataCell dc)
 		{

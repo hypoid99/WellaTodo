@@ -159,7 +159,7 @@ namespace WellaTodo
         private void MainFrame_Resize(object sender, EventArgs e)
         {
             Update_Display();
-            //Console.WriteLine("MainFrame_Resize");
+            Console.WriteLine("MainFrame_Resize");
         }
 
         private void MainFrame_Activated(object sender, EventArgs e)
@@ -214,12 +214,6 @@ namespace WellaTodo
             label_ListName.BackColor = PSEUDO_HIGHLIGHT_COLOR;
 
             // 태스크 항목
-            flowLayoutPanel2.AllowDrop = true;
-            flowLayoutPanel2.DragEnter += new DragEventHandler(flowLayoutPanel2_DragEnter);
-            flowLayoutPanel2.DragOver += new DragEventHandler(flowLayoutPanel2_DragOver);
-            flowLayoutPanel2.DragLeave += new EventHandler(flowLayoutPanel2_DragLeave);
-            flowLayoutPanel2.DragDrop += new DragEventHandler(flowLayoutPanel2_DragDrop);
-
             flowLayoutPanel2.AutoScroll = false;
             flowLayoutPanel2.HorizontalScroll.Maximum = 0;
             flowLayoutPanel2.HorizontalScroll.Enabled = false;
@@ -560,6 +554,9 @@ namespace WellaTodo
                 case WParam.WM_TASK_DELETE:
                     Update_Delete_Task(dc);
                     break;
+                case WParam.WM_TASK_MOVE_TO:
+                    Update_Task_Move_To(dc);
+                    break;
                 case WParam.WM_TASK_MOVE_UP:
                     Update_Task_Move_Up(dc);
                     break;
@@ -630,18 +627,14 @@ namespace WellaTodo
             twolinelist_Menu3.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
             twolinelist_Menu4.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
             twolinelist_Menu5.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu5.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+            twolinelist_Menu5.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
 
             flowLayoutPanel_Menulist.AutoScroll = false;
             flowLayoutPanel_Menulist.HorizontalScroll.Maximum = 0;
             flowLayoutPanel_Menulist.HorizontalScroll.Enabled = false;
             flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
             flowLayoutPanel_Menulist.AutoScroll = true;
-
-            flowLayoutPanel_Menulist.AllowDrop = true;
-            flowLayoutPanel_Menulist.DragEnter += new DragEventHandler(flowLayoutPanel_Menulist_DragEnter);
-            flowLayoutPanel_Menulist.DragOver += new DragEventHandler(flowLayoutPanel_Menulist_DragOver);
-            flowLayoutPanel_Menulist.DragLeave += new EventHandler(flowLayoutPanel_Menulist_DragLeave);
-            flowLayoutPanel_Menulist.DragDrop += new DragEventHandler(flowLayoutPanel_Menulist_DragDrop);
 
             flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
             flowLayoutPanel_Menulist.Margin = new Padding(0);
@@ -667,6 +660,10 @@ namespace WellaTodo
                     list = new TwoLineList(new Bitmap(ICON_LIST), list_name, "", "");
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
                     list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+                    list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
+                    list.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+                    list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
+                    list.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
 
                     flowLayoutPanel_Menulist.Controls.Add(list);  // 판넬에 목록 저장
                 }
@@ -1014,6 +1011,8 @@ namespace WellaTodo
                     Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_ListName Deleted is : " + target + "-" + list.PrimaryText);
 
                     list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
+                    list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
+                    list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
                     flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
                     list.Dispose();
 
@@ -1138,6 +1137,8 @@ namespace WellaTodo
             for (int i = 0; i < m_Task.Count; i++) // eventhandler 제거 및 m_Task 클리어
             {
                 m_Task[i].UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+                m_Task[i].DragEnter -= new DragEventHandler(TodoItem_DragEnter);
+                m_Task[i].DragDrop -= new DragEventHandler(TodoItem_DragDrop);
                 //m_Task[i].Dispose();
             }
             m_Task.Clear();
@@ -1147,6 +1148,11 @@ namespace WellaTodo
                 Todo_Item item = new Todo_Item(data);
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
+                item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
+                item.DragEnter += new DragEventHandler(TodoItem_DragEnter);
+                item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
+                item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
+
                 item.TD_infomation = MakeInfoTextFromDataCell(data);
                 m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
                 m_Task.Add(item);
@@ -1232,11 +1238,11 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 메뉴 리스트 드래그 앤 드롭 (flowLayoutPanel_Menulist) - Target
+        // 메뉴 리스트 드래그 앤 드롭 (TwoLineList & flowLayoutPanel_Menulist) - Target
         //--------------------------------------------------------------
-        private void flowLayoutPanel_Menulist_DragEnter(object sender, DragEventArgs e)
+        private void TwoLineList_DragEnter(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("flowLayoutPanel_Menulist_DragEnter");
+            //Console.WriteLine("TwoLineList_DragEnter");
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 e.Effect = DragDropEffects.Copy;
@@ -1247,24 +1253,29 @@ namespace WellaTodo
             }
         }
 
-        private void flowLayoutPanel_Menulist_DragOver(object sender, DragEventArgs e)
+        private void TwoLineList_DragDrop(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("flowLayoutPanel_Menulist_DragOver");
-        }
-
-        private void flowLayoutPanel_Menulist_DragLeave(object sender, EventArgs e)
-        {
-            //Console.WriteLine("flowLayoutPanel_Menulist_DragLeave");
-        }
-
-        private void flowLayoutPanel_Menulist_DragDrop(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("flowLayoutPanel_Menulist_DragDrop");
+            //Console.WriteLine("TwoLineList_DragDrop");
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                Console.WriteLine("flowLayoutPanel_Menulist_DragDrop" + item.TD_title);
+                Console.WriteLine("TwoLineList_DragDrop -> source : " + item.TD_title);
             }
+            TwoLineList sd = (TwoLineList)sender;
+            Console.WriteLine("TwoLineList_DragDrop -> target : " + sd.PrimaryText);
+
+            if (sd.PrimaryText == m_Selected_Menu.PrimaryText)
+            {
+                Send_Log_Message("Warning>MainFrame::TwoLineList_DragDrop -> Can't transfer item as same list");
+                return;
+            }
+
+            Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
+                             + m_Selected_Item.TD_DataCell.DC_listName
+                             + " to "
+                             + sd.PrimaryText);
+
+            m_Controller.Perform_Trasnfer_Task(m_Selected_Item.TD_DataCell, sd.PrimaryText);
         }
 
         //--------------------------------------------------------------
@@ -1323,6 +1334,10 @@ namespace WellaTodo
             TwoLineList list = new TwoLineList(new Bitmap(ICON_LIST), dc.DC_listName, "", "");
             list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
             list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
+            list.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+            list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
+            list.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
 
             flowLayoutPanel_Menulist.Controls.Add(list); // 판넬 컨렉션에 저장
 
@@ -1516,6 +1531,10 @@ namespace WellaTodo
             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
             item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
             item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click);
+            item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
+            item.DragEnter += new DragEventHandler(TodoItem_DragEnter);
+            item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
+            item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
 
             flowLayoutPanel2.VerticalScroll.Value = 0;
 
@@ -1552,6 +1571,8 @@ namespace WellaTodo
                     m_Task.Remove(item);  //m_Task 에서 항목 삭제해야함, 
 
                     item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+                    item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
+                    item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
                     flowLayoutPanel2.Controls.Remove(item);
                     item.Dispose();
                     Send_Log_Message("4>MainFrame::Update_Delete_Task -> Delete Todo_Item : [" + item.TD_DataCell.DC_task_ID + "]" + item.TD_title);
@@ -2841,12 +2862,28 @@ namespace WellaTodo
             }
         }
 
-        //--------------------------------------------------------------
-        // 태스크 리스트 드래그 앤 드롭 (flowLayoutPanel2) - Target
-        //--------------------------------------------------------------
-        private void flowLayoutPanel2_DragEnter(object sender, DragEventArgs e)
+        private void Update_Task_Move_To(CDataCell dc)
         {
-            //Console.WriteLine("flowLayoutPanel2_DragEnter");
+            int pos = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
+                {
+                    flowLayoutPanel2.Controls.SetChildIndex(m_Selected_Item, pos);
+                    Send_Log_Message("4>MainFrame::Update_Task_Move_To -> Source : " 
+                        + m_Selected_Item.TD_DataCell.DC_title + " Target : " + item.TD_DataCell.DC_title);
+                    break;
+                }
+                pos++;
+            }
+        }
+
+        //--------------------------------------------------------------
+        // 태스크 리스트 드래그 앤 드롭 - Target
+        //--------------------------------------------------------------
+        private void TodoItem_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("TodoItem_DragEnter");
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 e.Effect = DragDropEffects.Copy;
@@ -2857,31 +2894,35 @@ namespace WellaTodo
             }
         }
 
-        private void flowLayoutPanel2_DragOver(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("flowLayoutPanel2_DragOver");
-        }
-
-        private void flowLayoutPanel2_DragLeave(object sender, EventArgs e)
-        {
-            //Console.WriteLine("flowLayoutPanel2_DragLeave");
-        }
-
-        private void flowLayoutPanel2_DragDrop(object sender, DragEventArgs e)
+        private void TodoItem_DragDrop(object sender, DragEventArgs e)
         {
             Todo_Item data = null;
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 data = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                Console.WriteLine("flowLayoutPanel2_DragDrop -> source :" + data.TD_title);
+                Console.WriteLine("TodoItem_DragDrop -> source : " + data.TD_title);
+            }
+            
+            Point p = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
+            Todo_Item item = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
+
+            if (data.TD_title == item.TD_title)
+            {
+                Console.WriteLine("TodoItem_DragDrop -> Same task can't move");
+                return;
             }
 
-            Point p = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
-            var item = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
-            int index = flowLayoutPanel2.Controls.GetChildIndex(item, false);
-            //Console.WriteLine("flowLayoutPanel2_DragDrop -> target :" + index + "--" + item.TD_title);
-            flowLayoutPanel2.Controls.SetChildIndex(data, index);
-            flowLayoutPanel2.Invalidate();
+            if (item.TD_complete)
+            {
+                Console.WriteLine("TodoItem_DragDrop -> Can't move over Complete Task");
+                return;
+            }
+            
+            Send_Log_Message("1>MainFrame::TodoItem_DragDrop -> Source : "
+                             + data.TD_DataCell.DC_title
+                             + " Target : "
+                             + item.TD_DataCell.DC_title);
+            m_Controller.Perform_Task_Move_To(data.TD_DataCell, item.TD_DataCell);
         }
 
         // ------------------------------------------------------------------
@@ -3139,79 +3180,6 @@ namespace WellaTodo
             }
 
             return infoText;
-        }
-
-        // ---------------------------------------------------------------------------
-        // 드래그앤드롭 Drag & Drop
-        // ---------------------------------------------------------------------------
-        private void DragDrop_Task_MouseDown(object sender, MouseEventArgs e)
-        {
-            //isTaskDragging = false;
-            //pointDragStart = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
-
-            //Todo_Item sd = (Todo_Item)sender;
-            //Console.WriteLine("Task_MouseDown:"+sd.TD_title);
-            //m_taskDragStart = flowLayoutPanel2.Controls.IndexOf(sd);
-            //sd.DoDragDrop(sd, DragDropEffects.Move);
-        }
-
-        private void DragDrop_Task_MouseUp(object sender, MouseEventArgs e)
-        {
-            /*
-            if (isTaskDragging)
-            {
-                Console.WriteLine("Task_MouseUp - Drag");
-            }
-            else
-            {
-                Console.WriteLine("Task_MouseUp - Click");
-            }
-            isTaskDragging = false;
-            */
-        }
-
-        private void DragDrop_Task_MouseMove(object sender, MouseEventArgs e)
-        {
-            /*
-            int threshold = 10;
-            int deltaX;
-            int deltaY;
-            Point pointCurrent = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
-            deltaX = Math.Abs(pointCurrent.X - pointDragStart.X);
-            deltaY = Math.Abs(pointCurrent.Y - pointDragStart.Y);
-
-            if ((deltaX < threshold) && (deltaY < threshold))
-            {
-                isTaskDragging = false;
-            }
-            else
-            {
-                isTaskDragging = true;
-            }
-            */
-        }
-
-        private void DragDrop_Task_DragOver(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("Task_DragOver");
-            //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
-            //e.Effect = DragDropEffects.Move;
-        }
-
-        private void DragDrop_Task_DragDrop(object sender, DragEventArgs e)
-        {
-            //FlowLayoutPanel flowPanel = (FlowLayoutPanel)sender;
-            //Control c = e.Data.GetData(e.Data.GetFormats()[0]) as Control;
-            //Todo_Item item = (Todo_Item)c;
-            //Console.WriteLine("Task_DragDrop"+item.TD_title);
-            /*
-            if (item != null)
-            {
-                //item.Location = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
-                //Point mp = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
-                //Console.WriteLine("mx : " + mp.X + " my : " + mp.Y);
-            }
-            */
         }
 
         // ---------------------------------------------------------------------------

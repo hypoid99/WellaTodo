@@ -27,6 +27,7 @@ namespace WellaTodo
 		WM_IMPORTANT_PROCESS,
 		WM_TASK_ADD,
 		WM_TASK_DELETE,
+		WM_TASK_MOVE_TO,
 		WM_TASK_MOVE_UP,
 		WM_TASK_MOVE_DOWN,
 		WM_MODIFY_TASK_TITLE,
@@ -429,6 +430,27 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::Modify_Task_Memo : " + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_TASK_MEMO));
+		}
+
+		public void Task_Move_To(CDataCell source, CDataCell target)
+        {
+			CDataCell src = Find(source);
+			CDataCell tgt = Find(target);
+			int src_index = 0;
+			int tar_index = 0; ;
+            for (int i = 0; i <= myTaskItems.Count - 1; i++)
+            {
+				if (source.DC_task_ID == myTaskItems[i].DC_task_ID) src_index = i;
+				if (target.DC_task_ID == myTaskItems[i].DC_task_ID) tar_index = i;
+            }
+			Console.WriteLine("source" + source.DC_title + "-" + src_index);
+			Console.WriteLine("target" + target.DC_title + "-" + tar_index);
+
+			CDataCell temp = myTaskItems[src_index]; //추출
+			myTaskItems.RemoveAt(src_index); //삭제
+			myTaskItems.Insert(tar_index, temp); // 삽입
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)target.Clone(), WParam.WM_TASK_MOVE_TO));
 		}
 
 		public bool Task_Move_Up(CDataCell dc)

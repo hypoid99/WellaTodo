@@ -131,11 +131,10 @@ namespace WellaTodo
             Margin = new Padding(1);
             BackColor = BACK_COLOR;
 
-            this.AllowDrop = true;
-            this.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
-            this.DragOver += new DragEventHandler(TwoLineList_DragOver);
-            this.DragLeave += new EventHandler(TwoLineList_DragLeave);
-            this.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
+            AllowDrop = true;
+            DragEnter += new DragEventHandler(List_DragEnter);
+            DragOver += new DragEventHandler(List_DragOver);
+            DragLeave += new EventHandler(List_DragLeave);
 
             pictureBox_Icon.Size = new Size(24, 24);
             pictureBox_Icon.Location = new Point(5, 8);
@@ -315,44 +314,23 @@ namespace WellaTodo
             Mouse_Clicked(sender, e);
         }
 
-        //---------------------------------------------------------
-        // drag & drop
-        //---------------------------------------------------------
-        private void TwoLineList_DragEnter(object sender, DragEventArgs e)
+        private void List_DragEnter(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("TwoLineList_DragEnter");
-            if (e.Data.GetDataPresent(typeof(Todo_Item)))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
+            //Console.WriteLine("List_DragEnter");
+            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
         }
 
-        private void TwoLineList_DragOver(object sender, DragEventArgs e)
+        private void List_DragOver(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("TwoLineList_DragOver" + PrimaryText);
+            //Console.WriteLine("List_DragOver");
         }
 
-        private void TwoLineList_DragLeave(object sender, EventArgs e)
+        private void List_DragLeave(object sender, EventArgs e)
         {
-            //Console.WriteLine("TwoLineList_DragLeave" + PrimaryText);
-        }
-
-        private void TwoLineList_DragDrop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(typeof(Todo_Item)))
-            {
-                var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                Console.WriteLine("TwoLineList_DragDrop" + item.TD_title);
-            }
-        }
-
-        public override String ToString()
-        {
-            return PrimaryText;
+            //Console.WriteLine("List_DragLeave");
+            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
         }
     }
 }
