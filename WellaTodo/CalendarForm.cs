@@ -66,6 +66,9 @@ namespace WellaTodo
                 case WParam.WM_LOG_MESSAGE:
                     //m_Controller.Notify_Log_Message("4>CalendarForm::Update_View -> SetDate(m_dtValue)");
                     break;
+                case WParam.WM_OPEN_DATA:
+                    Update_Open_Data();
+                    break;
                 case WParam.WM_COMPLETE_PROCESS:
                     Update_Complete_Process(dc);
                     break;
@@ -508,6 +511,11 @@ namespace WellaTodo
                 m_Controller.Perform_Modify_Planned(dc, 0, default);
                 taskEditForm.IsPlannedDeleted = false;
             }
+        }
+
+        private void Update_Open_Data()
+        {
+            SetDate(m_dtValue);
         }
 
         private void Update_Complete_Process(CDataCell dc)

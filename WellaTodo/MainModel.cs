@@ -22,6 +22,7 @@ namespace WellaTodo
 		WM_LOG_MESSAGE,
 		WM_LOAD_DATA,
 		WM_SAVE_DATA,
+		WM_OPEN_DATA,
 		WM_PRINT_DATA,
 		WM_COMPLETE_PROCESS,
 		WM_IMPORTANT_PROCESS,
@@ -51,6 +52,7 @@ namespace WellaTodo
 		List<CDataCell> myTaskItems = new List<CDataCell>();
 		List<string> myListNames = new List<string>();
 		int m_Task_ID_Num = 0;
+		string m_FileName = "task.dat";
 
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
 
@@ -106,14 +108,27 @@ namespace WellaTodo
 
 		public void Load_Data()
         {
+			List<CDataCell> todo_data = new List<CDataCell>();
+			List<string> list_name = new List<string>();
+
 			// Loading Task File
-			Stream rs = new FileStream("task.dat", FileMode.Open);
-			BinaryFormatter deserializer = new BinaryFormatter();
+			if (File.Exists(m_FileName))
+            {
+				try
+				{
+					Stream rs = new FileStream(m_FileName, FileMode.Open);
+					BinaryFormatter deserializer = new BinaryFormatter();
 
-			List<CDataCell> todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
-			List<string> list_name = (List<string>)deserializer.Deserialize(rs);
+					todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+					list_name = (List<string>)deserializer.Deserialize(rs);
 
-			rs.Close();
+					rs.Close();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.Message);
+				}
+			}
 
 			m_Task_ID_Num = todo_data.Count - 1;
 
@@ -127,14 +142,14 @@ namespace WellaTodo
 			SetTaskCollection(todo_data); // deep copy로 변경할 것
 			SetListCollection(list_name);
 
-			Notify_Log_Message(">MainModel::Load_Data -> Data Loading Completed!! form 0 to " + m_Task_ID_Num);
+			Notify_Log_Message(">MainModel::Load_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
 		}
 
 		public void Save_Data()
 		{
 			// Saving Task File
-			Stream ws = new FileStream("task.dat", FileMode.Create);
+			Stream ws = new FileStream(m_FileName, FileMode.Create);
 			BinaryFormatter serializer = new BinaryFormatter();
 
 			serializer.Serialize(ws, GetTaskCollection());
@@ -142,8 +157,50 @@ namespace WellaTodo
 
 			ws.Close();
 
-			Notify_Log_Message(">MainModel::Save_Data -> Data Saving Completed!! form 0 to " + m_Task_ID_Num);
+			Notify_Log_Message(">MainModel::Save_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_SAVE_DATA));
+		}
+
+		public void Open_Data(string filename)
+        {
+			List<CDataCell> todo_data = new List<CDataCell>();
+			List<string> list_name = new List<string>();
+
+			m_FileName = filename;
+
+			// Loading Task File
+			if (File.Exists(m_FileName))
+			{
+				try
+				{
+					Stream rs = new FileStream(m_FileName, FileMode.Open);
+					BinaryFormatter deserializer = new BinaryFormatter();
+
+					todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+					list_name = (List<string>)deserializer.Deserialize(rs);
+
+					rs.Close();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.Message);
+				}
+			}
+
+			m_Task_ID_Num = todo_data.Count - 1;
+
+			int pos = 0;
+			for (int i = m_Task_ID_Num; i >= 0; i--)
+			{
+				todo_data[i].DC_task_ID = pos;
+				pos++;
+			}
+
+			SetTaskCollection(todo_data); // deep copy로 변경할 것
+			SetListCollection(list_name);
+			//Display_Data();
+			Notify_Log_Message(">MainModel::Open_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
+			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_OPEN_DATA));
 		}
 
 		public void Print_Data()

@@ -126,12 +126,12 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             Size = new Size(WINDOW_WIDTH, WINDOW_HEIGHT);
             Text = WINDOW_CAPTION + " [" + dt.ToString("yyyy-MM-dd(ddd) tt h:mm") + "]";
-
+            
             Initiate_View();
             Initiate_MenuList();
 
             Change_ColorTheme();
-
+            
             timer1.Interval = 3000;
             timer1.Enabled = true;
         }
@@ -159,7 +159,7 @@ namespace WellaTodo
         private void MainFrame_Resize(object sender, EventArgs e)
         {
             Update_Display();
-            Console.WriteLine("MainFrame_Resize");
+            //Console.WriteLine("MainFrame_Resize");
         }
 
         private void MainFrame_Activated(object sender, EventArgs e)
@@ -533,6 +533,9 @@ namespace WellaTodo
                 case WParam.WM_SAVE_DATA:
                     Update_Save_Data();
                     break;
+                case WParam.WM_OPEN_DATA:
+                    Update_Open_Data();
+                    break;
                 case WParam.WM_PRINT_DATA:
                     Update_Print_Data();
                     break;
@@ -700,6 +703,16 @@ namespace WellaTodo
         private void Update_Save_Data()
         {
             Send_Log_Message("4>MainFrame::Update_Save_Data -> Data Saving Completed!!");
+        }
+
+        private void Update_Open_Data()
+        {
+            Send_Log_Message("4>MainFrame::Update_Open_Data -> Data Open Completed!!");
+
+            // 목록 리스트 해제
+            flowLayoutPanel_Menulist.Controls.Clear();
+
+            Initiate_MenuList();
         }
 
         //--------------------------------------------------------------

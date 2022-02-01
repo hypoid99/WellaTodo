@@ -83,6 +83,7 @@ namespace WellaTodo
 		public void Open_Data_File(string filePath)
         {
 			Send_Log_Message("2>MainController::Open_Data_File" + filePath);
+			m_model.Open_Data(filePath);	
 		}
 
 		public void Perform_Menulist_Add(string target)
