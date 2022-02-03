@@ -142,7 +142,7 @@ namespace WellaTodo
 			SetTaskCollection(todo_data); // deep copy로 변경할 것
 			SetListCollection(list_name);
 
-			Notify_Log_Message(">MainModel::Load_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
+			Notify_Log_Message("3>MainModel::Load_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
 		}
 

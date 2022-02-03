@@ -151,8 +151,13 @@ namespace WellaTodo
             {
                 dayPanel[i] = new FlowLayoutPanel();
                 dayPanel[i].Size = new Size(1, 1);
-                dayPanel[i].BackColor = Color.White;
+                dayPanel[i].BackColor = PSEUDO_BACK_COLOR;
                 dayPanel[i].MouseDoubleClick += new MouseEventHandler(DayPanel_MouseDoubleClick);
+                dayPanel[i].AllowDrop = true;
+                dayPanel[i].DragEnter += new DragEventHandler(DayPanel_DragEnter);
+                dayPanel[i].DragDrop += new DragEventHandler(DayPanel_DragDrop);
+                dayPanel[i].DragOver += new DragEventHandler(DayPanel_DragOver);
+                dayPanel[i].DragLeave += new EventHandler(DayPanel_DragLeave);
                 panel_Calendar.Controls.Add(dayPanel[i]);
             }
 
@@ -197,6 +202,91 @@ namespace WellaTodo
 
             taskEditForm.IsNewTask = false;
             taskEditForm.IsCreated = false;
+        }
+
+        private void DayPanel_DragOver(object sender, DragEventArgs e)
+        {
+            FlowLayoutPanel dp = (FlowLayoutPanel )sender;
+            dp.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void DayPanel_DragLeave(object sender, EventArgs e)
+        {
+            FlowLayoutPanel dp = (FlowLayoutPanel)sender;
+            dp.BackColor = PSEUDO_BACK_COLOR;
+        }
+
+        private void DayPanel_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("DayPanel_DragEnter");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else if(e.Data.GetDataPresent(typeof(Calendar_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void DayPanel_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                Todo_Item item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.TD_title);
+                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
+                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
+
+                Calendar_Day planned_day = null;
+                foreach (Control ctr in dp.Controls)
+                {
+                    if (ctr is Calendar_Day)
+                    {
+                        planned_day = (Calendar_Day)ctr;
+                        break;
+                    }
+                }
+                dp.BackColor = PSEUDO_BACK_COLOR;
+
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Create New Task at DragDrop Selected Day");
+
+                DateTime dt = planned_day.Present_Day;
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+                m_Controller.Perform_Modify_Planned(item.TD_DataCell, 4, dt);
+            }
+            else if (e.Data.GetDataPresent(typeof(Calendar_Item)))
+            {
+                Calendar_Item item = e.Data.GetData(typeof(Calendar_Item)) as Calendar_Item;
+                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.PrimaryText);
+                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
+                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
+
+                Calendar_Day planned_day = null;
+                foreach (Control ctr in dp.Controls)
+                {
+                    if (ctr is Calendar_Day)
+                    {
+                        planned_day = (Calendar_Day)ctr;
+                        break;
+                    }
+                }
+                dp.BackColor = PSEUDO_BACK_COLOR;
+
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Move Task at DragDrop Selected Day");
+
+                DateTime dt = planned_day.Present_Day;
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+                m_Controller.Perform_Modify_Planned(item.CD_DataCell , 4, dt);
+            }
+            else
+            {
+                
+            }
         }
 
         private void CalendarForm_Paint(object sender, PaintEventArgs e)
@@ -762,7 +852,7 @@ namespace WellaTodo
                 if (LanarMonth > LeapMonth) LanarMonth++;
             }
 
-            //LanarCalendar은 마지막 날짜가 매달 다르기 때문에 예외 뜨면 그날 맨 마지막 날로 지정
+            //LanarCalendar은 마지막 날짜가 매달 다르기 때문에 예외 뜨면 그날 맨 마지막 날로 지정 -> 오류수정할 것
             try
             {
                 LanarCalendar.ToDateTime(LanarYear, LanarMonth, LanarDay, 0, 0, 0, 0);
@@ -797,7 +887,7 @@ namespace WellaTodo
 
             // 음력 공휴일
             DateTime solar;
-            solar = ConvertLunarToSolar(year-1, 12, 31);
+            solar = ConvertLunarToSolar(year-1, 12, 29);
             if (month == solar.Month && day == solar.Day) return "구정";
             solar = ConvertLunarToSolar(year, 1, 1);
             if (month == solar.Month && day == solar.Day) return "구정";

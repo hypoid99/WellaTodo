@@ -320,11 +320,11 @@ namespace WellaTodo
         {
             if (isDragging)
             {
-                Console.WriteLine("Todo_Item_MouseUp - DragDrop");
+                //Console.WriteLine("Todo_Item_MouseUp - DragDrop");
             }
             else
             {
-                Console.WriteLine("Todo_Item_MouseUp - Click");
+                //Console.WriteLine("Todo_Item_MouseUp - Click");
             }
             isDragging = false;
         }

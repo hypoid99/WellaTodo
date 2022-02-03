@@ -159,7 +159,7 @@ namespace WellaTodo
         private void MainFrame_Resize(object sender, EventArgs e)
         {
             Update_Display();
-            //Console.WriteLine("MainFrame_Resize");
+            Console.WriteLine("MainFrame_Resize");
         }
 
         private void MainFrame_Activated(object sender, EventArgs e)
@@ -362,7 +362,6 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer2.Size W[{0}] H[{1}]", splitContainer2.Width, splitContainer2.Height);
             //Console.WriteLine("splitContainer2.Panel1.Width [{0}]", splitContainer2.Panel1.Width);
             //Console.WriteLine("splitContainer2.Panel2.Width [{0}]", splitContainer2.Panel2.Width);
-
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
 
             panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
@@ -765,16 +764,16 @@ namespace WellaTodo
             switch (me.Button)
             {
                 case MouseButtons.Left:
-                    Send_Log_Message("1>MainFrame::TwoLineList_Click -> Left Button : " + m_Selected_Menu.PrimaryText);
+                    Send_Log_Message(">MainFrame::TwoLineList_Click -> Left Button : " + m_Selected_Menu.PrimaryText);
                     Update_Selected_Menu();
                     break;
                 case MouseButtons.Right:
-                    Send_Log_Message("1>MainFrame::TwoLineList_Click -> Right Button : " + m_Selected_Menu.PrimaryText);
+                    Send_Log_Message(">MainFrame::TwoLineList_Click -> Right Button : " + m_Selected_Menu.PrimaryText);
                     Update_Selected_Menu();
                     MenuList_Right_Click_ContextMenu();  // 컨텍스트 메뉴
                     break;
                 case MouseButtons.Middle:
-                    Send_Log_Message("1-2>MainFrame::TwoLineList_Click -> Middle Button : " + m_Selected_Menu.PrimaryText);
+                    Send_Log_Message(">MainFrame::TwoLineList_Click -> Middle Button : " + m_Selected_Menu.PrimaryText);
                     Menulist_Rename_Process(sender, me);  // 목록명 변경되어 실행됨
                     break;
             }
@@ -782,7 +781,7 @@ namespace WellaTodo
 
         private void Update_Selected_Menu()
         {
-            Send_Log_Message("1>MainFrame::Update_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Update_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
 
             switch (m_Selected_Menu.PrimaryText)
             {
@@ -864,8 +863,10 @@ namespace WellaTodo
 
         private void OnDisplayDataMenu_Click(object sender, EventArgs e)
         {
-            outputForm.StartPosition = FormStartPosition.Manual;
-            outputForm.Location = new Point(Location.X + (Width - outputForm.Width) / 2, Location.Y + (Height - outputForm.Height) / 2);
+            //outputForm.StartPosition = FormStartPosition.Manual;
+            //outputForm.Location = new Point(Location.X + (Width - outputForm.Width) / 2, Location.Y + (Height - outputForm.Height) / 2);
+
+            outputForm.StartPosition = FormStartPosition.CenterParent;
 
             if (outputForm.Visible)
                 outputForm.Hide();
@@ -1066,7 +1067,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.MYTODAY_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_MyToday -> Query & Display MyToday Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_MyToday -> Query & Display MyToday Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_MyToday());
         }
 
@@ -1081,7 +1082,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.IMPORTANT_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_Important -> Query & Display Important Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_Important -> Query & Display Important Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Important());
         }
 
@@ -1096,7 +1097,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.DEADLINE_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_Planned -> Query & Display Planned Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_Planned -> Query & Display Planned Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Planned());
         }
 
@@ -1111,7 +1112,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.COMPLETE_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_Completed -> Query & Display Complete Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_Completed -> Query & Display Complete Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Complete());
         }
 
@@ -1126,7 +1127,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_Task -> Query & Display Task Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_Task -> Query & Display Task Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Task("작업"));
         }
 
@@ -1141,7 +1142,7 @@ namespace WellaTodo
 
             enum_Selected_Menu = MenuList.LIST_MENU;
 
-            Send_Log_Message("1>MainFrame::Menu_List -> Query & Display List Menu : " + m_Selected_Menu.PrimaryText);
+            Send_Log_Message(">MainFrame::Menu_List -> Query & Display List Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Task(m_Selected_Menu.PrimaryText));
         }
 
@@ -1531,7 +1532,7 @@ namespace WellaTodo
                     }
                     else
                     {
-                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to LIST_MENU");
+                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Current List");
                     }
                     break;
             }
@@ -1619,8 +1620,11 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Edit_Task_Memo()
         {
-            memoForm.StartPosition = FormStartPosition.Manual;
-            memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
+            //memoForm.StartPosition = FormStartPosition.Manual;
+            //memoForm.Location = new Point(Location.X + (Width - memoForm.Width) / 2, Location.Y + (Height - memoForm.Height) / 2);
+
+            memoForm.StartPosition = FormStartPosition.CenterParent;
+
             memoForm.TextBoxString = textBox_Memo.Text;
             memoForm.Text = m_Selected_Item.TD_DataCell.DC_title;
             memoForm.ShowDialog();
@@ -1630,7 +1634,8 @@ namespace WellaTodo
 
             //메모 내용에 변경이 있는지 확인(?)
             m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
-            Console.WriteLine("1>MainFrame::Edit_Task_Memo -> Memo :" + m_Selected_Item.TD_DataCell.DC_memo);
+
+            Send_Log_Message("1>MainFrame::Edit_Task_Memo : " + m_Selected_Item.TD_DataCell.DC_title);
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
@@ -1663,7 +1668,7 @@ namespace WellaTodo
             m_Selected_Item = sd;
             m_Selected_Item.IsItemSelected = true;
 
-            Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
+            Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
 
             SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
             Update_Task_Width();
@@ -2214,14 +2219,13 @@ namespace WellaTodo
                 if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     SendDataCellToDetailWindow(dc);
-                    // tooltip 변경할 것
+                    m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
+                    item.Refresh();
                     break;
                 }
             }
 
-            Send_Log_Message("4>MainFrame::Update_Modify_Task_Memo");
-
-            Update_Selected_Menu();  // tooltip 변경하기 위해 Query 재실행  --> Query 없이 tooltip 변경 가능 ?
+            Send_Log_Message("4>MainFrame::Update_Modify_Task_Memo : " + dc.DC_title);
         }
 
 

@@ -151,7 +151,7 @@ namespace WellaTodo
         {
             if (IsNewTask)
             {
-                Console.WriteLine("1>TaskEditForm::button_Close_Click -> Task Create is Canceled!!");
+                //Console.WriteLine("1>TaskEditForm::button_Close_Click -> Task Create is Canceled!!");
                 IsCreated = false;
                 Close();
             }
@@ -166,13 +166,13 @@ namespace WellaTodo
         {
             if (IsNewTask)
             {
-                Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task is Created!!");
+                //Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task is Created!!");
                 IsCreated = true;
                 Close();
             }
             else
             {
-                Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task Delete");
+                //Console.WriteLine("1>TaskEditForm::button_Delete_Click -> Task Delete");
                 IsDeleted = true;
                 Close();
             }
@@ -180,14 +180,14 @@ namespace WellaTodo
 
         private void roundCheckbox_MouseClick(object sender, EventArgs e)
         {
-            Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Complete Changed");
+            //Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Complete Changed");
             TE_DataCell.DC_complete = roundCheckbox.Checked;
             isCompleteChanged = true;
         }
 
         private void starCheckbox_MouseClick(object sender, EventArgs e)
         {
-            Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Important Changed");
+            //Console.WriteLine("1>TaskEditForm::starCheckbox_MouseClick -> Important Changed");
             TE_DataCell.DC_important = starCheckbox.Checked;
             isImportantChanged = true;
         }
@@ -231,12 +231,12 @@ namespace WellaTodo
 
                 if (IsNewTask)
                 {
-                    Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task is Created");
+                    //Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task is Created");
                     IsCreated = true;
                 }
                 else
                 {
-                    Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
+                    //Console.WriteLine("1>TaskEditForm::textBox_Title_KeyUp -> Task Title Changed");
                     IsTitleChanged = true;
                 }
                 Close();
@@ -255,12 +255,12 @@ namespace WellaTodo
 
             if (IsNewTask)
             {
-                Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task is Created");
+                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task is Created");
                 IsCreated = true;
             }
             else
             {
-                Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task Title Changed");
+                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task Title Changed");
                 IsTitleChanged = true;
             }
         }
@@ -337,13 +337,13 @@ namespace WellaTodo
                     dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
                 }
                 carendar.IsSelected = false;
-                Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 설정 type 4");
+                //Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 설정 type 4");
                 TE_DataCell.DC_deadlineType = 4;
                 TE_DataCell.DC_deadlineTime = dt;
             }
             else
             {
-                Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 해제 type 0");
+                //Console.WriteLine("1>TaskEditForm::OnSelectDeadline_Click -> 기한 해제 type 0");
                 TE_DataCell.DC_deadlineType = 0;
                 TE_DataCell.DC_deadlineTime = default;
             }
@@ -362,7 +362,7 @@ namespace WellaTodo
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("1>TaskEditForm::OnDeleteDeadline_Click -> 기한 해제");
+            //Console.WriteLine("1>TaskEditForm::OnDeleteDeadline_Click -> 기한 해제");
             TE_DataCell.DC_deadlineType = 0;
             TE_DataCell.DC_deadlineTime = default;
             roundLabel_Planned.Text = "기한 해제";
@@ -442,7 +442,7 @@ namespace WellaTodo
         //
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
-            Console.WriteLine("1>TaskEditForm::textBox_Memo_Leave -> Memo Changed");
+            //Console.WriteLine("1>TaskEditForm::textBox_Memo_Leave -> Memo Changed");
 
             //메모 내용에 변경이 있는지 확인(?)
             TE_DataCell.DC_memo = textBox_Memo.Text;
