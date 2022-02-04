@@ -112,6 +112,12 @@
     <Compile Include="MemoForm.Designer.cs">
       <DependentUpon>MemoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NotePadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotePadForm.Designer.cs">
+      <DependentUpon>NotePadForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SingleLineList.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -192,6 +198,9 @@
     <EmbeddedResource Include="MemoForm.resx">
       <DependentUpon>MemoForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NotePadForm.resx">
+      <DependentUpon>NotePadForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SingleLineList.resx">
       <DependentUpon>SingleLineList.cs</DependentUpon>
     </EmbeddedResource>
@@ -236,6 +245,32 @@
   <ItemGroup>
     <None Include="icon\outline_manage_accounts_black_24dp.png" />
     <None Include="icon\outline_assignment_black_24dp.png" />
+    <None Include="icon\Editor\outline_attach_file_black_24dp.png" />
+    <None Include="icon\Editor\outline_content_copy_black_24dp.png" />
+    <None Include="icon\Editor\outline_content_cut_black_24dp.png" />
+    <None Include="icon\Editor\outline_content_paste_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_align_center_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_align_justify_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_align_left_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_align_right_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_bold_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_color_fill_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_color_text_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_indent_decrease_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_indent_increase_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_italic_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_paint_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_strikethrough_black_24dp.png" />
+    <None Include="icon\Editor\outline_format_underlined_black_24dp.png" />
+    <None Include="icon\Editor\outline_insert_photo_black_24dp.png" />
+    <None Include="icon\Editor\outline_print_black_24dp.png" />
+    <None Include="icon\Editor\outline_redo_black_24dp.png" />
+    <None Include="icon\Editor\outline_text_decrease_black_24dp.png" />
+    <None Include="icon\Editor\outline_text_increase_black_24dp.png" />
+    <None Include="icon\Editor\outline_undo_black_24dp.png" />
+    <None Include="icon\Editor\outline_file_open_black_24dp.png" />
+    <None Include="icon\Editor\outline_open_in_new_black_24dp.png" />
+    <None Include="icon\Editor\outline_save_black_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />

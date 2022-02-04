@@ -21,6 +21,7 @@ namespace WellaTodo
         MainFrame toDoList = new MainFrame();
         CalendarForm calendar = new CalendarForm();
         CalculatorForm calculator = new CalculatorForm();
+        NotePadForm notePad = new NotePadForm();
         OutputForm output = new OutputForm();
         MainModel model = new MainModel();
         MainController controller;
@@ -38,6 +39,7 @@ namespace WellaTodo
             controller = new MainController(model);
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
+            controller.Add_View(notePad );
             controller.Add_View(output);
 
             controller.Load_Data_File();
@@ -45,10 +47,12 @@ namespace WellaTodo
             toDoList.TopLevel = false;
             calculator.TopLevel = false;
             calendar.TopLevel = false;
+            notePad.TopLevel = false;
 
             toDoList.MdiParent = this;
             calendar.MdiParent = this;
             calculator.MdiParent = this;
+            notePad.MdiParent = this;
 
             calendar.Show();
             toDoList.Show();
@@ -103,6 +107,12 @@ namespace WellaTodo
         private void 달력ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
+        }
+
+
+        private void 노트패드ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            notePad = (NotePadForm)ShowActiveForm(notePad, typeof(NotePadForm));
         }
 
         private void 메모ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -422,3 +432,23 @@ namespace WellaTodo
 
     }
 }
+
+/*
+Random random = new Random(); // Make it critiacally depended.
+
+private void button1_Click(object sender, EventArgs e)
+{
+    Panel toDoElement = new Panel();
+
+    toDoElement.Name = "panel" + (TodoListFlowLayout.Controls.Count + 1);
+    toDoElement.BackColor = Color.FromArgb(123, random.Next(222), random.Next(222));
+    toDoElement.Size = new Size(TodoListFlowLayout.ClientSize.Width, 50);
+
+    TodoListFlowLayout.Controls.Add(toDoElement);
+    TodoListFlowLayout.Controls.SetChildIndex(toDoElement, 0);
+
+    toDoElement.Paint += (ss, ee) => { ee.Graphics.DrawString(toDoElement.Name, Font, Brushes.White, 22, 11); };
+    TodoListFlowLayout.Invalidate();
+}
+
+*/

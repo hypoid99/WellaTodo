@@ -364,17 +364,16 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer2.Panel2.Width [{0}]", splitContainer2.Panel2.Width);
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
 
-            panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
-
-            flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
-            textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
-            textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
-
             if (isDetailWindowOpen)
             {
                 int width = splitContainer2.Width - DETAIL_WINDOW_WIDTH;
                 splitContainer2.SplitterDistance = width < 0 ? 0 : width;
             }
+
+            panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
+            flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
+            textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+            textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
             Update_Task_Width();
         }
