@@ -159,7 +159,7 @@ namespace WellaTodo
         private void MainFrame_Resize(object sender, EventArgs e)
         {
             Update_Display();
-            Console.WriteLine("MainFrame_Resize");
+            //Console.WriteLine("MainFrame_Resize");
         }
 
         private void MainFrame_Activated(object sender, EventArgs e)

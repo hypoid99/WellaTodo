@@ -56,6 +56,7 @@ namespace WellaTodo
 
             calendar.Show();
             toDoList.Show();
+            notePad.Show();
 
             toDoList.Activate();
             LayoutMdi(MdiLayout.TileVertical);

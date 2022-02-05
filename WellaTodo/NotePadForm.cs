@@ -14,16 +14,39 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> View_Changed_Event;
 
+        static readonly Color BACK_COLOR = Color.White;
+        static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
+        static readonly Color SELECTED_COLOR = Color.Cyan;
+
+        static readonly string FONT_NAME = "돋움";
+        static readonly float FONT_SIZE_TEXT = 14.0f;
+
         MainController m_Controller;
 
         List<string> m_FontName = new List<string>();
         List<float> m_FontSize = new List<float>();
 
+        private string m_FileName;
+        private string OpenedDocumentPath { get; set; } = "NoName";
+        public string DefaultSaveDirectory { get; set; } = "c:\\";
+        public bool IsOpened { get; set; } = false;
+        private bool isUnsaved = false;
+        public bool IsUnsaved
+        {
+            get
+            {
+                return isUnsaved;
+            }
+            set
+            {
+                isUnsaved = value;
+                UpdatePath();
+            }
+        }
+
         public NotePadForm()
         {
             InitializeComponent();
-
-            Initiate();
         }
 
         public void SetController(MainController controller)
@@ -36,15 +59,24 @@ namespace WellaTodo
 
         }
 
+        private void NotePadForm_Load(object sender, EventArgs e)
+        {
+            Initiate();
+        }
+
         private void Initiate()
         {
+            Console.WriteLine("Initiate");
+
+            richTextBox.BackColor = Color.LightCyan;
+            richTextBox.SelectionFont = new Font(FONT_NAME, FONT_SIZE_TEXT);
+
             FontFamily[] fontList = new System.Drawing.Text.InstalledFontCollection().Families;
 
             foreach (var item in fontList)
             {
                 m_FontName.Add(item.Name);
             }
-
             comboBox_FontSelect.DataSource = m_FontName;
             comboBox_FontSelect.SelectedIndex = 10;
 
@@ -52,9 +84,18 @@ namespace WellaTodo
             {
                 m_FontSize.Add(i);
             }
-
             comboBox_FontSize.DataSource = m_FontSize;
             comboBox_FontSize.SelectedIndex = 10;
+
+            checkBox_AlignLeft.Click += new EventHandler(checkBox_TextAlign_Click);
+            checkBox_AlignCenter.Click += new EventHandler(checkBox_TextAlign_Click);
+            checkBox_AlignRight.Click += new EventHandler(checkBox_TextAlign_Click);
+        }
+
+        private void UpdatePath()
+        {
+            m_FileName = $"{(IsUnsaved ? "*" : "")}{OpenedDocumentPath} - NotePad";
+            Console.WriteLine("m_FileName : " + m_FileName);
         }
 
         // ------------------------------------------------------------
@@ -65,9 +106,393 @@ namespace WellaTodo
 
         }
 
+        private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            /*
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = DefaultSaveDirectory;
+                saveFileDialog.Filter = "Текст с форматированием (*.rtf)|*.rtf|Простой текст (*.txt)|*.txt|Все файлы (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    Directory.CreateDirectory(dirPath);
+
+                    richTextBox.SaveFile(saveFileDialog.FileName,
+                        saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+
+                    OpenedDocumentPath = saveFileDialog.FileName;
+                    IsOpened = true;
+                    IsUnsaved = false;
+                    UpdatePath();
+                }
+            }
+            */
+        }
+
+        private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 모두선택ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox.SelectAll();
+        }
+
         // ------------------------------------------------------------
         // 툴바
         // ------------------------------------------------------------
+        private void button_New_Click(object sender, EventArgs e)
+        {
+            IsOpened = false;
+            richTextBox.Text = String.Empty;
+            OpenedDocumentPath = "NoName";
+            UpdatePath();
+        }
 
+        private void button_Open_Click(object sender, EventArgs e)
+        {
+            /*
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = DefaultSaveDirectory;
+                openFileDialog.Filter = "Документы (*.rtf;*.pdf;*.txt)|*.rtf;*.pdf;*.txt|Все файлы (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK &&
+                    openFileDialog.FileName.Length > 0)
+                {
+                    OpenedDocumentPath = openFileDialog.FileName;
+                    IsOpened = true; //Файл теперь открыт
+                    UpdatePath();
+
+                    try
+                    {
+                        if (OpenedDocumentPath.EndsWith(".rtf"))
+                        {
+                            richTextBox.LoadFile(OpenedDocumentPath);
+                        }
+                        else if (OpenedDocumentPath.EndsWith(".pdf"))
+                        {
+                            MessageBox.Show("PDF Временно не поддерживается!");
+
+
+                            IsOpened = false;
+                            richTextBox.Text = String.Empty;
+                            OpenedDocumentPath = "Новый документ";
+                            IsUnsaved = false;
+                            UpdatePath();
+                        }
+                        else
+                        {
+                            var fileStream = openFileDialog.OpenFile();
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                richTextBox.Text = reader.ReadToEnd();
+                            }
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show("Не удалось открыть файл. Возможно он занят другим процессом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            */
+        }
+
+        private void button_Save_Click(object sender, EventArgs e)
+        {
+            /*
+            try
+            {
+                if (IsOpened) //Если файл уже был открыт, просто сохранить по пути (проверив существование директории)
+                {
+                    var dirPath = OpenedDocumentPath.Substring(0, OpenedDocumentPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    Directory.CreateDirectory(dirPath); //Если каталог не существует - создать
+
+                    richTextBox.SaveFile(OpenedDocumentPath,
+                        OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+                }
+                else //Файл новый, значит вызвать диалог для сохранения
+                {
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                    {
+                        saveFileDialog.InitialDirectory = DefaultSaveDirectory;
+                        saveFileDialog.Filter = "Текст с форматированием (*.rtf)|*.rtf|Простой текст (*.txt)|*.txt|Все файлы (*.*)|*.*";
+                        saveFileDialog.FilterIndex = 1;
+                        saveFileDialog.RestoreDirectory = true;
+
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                            Directory.CreateDirectory(dirPath); //Если каталог не существует - создать
+
+                            richTextBox.SaveFile(saveFileDialog.FileName,
+                                saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+
+                            OpenedDocumentPath = saveFileDialog.FileName;
+                            IsOpened = true;
+                            IsUnsaved = false;
+                            UpdatePath();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            */
+        }
+
+        private void button_Print_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_Undo_Click(object sender, EventArgs e)
+        {
+            richTextBox.Undo();
+        }
+
+        private void button_Redo_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.CanRedo == true && richTextBox.RedoActionName != "Delete")
+            {
+                richTextBox.Redo();
+            }
+        }
+
+        private void button_Cut_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.SelectionLength > 0) richTextBox.Cut();
+        }
+
+        private void button_Copy_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.SelectionLength > 0) richTextBox.Copy();
+        }
+
+        private void button_Paste_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetDataObject().GetDataPresent(DataFormats.Text)) richTextBox.Paste();
+        }
+
+        private void comboBox_FontSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("comboBox_FontSelect_SelectedIndexChanged");
+
+            string fontName = comboBox_FontSelect.SelectedItem.ToString();
+            float fontSize;
+
+            if (comboBox_FontSize.SelectedItem == null)
+            {
+                fontSize = FONT_SIZE_TEXT;
+            }
+            else
+            {
+                fontSize = (float)comboBox_FontSize.SelectedItem;
+            }
+
+            FontStyle fontStyle = (checkBox_Bold.Checked ? FontStyle.Bold : 0) 
+                                 | (checkBox_Italic.Checked ? FontStyle.Italic : 0)
+                                 | (checkBox_Underline.Checked ? FontStyle.Underline : 0)
+                                 | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
+
+            richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
+        }
+
+        private void comboBox_FontSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("comboBox_FontSize_SelectedIndexChanged");
+
+            string fontName = comboBox_FontSelect.SelectedItem.ToString();
+            float fontSize = (float)comboBox_FontSize.SelectedItem;
+            FontStyle fontStyle = (checkBox_Bold.Checked ? FontStyle.Bold : 0)
+                                 | (checkBox_Italic.Checked ? FontStyle.Italic : 0)
+                                 | (checkBox_Underline.Checked ? FontStyle.Underline : 0)
+                                 | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
+
+            richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
+        }
+
+        private void button_FontSizeUp_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("button_FontSizeUp_Click");
+        }
+
+        private void button_FontSizeDown_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("button_FontSizeDown_Click");
+        }
+
+        private void checkBox_Bold_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox pressed = (CheckBox)sender;
+
+            Console.WriteLine("checkBox_Bold_CheckedChanged : " + pressed.Name);
+
+            richTextBox.SelectionFont = new Font(richTextBox.Font ,FontStyle.Bold);
+
+            Update_CheckBox_Status();
+        }
+
+        private void checkBox_Italic_CheckedChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("checkBox_Italic_CheckedChanged : " + checkBox_Italic.Checked);
+            Update_CheckBox_Status();
+        }
+
+        private void checkBox_Underline_CheckedChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("checkBox_Underline_CheckedChanged : " + checkBox_Underline.Checked);
+            Update_CheckBox_Status();
+        }
+
+        private void checkBox_Strike_CheckedChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("checkBox_Strike_CheckedChanged : " + checkBox_Strike.Checked);
+            Update_CheckBox_Status();
+        }
+
+        private void button_TextColor_Click(object sender, EventArgs e)
+        {
+            using (ColorDialog colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    richTextBox.SelectionColor = colorDialog.Color;
+                    button_TextColor.FlatAppearance.BorderColor = colorDialog.Color;
+                }
+            }
+        }
+
+        private void button_TextFillColor_Click(object sender, EventArgs e)
+        {
+            using (ColorDialog colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    richTextBox.SelectionBackColor = colorDialog.Color;
+                    button_TextFillColor.FlatAppearance.BorderColor = colorDialog.Color;
+                }
+            }
+        }
+
+        private void checkBox_TextAlign_Click(object sender, EventArgs e)
+        {
+            CheckBox pressed = (CheckBox)sender;
+
+            if (pressed.Checked)
+            {
+
+                checkBox_AlignLeft.Checked = false;
+                checkBox_AlignCenter.Checked = false;
+                checkBox_AlignRight.Checked = false;
+
+                ((CheckBox)sender).Checked = true;
+
+                switch (pressed.Name)
+                {
+                    case "checkBox_AlignLeft":
+                        richTextBox.SelectionAlignment = HorizontalAlignment.Left;
+                        break;
+                    case "checkBox_AlignCenter":
+                        richTextBox.SelectionAlignment = HorizontalAlignment.Center;
+                        break;
+                    case "checkBox_AlignRight":
+                        richTextBox.SelectionAlignment = HorizontalAlignment.Right;
+                        break;
+                }
+            }
+            else
+            {
+                richTextBox.SelectionAlignment = HorizontalAlignment.Left;
+            }
+
+            switch (richTextBox.SelectionAlignment)
+            {
+                case HorizontalAlignment.Left:
+                    checkBox_AlignLeft.Checked = true;
+                    break;
+                case HorizontalAlignment.Center:
+                    checkBox_AlignCenter.Checked = true;
+                    break;
+                case HorizontalAlignment.Right:
+                    checkBox_AlignRight.Checked = true;
+                    break;
+            }
+
+            Update_CheckBox_Status();
+        }
+
+        private void Update_CheckBox_Status()
+        {
+            checkBox_Bold.BackColor = checkBox_Bold.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+            checkBox_Italic.BackColor = checkBox_Italic.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+            checkBox_Underline.BackColor = checkBox_Underline.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+            checkBox_Strike.BackColor = checkBox_Strike.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+
+            checkBox_AlignLeft.BackColor = checkBox_AlignLeft.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+            checkBox_AlignCenter.BackColor = checkBox_AlignCenter.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+            checkBox_AlignRight.BackColor = checkBox_AlignRight.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+        }
+
+        // ------------------------------------------------------------
+        // RichTextBox
+        // ------------------------------------------------------------
+        private void richTextBox_SelectionChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("richTextBox_SelectionChanged");
+
+            if (richTextBox.SelectionFont != null)
+            {
+                checkBox_Bold.Checked = richTextBox.SelectionFont.Bold;
+                checkBox_Italic.Checked = richTextBox.SelectionFont.Italic;
+                checkBox_Underline.Checked = richTextBox.SelectionFont.Underline;
+                checkBox_Strike.Checked = richTextBox.SelectionFont.Strikeout;
+
+                comboBox_FontSelect.SelectedIndex = m_FontName.IndexOf(richTextBox.SelectionFont.FontFamily.Name);
+                comboBox_FontSize.SelectedItem = richTextBox.SelectionFont.Size;
+
+                button_TextColor.FlatAppearance.BorderColor = richTextBox.SelectionColor;
+                button_TextFillColor.FlatAppearance.BorderColor = richTextBox.SelectionBackColor;
+
+                checkBox_AlignLeft.Checked = false;
+                checkBox_AlignCenter.Checked = false;
+                checkBox_AlignRight.Checked = false;
+
+                switch (richTextBox.SelectionAlignment)
+                {
+                    case HorizontalAlignment.Left:
+                        checkBox_AlignLeft.Checked = true;
+                        break;
+                    case HorizontalAlignment.Center:
+                        checkBox_AlignCenter.Checked = true;
+                        break;
+                    case HorizontalAlignment.Right:
+                        checkBox_AlignRight.Checked = true;
+                        break;
+                }
+            }
+        }
+
+        private void richTextBox_TextChanged(object sender, EventArgs e)
+        {
+            IsUnsaved = true;
+        }
+
+        
     }
 }
