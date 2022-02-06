@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.IO;
+
 namespace WellaTodo
 {
     public partial class NotePadForm : Form, IView, IModelObserver
@@ -18,8 +20,9 @@ namespace WellaTodo
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
 
-        static readonly string FONT_NAME = "돋움";
+        static readonly string FONT_NAME = "맑은 고딕";
         static readonly float FONT_SIZE_TEXT = 14.0f;
+        static readonly int FONT_MAX_SIZE = 50;
 
         MainController m_Controller;
 
@@ -69,23 +72,41 @@ namespace WellaTodo
             Console.WriteLine("Initiate");
 
             richTextBox.BackColor = Color.LightCyan;
-            richTextBox.SelectionFont = new Font(FONT_NAME, FONT_SIZE_TEXT);
+            richTextBox.SelectionCharOffset = 0;
 
             FontFamily[] fontList = new System.Drawing.Text.InstalledFontCollection().Families;
-
             foreach (var item in fontList)
             {
                 m_FontName.Add(item.Name);
             }
             comboBox_FontSelect.DataSource = m_FontName;
-            comboBox_FontSelect.SelectedIndex = 10;
 
-            for (int i = 1; i < 50; i++)
+            int cnt = 0;    
+            for (int i = 0; i < m_FontName.Count; i++)
+            {
+                if (m_FontName[i] == FONT_NAME)
+                {
+                    comboBox_FontSelect.SelectedIndex = i;
+                    cnt++;
+                }
+            }
+            if (cnt == 0)
+            {
+                comboBox_FontSelect.SelectedIndex = 2;
+            }
+
+            for (int i = 1; i <= FONT_MAX_SIZE; i++)
             {
                 m_FontSize.Add(i);
             }
             comboBox_FontSize.DataSource = m_FontSize;
-            comboBox_FontSize.SelectedIndex = 10;
+            comboBox_FontSize.SelectedIndex = 15;
+
+
+            checkBox_Bold.Click += new EventHandler(checkBox_FontStyle_Click);
+            checkBox_Italic.Click += new EventHandler(checkBox_FontStyle_Click);
+            checkBox_Underline.Click += new EventHandler(checkBox_FontStyle_Click);
+            checkBox_Strike.Click += new EventHandler(checkBox_FontStyle_Click);
 
             checkBox_AlignLeft.Click += new EventHandler(checkBox_TextAlign_Click);
             checkBox_AlignCenter.Click += new EventHandler(checkBox_TextAlign_Click);
@@ -95,7 +116,7 @@ namespace WellaTodo
         private void UpdatePath()
         {
             m_FileName = $"{(IsUnsaved ? "*" : "")}{OpenedDocumentPath} - NotePad";
-            Console.WriteLine("m_FileName : " + m_FileName);
+            //Console.WriteLine("m_FileName : " + m_FileName);
         }
 
         // ------------------------------------------------------------
@@ -108,11 +129,10 @@ namespace WellaTodo
 
         private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            /*
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.InitialDirectory = DefaultSaveDirectory;
-                saveFileDialog.Filter = "Текст с форматированием (*.rtf)|*.rtf|Простой текст (*.txt)|*.txt|Все файлы (*.*)|*.*";
+                saveFileDialog.Filter = "서식이 있는 텍스트 (*.rtf)|*.rtf|일반 텍스트 (*.txt)|*.txt|All files (*.*)|*.*";
                 saveFileDialog.FilterIndex = 1;
                 saveFileDialog.RestoreDirectory = true;
 
@@ -121,8 +141,9 @@ namespace WellaTodo
                     var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                     Directory.CreateDirectory(dirPath);
 
+                    // rtf인 경우 서식을 사용하여 저장
                     richTextBox.SaveFile(saveFileDialog.FileName,
-                        saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+                        saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
 
                     OpenedDocumentPath = saveFileDialog.FileName;
                     IsOpened = true;
@@ -130,7 +151,6 @@ namespace WellaTodo
                     UpdatePath();
                 }
             }
-            */
         }
 
         private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -161,11 +181,10 @@ namespace WellaTodo
 
         private void button_Open_Click(object sender, EventArgs e)
         {
-            /*
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = DefaultSaveDirectory;
-                openFileDialog.Filter = "Документы (*.rtf;*.pdf;*.txt)|*.rtf;*.pdf;*.txt|Все файлы (*.*)|*.*";
+                openFileDialog.Filter = "Documentation (*.rtf;*.pdf;*.txt)|*.rtf;*.pdf;*.txt|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -173,7 +192,7 @@ namespace WellaTodo
                     openFileDialog.FileName.Length > 0)
                 {
                     OpenedDocumentPath = openFileDialog.FileName;
-                    IsOpened = true; //Файл теперь открыт
+                    IsOpened = true;
                     UpdatePath();
 
                     try
@@ -184,12 +203,11 @@ namespace WellaTodo
                         }
                         else if (OpenedDocumentPath.EndsWith(".pdf"))
                         {
-                            MessageBox.Show("PDF Временно не поддерживается!");
-
+                            MessageBox.Show("PDF is not supported");
 
                             IsOpened = false;
                             richTextBox.Text = String.Empty;
-                            OpenedDocumentPath = "Новый документ";
+                            OpenedDocumentPath = "NoName";
                             IsUnsaved = false;
                             UpdatePath();
                         }
@@ -204,42 +222,44 @@ namespace WellaTodo
                     }
                     catch (IOException ex)
                     {
-                        MessageBox.Show("Не удалось открыть файл. Возможно он занят другим процессом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Can't Open File", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Console.WriteLine(ex.Message);
                     }
                 }
             }
-            */
+            
         }
 
         private void button_Save_Click(object sender, EventArgs e)
         {
-            /*
             try
             {
-                if (IsOpened) //Если файл уже был открыт, просто сохранить по пути (проверив существование директории)
+                if (IsOpened) // 파일이 이미 열려 있는 경우 경로를 따라 저장
                 {
                     var dirPath = OpenedDocumentPath.Substring(0, OpenedDocumentPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                    Directory.CreateDirectory(dirPath); //Если каталог не существует - создать
+                    Directory.CreateDirectory(dirPath); // 디렉토리가 없으면 생성
 
+                    // rtf인 경우 서식을 사용하여 저장
                     richTextBox.SaveFile(OpenedDocumentPath,
-                        OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+                                         OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
                 }
-                else //Файл новый, значит вызвать диалог для сохранения
+                else // 파일이 새 파일이면 저장 대화 상자를 호출
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
                         saveFileDialog.InitialDirectory = DefaultSaveDirectory;
-                        saveFileDialog.Filter = "Текст с форматированием (*.rtf)|*.rtf|Простой текст (*.txt)|*.txt|Все файлы (*.*)|*.*";
+                        saveFileDialog.Filter = "서식이 있는 텍스트 (*.rtf)|*.rtf|일반 텍스트 (*.txt)|*.txt|All files (*.*)|*.*";
                         saveFileDialog.FilterIndex = 1;
                         saveFileDialog.RestoreDirectory = true;
 
                         if (saveFileDialog.ShowDialog() == DialogResult.OK)
                         {
                             var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                            Directory.CreateDirectory(dirPath); //Если каталог не существует - создать
+                            Directory.CreateDirectory(dirPath); // 디렉토리가 없으면 생성
 
+                            // rtf인 경우 서식을 사용하여 저장
                             richTextBox.SaveFile(saveFileDialog.FileName,
-                                saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); //Если .rtf, сохранить с форматированием
+                                saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
 
                             OpenedDocumentPath = saveFileDialog.FileName;
                             IsOpened = true;
@@ -251,9 +271,8 @@ namespace WellaTodo
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
-            */
         }
 
         private void button_Print_Click(object sender, EventArgs e)
@@ -330,20 +349,43 @@ namespace WellaTodo
         private void button_FontSizeUp_Click(object sender, EventArgs e)
         {
             Console.WriteLine("button_FontSizeUp_Click");
+
+            int size = (int)comboBox_FontSize.SelectedIndex;
+            size++;
+            if (size > FONT_MAX_SIZE) size = FONT_MAX_SIZE;
+            comboBox_FontSize.SelectedIndex = size;
         }
 
         private void button_FontSizeDown_Click(object sender, EventArgs e)
         {
             Console.WriteLine("button_FontSizeDown_Click");
+
+            int size = (int)comboBox_FontSize.SelectedIndex;
+            size--;
+            if (size < 1) size = 1;
+            comboBox_FontSize.SelectedIndex = size;
+        }
+
+        private void checkBox_FontStyle_Click(object sender, EventArgs e)
+        {
+            CheckBox sd = (CheckBox)sender;
+            Console.WriteLine("checkBox_FontStyle_Click : " + sd.Checked);
+            Update_CheckBox_Status();
         }
 
         private void checkBox_Bold_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox pressed = (CheckBox)sender;
+            Console.WriteLine("checkBox_Bold_CheckedChanged : " + checkBox_Bold.Checked);
+            Console.WriteLine("checkBox_Bold_CheckedChanged -> font size : " + richTextBox.SelectionFont.Size);
 
-            Console.WriteLine("checkBox_Bold_CheckedChanged : " + pressed.Name);
-
-            richTextBox.SelectionFont = new Font(richTextBox.Font ,FontStyle.Bold);
+            if (checkBox_Bold.Checked)
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style | FontStyle.Bold);
+            }
+            else
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style & ~FontStyle.Bold);
+            }
 
             Update_CheckBox_Status();
         }
@@ -351,18 +393,48 @@ namespace WellaTodo
         private void checkBox_Italic_CheckedChanged(object sender, EventArgs e)
         {
             Console.WriteLine("checkBox_Italic_CheckedChanged : " + checkBox_Italic.Checked);
+
+            if (checkBox_Italic.Checked)
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style | FontStyle.Italic);
+            }
+            else
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style & ~FontStyle.Italic);
+            }
+
             Update_CheckBox_Status();
         }
 
         private void checkBox_Underline_CheckedChanged(object sender, EventArgs e)
         {
             Console.WriteLine("checkBox_Underline_CheckedChanged : " + checkBox_Underline.Checked);
+
+            if (checkBox_Underline.Checked)
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style | FontStyle.Underline);
+            }
+            else
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style & ~FontStyle.Underline);
+            }
+
             Update_CheckBox_Status();
         }
 
         private void checkBox_Strike_CheckedChanged(object sender, EventArgs e)
         {
             Console.WriteLine("checkBox_Strike_CheckedChanged : " + checkBox_Strike.Checked);
+
+            if (checkBox_Strike.Checked)
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style | FontStyle.Strikeout);
+            }
+            else
+            {
+                richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style & ~FontStyle.Strikeout);
+            }
+
             Update_CheckBox_Status();
         }
 
@@ -392,9 +464,9 @@ namespace WellaTodo
 
         private void checkBox_TextAlign_Click(object sender, EventArgs e)
         {
-            CheckBox pressed = (CheckBox)sender;
+            CheckBox sd = (CheckBox)sender;
 
-            if (pressed.Checked)
+            if (sd.Checked)
             {
 
                 checkBox_AlignLeft.Checked = false;
@@ -403,7 +475,7 @@ namespace WellaTodo
 
                 ((CheckBox)sender).Checked = true;
 
-                switch (pressed.Name)
+                switch (sd.Name)
                 {
                     case "checkBox_AlignLeft":
                         richTextBox.SelectionAlignment = HorizontalAlignment.Left;
@@ -437,6 +509,16 @@ namespace WellaTodo
             Update_CheckBox_Status();
         }
 
+        private void button_IndentDec_Click(object sender, EventArgs e)
+        {
+            richTextBox.SelectionIndent -= 20;
+        }
+
+        private void button_IndentInc_Click(object sender, EventArgs e)
+        {
+            richTextBox.SelectionIndent += 20;
+        }
+
         private void Update_CheckBox_Status()
         {
             checkBox_Bold.BackColor = checkBox_Bold.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
@@ -447,6 +529,12 @@ namespace WellaTodo
             checkBox_AlignLeft.BackColor = checkBox_AlignLeft.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
             checkBox_AlignCenter.BackColor = checkBox_AlignCenter.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
             checkBox_AlignRight.BackColor = checkBox_AlignRight.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
+
+            Console.WriteLine("SelectionFont.Bold : " + richTextBox.SelectionFont.Bold);
+            Console.WriteLine("SelectionFont.Italic : " + richTextBox.SelectionFont.Italic);
+            Console.WriteLine("SelectionFont.Underline : " + richTextBox.SelectionFont.Underline);
+            Console.WriteLine("SelectionFont.Strike : " + richTextBox.SelectionFont.Strikeout);
+            Console.WriteLine("SelectionFont.Size : " + richTextBox.SelectionFont.Size);
         }
 
         // ------------------------------------------------------------
@@ -454,37 +542,45 @@ namespace WellaTodo
         // ------------------------------------------------------------
         private void richTextBox_SelectionChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("richTextBox_SelectionChanged");
+            //Console.WriteLine("richTextBox_SelectionChanged"); // 변화를 툴바에 알린다
 
-            if (richTextBox.SelectionFont != null)
+            if (richTextBox.SelectionFont == null)
             {
-                checkBox_Bold.Checked = richTextBox.SelectionFont.Bold;
-                checkBox_Italic.Checked = richTextBox.SelectionFont.Italic;
-                checkBox_Underline.Checked = richTextBox.SelectionFont.Underline;
-                checkBox_Strike.Checked = richTextBox.SelectionFont.Strikeout;
+                MessageBox.Show("richTextBox.SelectionFont == null");
+                return;
+            }
 
-                comboBox_FontSelect.SelectedIndex = m_FontName.IndexOf(richTextBox.SelectionFont.FontFamily.Name);
-                comboBox_FontSize.SelectedItem = richTextBox.SelectionFont.Size;
+            comboBox_FontSelect.SelectedIndex = m_FontName.IndexOf(richTextBox.SelectionFont.FontFamily.Name);
+            comboBox_FontSize.SelectedItem = richTextBox.SelectionFont.Size;
+            Console.WriteLine("richTextBox_SelectionChanged -> "
+                              + richTextBox.SelectionFont.FontFamily.Name
+                              + "["
+                              + richTextBox.SelectionFont.Size
+                              + "]");
 
-                button_TextColor.FlatAppearance.BorderColor = richTextBox.SelectionColor;
-                button_TextFillColor.FlatAppearance.BorderColor = richTextBox.SelectionBackColor;
+            checkBox_Bold.Checked = richTextBox.SelectionFont.Bold;
+            checkBox_Italic.Checked = richTextBox.SelectionFont.Italic;
+            checkBox_Underline.Checked = richTextBox.SelectionFont.Underline;
+            checkBox_Strike.Checked = richTextBox.SelectionFont.Strikeout;
 
-                checkBox_AlignLeft.Checked = false;
-                checkBox_AlignCenter.Checked = false;
-                checkBox_AlignRight.Checked = false;
+            button_TextColor.FlatAppearance.BorderColor = richTextBox.SelectionColor;
+            button_TextFillColor.FlatAppearance.BorderColor = richTextBox.SelectionBackColor;
 
-                switch (richTextBox.SelectionAlignment)
-                {
-                    case HorizontalAlignment.Left:
-                        checkBox_AlignLeft.Checked = true;
-                        break;
-                    case HorizontalAlignment.Center:
-                        checkBox_AlignCenter.Checked = true;
-                        break;
-                    case HorizontalAlignment.Right:
-                        checkBox_AlignRight.Checked = true;
-                        break;
-                }
+            checkBox_AlignLeft.Checked = false;
+            checkBox_AlignCenter.Checked = false;
+            checkBox_AlignRight.Checked = false;
+
+            switch (richTextBox.SelectionAlignment)
+            {
+                case HorizontalAlignment.Left:
+                    checkBox_AlignLeft.Checked = true;
+                    break;
+                case HorizontalAlignment.Center:
+                    checkBox_AlignCenter.Checked = true;
+                    break;
+                case HorizontalAlignment.Right:
+                    checkBox_AlignRight.Checked = true;
+                    break;
             }
         }
 
@@ -492,7 +588,5 @@ namespace WellaTodo
         {
             IsUnsaved = true;
         }
-
-        
     }
 }
