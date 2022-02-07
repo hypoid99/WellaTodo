@@ -22,6 +22,7 @@ namespace WellaTodo
         CalendarForm calendar = new CalendarForm();
         CalculatorForm calculator = new CalculatorForm();
         NotePadForm notePad = new NotePadForm();
+        BulletinBoardForm bulletinBoard = new BulletinBoardForm();
         OutputForm output = new OutputForm();
         MainModel model = new MainModel();
         MainController controller;
@@ -39,6 +40,7 @@ namespace WellaTodo
             controller = new MainController(model);
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
+            controller.Add_View(bulletinBoard);
             controller.Add_View(notePad );
             controller.Add_View(output);
 
@@ -47,16 +49,21 @@ namespace WellaTodo
             toDoList.TopLevel = false;
             calculator.TopLevel = false;
             calendar.TopLevel = false;
+            bulletinBoard.TopLevel = false;
             notePad.TopLevel = false;
 
             toDoList.MdiParent = this;
             calendar.MdiParent = this;
+            bulletinBoard.MdiParent = this;
             calculator.MdiParent = this;
             notePad.MdiParent = this;
 
+
+            bulletinBoard.Show();
             calendar.Show();
-            toDoList.Show();
             notePad.Show();
+            toDoList.Show();
+
 
             toDoList.Activate();
             LayoutMdi(MdiLayout.TileVertical);
@@ -118,7 +125,7 @@ namespace WellaTodo
 
         private void 메모ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            bulletinBoard = (BulletinBoardForm)ShowActiveForm(bulletinBoard, typeof(BulletinBoardForm));
         }
 
         private void 출력창ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -175,7 +182,12 @@ namespace WellaTodo
 
         private void button_Memo_Click(object sender, EventArgs e)
         {
+            bulletinBoard = (BulletinBoardForm)ShowActiveForm(bulletinBoard, typeof(BulletinBoardForm));
+        }
 
+        private void button_Notepad_Click(object sender, EventArgs e)
+        {
+            notePad = (NotePadForm)ShowActiveForm(notePad, typeof(NotePadForm));
         }
 
         private void button_Output_Click(object sender, EventArgs e)
@@ -430,6 +442,7 @@ namespace WellaTodo
             info.StartPosition = FormStartPosition.CenterParent;
             info.ShowDialog();
         }
+
 
     }
 }

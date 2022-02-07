@@ -58,6 +58,12 @@
     <Compile Include="AlarmForm.Designer.cs">
       <DependentUpon>AlarmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="BulletinBoardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BulletinBoardForm.Designer.cs">
+      <DependentUpon>BulletinBoardForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="CalculatorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,6 +124,12 @@
     <Compile Include="NotePadForm.Designer.cs">
       <DependentUpon>NotePadForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Post_it.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Post_it.Designer.cs">
+      <DependentUpon>Post_it.cs</DependentUpon>
+    </Compile>
     <Compile Include="SingleLineList.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -177,6 +189,9 @@
     <EmbeddedResource Include="AlarmForm.resx">
       <DependentUpon>AlarmForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BulletinBoardForm.resx">
+      <DependentUpon>BulletinBoardForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CalculatorForm.resx">
       <DependentUpon>CalculatorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -200,6 +215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NotePadForm.resx">
       <DependentUpon>NotePadForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Post_it.resx">
+      <DependentUpon>Post_it.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SingleLineList.resx">
       <DependentUpon>SingleLineList.cs</DependentUpon>
@@ -271,6 +289,8 @@
     <None Include="icon\Editor\outline_file_open_black_24dp.png" />
     <None Include="icon\Editor\outline_open_in_new_black_24dp.png" />
     <None Include="icon\Editor\outline_save_black_24dp.png" />
+    <None Include="icon\outline_menu_black_24dp.png" />
+    <None Include="icon\outline_edit_note_black_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />

@@ -71,8 +71,8 @@ namespace WellaTodo
         {
             Console.WriteLine("Initiate");
 
-            richTextBox.BackColor = Color.LightCyan;
-            richTextBox.SelectionCharOffset = 0;
+            richTextBox.WordWrap = false;
+            //richTextBox.SelectionCharOffset = 0;
 
             FontFamily[] fontList = new System.Drawing.Text.InstalledFontCollection().Families;
             foreach (var item in fontList)
@@ -102,12 +102,6 @@ namespace WellaTodo
             comboBox_FontSize.DataSource = m_FontSize;
             comboBox_FontSize.SelectedIndex = 15;
 
-
-            checkBox_Bold.Click += new EventHandler(checkBox_FontStyle_Click);
-            checkBox_Italic.Click += new EventHandler(checkBox_FontStyle_Click);
-            checkBox_Underline.Click += new EventHandler(checkBox_FontStyle_Click);
-            checkBox_Strike.Click += new EventHandler(checkBox_FontStyle_Click);
-
             checkBox_AlignLeft.Click += new EventHandler(checkBox_TextAlign_Click);
             checkBox_AlignCenter.Click += new EventHandler(checkBox_TextAlign_Click);
             checkBox_AlignRight.Click += new EventHandler(checkBox_TextAlign_Click);
@@ -117,61 +111,10 @@ namespace WellaTodo
         {
             m_FileName = $"{(IsUnsaved ? "*" : "")}{OpenedDocumentPath} - NotePad";
             //Console.WriteLine("m_FileName : " + m_FileName);
+            Text = m_FileName;
         }
 
-        // ------------------------------------------------------------
-        // 메뉴
-        // ------------------------------------------------------------
-        private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.InitialDirectory = DefaultSaveDirectory;
-                saveFileDialog.Filter = "서식이 있는 텍스트 (*.rtf)|*.rtf|일반 텍스트 (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.FilterIndex = 1;
-                saveFileDialog.RestoreDirectory = true;
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                    Directory.CreateDirectory(dirPath);
-
-                    // rtf인 경우 서식을 사용하여 저장
-                    richTextBox.SaveFile(saveFileDialog.FileName,
-                        saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
-
-                    OpenedDocumentPath = saveFileDialog.FileName;
-                    IsOpened = true;
-                    IsUnsaved = false;
-                    UpdatePath();
-                }
-            }
-        }
-
-        private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void 모두선택ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            richTextBox.SelectAll();
-        }
-
-        // ------------------------------------------------------------
-        // 툴바
-        // ------------------------------------------------------------
-        private void button_New_Click(object sender, EventArgs e)
+        private void New_File()
         {
             IsOpened = false;
             richTextBox.Text = String.Empty;
@@ -179,7 +122,7 @@ namespace WellaTodo
             UpdatePath();
         }
 
-        private void button_Open_Click(object sender, EventArgs e)
+        private void Open_File()
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -227,10 +170,9 @@ namespace WellaTodo
                     }
                 }
             }
-            
         }
 
-        private void button_Save_Click(object sender, EventArgs e)
+        private void Save_File()
         {
             try
             {
@@ -241,7 +183,7 @@ namespace WellaTodo
 
                     // rtf인 경우 서식을 사용하여 저장
                     richTextBox.SaveFile(OpenedDocumentPath,
-                                         OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
+                                         OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText);
                 }
                 else // 파일이 새 파일이면 저장 대화 상자를 호출
                 {
@@ -259,7 +201,7 @@ namespace WellaTodo
 
                             // rtf인 경우 서식을 사용하여 저장
                             richTextBox.SaveFile(saveFileDialog.FileName,
-                                saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText); 
+                                saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText);
 
                             OpenedDocumentPath = saveFileDialog.FileName;
                             IsOpened = true;
@@ -273,6 +215,88 @@ namespace WellaTodo
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private void Save_As_File()
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = DefaultSaveDirectory;
+                saveFileDialog.Filter = "서식이 있는 텍스트 (*.rtf)|*.rtf|일반 텍스트 (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var dirPath = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    Directory.CreateDirectory(dirPath);
+
+                    // rtf인 경우 서식을 사용하여 저장
+                    richTextBox.SaveFile(saveFileDialog.FileName,
+                        saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText);
+
+                    OpenedDocumentPath = saveFileDialog.FileName;
+                    IsOpened = true;
+                    IsUnsaved = false;
+                    UpdatePath();
+                }
+            }
+        }
+
+        // ------------------------------------------------------------
+        // 메뉴
+        // ------------------------------------------------------------
+        private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            New_File();
+        }
+
+        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Open_File();
+        }
+
+        private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save_File();
+        }
+
+        private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save_As_File();
+        }
+
+        private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 모두선택ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox.SelectAll();
+        }
+
+        // ------------------------------------------------------------
+        // 툴바
+        // ------------------------------------------------------------
+        private void button_New_Click(object sender, EventArgs e)
+        {
+            New_File();
+        }
+
+        private void button_Open_Click(object sender, EventArgs e)
+        {
+            Open_File();
+        }
+
+        private void button_Save_Click(object sender, EventArgs e)
+        {
+            Save_File();
         }
 
         private void button_Print_Click(object sender, EventArgs e)
@@ -364,13 +388,6 @@ namespace WellaTodo
             size--;
             if (size < 1) size = 1;
             comboBox_FontSize.SelectedIndex = size;
-        }
-
-        private void checkBox_FontStyle_Click(object sender, EventArgs e)
-        {
-            CheckBox sd = (CheckBox)sender;
-            Console.WriteLine("checkBox_FontStyle_Click : " + sd.Checked);
-            Update_CheckBox_Status();
         }
 
         private void checkBox_Bold_CheckedChanged(object sender, EventArgs e)
@@ -529,12 +546,6 @@ namespace WellaTodo
             checkBox_AlignLeft.BackColor = checkBox_AlignLeft.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
             checkBox_AlignCenter.BackColor = checkBox_AlignCenter.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
             checkBox_AlignRight.BackColor = checkBox_AlignRight.Checked ? HIGHLIGHT_COLOR : BACK_COLOR;
-
-            Console.WriteLine("SelectionFont.Bold : " + richTextBox.SelectionFont.Bold);
-            Console.WriteLine("SelectionFont.Italic : " + richTextBox.SelectionFont.Italic);
-            Console.WriteLine("SelectionFont.Underline : " + richTextBox.SelectionFont.Underline);
-            Console.WriteLine("SelectionFont.Strike : " + richTextBox.SelectionFont.Strikeout);
-            Console.WriteLine("SelectionFont.Size : " + richTextBox.SelectionFont.Size);
         }
 
         // ------------------------------------------------------------
