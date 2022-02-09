@@ -127,6 +127,9 @@
   <data name="outline_text_decrease_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_text_decrease_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_close_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_close_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_redo_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_redo_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -148,8 +151,8 @@
   <data name="outline_content_paste_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_content_paste_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_insert_photo_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\Editor\outline_insert_photo_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_home_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_home_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_check_circle_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_check_circle_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -157,8 +160,8 @@
   <data name="outline_print_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_print_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_format_align_right_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\Editor\outline_format_align_right_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_edit_note_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_edit_note_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_assignment_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_assignment_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,17 +190,20 @@
   <data name="outline_content_copy_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_content_copy_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_add_circle_outline_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_add_circle_outline_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_format_align_center_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_align_center_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="outline_menu_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\outline_menu_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_attach_file_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_attach_file_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_home_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\outline_home_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_menu_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_menu_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_insert_photo_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\Editor\outline_insert_photo_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_format_paint_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_paint_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -208,11 +214,17 @@
   <data name="outline_format_color_fill_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_color_fill_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_apps_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_apps_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_format_indent_decrease_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_indent_decrease_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_format_align_left_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_align_left_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_format_align_right_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\Editor\outline_format_align_right_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_format_bold_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_bold_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -223,7 +235,7 @@
   <data name="outline_text_increase_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_text_increase_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_edit_note_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\outline_edit_note_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_more_horiz_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_more_horiz_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

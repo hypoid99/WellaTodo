@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NotePadForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.파일ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.새로만들기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,6 +76,9 @@
             this.button_Undo = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
+            this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
+            this.printDialog1 = new System.Windows.Forms.PrintDialog();
+            this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.menuStrip1.SuspendLayout();
             this.panel_Header.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -90,7 +94,6 @@
             this.도움말ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
             this.menuStrip1.Size = new System.Drawing.Size(1153, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
@@ -119,14 +122,14 @@
             // 열기ToolStripMenuItem
             // 
             this.열기ToolStripMenuItem.Name = "열기ToolStripMenuItem";
-            this.열기ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.열기ToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
             this.열기ToolStripMenuItem.Text = "열기";
             this.열기ToolStripMenuItem.Click += new System.EventHandler(this.열기ToolStripMenuItem_Click);
             // 
             // 저장ToolStripMenuItem
             // 
             this.저장ToolStripMenuItem.Name = "저장ToolStripMenuItem";
-            this.저장ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.저장ToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
             this.저장ToolStripMenuItem.Text = "저장";
             this.저장ToolStripMenuItem.Click += new System.EventHandler(this.저장ToolStripMenuItem_Click);
             // 
@@ -156,6 +159,7 @@
             this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
             this.종료ToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
             this.종료ToolStripMenuItem.Text = "종료";
+            this.종료ToolStripMenuItem.Click += new System.EventHandler(this.종료ToolStripMenuItem_Click);
             // 
             // 편집ToolStripMenuItem
             // 
@@ -167,7 +171,7 @@
             this.붙여넣기ToolStripMenuItem,
             this.모두선택ToolStripMenuItem});
             this.편집ToolStripMenuItem.Name = "편집ToolStripMenuItem";
-            this.편집ToolStripMenuItem.Size = new System.Drawing.Size(53, 26);
+            this.편집ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.편집ToolStripMenuItem.Text = "편집";
             // 
             // 취소ToolStripMenuItem
@@ -175,30 +179,35 @@
             this.취소ToolStripMenuItem.Name = "취소ToolStripMenuItem";
             this.취소ToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
             this.취소ToolStripMenuItem.Text = "실행 취소";
+            this.취소ToolStripMenuItem.Click += new System.EventHandler(this.취소ToolStripMenuItem_Click);
             // 
             // 다시실행ToolStripMenuItem
             // 
             this.다시실행ToolStripMenuItem.Name = "다시실행ToolStripMenuItem";
             this.다시실행ToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
             this.다시실행ToolStripMenuItem.Text = "다시 실행";
+            this.다시실행ToolStripMenuItem.Click += new System.EventHandler(this.다시실행ToolStripMenuItem_Click);
             // 
             // 잘라내기ToolStripMenuItem
             // 
             this.잘라내기ToolStripMenuItem.Name = "잘라내기ToolStripMenuItem";
             this.잘라내기ToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
             this.잘라내기ToolStripMenuItem.Text = "잘라내기";
+            this.잘라내기ToolStripMenuItem.Click += new System.EventHandler(this.잘라내기ToolStripMenuItem_Click);
             // 
             // 복사ToolStripMenuItem
             // 
             this.복사ToolStripMenuItem.Name = "복사ToolStripMenuItem";
             this.복사ToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
             this.복사ToolStripMenuItem.Text = "복사";
+            this.복사ToolStripMenuItem.Click += new System.EventHandler(this.복사ToolStripMenuItem_Click);
             // 
             // 붙여넣기ToolStripMenuItem
             // 
             this.붙여넣기ToolStripMenuItem.Name = "붙여넣기ToolStripMenuItem";
             this.붙여넣기ToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
             this.붙여넣기ToolStripMenuItem.Text = "붙여넣기";
+            this.붙여넣기ToolStripMenuItem.Click += new System.EventHandler(this.붙여넣기ToolStripMenuItem_Click);
             // 
             // 모두선택ToolStripMenuItem
             // 
@@ -212,7 +221,7 @@
             this.도움말ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.정보ToolStripMenuItem});
             this.도움말ToolStripMenuItem.Name = "도움말ToolStripMenuItem";
-            this.도움말ToolStripMenuItem.Size = new System.Drawing.Size(68, 26);
+            this.도움말ToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
             this.도움말ToolStripMenuItem.Text = "도움말";
             // 
             // 정보ToolStripMenuItem
@@ -220,6 +229,7 @@
             this.정보ToolStripMenuItem.Name = "정보ToolStripMenuItem";
             this.정보ToolStripMenuItem.Size = new System.Drawing.Size(122, 26);
             this.정보ToolStripMenuItem.Text = "정보";
+            this.정보ToolStripMenuItem.Click += new System.EventHandler(this.정보ToolStripMenuItem_Click);
             // 
             // panel_Header
             // 
@@ -656,6 +666,7 @@
             this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox.EnableAutoDragDrop = true;
+            this.richTextBox.HideSelection = false;
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.richTextBox.Name = "richTextBox";
@@ -665,6 +676,25 @@
             this.richTextBox.WordWrap = false;
             this.richTextBox.SelectionChanged += new System.EventHandler(this.richTextBox_SelectionChanged);
             this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
+            // 
+            // printPreviewDialog1
+            // 
+            this.printPreviewDialog1.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.printPreviewDialog1.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.printPreviewDialog1.ClientSize = new System.Drawing.Size(400, 300);
+            this.printPreviewDialog1.Enabled = true;
+            this.printPreviewDialog1.Icon = ((System.Drawing.Icon)(resources.GetObject("printPreviewDialog1.Icon")));
+            this.printPreviewDialog1.Name = "printPreviewDialog1";
+            this.printPreviewDialog1.Visible = false;
+            // 
+            // printDialog1
+            // 
+            this.printDialog1.UseEXDialog = true;
+            // 
+            // printDocument1
+            // 
+            this.printDocument1.BeginPrint += new System.Drawing.Printing.PrintEventHandler(this.printDocument1_BeginPrint_1);
+            this.printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage_1);
             // 
             // NotePadForm
             // 
@@ -679,6 +709,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "NotePadForm";
             this.Text = "NotePadForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NotePadForm_FormClosing);
             this.Load += new System.EventHandler(this.NotePadForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -738,5 +769,8 @@
         private System.Windows.Forms.CheckBox checkBox_AlignRight;
         private System.Windows.Forms.CheckBox checkBox_AlignCenter;
         private System.Windows.Forms.CheckBox checkBox_AlignLeft;
+        private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
+        private System.Windows.Forms.PrintDialog printDialog1;
+        private System.Drawing.Printing.PrintDocument printDocument1;
     }
 }

@@ -63,6 +63,26 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_add_circle_outline_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_add_circle_outline_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_apps_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_apps_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_assignment_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_assignment_black_24dp", resourceCulture);
@@ -86,6 +106,16 @@ namespace WellaTodo.Properties {
         internal static System.Drawing.Bitmap outline_check_circle_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_check_circle_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_close_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_close_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -336,6 +366,16 @@ namespace WellaTodo.Properties {
         internal static System.Drawing.Bitmap outline_menu_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_menu_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_more_horiz_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_more_horiz_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

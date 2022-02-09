@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Drawing.Printing;
 using System.IO;
 
 namespace WellaTodo
@@ -47,6 +48,9 @@ namespace WellaTodo
             }
         }
 
+        int m_linesPrinted;
+        string[] m_Printlines;
+
         public NotePadForm()
         {
             InitializeComponent();
@@ -65,6 +69,35 @@ namespace WellaTodo
         private void NotePadForm_Load(object sender, EventArgs e)
         {
             Initiate();
+        }
+
+
+        private void NotePadForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (IsUnsaved)
+            {
+                DialogResult savePrompt = MessageBox.Show("저장할까요?", "NotePad", MessageBoxButtons.YesNoCancel);
+
+                switch (savePrompt)
+                {
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                    case DialogResult.No:
+                        break;
+                    case DialogResult.Yes:
+                        Save_File();
+                        break;
+                }
+            }
+
+            New_File();
+
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
         }
 
         private void Initiate()
@@ -268,17 +301,106 @@ namespace WellaTodo
 
         private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            printDialog1.Document = printDocument1;
+            if (printDialog1.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
         }
 
         private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            printPreviewDialog1.StartPosition = FormStartPosition.CenterParent;
+            printPreviewDialog1.Document = printDocument1;
+            //printPreviewDialog1.ClientSize = new Size(this.Width, this.Height);
+            printPreviewDialog1.MinimumSize = new Size(800, 600);
+            printPreviewDialog1.UseAntiAlias = true;
 
+            printPreviewDialog1.ShowDialog();
+        }
+
+        private void printDocument1_BeginPrint_1(object sender, PrintEventArgs e)
+        {
+            char[] param = { '\n' };
+            if (printDocument1.PrinterSettings.PrintRange == PrintRange.Selection)
+            {
+                m_Printlines = richTextBox.SelectedText.Split(param);
+            }
+            else
+            {
+                m_Printlines = richTextBox.Text.Split(param);
+            }
+            int i = 0;
+            char[] trimParam = { '\r' };
+            foreach (string s in m_Printlines)
+            {
+                m_Printlines[i++] = s.TrimEnd(trimParam);
+            }
+        }
+
+        private void printDocument1_PrintPage_1(object sender, PrintPageEventArgs e)
+        {
+            int x = e.MarginBounds.Left;
+            int y = e.MarginBounds.Top;
+            Brush brush = new SolidBrush(richTextBox.ForeColor);
+
+            while (m_linesPrinted < m_Printlines.Length)
+            {
+                e.Graphics.DrawString(m_Printlines[m_linesPrinted++],
+                    richTextBox.Font, brush, x, y);
+                y += 15;
+                if (y >= e.MarginBounds.Bottom)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+            }
+
+            m_linesPrinted = 0;
+            e.HasMorePages = false;
+        }
+
+        private void 취소ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox.Undo();
+        }
+
+        private void 다시실행ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.CanRedo == true && richTextBox.RedoActionName != "Delete")
+            {
+                richTextBox.Redo();
+            }
+        }
+
+        private void 잘라내기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.SelectionLength > 0) richTextBox.Cut();
+        }
+
+        private void 복사ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (richTextBox.SelectionLength > 0) richTextBox.Copy();
+        }
+
+        private void 붙여넣기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetDataObject().GetDataPresent(DataFormats.Text)) richTextBox.Paste();
         }
 
         private void 모두선택ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             richTextBox.SelectAll();
+        }
+
+        private void 정보ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         // ------------------------------------------------------------

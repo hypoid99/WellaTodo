@@ -73,6 +73,7 @@ namespace WellaTodo
         {
             if (form == null)
             {
+                Console.WriteLine("ShowActiveForm -> form is null, CreateInstance");
                 form = (Form)Activator.CreateInstance(t);
                 form.MdiParent = this;
                 form.WindowState = FormWindowState.Maximized;
@@ -82,6 +83,7 @@ namespace WellaTodo
             {
                 if (form.IsDisposed)
                 {
+                    Console.WriteLine("ShowActiveForm -> form is disposed, CreateInstance");
                     form = (Form)Activator.CreateInstance(t);
                     form.MdiParent = this;
                     form.WindowState = FormWindowState.Maximized;
@@ -91,10 +93,12 @@ namespace WellaTodo
                 {
                     if (form.Visible)
                     {
+                        Console.WriteLine("ShowActiveForm -> form is visible, Hide!!!");
                         form.Hide();
                     }
                     else
                     {
+                        Console.WriteLine("ShowActiveForm -> form is hiding, Show!!!");
                         form.Show();
                     }
                 }

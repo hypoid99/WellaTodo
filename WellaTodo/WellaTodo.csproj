@@ -112,6 +112,12 @@
       <DependentUpon>MainFrame.cs</DependentUpon>
     </Compile>
     <Compile Include="MainModel.cs" />
+    <Compile Include="MemoEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MemoEditorForm.Designer.cs">
+      <DependentUpon>MemoEditorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MemoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -210,6 +216,9 @@
     <EmbeddedResource Include="MainFrame.resx">
       <DependentUpon>MainFrame.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MemoEditorForm.resx">
+      <DependentUpon>MemoEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MemoForm.resx">
       <DependentUpon>MemoForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -291,6 +300,10 @@
     <None Include="icon\Editor\outline_save_black_24dp.png" />
     <None Include="icon\outline_menu_black_24dp.png" />
     <None Include="icon\outline_edit_note_black_24dp.png" />
+    <None Include="icon\outline_apps_black_24dp.png" />
+    <None Include="icon\outline_add_circle_outline_black_24dp.png" />
+    <None Include="icon\outline_close_black_24dp.png" />
+    <None Include="icon\outline_more_horiz_black_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />
