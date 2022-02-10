@@ -12,11 +12,46 @@ namespace WellaTodo
 {
     public partial class MemoEditorForm : Form
     {
+        private string _textBoxString;
+        public string TextBoxString 
+        { 
+            get => _textBoxString;
+            set 
+            { 
+                _textBoxString = value;
+                richTextBox.Text = _textBoxString;
+            }
+        }
+
+        private string _textBoxRTFString;
+        public string TextBoxRTFString
+        {
+            get => _textBoxRTFString;
+            set
+            {
+                _textBoxRTFString = value;
+                richTextBox.Rtf = _textBoxRTFString;
+            }
+        }
+
         public MemoEditorForm()
         {
             InitializeComponent();
+        }
 
+        private void MemoEditorForm_Load(object sender, EventArgs e)
+        {
             Initiate();
+        }
+
+        private void MemoEditorForm_Resize(object sender, EventArgs e)
+        {
+            Update_EditorForm();
+        }
+
+        private void MemoEditorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            TextBoxRTFString = richTextBox.Rtf;
         }
 
         private void Initiate()
@@ -24,11 +59,20 @@ namespace WellaTodo
             panel_Header.BackColor = Color.Gold;
             panel_Footer.BackColor = Color.Gold;
             richTextBox.BackColor = Color.Gold;
+
+            pictureBox_More_Hori.Location = new Point(panel_Header.Width - 72, 4);
+            pictureBox_Delete.Location = new Point(panel_Header.Width - 40, 4);
         }
 
-        private void pictureBox_Close_Click(object sender, EventArgs e)
+        private void Update_EditorForm()
         {
-            Close();
+            pictureBox_More_Hori.Location = new Point(panel_Header.Width - 72, 4);
+            pictureBox_Delete.Location = new Point(panel_Header.Width - 40, 4);
+        }
+
+        private void pictureBox_Delete_Click(object sender, EventArgs e)
+        {
+
         }
 
         //

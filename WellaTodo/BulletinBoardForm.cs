@@ -14,9 +14,9 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> View_Changed_Event;
 
-        static readonly int NOTE_WIDTH = 250;
-        static readonly int NOTE_HEIGHT = 200;
-        static readonly int NOTE_GAP = 20;
+        static readonly int NOTE_WIDTH = 200;
+        static readonly int NOTE_HEIGHT = 170;
+        static readonly int NOTE_GAP = 10;
 
         MainController m_Controller;
 
@@ -40,6 +40,8 @@ namespace WellaTodo
         private void Initiate()
         {
             pictureBox_Add_Note.Location = new Point(panel_Header.Width - 45, 4);
+
+            label_Title.Focus();
         }
 
         private void BulletinBoardForm_Load(object sender, EventArgs e)
@@ -66,9 +68,17 @@ namespace WellaTodo
 
         }
 
-        private void note_Post_it_Click(object sender, EventArgs e)
+        private void Post_it_Click(object sender, EventArgs e)
         {
             Console.WriteLine("BulletinBoardForm::note_Post_it_Click");
+
+            Post_it note = (Post_it)sender;
+            memoEditorForm.TextBoxRTFString = note.TextBoxRTFString;
+
+            memoEditorForm.StartPosition = FormStartPosition.CenterParent;
+            memoEditorForm.ShowDialog();
+
+            note.TextBoxRTFString = memoEditorForm.TextBoxRTFString;
         }
 
         private void Update_Notes_Position()
@@ -78,7 +88,6 @@ namespace WellaTodo
             int posY = 10;
             int num_Notes = panel_Bulletin.Controls.Count;
             int num_Column = panel_Bulletin.Width / (NOTE_WIDTH + NOTE_GAP);
-            Console.WriteLine("BulletinBoardForm::Update_Notes_Position : {num_Notes} " + num_Column);
             int cnt = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
             {
@@ -98,9 +107,6 @@ namespace WellaTodo
         {
             Console.WriteLine("BulletinBoardForm::pictureBox_Add_Note_Click");
 
-            //memoEditorForm.StartPosition = FormStartPosition.CenterParent;
-            //memoEditorForm.ShowDialog();
-
             New_Note();
         }
 
@@ -116,11 +122,10 @@ namespace WellaTodo
             Post_it note = new Post_it();
             panel_Bulletin.Controls.Add(note);
             note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
-            note.Post_it_Click += new Post_it_Event(note_Post_it_Click);
+            note.Post_it_Click += new Post_it_Event(Post_it_Click);
 
             Update_Notes_Position();
         }
-
 
     }
 }

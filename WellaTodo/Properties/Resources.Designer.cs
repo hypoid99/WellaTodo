@@ -63,6 +63,16 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_access_alarms_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_access_alarms_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_add_circle_outline_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_add_circle_outline_black_24dp", resourceCulture);
@@ -76,6 +86,16 @@ namespace WellaTodo.Properties {
         internal static System.Drawing.Bitmap outline_apps_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_apps_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_archive_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_archive_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -146,6 +166,16 @@ namespace WellaTodo.Properties {
         internal static System.Drawing.Bitmap outline_content_paste_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_content_paste_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_delete_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_delete_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -343,6 +373,16 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_label_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_label_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_list_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_list_black_24dp", resourceCulture);
@@ -373,6 +413,16 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_mode_edit_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_mode_edit_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_more_horiz_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_more_horiz_black_24dp", resourceCulture);
@@ -383,9 +433,39 @@ namespace WellaTodo.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap outline_new_label_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_new_label_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_note_alt_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_note_alt_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap outline_open_in_new_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("outline_open_in_new_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap outline_palette_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("outline_palette_black_24dp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

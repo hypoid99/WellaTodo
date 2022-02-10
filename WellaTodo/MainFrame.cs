@@ -138,9 +138,17 @@ namespace WellaTodo
 
         private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            DialogResult result = MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNoCancel);
+            switch (result)
             {
-                m_Controller.Save_Data_File();
+                case DialogResult.Cancel:
+                    e.Cancel = true;
+                    return;
+                case DialogResult.No:
+                    break;
+                case DialogResult.Yes:
+                    m_Controller.Save_Data_File();
+                    break;
             }
 
             if (e.CloseReason == CloseReason.UserClosing)
@@ -854,9 +862,16 @@ namespace WellaTodo
 
         private void OnSaveDataMenu_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            DialogResult result = MessageBox.Show("저장할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNoCancel);
+            switch (result)
             {
-                m_Controller.Save_Data_File();
+                case DialogResult.Cancel:
+                    return;
+                case DialogResult.No:
+                    break;
+                case DialogResult.Yes:
+                    m_Controller.Save_Data_File();
+                    break;
             }
         }
 
