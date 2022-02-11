@@ -41,6 +41,7 @@ namespace WellaTodo
             {
                 return isUnsaved;
             }
+
             set
             {
                 isUnsaved = value;

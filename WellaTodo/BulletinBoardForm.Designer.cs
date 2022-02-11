@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.panel_Header = new System.Windows.Forms.Panel();
+            this.pictureBox_Add_Note = new System.Windows.Forms.PictureBox();
+            this.label_Menu = new System.Windows.Forms.Label();
             this.label_Title = new System.Windows.Forms.Label();
             this.panel_Menu = new System.Windows.Forms.Panel();
-            this.panel_Bulletin = new System.Windows.Forms.Panel();
             this.button_Label = new System.Windows.Forms.Button();
             this.button_Store = new System.Windows.Forms.Button();
             this.button_Alarm = new System.Windows.Forms.Button();
             this.button_Memo = new System.Windows.Forms.Button();
-            this.pictureBox_Add_Note = new System.Windows.Forms.PictureBox();
-            this.label_Menu = new System.Windows.Forms.Label();
+            this.panel_Bulletin = new System.Windows.Forms.Panel();
             this.panel_Header.SuspendLayout();
-            this.panel_Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).BeginInit();
+            this.panel_Menu.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_Header
@@ -53,6 +53,29 @@
             this.panel_Header.Name = "panel_Header";
             this.panel_Header.Size = new System.Drawing.Size(800, 50);
             this.panel_Header.TabIndex = 0;
+            // 
+            // pictureBox_Add_Note
+            // 
+            this.pictureBox_Add_Note.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_Add_Note.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
+            this.pictureBox_Add_Note.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Add_Note.Location = new System.Drawing.Point(749, 4);
+            this.pictureBox_Add_Note.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Add_Note.Name = "pictureBox_Add_Note";
+            this.pictureBox_Add_Note.Size = new System.Drawing.Size(42, 42);
+            this.pictureBox_Add_Note.TabIndex = 2;
+            this.pictureBox_Add_Note.TabStop = false;
+            this.pictureBox_Add_Note.Click += new System.EventHandler(this.pictureBox_Add_Note_Click);
+            // 
+            // label_Menu
+            // 
+            this.label_Menu.Image = global::WellaTodo.Properties.Resources.outline_apps_black_24dp;
+            this.label_Menu.Location = new System.Drawing.Point(9, 9);
+            this.label_Menu.Margin = new System.Windows.Forms.Padding(0);
+            this.label_Menu.Name = "label_Menu";
+            this.label_Menu.Size = new System.Drawing.Size(32, 32);
+            this.label_Menu.TabIndex = 1;
+            this.label_Menu.Click += new System.EventHandler(this.label_Menu_Click);
             // 
             // label_Title
             // 
@@ -77,16 +100,6 @@
             this.panel_Menu.Size = new System.Drawing.Size(100, 400);
             this.panel_Menu.TabIndex = 1;
             // 
-            // panel_Bulletin
-            // 
-            this.panel_Bulletin.AutoScroll = true;
-            this.panel_Bulletin.BackColor = System.Drawing.Color.White;
-            this.panel_Bulletin.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_Bulletin.Location = new System.Drawing.Point(100, 50);
-            this.panel_Bulletin.Name = "panel_Bulletin";
-            this.panel_Bulletin.Size = new System.Drawing.Size(700, 400);
-            this.panel_Bulletin.TabIndex = 2;
-            // 
             // button_Label
             // 
             this.button_Label.Dock = System.Windows.Forms.DockStyle.Top;
@@ -104,6 +117,7 @@
             this.button_Label.Text = "라벨";
             this.button_Label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button_Label.UseVisualStyleBackColor = true;
+            this.button_Label.Click += new System.EventHandler(this.button_Label_Click);
             // 
             // button_Store
             // 
@@ -159,28 +173,15 @@
             this.button_Memo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button_Memo.UseVisualStyleBackColor = true;
             // 
-            // pictureBox_Add_Note
+            // panel_Bulletin
             // 
-            this.pictureBox_Add_Note.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_Add_Note.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
-            this.pictureBox_Add_Note.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Add_Note.Location = new System.Drawing.Point(749, 4);
-            this.pictureBox_Add_Note.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Add_Note.Name = "pictureBox_Add_Note";
-            this.pictureBox_Add_Note.Size = new System.Drawing.Size(42, 42);
-            this.pictureBox_Add_Note.TabIndex = 2;
-            this.pictureBox_Add_Note.TabStop = false;
-            this.pictureBox_Add_Note.Click += new System.EventHandler(this.pictureBox_Add_Note_Click);
-            // 
-            // label_Menu
-            // 
-            this.label_Menu.Image = global::WellaTodo.Properties.Resources.outline_apps_black_24dp;
-            this.label_Menu.Location = new System.Drawing.Point(9, 9);
-            this.label_Menu.Margin = new System.Windows.Forms.Padding(0);
-            this.label_Menu.Name = "label_Menu";
-            this.label_Menu.Size = new System.Drawing.Size(32, 32);
-            this.label_Menu.TabIndex = 1;
-            this.label_Menu.Click += new System.EventHandler(this.label_Menu_Click);
+            this.panel_Bulletin.AutoScroll = true;
+            this.panel_Bulletin.BackColor = System.Drawing.Color.White;
+            this.panel_Bulletin.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_Bulletin.Location = new System.Drawing.Point(100, 50);
+            this.panel_Bulletin.Name = "panel_Bulletin";
+            this.panel_Bulletin.Size = new System.Drawing.Size(700, 400);
+            this.panel_Bulletin.TabIndex = 2;
             // 
             // BulletinBoardForm
             // 
@@ -197,8 +198,8 @@
             this.Load += new System.EventHandler(this.BulletinBoardForm_Load);
             this.Resize += new System.EventHandler(this.BulletinBoardForm_Resize);
             this.panel_Header.ResumeLayout(false);
-            this.panel_Menu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).EndInit();
+            this.panel_Menu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

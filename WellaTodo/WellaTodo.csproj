@@ -134,6 +134,12 @@
     <Compile Include="NotePadForm.Designer.cs">
       <DependentUpon>NotePadForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Popup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Popup.Designer.cs">
+      <DependentUpon>Popup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Post_it.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -188,6 +194,7 @@
     <Compile Include="TwoLineList.Designer.cs">
       <DependentUpon>TwoLineList.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserCommandEventArgs.cs" />
     <Compile Include="WellaForm.cs">
       <SubType>Form</SubType>
     </Compile>
