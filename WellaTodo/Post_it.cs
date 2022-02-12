@@ -18,6 +18,9 @@ namespace WellaTodo
 
         Popup popup;
 
+        CDataCell m_DataCell;
+        public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
+
         private string _textBoxString;
         public string TextBoxString
         {
@@ -55,9 +58,13 @@ namespace WellaTodo
             }
         }
 
-        public Post_it()
+        public Post_it(CDataCell dc)
         {
             InitializeComponent();
+
+            DataCell = dc;
+            TextBoxRTFString = dc.DC_memoRTF;
+            //MemoColor = dc.DC_memoColor;
         }
 
         private void Post_it_Load(object sender, EventArgs e)

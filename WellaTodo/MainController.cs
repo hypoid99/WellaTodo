@@ -240,6 +240,12 @@ namespace WellaTodo
 			m_model.Add_BulletinBoard(dc);
 		}
 
+		public void Perform_Modify_BulletinBoard(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_BulletinBoard(dc);
+		}
+
 		// -----------------------------------------------------------
 		// DB Query
 		// -----------------------------------------------------------

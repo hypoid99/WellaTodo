@@ -43,7 +43,8 @@ namespace WellaTodo
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK,
-		WM_BULLETINBOARD_ADD
+		WM_BULLETINBOARD_ADD,
+		WM_BULLETINBOARD_MODIFY
 	}
 
 	public class MainModel : IModel
@@ -707,6 +708,23 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::Add_BulletinBoard -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_ADD));  // deep copy 할 것!
+		}
+
+		public void Modify_BulletinBoard(CDataCell dc)
+        {
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_BulletinBoard -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_memoRTF = dc.DC_memoRTF;
+			data.DC_memoColor = dc.DC_memoColor;
+
+			Notify_Log_Message("3>MainModel::Modify_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY));  // deep copy 할 것!
 		}
 
 		private CDataCell Find(CDataCell dc)

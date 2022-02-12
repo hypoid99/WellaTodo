@@ -1547,6 +1547,7 @@ namespace WellaTodo
                     if (dc.DC_listName != m_Selected_Menu.PrimaryText)
                     {
                         Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Anothor List");
+                        Update_Menu_Metadata();
                         return;
                     }
                     else

@@ -42,8 +42,6 @@ namespace WellaTodo
         {
             Initiate();
 
-            //Open_File();
-
             Update_BulletinBoard();
         }
 
@@ -54,6 +52,7 @@ namespace WellaTodo
 
         private void BulletinBoardForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            /*
             if (IsUnsaved)
             {
                 DialogResult savePrompt = MessageBox.Show("저장할까요?", "BulletinBoard", MessageBoxButtons.YesNoCancel);
@@ -70,7 +69,7 @@ namespace WellaTodo
                         break;
                 }
             }
-
+            */
             IsUnsaved = false;
 
             if (e.CloseReason == CloseReason.UserClosing)
@@ -87,20 +86,7 @@ namespace WellaTodo
         {
             pictureBox_Add_Note.Location = new Point(panel_Header.Width - 45, 4);
 
-            IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard();
-            foreach (CDataCell data in dataset)  // Post_it 생성 및 m_Post_it에 저장
-            {
-                Post_it note = new Post_it();
-
-                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
-                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
-                note.Post_it_Click += new Post_it_Event(Post_it_Click);
-                note.TextBoxRTFString = data.DC_memoRTF;
-                //note.MemoColor = data.DC_memoColor;
-                note.MemoColor = Color.Gold;
-
-                panel_Bulletin.Controls.Add(note);
-            }
+            Load_Data();
 
             IsUnsaved = false;
             Update_BulletinBoard();
@@ -162,66 +148,37 @@ namespace WellaTodo
                 case WParam.WM_PRINT_DATA:
                     //Update_Print_Data();
                     break;
-                case WParam.WM_COMPLETE_PROCESS:
-                    //Update_Complete_Process(dc);
-                    break;
-                case WParam.WM_IMPORTANT_PROCESS:
-                    //Update_Important_Process(dc);
-                    break;
-                case WParam.WM_MODIFY_TASK_TITLE:
-                    //Update_Modify_Task_Title(dc);
-                    break;
-                case WParam.WM_MODIFY_TASK_MEMO:
-                    //Update_Modify_Task_Memo(dc);
+                case WParam.WM_BULLETINBOARD_MODIFY:
+                    Update_Modify_BulletinBoard(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_ADD:
                     Update_New_Note(dc);
                     break;
-                case WParam.WM_TASK_DELETE:
-                    //Update_Delete_Task(dc);
-                    break;
-                case WParam.WM_TASK_MOVE_TO:
-                    //Update_Task_Move_To(dc);
-                    break;
-                case WParam.WM_TASK_MOVE_UP:
-                    //Update_Task_Move_Up(dc);
-                    break;
-                case WParam.WM_TASK_MOVE_DOWN:
-                    //Update_Task_Move_Down(dc);
-                    break;
-                case WParam.WM_MODIFY_MYTODAY:
-                    //Update_Modify_MyToday(dc);
-                    break;
-                case WParam.WM_MODIFY_REMIND:
-                    //Update_Modify_Remind(dc);
-                    break;
-                case WParam.WM_MODIFY_PLANNED:
-                    //Update_Modify_Planned(dc);
-                    break;
-                case WParam.WM_MODIFY_REPEAT:
-                    //Update_Modify_Repeat(dc);
-                    break;
-                case WParam.WM_MENULIST_ADD:
-                    //Update_Menulist_Add(dc);
-                    break;
-                case WParam.WM_MENULIST_RENAME:
-                    //Update_Menulist_Rename(dc);
-                    break;
-                case WParam.WM_MENULIST_DELETE:
-                    //Update_Menulist_Delete(dc);
-                    break;
-                case WParam.WM_MENULIST_UP:
-                    //Update_Menulist_Up(dc);
-                    break;
-                case WParam.WM_MENULIST_DOWN:
-                    //Update_Menulist_Down(dc);
-                    break;
-                case WParam.WM_TRANSFER_TASK:
-                    //Update_Transfer_Task(dc);
-                    break;
                 default:
                     break;
             }
+        }
+
+        private void Update_New_Note(CDataCell dc)
+        {
+            Post_it note = new Post_it(dc);
+
+            note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+            note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+            note.Post_it_Click += new Post_it_Event(Post_it_Click);
+            note.TextBoxRTFString = dc.DC_memoRTF;
+            //note.MemoColor = data.DC_memoColor;
+            note.MemoColor = Color.Gold;
+
+            panel_Bulletin.Controls.Add(note);
+
+            Update_Notes_Position();
+            Send_Log_Message("4>BulletinBoard::Update_New_Note -> Add Note : " + dc.DC_title);
+        }
+
+        private void Update_Modify_BulletinBoard(CDataCell dc)
+        {
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_BulletinBoard : -> Completed" + dc.DC_title);
         }
 
         private void Send_Log_Message(string msg)
@@ -242,7 +199,6 @@ namespace WellaTodo
         private void New_Note()
         {
             CDataCell dc = new CDataCell();
-            DateTime dt = DateTime.Now;
 
             dc.DC_listName = "작업";
             dc.DC_title = "새로운 메모를 작성하세요";
@@ -252,23 +208,6 @@ namespace WellaTodo
 
             Send_Log_Message("1>BulletinBoard::New_Note -> Add Note : " + dc.DC_title);
             m_Controller.Perform_Add_BulletinBoard(dc);
-        }
-
-        private void Update_New_Note(CDataCell dc)
-        {
-            Post_it note = new Post_it();
-
-            note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
-            note.Post_it_Click -= new Post_it_Event(Post_it_Click);
-            note.Post_it_Click += new Post_it_Event(Post_it_Click);
-            note.TextBoxRTFString = dc.DC_memoRTF;
-            //note.MemoColor = data.DC_memoColor;
-            note.MemoColor = Color.Gold;
-
-            panel_Bulletin.Controls.Add(note);
-
-            Update_Notes_Position();
-            Send_Log_Message("4>BulletinBoard::Update_New_Note -> Add Note : " + dc.DC_title);
         }
 
         private void Delete_Note(Post_it note)
@@ -281,6 +220,32 @@ namespace WellaTodo
             IsUnsaved = true;
 
             Update_Notes_Position();
+        }
+
+        private void Load_Data()
+        {
+            Console.WriteLine("BulletinBoardForm::Load_Data");
+
+            IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard();
+
+            foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
+            {
+                Post_it note = new Post_it(dc);
+
+                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                note.Post_it_Click += new Post_it_Event(Post_it_Click);
+                note.TextBoxRTFString = dc.DC_memoRTF;
+                //note.MemoColor = data.DC_memoColor;
+                note.MemoColor = Color.Gold;
+
+                panel_Bulletin.Controls.Add(note);
+            }
+        }
+
+        private void Save_Data()
+        {
+            Console.WriteLine("BulletinBoardForm::Save_Data");
         }
 
         private void Save_File()
@@ -323,17 +288,6 @@ namespace WellaTodo
                 }
             }
 
-            foreach (string str in stringRTF)
-            {
-                Post_it note = new Post_it();
-                panel_Bulletin.Controls.Add(note);
-                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
-                note.Post_it_Click += new Post_it_Event(Post_it_Click);
-                note.TextBoxRTFString = str;
-
-                Console.WriteLine(note.TextBoxRTFString);
-            }
-
             IsUnsaved = false;
         }
 
@@ -365,8 +319,14 @@ namespace WellaTodo
             Console.WriteLine("BulletinBoardForm::Show_Note_Editor");
             memoEditorForm.TextBoxRTFString = note.TextBoxRTFString;
             memoEditorForm.StartPosition = FormStartPosition.CenterParent;
+
             memoEditorForm.ShowDialog();
+
             note.TextBoxRTFString = memoEditorForm.TextBoxRTFString;
+            note.DataCell.DC_memoRTF = memoEditorForm.TextBoxRTFString;
+
+            Send_Log_Message("1>BulletinBoardForm::Show_Note_Editor -> Note Changed :" + note.DataCell.DC_title);
+            m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
         }
 
         // ----------------------------------------------------------
