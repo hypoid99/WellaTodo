@@ -16,6 +16,8 @@ namespace WellaTodo
     {
         public event Post_it_Event Post_it_Click;
 
+        Popup popup;
+
         private string _textBoxString;
         public string TextBoxString
         {
@@ -35,6 +37,21 @@ namespace WellaTodo
             {
                 _textBoxRTFString = value;
                 richTextBox.Rtf = _textBoxRTFString;
+            }
+        }
+
+        private Color _memoColor;
+        public Color MemoColor 
+        {
+            get 
+            {
+                _memoColor = BackColor;
+                return _memoColor;
+            }
+            set 
+            { 
+                _memoColor = value; 
+                BackColor = _memoColor;
             }
         }
 
@@ -58,6 +75,8 @@ namespace WellaTodo
             richTextBox.ReadOnly = true;
 
             pictureBox_Delete.Location = new Point(panel_Header.Width - 28, 4);
+
+            panel_ColorPallet.Visible = false;
         }
 
         private void Update_Post_it()
@@ -65,9 +84,37 @@ namespace WellaTodo
             pictureBox_Delete.Location = new Point(panel_Header.Width - 28, 4);
         }
 
-        //
+        private void pictureBox_Color_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("pictureBox_Color_Click");
+
+            PictureBox sd = (PictureBox)sender;
+
+            switch (sd.Name)
+            {
+                case "pictureBox_Color1":
+                    BackColor = richTextBox.BackColor = pictureBox_Color1.BackColor;
+                    break;
+                case "pictureBox_Color2":
+                    BackColor = richTextBox.BackColor = pictureBox_Color2.BackColor;
+                    break;
+                case "pictureBox_Color3":
+                    BackColor = richTextBox.BackColor = pictureBox_Color3.BackColor;
+                    break;
+                case "pictureBox_Color4":
+                    BackColor = richTextBox.BackColor = pictureBox_Color4.BackColor;
+                    break;
+                case "pictureBox_Color5":
+                    BackColor = richTextBox.BackColor = pictureBox_Color5.BackColor;
+                    break;
+            }
+
+            popup.Close();
+        }
+
+        // --------------------------------------------------------------
         // 툴바 이벤트
-        //
+        // --------------------------------------------------------------
         private void pictureBox_Edit_Click(object sender, EventArgs e)
         {
             Console.WriteLine("pictureBox_Edit_Click");
@@ -95,26 +142,16 @@ namespace WellaTodo
         private void pictureBox_ColorPallet_Click(object sender, EventArgs e)
         {
             Console.WriteLine("pictureBox_ColorPallet_Click");
-            Popup complex;
-            Panel cp;
-            cp = new Panel();
-            cp.Size = new Size(500, 500);
-            Button btn1 = new Button();
-            btn1.Text = "No1";
-            btn1.Location = new Point(10, 10);
-            Button btn2 = new Button();
-            btn2.Text = "No2";
-            btn2.Location = new Point(10, 50);
-            cp.Controls.Add(btn1);
-            cp.Controls.Add(btn2);
 
-            complex = new Popup(cp);
-            complex.Show(sender as PictureBox);
+            panel_ColorPallet.Size = new Size(175, 40);
+
+            popup = new Popup(panel_ColorPallet);
+            popup.Show(sender as PictureBox);
         }
 
         private void pictureBox_Image_Click(object sender, EventArgs e)
         {
-
+            Console.WriteLine("pictureBox_Image_Click");
         }
 
     }

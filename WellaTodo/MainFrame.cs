@@ -134,6 +134,11 @@ namespace WellaTodo
             
             timer1.Interval = 3000;
             timer1.Enabled = true;
+
+            Menu_Task(); // 작업이 초기 출력됨
+
+            Update_Task_Width();
+            Update_Menu_Metadata();
         }
 
         private void MainFrame_FormClosing(object sender, FormClosingEventArgs e)
@@ -183,6 +188,9 @@ namespace WellaTodo
             isActivated = false;
         }
 
+        //--------------------------------------------------------------
+        // 초기화 - 태스트 및 메뉴리스트 초기 데이타 로딩
+        //--------------------------------------------------------------
         private void Initiate_View()
         {
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
@@ -324,6 +332,78 @@ namespace WellaTodo
             button2.Size = new Size(75, 25);
 
             Send_Log_Message(">MainFrame::Initiate_View");
+        }
+
+        private void Initiate_MenuList()
+        {
+            TwoLineList divider1 = new TwoLineList();
+            TwoLineList twolinelist_Menu1 = new TwoLineList(new Bitmap(ICON_SUNNY), "오늘 할 일", "", "");
+            TwoLineList twolinelist_Menu2 = new TwoLineList(new Bitmap(ICON_GRADE), "중요", "", "");
+            TwoLineList twolinelist_Menu3 = new TwoLineList(new Bitmap(ICON_EVENTNOTE), "계획된 일정", "", "");
+            TwoLineList twolinelist_Menu4 = new TwoLineList(new Bitmap(ICON_CHECKCIRCLE), "완료됨", "", "");
+            TwoLineList twolinelist_Menu5 = new TwoLineList(new Bitmap(ICON_HOME), "작업", "", "");
+            TwoLineList divider2 = new TwoLineList();
+            twolinelist_Menu1.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu2.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu3.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu4.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu5.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+            twolinelist_Menu5.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+            twolinelist_Menu5.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
+
+            flowLayoutPanel_Menulist.AutoScroll = false;
+            flowLayoutPanel_Menulist.HorizontalScroll.Maximum = 0;
+            flowLayoutPanel_Menulist.HorizontalScroll.Enabled = false;
+            flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
+            flowLayoutPanel_Menulist.AutoScroll = true;
+
+            flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
+            flowLayoutPanel_Menulist.Margin = new Padding(0);
+            flowLayoutPanel_Menulist.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel_Menulist.WrapContents = false;
+            flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
+            flowLayoutPanel_Menulist.Location = new Point(labelUserName.Location.X, labelUserName.Height);
+            flowLayoutPanel_Menulist.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT);
+
+            flowLayoutPanel_Menulist.Controls.Add(divider1);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu1);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu2);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu3);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu4);
+            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu5);
+            flowLayoutPanel_Menulist.Controls.Add(divider2);
+
+            foreach (string list_name in m_Controller.Query_ListName()) // 목록 리스트를 등록한다
+            {
+                if (list_name != "작업")
+                {
+                    TwoLineList list;
+                    list = new TwoLineList(new Bitmap(ICON_LIST), list_name, "", "");
+                    list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
+                    list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
+                    list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
+                    list.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
+                    list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
+                    list.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
+
+                    flowLayoutPanel_Menulist.Controls.Add(list);  // 판넬에 목록 저장
+                }
+            }
+
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls) // 폭 조절
+            {
+                item.Width = flowLayoutPanel_Menulist.VerticalScroll.Visible
+                ? flowLayoutPanel_Menulist.Width - 2 - SystemInformation.VerticalScrollBarWidth
+                : flowLayoutPanel_Menulist.Width - 2;
+                item.IsSelected = false;
+            }
+
+            m_Selected_Menu = twolinelist_Menu5; // 최초로 "작업"이 선택됨
+            m_Pre_Selected_Menu = m_Selected_Menu;
+            m_Selected_Menu.IsSelected = true;
+            enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
+
+            Send_Log_Message(">MainFrame::Initiate_MenuList");
         }
 
         //--------------------------------------------------------------
@@ -602,6 +682,9 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
+                case WParam.WM_BULLETINBOARD_ADD:
+                    Update_Add_Task(dc);
+                    break;
                 default:
                     break;
             }
@@ -619,85 +702,7 @@ namespace WellaTodo
             }
         }
 
-        //--------------------------------------------------------------
-        // 메뉴리스트 초기 데이타 로딩
-        //--------------------------------------------------------------
-        private void Initiate_MenuList()
-        {
-            TwoLineList divider1 = new TwoLineList();
-            TwoLineList twolinelist_Menu1 = new TwoLineList(new Bitmap(ICON_SUNNY), "오늘 할 일", "", "");
-            TwoLineList twolinelist_Menu2 = new TwoLineList(new Bitmap(ICON_GRADE), "중요", "", "");
-            TwoLineList twolinelist_Menu3 = new TwoLineList(new Bitmap(ICON_EVENTNOTE), "계획된 일정", "", "");
-            TwoLineList twolinelist_Menu4 = new TwoLineList(new Bitmap(ICON_CHECKCIRCLE), "완료됨", "", "");
-            TwoLineList twolinelist_Menu5 = new TwoLineList(new Bitmap(ICON_HOME), "작업", "", "");
-            TwoLineList divider2 = new TwoLineList();
-            twolinelist_Menu1.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            twolinelist_Menu2.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            twolinelist_Menu3.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            twolinelist_Menu4.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            twolinelist_Menu5.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            twolinelist_Menu5.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
-            twolinelist_Menu5.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
-
-            flowLayoutPanel_Menulist.AutoScroll = false;
-            flowLayoutPanel_Menulist.HorizontalScroll.Maximum = 0;
-            flowLayoutPanel_Menulist.HorizontalScroll.Enabled = false;
-            flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
-            flowLayoutPanel_Menulist.AutoScroll = true;
-
-            flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
-            flowLayoutPanel_Menulist.Margin = new Padding(0);
-            flowLayoutPanel_Menulist.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel_Menulist.WrapContents = false;
-            flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
-            flowLayoutPanel_Menulist.Location = new Point(labelUserName.Location.X, labelUserName.Height);
-            flowLayoutPanel_Menulist.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT);
-
-            flowLayoutPanel_Menulist.Controls.Add(divider1);
-            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu1);
-            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu2);
-            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu3);
-            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu4);
-            flowLayoutPanel_Menulist.Controls.Add(twolinelist_Menu5);
-            flowLayoutPanel_Menulist.Controls.Add(divider2);
-
-            foreach (string list_name in m_Controller.Query_ListName()) // 목록 리스트를 등록한다
-            {
-                if (list_name != "작업")
-                {
-                    TwoLineList list;
-                    list = new TwoLineList(new Bitmap(ICON_LIST), list_name, "", "");
-                    list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
-                    list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-                    list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
-                    list.DragEnter += new DragEventHandler(TwoLineList_DragEnter);
-                    list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
-                    list.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
-
-                    flowLayoutPanel_Menulist.Controls.Add(list);  // 판넬에 목록 저장
-                }
-            }
-
-            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls) // 폭 조절
-            {
-                item.Width = flowLayoutPanel_Menulist.VerticalScroll.Visible
-                ? flowLayoutPanel_Menulist.Width - 2 - SystemInformation.VerticalScrollBarWidth
-                : flowLayoutPanel_Menulist.Width - 2;
-                item.IsSelected = false;
-            }
-
-            m_Selected_Menu = twolinelist_Menu5; // 최초로 "작업"이 선택됨
-            m_Pre_Selected_Menu = m_Selected_Menu;
-            m_Selected_Menu.IsSelected = true;
-            enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
-
-            Send_Log_Message(">MainFrame::Initiate_MenuList -> Display Menu_Task");
-            Menu_Task();
-
-            Update_Task_Width();
-            Update_Menu_Metadata();
-        }
-
+        
         //--------------------------------------------------------------
         // 할일/목록 파일 로딩 & 세이빙
         //--------------------------------------------------------------

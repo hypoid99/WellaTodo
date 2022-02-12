@@ -116,7 +116,8 @@ namespace WellaTodo
             }
             location = control.PointToClient(location);
 
-            Show(control, location, ToolStripDropDownDirection.BelowRight);
+            location.Y -= Size.Height;
+            Show(control, location, ToolStripDropDownDirection.AboveRight);
         }
 
         private void SetOwnerItem(Control control)

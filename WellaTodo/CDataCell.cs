@@ -15,6 +15,9 @@ namespace WellaTodo
         private bool _complete;
         private bool _important;
         private string _memo;
+        private string _memoRTF;
+        private bool _bulletin;
+        private string _memoColor;
         private DateTime _dateCreated;
         private bool _myToday;
         private DateTime _myTodayTime;
@@ -31,6 +34,9 @@ namespace WellaTodo
         public bool DC_complete { get => _complete; set => _complete = value; }
         public bool DC_important { get => _important; set => _important = value; }
         public string DC_memo { get => _memo; set => _memo = value; }
+        public string DC_memoRTF { get => _memoRTF; set => _memoRTF = value; }
+        public bool DC_bulletin { get => _bulletin; set => _bulletin = value; }
+        public string DC_memoColor { get => _memoColor; set => _memoColor = value; }
         public DateTime DC_dateCreated { get => _dateCreated; set => _dateCreated = value; }
         public bool DC_myToday { get => _myToday; set => _myToday = value; }
         public DateTime DC_myTodayTime { get => _myTodayTime; set => _myTodayTime = value; }
@@ -49,6 +55,9 @@ namespace WellaTodo
             _complete = false;
             _important = false;
             _memo = "메모추가";
+            _memoRTF = "";
+            _bulletin = false;
+            _memoColor = "";
             _dateCreated = DateTime.Now;
             _myToday = false;
             _myTodayTime = default;
@@ -68,6 +77,9 @@ namespace WellaTodo
             _complete = false;
             _important = false;
             _memo = "메모추가";
+            _memoRTF = "";
+            _bulletin = false;
+            _memoColor = "";
             _dateCreated = DateTime.Now;
             _myToday = false;
             _myTodayTime = default;

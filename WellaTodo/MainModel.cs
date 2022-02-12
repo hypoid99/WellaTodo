@@ -42,7 +42,8 @@ namespace WellaTodo
 		WM_MENULIST_DELETE,
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
-		WM_TRANSFER_TASK
+		WM_TRANSFER_TASK,
+		WM_BULLETINBOARD_ADD
 	}
 
 	public class MainModel : IModel
@@ -691,6 +692,21 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::Modifiy_Repeat : type " + data.DC_repeatType);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REPEAT));
+		}
+
+		public void Add_BulletinBoard(CDataCell dc)
+        {
+			CDataCell data = (CDataCell)dc.Clone();
+
+			m_Task_ID_Num++;
+
+			data.DC_task_ID = m_Task_ID_Num;
+			data.DC_dateCreated = DateTime.Now;
+
+			myTaskItems.Insert(0, data);
+
+			Notify_Log_Message("3>MainModel::Add_BulletinBoard -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_ADD));  // deep copy 할 것!
 		}
 
 		private CDataCell Find(CDataCell dc)

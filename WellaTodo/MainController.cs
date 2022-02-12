@@ -86,6 +86,9 @@ namespace WellaTodo
 			m_model.Open_Data(filePath);	
 		}
 
+		// -----------------------------------------------------------
+		// Perform Command
+		// -----------------------------------------------------------
 		public void Perform_Menulist_Add(string target)
         {
 			Send_Log_Message("2>MainController::Perform_Menulist_Add : " + target);
@@ -231,7 +234,15 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
+		public void Perform_Add_BulletinBoard(CDataCell dc)
+        {
+			Send_Log_Message("2>MainController::Perform_Add_BulletinBoard : " + dc.DC_title);
+			m_model.Add_BulletinBoard(dc);
+		}
 
+		// -----------------------------------------------------------
+		// DB Query
+		// -----------------------------------------------------------
 		public List<string> Query_ListName()
 		{
 			List<string> list = new List<string>();
@@ -328,6 +339,16 @@ namespace WellaTodo
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_All_Task -> Counter : " + deepCopy.Count);
+			return deepCopy;
+		}
+
+		public IEnumerable<CDataCell> Query_BulletineBoard()
+		{
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+											 where dt.DC_bulletin
+											 select dt;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_BulletineBoard -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 

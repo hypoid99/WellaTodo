@@ -58,12 +58,10 @@ namespace WellaTodo
             calculator.MdiParent = this;
             notePad.MdiParent = this;
 
-
             bulletinBoard.Show();
             calendar.Show();
             notePad.Show();
             toDoList.Show();
-
 
             toDoList.Activate();
             LayoutMdi(MdiLayout.TileVertical);

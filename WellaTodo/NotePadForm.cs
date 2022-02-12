@@ -32,16 +32,13 @@ namespace WellaTodo
 
         private string m_FileName;
         private string OpenedDocumentPath { get; set; } = "NoName";
-        public string DefaultSaveDirectory { get; set; } = "c:\\";
+        //public string DefaultSaveDirectory { get; set; } = "c:\\";
+        public string DefaultSaveDirectory { get; set; }
         public bool IsOpened { get; set; } = false;
         private bool isUnsaved = false;
         public bool IsUnsaved
         {
-            get
-            {
-                return isUnsaved;
-            }
-
+            get => isUnsaved;
             set
             {
                 isUnsaved = value;
