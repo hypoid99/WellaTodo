@@ -53,8 +53,8 @@ namespace WellaTodo
             }
             set 
             { 
-                _memoColor = value; 
-                BackColor = _memoColor;
+                _memoColor = value;
+                BackColor = richTextBox.BackColor = _memoColor;
             }
         }
 
@@ -64,7 +64,7 @@ namespace WellaTodo
 
             DataCell = dc;
             TextBoxRTFString = dc.DC_memoRTF;
-            //MemoColor = dc.DC_memoColor;
+            MemoColor = Color.FromName(dc.DC_memoColor);
         }
 
         private void Post_it_Load(object sender, EventArgs e)
@@ -93,7 +93,7 @@ namespace WellaTodo
 
         private void pictureBox_Color_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("pictureBox_Color_Click");
+            //Console.WriteLine("pictureBox_Color_Click");
 
             PictureBox sd = (PictureBox)sender;
 
@@ -117,6 +117,8 @@ namespace WellaTodo
             }
 
             popup.Close();
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Color"));
         }
 
         // --------------------------------------------------------------
@@ -124,31 +126,31 @@ namespace WellaTodo
         // --------------------------------------------------------------
         private void pictureBox_Edit_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("pictureBox_Edit_Click");
+            //Console.WriteLine("pictureBox_Edit_Click");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs ("Edit"));
         }
 
         private void richTextBox_DoubleClick(object sender, EventArgs e)
         {
-            Console.WriteLine("richTextBox_DoubleClick");
+            //Console.WriteLine("richTextBox_DoubleClick");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Edit"));
         }
 
         private void pictureBox_Delete_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("pictureBox_Delete_Click");
+            //Console.WriteLine("pictureBox_Delete_Click");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Delete"));
         }
 
         private void richTextBox_TextChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("richTextBox_TextChanged");
+            //Console.WriteLine("richTextBox_TextChanged");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Changed"));
         }
 
         private void pictureBox_ColorPallet_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("pictureBox_ColorPallet_Click");
+            //Console.WriteLine("pictureBox_ColorPallet_Click");
 
             panel_ColorPallet.Size = new Size(175, 40);
 

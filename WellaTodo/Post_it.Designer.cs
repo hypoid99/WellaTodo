@@ -38,13 +38,13 @@
             this.pictureBox_ColorPallet = new System.Windows.Forms.PictureBox();
             this.pictureBox_Alarm = new System.Windows.Forms.PictureBox();
             this.panel_Body = new System.Windows.Forms.Panel();
-            this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.panel_ColorPallet = new System.Windows.Forms.Panel();
-            this.pictureBox_Color1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Color2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Color3 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Color4 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Color5 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Color4 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Color3 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Color2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Color1 = new System.Windows.Forms.PictureBox();
+            this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.panel_Header.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Edit)).BeginInit();
@@ -56,11 +56,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Alarm)).BeginInit();
             this.panel_Body.SuspendLayout();
             this.panel_ColorPallet.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel_Header
@@ -185,21 +185,6 @@
             this.panel_Body.Size = new System.Drawing.Size(202, 140);
             this.panel_Body.TabIndex = 2;
             // 
-            // richTextBox
-            // 
-            this.richTextBox.BackColor = System.Drawing.Color.Gold;
-            this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox.HideSelection = false;
-            this.richTextBox.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox.Name = "richTextBox";
-            this.richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.richTextBox.Size = new System.Drawing.Size(202, 140);
-            this.richTextBox.TabIndex = 0;
-            this.richTextBox.Text = "";
-            this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
-            this.richTextBox.DoubleClick += new System.EventHandler(this.richTextBox_DoubleClick);
-            // 
             // panel_ColorPallet
             // 
             this.panel_ColorPallet.BackColor = System.Drawing.Color.GreenYellow;
@@ -214,48 +199,22 @@
             this.panel_ColorPallet.Size = new System.Drawing.Size(175, 40);
             this.panel_ColorPallet.TabIndex = 1;
             // 
-            // pictureBox_Color1
+            // pictureBox_Color5
             // 
-            this.pictureBox_Color1.BackColor = System.Drawing.Color.Orange;
-            this.pictureBox_Color1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
-            this.pictureBox_Color1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color1.Location = new System.Drawing.Point(4, 4);
-            this.pictureBox_Color1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Color1.Name = "pictureBox_Color1";
-            this.pictureBox_Color1.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Color1.TabIndex = 0;
-            this.pictureBox_Color1.TabStop = false;
-            this.pictureBox_Color1.Click += new System.EventHandler(this.pictureBox_Color_Click);
-            // 
-            // pictureBox_Color2
-            // 
-            this.pictureBox_Color2.BackColor = System.Drawing.Color.Turquoise;
-            this.pictureBox_Color2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
-            this.pictureBox_Color2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color2.Location = new System.Drawing.Point(38, 4);
-            this.pictureBox_Color2.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Color2.Name = "pictureBox_Color2";
-            this.pictureBox_Color2.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Color2.TabIndex = 0;
-            this.pictureBox_Color2.TabStop = false;
-            this.pictureBox_Color2.Click += new System.EventHandler(this.pictureBox_Color_Click);
-            // 
-            // pictureBox_Color3
-            // 
-            this.pictureBox_Color3.BackColor = System.Drawing.Color.Tomato;
-            this.pictureBox_Color3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
-            this.pictureBox_Color3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color3.Location = new System.Drawing.Point(72, 4);
-            this.pictureBox_Color3.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Color3.Name = "pictureBox_Color3";
-            this.pictureBox_Color3.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Color3.TabIndex = 0;
-            this.pictureBox_Color3.TabStop = false;
-            this.pictureBox_Color3.Click += new System.EventHandler(this.pictureBox_Color_Click);
+            this.pictureBox_Color5.BackColor = System.Drawing.Color.SkyBlue;
+            this.pictureBox_Color5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
+            this.pictureBox_Color5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Color5.Location = new System.Drawing.Point(140, 4);
+            this.pictureBox_Color5.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Color5.Name = "pictureBox_Color5";
+            this.pictureBox_Color5.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color5.TabIndex = 0;
+            this.pictureBox_Color5.TabStop = false;
+            this.pictureBox_Color5.Click += new System.EventHandler(this.pictureBox_Color_Click);
             // 
             // pictureBox_Color4
             // 
-            this.pictureBox_Color4.BackColor = System.Drawing.Color.Yellow;
+            this.pictureBox_Color4.BackColor = System.Drawing.Color.Orange;
             this.pictureBox_Color4.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox_Color4.Location = new System.Drawing.Point(106, 4);
@@ -266,18 +225,59 @@
             this.pictureBox_Color4.TabStop = false;
             this.pictureBox_Color4.Click += new System.EventHandler(this.pictureBox_Color_Click);
             // 
-            // pictureBox_Color5
+            // pictureBox_Color3
             // 
-            this.pictureBox_Color5.BackColor = System.Drawing.Color.Violet;
-            this.pictureBox_Color5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
-            this.pictureBox_Color5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color5.Location = new System.Drawing.Point(140, 4);
-            this.pictureBox_Color5.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Color5.Name = "pictureBox_Color5";
-            this.pictureBox_Color5.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Color5.TabIndex = 0;
-            this.pictureBox_Color5.TabStop = false;
-            this.pictureBox_Color5.Click += new System.EventHandler(this.pictureBox_Color_Click);
+            this.pictureBox_Color3.BackColor = System.Drawing.Color.PaleGreen;
+            this.pictureBox_Color3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
+            this.pictureBox_Color3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Color3.Location = new System.Drawing.Point(72, 4);
+            this.pictureBox_Color3.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Color3.Name = "pictureBox_Color3";
+            this.pictureBox_Color3.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color3.TabIndex = 0;
+            this.pictureBox_Color3.TabStop = false;
+            this.pictureBox_Color3.Click += new System.EventHandler(this.pictureBox_Color_Click);
+            // 
+            // pictureBox_Color2
+            // 
+            this.pictureBox_Color2.BackColor = System.Drawing.Color.Violet;
+            this.pictureBox_Color2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
+            this.pictureBox_Color2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Color2.Location = new System.Drawing.Point(38, 4);
+            this.pictureBox_Color2.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Color2.Name = "pictureBox_Color2";
+            this.pictureBox_Color2.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color2.TabIndex = 0;
+            this.pictureBox_Color2.TabStop = false;
+            this.pictureBox_Color2.Click += new System.EventHandler(this.pictureBox_Color_Click);
+            // 
+            // pictureBox_Color1
+            // 
+            this.pictureBox_Color1.BackColor = System.Drawing.Color.Yellow;
+            this.pictureBox_Color1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
+            this.pictureBox_Color1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Color1.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Color1.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Color1.Name = "pictureBox_Color1";
+            this.pictureBox_Color1.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color1.TabIndex = 0;
+            this.pictureBox_Color1.TabStop = false;
+            this.pictureBox_Color1.Click += new System.EventHandler(this.pictureBox_Color_Click);
+            // 
+            // richTextBox
+            // 
+            this.richTextBox.BackColor = System.Drawing.Color.Gold;
+            this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox.HideSelection = false;
+            this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Name = "richTextBox";
+            this.richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.richTextBox.Size = new System.Drawing.Size(202, 140);
+            this.richTextBox.TabIndex = 0;
+            this.richTextBox.Text = "";
+            this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
+            this.richTextBox.DoubleClick += new System.EventHandler(this.richTextBox_DoubleClick);
             // 
             // Post_it
             // 
@@ -304,11 +304,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Alarm)).EndInit();
             this.panel_Body.ResumeLayout(false);
             this.panel_ColorPallet.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).EndInit();
             this.ResumeLayout(false);
 
         }

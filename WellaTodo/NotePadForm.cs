@@ -100,7 +100,7 @@ namespace WellaTodo
 
         private void Initiate()
         {
-            Console.WriteLine("Initiate");
+            //Console.WriteLine("Initiate");
 
             richTextBox.WordWrap = false;
             //richTextBox.SelectionCharOffset = 0;
@@ -454,7 +454,7 @@ namespace WellaTodo
 
         private void comboBox_FontSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("comboBox_FontSelect_SelectedIndexChanged");
+            //Console.WriteLine("comboBox_FontSelect_SelectedIndexChanged");
 
             string fontName = comboBox_FontSelect.SelectedItem.ToString();
             float fontSize;
@@ -478,7 +478,7 @@ namespace WellaTodo
 
         private void comboBox_FontSize_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("comboBox_FontSize_SelectedIndexChanged");
+            //Console.WriteLine("comboBox_FontSize_SelectedIndexChanged");
 
             string fontName = comboBox_FontSelect.SelectedItem.ToString();
             float fontSize = (float)comboBox_FontSize.SelectedItem;
@@ -492,7 +492,7 @@ namespace WellaTodo
 
         private void button_FontSizeUp_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("button_FontSizeUp_Click");
+            //Console.WriteLine("button_FontSizeUp_Click");
 
             int size = (int)comboBox_FontSize.SelectedIndex;
             size++;
@@ -502,7 +502,7 @@ namespace WellaTodo
 
         private void button_FontSizeDown_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("button_FontSizeDown_Click");
+            //Console.WriteLine("button_FontSizeDown_Click");
 
             int size = (int)comboBox_FontSize.SelectedIndex;
             size--;
@@ -512,8 +512,8 @@ namespace WellaTodo
 
         private void checkBox_Bold_CheckedChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("checkBox_Bold_CheckedChanged : " + checkBox_Bold.Checked);
-            Console.WriteLine("checkBox_Bold_CheckedChanged -> font size : " + richTextBox.SelectionFont.Size);
+            //Console.WriteLine("checkBox_Bold_CheckedChanged : " + checkBox_Bold.Checked);
+            //Console.WriteLine("checkBox_Bold_CheckedChanged -> font size : " + richTextBox.SelectionFont.Size);
 
             if (checkBox_Bold.Checked)
             {
@@ -529,7 +529,7 @@ namespace WellaTodo
 
         private void checkBox_Italic_CheckedChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("checkBox_Italic_CheckedChanged : " + checkBox_Italic.Checked);
+            //Console.WriteLine("checkBox_Italic_CheckedChanged : " + checkBox_Italic.Checked);
 
             if (checkBox_Italic.Checked)
             {
@@ -545,7 +545,7 @@ namespace WellaTodo
 
         private void checkBox_Underline_CheckedChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("checkBox_Underline_CheckedChanged : " + checkBox_Underline.Checked);
+            //Console.WriteLine("checkBox_Underline_CheckedChanged : " + checkBox_Underline.Checked);
 
             if (checkBox_Underline.Checked)
             {
@@ -561,7 +561,7 @@ namespace WellaTodo
 
         private void checkBox_Strike_CheckedChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("checkBox_Strike_CheckedChanged : " + checkBox_Strike.Checked);
+            //Console.WriteLine("checkBox_Strike_CheckedChanged : " + checkBox_Strike.Checked);
 
             if (checkBox_Strike.Checked)
             {
@@ -683,12 +683,13 @@ namespace WellaTodo
 
             comboBox_FontSelect.SelectedIndex = m_FontName.IndexOf(richTextBox.SelectionFont.FontFamily.Name);
             comboBox_FontSize.SelectedItem = richTextBox.SelectionFont.Size;
+            /*
             Console.WriteLine("richTextBox_SelectionChanged -> "
                               + richTextBox.SelectionFont.FontFamily.Name
                               + "["
                               + richTextBox.SelectionFont.Size
                               + "]");
-
+            */
             checkBox_Bold.Checked = richTextBox.SelectionFont.Bold;
             checkBox_Italic.Checked = richTextBox.SelectionFont.Italic;
             checkBox_Underline.Checked = richTextBox.SelectionFont.Underline;

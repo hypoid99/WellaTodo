@@ -52,6 +52,7 @@ namespace WellaTodo
         private void MemoEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             TextBoxRTFString = richTextBox.Rtf;
+            TextBoxString = richTextBox.Text;
         }
 
         private void Initiate()

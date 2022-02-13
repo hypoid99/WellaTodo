@@ -246,6 +246,12 @@ namespace WellaTodo
 			m_model.Modify_BulletinBoard(dc);
 		}
 
+		public void Perform_Delete_BulletinBoard(CDataCell dc)
+        {
+			Send_Log_Message("2>MainController::Perform_Delete_BulletinBoard : " + dc.DC_title);
+			m_model.Delete_BulletinBoard(dc);
+		}
+
 		// -----------------------------------------------------------
 		// DB Query
 		// -----------------------------------------------------------

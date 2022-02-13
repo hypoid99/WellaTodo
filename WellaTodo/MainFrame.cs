@@ -685,6 +685,12 @@ namespace WellaTodo
                 case WParam.WM_BULLETINBOARD_ADD:
                     Update_Add_Task(dc);
                     break;
+                case WParam.WM_BULLETINBOARD_DELETE:
+                    Update_Delete_Task(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY:
+                    Update_Modify_Task_Memo(dc);
+                    break;
                 default:
                     break;
             }
@@ -2239,6 +2245,7 @@ namespace WellaTodo
                 if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     SendDataCellToDetailWindow(dc);
+                    item.TD_DataCell.DC_memo = dc.DC_memo;
                     m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
                     item.Refresh();
                     break;
