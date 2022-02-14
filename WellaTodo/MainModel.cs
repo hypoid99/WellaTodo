@@ -722,7 +722,11 @@ namespace WellaTodo
 			}
 
 			data.DC_memo = dc.DC_memo;
+
 			data.DC_memoRTF = dc.DC_memoRTF;
+			data.DC_bulletin = dc.DC_bulletin;
+			data.DC_archive = dc.DC_archive;
+			data.DC_memoTag = dc.DC_memoTag;
 			data.DC_memoColor = dc.DC_memoColor;
 
 			Notify_Log_Message("3>MainModel::Modify_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);

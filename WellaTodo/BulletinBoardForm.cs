@@ -174,6 +174,59 @@ namespace WellaTodo
 
         private void Update_Modify_BulletinBoard(CDataCell dc)
         {
+            Post_it note = null;
+
+            int counter = 0;
+            foreach (Post_it po in panel_Bulletin.Controls)
+            {
+                if (dc.DC_task_ID == po.DataCell.DC_task_ID)
+                {
+                    note = po;
+
+                    counter++;
+                    break;
+                }
+            }
+
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_BulletinBoard -> No matching Data!!");
+                return;
+            }
+
+            if (dc.DC_bulletin)
+            {
+
+            }
+            if (dc.DC_archive)
+            {
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                panel_Bulletin.Controls.Remove(note);
+                note.Dispose();
+            }
+
+            switch (dc.DC_memoTag)
+            {
+                case 0:
+                    break;
+                case 1:
+                    break;
+            }
+
+            switch (dc.DC_memoColor)
+            {
+                case "Yellow":
+                    break;
+                case "Violet":
+                    break;
+                case "PaleGreen":
+                    break;
+                case "Orange":
+                    break;
+                case "SkyBlue":
+                    break;
+            }
+
             Send_Log_Message("4>BulletinBoardForm::Update_Modify_BulletinBoard : -> Completed" + dc.DC_title);
         }
 
@@ -227,16 +280,22 @@ namespace WellaTodo
             switch (e.CommandName)
             {
                 case "Edit":
-                    Show_Note_Editor(note);
+                    Edit_Note(note);
+                    break;
+                case "New":
+                    New_Note();
                     break;
                 case "Delete":
                     Delete_Note(note);
+                    break;
+                case "Archive":
+                    Archive_Note(note);
                     break;
                 case "Changed":
 
                     break;
                 case "Color":
-                    Change_Pallet_Color(note);
+                    Change_Color(note);
                     break;
             }
         }
@@ -245,7 +304,7 @@ namespace WellaTodo
         {
             CDataCell dc = new CDataCell();
 
-            dc.DC_listName = "작업";
+            dc.DC_listName = "메모";
             dc.DC_title = "새로운 메모를 작성하세요";
             dc.DC_bulletin = true;
             dc.DC_memoRTF = "";
@@ -255,7 +314,7 @@ namespace WellaTodo
             m_Controller.Perform_Add_BulletinBoard(dc);
         }
 
-        private void Show_Note_Editor(Post_it note)
+        private void Edit_Note(Post_it note)
         {
             memoEditorForm.TextBoxRTFString = note.TextBoxRTFString;
             memoEditorForm.StartPosition = FormStartPosition.CenterParent;
@@ -266,7 +325,7 @@ namespace WellaTodo
             note.DataCell.DC_memoRTF = memoEditorForm.TextBoxRTFString;
             note.DataCell.DC_memo = memoEditorForm.TextBoxString;
 
-            Send_Log_Message("1>BulletinBoardForm::Show_Note_Editor -> Note Changed :" + note.DataCell.DC_title);
+            Send_Log_Message("1>BulletinBoardForm::Edit_Note -> Note Changed :" + note.DataCell.DC_title);
             m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
         }
 
@@ -277,11 +336,19 @@ namespace WellaTodo
 
         }
 
-        private void Change_Pallet_Color(Post_it note)
+        private void Change_Color(Post_it note)
         {
             note.DataCell.DC_memoColor = note.BackColor.Name;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Pallet_Color -> Pallet Color Changed :" + note.DataCell.DC_title);
+            m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+        }
+
+        private void Archive_Note(Post_it note)
+        {
+            note.DataCell.DC_archive = true;
+
+            Send_Log_Message("1>BulletinBoardForm::Archive_Note :" + note.DataCell.DC_title);
             m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
         }
 
