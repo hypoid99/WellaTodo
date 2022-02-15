@@ -205,8 +205,6 @@ namespace WellaTodo
 
         private void pictureBox_Tag_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_Color_Click");
-
             PictureBox sd = (PictureBox)sender;
 
             switch (sd.Name)
@@ -298,7 +296,6 @@ namespace WellaTodo
 
         private void pictureBox_ColorPallet_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_ColorPallet_Click");
             panel_ColorPallet.Size = new Size(175, 40);
 
             popup = new Popup(panel_ColorPallet);

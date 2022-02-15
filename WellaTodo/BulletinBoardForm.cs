@@ -17,15 +17,39 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> View_Changed_Event;
 
+        static readonly string WINDOW_CAPTION = "BulletinBoard";
         static readonly int NOTE_WIDTH = 200;
         static readonly int NOTE_HEIGHT = 170;
         static readonly int NOTE_GAP = 10;
 
+        public enum MemoMenuList
+        {
+            MEMO_MENU = 1,
+            ALARM_MENU = 2,
+            ARCHIVE_MENU = 3,
+            TAG_RED_MENU = 4,
+            TAG_ORANGE_MENU = 5,
+            TAG_YELLOW_MENU = 6,
+            TAG_GREEN_MENU = 7,
+            TAG_BLUE_MENU = 8,
+            TAG_COMMON_MENU = 9
+        }
+
+        public enum MemoTagList
+        {
+            TAG_COMMON = 0,
+            TAG_RED = 1,
+            TAG_ORANGE = 2,
+            TAG_YELLOW = 3,
+            TAG_GREEN = 4,
+            TAG_BLUE = 5
+        }
+
         MainController m_Controller;
 
         MemoEditorForm memoEditorForm = new MemoEditorForm();
-
-        int m_SelectedMenu = 1;  // 메모 메뉴
+        MemoMenuList m_Selected_Menu;
+        MemoTagList m_Tag;
 
         public BulletinBoardForm()
         {
@@ -40,13 +64,11 @@ namespace WellaTodo
         private void BulletinBoardForm_Load(object sender, EventArgs e)
         {
             Initiate();
-
-            Update_Notes_Position();
         }
 
         private void BulletinBoardForm_Resize(object sender, EventArgs e)
         {
-            Update_Notes_Position();
+            Update_Display();
         }
 
         private void BulletinBoardForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -65,16 +87,14 @@ namespace WellaTodo
         {
             Load_Data();
 
-            m_SelectedMenu = 1;  // 메모 메뉴
+            m_Selected_Menu = MemoMenuList.MEMO_MENU;
             label_Title.Text = "Bulleting Board - 메모";
 
-            Update_BulletinBoard();
+            Update_Display();
         }
 
         private void Load_Data()
         {
-            //Console.WriteLine("BulletinBoardForm::Load_Data");
-
             IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard();
 
             foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
@@ -97,45 +117,13 @@ namespace WellaTodo
             }
         }
 
-        private void Update_BulletinBoard()
+        private void Update_Display()
         {
-            /*
-            switch (m_SelectedMenu)
-            {
-                case 1:  // 메모
-                    List_Note();
-                    break;
-                case 2:  // 알람
-                    break;
-                case 3:  // 보관처리
-                    List_Archive();
-                    break;
-                case 4:  // 빨강
-                    List_Note(1);
-                    break;
-                case 5:  // 주황
-                    List_Note(2);
-                    break;
-                case 6:  // 노랑
-                    List_Note(3);
-                    break;
-                case 7:  // 초록
-                    List_Note(4);
-                    break;
-                case 8:  // 파랑
-                    List_Note(5);
-                    break;
-                case 9:  // 해제
-                    List_Note(0);
-                    break;
-            }
-            */
             Update_Notes_Position();
         }
 
         private void Update_Notes_Position()
         {
-            //Console.WriteLine("BulletinBoardForm::Update_Notes_Position");
             int posX = 10;
             int posY = 10;
             int num_Column = panel_Bulletin.Width / (NOTE_WIDTH + NOTE_GAP);
@@ -154,6 +142,39 @@ namespace WellaTodo
             }
         }
 
+        private void Update_BulletinBoard()
+        {
+            switch (m_Selected_Menu)
+            {
+                case MemoMenuList.MEMO_MENU:  // 메모
+                    Display_Memo_Menu();
+                    break;
+                case MemoMenuList.ALARM_MENU:  // 알람
+                    break;
+                case MemoMenuList.ARCHIVE_MENU:  // 보관처리
+                    Display_Archive_Menu();
+                    break;
+                case MemoMenuList.TAG_RED_MENU:  // 빨강
+                    Display_Tag_Menu(1);
+                    break;
+                case MemoMenuList.TAG_ORANGE_MENU:  // 주황
+                    Display_Tag_Menu(2);
+                    break;
+                case MemoMenuList.TAG_YELLOW_MENU:  // 노랑
+                    Display_Tag_Menu(3);
+                    break;
+                case MemoMenuList.TAG_GREEN_MENU:  // 초록
+                    Display_Tag_Menu(4);
+                    break;
+                case MemoMenuList.TAG_BLUE_MENU:  // 파랑
+                    Display_Tag_Menu(5);
+                    break;
+                case MemoMenuList.TAG_COMMON_MENU:  // 해제
+                    Display_Tag_Menu(0);
+                    break;
+            }
+        }
+
         //--------------------------------------------------------------
         // Model 이벤트
         //--------------------------------------------------------------
@@ -164,31 +185,18 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
-            //Console.WriteLine(">BulletinBoard::Update_View");
             CDataCell dc = e.Item;
             WParam param = e.Param;
             switch (param)
             {
-                case WParam.WM_LOAD_DATA:
-                    //Update_Load_Data();
-                    break;
-                case WParam.WM_SAVE_DATA:
-                    //Update_Save_Data();
-                    break;
-                case WParam.WM_OPEN_DATA:
-                    //Update_Open_Data();
-                    break;
-                case WParam.WM_PRINT_DATA:
-                    //Update_Print_Data();
-                    break;
                 case WParam.WM_BULLETINBOARD_ADD:
                     Update_New_Note(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
-                    Update_Modify_Memo_BulletinBoard(dc);
-                    break;
                 case WParam.WM_BULLETINBOARD_DELETE:
                     Update_Delete_BulletinBoard(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
+                    Update_Modify_Memo_BulletinBoard(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
                     Update_Modify_Title_BulletinBoard(dc);
@@ -196,7 +204,12 @@ namespace WellaTodo
                 case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
                     Update_Modify_Archive_BulletinBoard(dc);
                     break;
-                    
+                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
+                    Update_Modify_Color_BulletinBoard(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
+                    Update_Modify_Tag_BulletinBoard(dc);
+                    break;
                 default:
                     break;
             }
@@ -298,6 +311,54 @@ namespace WellaTodo
             Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_BulletinBoard : -> Completed" + dc.DC_title);
         }
 
+        private void Update_Modify_Color_BulletinBoard(CDataCell dc)
+        {
+            int counter = 0;
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                if (dc.DC_task_ID == note.DataCell.DC_task_ID)
+                {
+                    note.MemoColor = Color.FromName(dc.DC_memoColor);
+
+                    counter++;
+                    break;
+                }
+            }
+
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Color_BulletinBoard -> No matching Data!!");
+                return;
+            }
+
+            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Color_BulletinBoard : -> Completed" + dc.DC_title);
+        }
+
+        private void Update_Modify_Tag_BulletinBoard(CDataCell dc)
+        {
+            int counter = 0;
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                if (dc.DC_task_ID == note.DataCell.DC_task_ID)
+                {
+                    note.MemoTag = dc.DC_memoTag;
+
+                    counter++;
+                    break;
+                }
+            }
+
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Tag_BulletinBoard -> No matching Data!!");
+                return;
+            }
+
+            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Tag_BulletinBoard : -> Completed" + dc.DC_title);
+        }
+
         private void Update_Delete_BulletinBoard(CDataCell dc)
         {
             int counter = 0;
@@ -340,17 +401,15 @@ namespace WellaTodo
         // ----------------------------------------------------------
         private void Post_it_Click(object sender, UserCommandEventArgs e)
         {
-            //Console.WriteLine("BulletinBoardForm::note_Post_it_Click");
-
             Post_it note = (Post_it)sender;
 
             switch (e.CommandName)
             {
-                case "Edit":
-                    Edit_Note(note);
-                    break;
                 case "New":
                     New_Note();
+                    break;
+                case "Edit":
+                    Edit_Note(note);
                     break;
                 case "Delete":
                     Delete_Note(note);
@@ -382,29 +441,29 @@ namespace WellaTodo
             dc.DC_memoRTF = "";
             dc.DC_bulletin = true;
             dc.DC_archive = false;
-            dc.DC_memoTag = 0;
-            switch (m_SelectedMenu)
+            dc.DC_memoColor = "Yellow";
+
+            switch (m_Selected_Menu)
             {
-                case 4:  // 빨강
-                    dc.DC_memoTag = 1;
+                case MemoMenuList.TAG_RED_MENU:  // 빨강
+                    dc.DC_memoTag = (int)MemoTagList.TAG_RED;
                     break;
-                case 5:  // 주황
-                    dc.DC_memoTag = 2;
+                case MemoMenuList.TAG_ORANGE_MENU:  // 주황
+                    dc.DC_memoTag = (int)MemoTagList.TAG_ORANGE;
                     break;
-                case 6:  // 노랑
-                    dc.DC_memoTag = 3;
+                case MemoMenuList.TAG_YELLOW_MENU:  // 노랑
+                    dc.DC_memoTag = (int)MemoTagList.TAG_YELLOW; ;
                     break;
-                case 7:  // 초록
-                    dc.DC_memoTag = 4;
+                case MemoMenuList.TAG_GREEN_MENU:  // 초록
+                    dc.DC_memoTag = (int)MemoTagList.TAG_GREEN; ;
                     break;
-                case 8:  // 파랑
-                    dc.DC_memoTag = 5;
+                case MemoMenuList.TAG_BLUE_MENU:  // 파랑
+                    dc.DC_memoTag = (int)MemoTagList.TAG_BLUE; ;
                     break;
-                case 9:  // 해제
-                    dc.DC_memoTag = 0;
+                case MemoMenuList.TAG_COMMON_MENU:  // 해제
+                    dc.DC_memoTag = (int)MemoTagList.TAG_COMMON; ;
                     break;
             }
-            dc.DC_memoColor = "Yellow";
 
             Send_Log_Message("1>BulletinBoard::New_Note -> Add Note : " + dc.DC_title);
             m_Controller.Perform_Add_BulletinBoard(dc);
@@ -427,6 +486,15 @@ namespace WellaTodo
 
         private void Delete_Note(Post_it note)
         {
+            DialogResult result = MessageBox.Show("메모를 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo);
+            switch (result)
+            {
+                case DialogResult.No:
+                    return;
+                case DialogResult.Yes:
+                    break;
+            }
+
             Send_Log_Message("1>BulletinBoardForm::Delete_Note :" + note.DataCell.DC_title);
             m_Controller.Perform_Delete_BulletinBoard(note.DataCell);
 
@@ -449,7 +517,7 @@ namespace WellaTodo
             note.DataCell.DC_memoColor = note.BackColor.Name;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Color -> Pallet Color Changed :" + note.DataCell.DC_title);
-            //m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Color_BulletinBoard(note.DataCell);
         }
 
         private void Change_Tag(Post_it note)
@@ -457,18 +525,28 @@ namespace WellaTodo
             note.DataCell.DC_memoTag = note.MemoTag;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Tag -> Tag Color Changed :" + note.DataCell.DC_title);
-            //m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Tag_BulletinBoard(note.DataCell);
         }
 
         private void Archive_Note(Post_it note)
         {
+            if (note.MemoRTFString.Length == 0)
+            {
+                return;
+            }
+
             note.DataCell.DC_archive = note.IsArchive = !note.IsArchive;
 
             Send_Log_Message("1>BulletinBoardForm::Archive_Note :" + note.DataCell.DC_title);
             m_Controller.Perform_Modify_Archive_BulletinBoard(note.DataCell);
+
+            if (panel_Bulletin.Controls.Count == 0)
+            {
+                New_Note();
+            }
         }
 
-        private void List_Note()
+        private void Display_Memo_Menu()
         {
             foreach (Post_it note in panel_Bulletin.Controls)
             {
@@ -478,14 +556,32 @@ namespace WellaTodo
             }
             panel_Bulletin.Controls.Clear();
 
-            Load_Data();
+            IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard();
 
-            Update_BulletinBoard();
+            foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
+            {
+                Post_it note = new Post_it(dc);
 
-            Send_Log_Message("1>BulletinBoardForm::List_Note : ");
+                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                note.Post_it_Click += new Post_it_Event(Post_it_Click);
+
+                note.MemoTitle = dc.DC_title;
+                note.MemoRTFString = dc.DC_memoRTF;
+                note.IsBulletin = dc.DC_bulletin;
+                note.IsArchive = dc.DC_archive;
+                note.MemoTag = dc.DC_memoTag;
+                note.MemoColor = Color.FromName(dc.DC_memoColor);
+
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+            }
+
+            Update_Notes_Position();
+            Send_Log_Message("1>BulletinBoardForm::Display_Memo_Menu : ");
         }
 
-        private void List_Note(int tag)
+        private void Display_Tag_Menu(int tag)
         {
             foreach (Post_it note in panel_Bulletin.Controls)
             {
@@ -516,12 +612,11 @@ namespace WellaTodo
                 panel_Bulletin.Controls.SetChildIndex(note, 0);
             }
 
-            Update_BulletinBoard();
-
-            Send_Log_Message("1>BulletinBoardForm::List_Note -> TAG : " + tag);
+            Update_Notes_Position();
+            Send_Log_Message("1>BulletinBoardForm::Display_Tag_Menu -> TAG : " + tag);
         }
 
-        private void List_Archive()
+        private void Display_Archive_Menu()
         {
             foreach (Post_it note in panel_Bulletin.Controls)
             {
@@ -552,9 +647,8 @@ namespace WellaTodo
                 panel_Bulletin.Controls.SetChildIndex(note, 0);
             }
 
-            Update_BulletinBoard();
-
-            Send_Log_Message("1>BulletinBoardForm::List_Archive : ");
+            Update_Notes_Position();
+            Send_Log_Message("1>BulletinBoardForm::Display_Archive_Menu : ");
         }
 
         // ----------------------------------------------------------
@@ -567,63 +661,59 @@ namespace WellaTodo
 
         private void button_Memo_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("BulletinBoardForm::button_Memo_Click");
             label_Title.Text = "Bulleting Board - 메모";
-            m_SelectedMenu = 1;
-            List_Note();
+            m_Selected_Menu = MemoMenuList.MEMO_MENU;
+            Display_Memo_Menu();
         }
 
         private void button_Alarm_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("BulletinBoardForm::button_Alarm_Click");
             label_Title.Text = "Bulleting Board - 알람";
-            m_SelectedMenu = 2;
+            m_Selected_Menu = MemoMenuList.ALARM_MENU;
         }
 
         private void button_Archive_Click(object sender, EventArgs e)
         {
             label_Title.Text = "Bulleting Board - 보관처리";
-            m_SelectedMenu = 3;
-            List_Archive();
+            m_Selected_Menu = MemoMenuList.ARCHIVE_MENU;
+            Display_Archive_Menu();
         }
 
         private void button_Label_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("BulletinBoardForm::button_Label_Click");
-
             Button sd = (Button)sender;
 
             switch (sd.Name)
             {
-                case "button_Label_Common":
-                    m_SelectedMenu = 9;
-                    label_Title.Text = "Bulleting Board - 라벨(해제)";
-                    List_Note(0);
-                    break;
                 case "button_Label_Red":
                     label_Title.Text = "Bulleting Board - 라벨(빨강)";
-                    m_SelectedMenu = 4;
-                    List_Note(1);
+                    m_Selected_Menu = MemoMenuList.TAG_RED_MENU;
+                    Display_Tag_Menu(1);
                     break;
                 case "button_Label_Orange":
                     label_Title.Text = "Bulleting Board - 라벨(주황)";
-                    m_SelectedMenu = 5;
-                    List_Note(2);
+                    m_Selected_Menu = MemoMenuList.TAG_ORANGE_MENU;
+                    Display_Tag_Menu(2);
                     break;
                 case "button_Label_Yellow":
                     label_Title.Text = "Bulleting Board - 라벨(노랑)";
-                    m_SelectedMenu = 6;
-                    List_Note(3);
+                    m_Selected_Menu = MemoMenuList.TAG_YELLOW_MENU;
+                    Display_Tag_Menu(3);
                     break;
                 case "button_Label_Green":
                     label_Title.Text = "Bulleting Board - 라벨(초록)";
-                    m_SelectedMenu = 7;
-                    List_Note(4);
+                    m_Selected_Menu = MemoMenuList.TAG_GREEN_MENU;
+                    Display_Tag_Menu(4);
                     break;
                 case "button_Label_Blue":
                     label_Title.Text = "Bulleting Board - 라벨(파랑)";
-                    m_SelectedMenu = 8;
-                    List_Note(5);
+                    m_Selected_Menu = MemoMenuList.TAG_BLUE_MENU;
+                    Display_Tag_Menu(5);
+                    break;
+                case "button_Label_Common":
+                    m_Selected_Menu = MemoMenuList.TAG_COMMON_MENU;
+                    label_Title.Text = "Bulleting Board - 라벨(해제)";
+                    Display_Tag_Menu(0);
                     break;
             }
         }

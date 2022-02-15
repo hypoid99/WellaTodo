@@ -258,6 +258,18 @@ namespace WellaTodo
 			m_model.Modify_Archive_BulletinBoard(dc);
 		}
 
+		public void Perform_Modify_Color_BulletinBoard(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Color_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Color_BulletinBoard(dc);
+		}
+
+		public void Perform_Modify_Tag_BulletinBoard(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Tag_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Tag_BulletinBoard(dc);
+		}
+
 		public void Perform_Delete_BulletinBoard(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Delete_BulletinBoard : " + dc.DC_title);
