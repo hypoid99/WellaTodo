@@ -688,7 +688,13 @@ namespace WellaTodo
                 case WParam.WM_BULLETINBOARD_DELETE:
                     Update_Delete_Task(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY:
+                case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
+                    Update_Modify_Task_Title(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
+                    Update_Complete_Process(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
                     Update_Modify_Task_Memo(dc);
                     break;
                 default:

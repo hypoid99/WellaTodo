@@ -86,7 +86,7 @@ namespace WellaTodo
 
         public void Show(Control control)
         {
-            Console.WriteLine("Popup::Show(Control control)");
+            //Console.WriteLine("Popup::Show(Control control)");
             if (control == null)
             {
                 throw new ArgumentNullException("control");
@@ -96,7 +96,7 @@ namespace WellaTodo
 
         public void Show(Control control, Rectangle area)
         {
-            Console.WriteLine("Popup::Show(Control control, Rectangle area)");
+            //Console.WriteLine("Popup::Show(Control control, Rectangle area)");
             if (control == null)
             {
                 throw new ArgumentNullException("control");

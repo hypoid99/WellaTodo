@@ -29,27 +29,25 @@
         private void InitializeComponent()
         {
             this.panel_Header = new System.Windows.Forms.Panel();
-            this.pictureBox_Add_Note = new System.Windows.Forms.PictureBox();
             this.label_Menu = new System.Windows.Forms.Label();
             this.label_Title = new System.Windows.Forms.Label();
             this.panel_Menu = new System.Windows.Forms.Panel();
-            this.button_Label = new System.Windows.Forms.Button();
-            this.button_Store = new System.Windows.Forms.Button();
+            this.button_Label_Common = new System.Windows.Forms.Button();
+            this.button_Label_Blue = new System.Windows.Forms.Button();
+            this.button_Label_Green = new System.Windows.Forms.Button();
+            this.button_Label_Yellow = new System.Windows.Forms.Button();
+            this.button_Label_Orange = new System.Windows.Forms.Button();
+            this.button_Label_Red = new System.Windows.Forms.Button();
+            this.button_Archive = new System.Windows.Forms.Button();
             this.button_Alarm = new System.Windows.Forms.Button();
             this.button_Memo = new System.Windows.Forms.Button();
             this.panel_Bulletin = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.panel_Header.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).BeginInit();
             this.panel_Menu.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_Header
             // 
-            this.panel_Header.Controls.Add(this.pictureBox_Add_Note);
             this.panel_Header.Controls.Add(this.label_Menu);
             this.panel_Header.Controls.Add(this.label_Title);
             this.panel_Header.Dock = System.Windows.Forms.DockStyle.Top;
@@ -57,19 +55,6 @@
             this.panel_Header.Name = "panel_Header";
             this.panel_Header.Size = new System.Drawing.Size(800, 50);
             this.panel_Header.TabIndex = 0;
-            // 
-            // pictureBox_Add_Note
-            // 
-            this.pictureBox_Add_Note.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_Add_Note.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
-            this.pictureBox_Add_Note.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Add_Note.Location = new System.Drawing.Point(749, 4);
-            this.pictureBox_Add_Note.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Add_Note.Name = "pictureBox_Add_Note";
-            this.pictureBox_Add_Note.Size = new System.Drawing.Size(42, 42);
-            this.pictureBox_Add_Note.TabIndex = 2;
-            this.pictureBox_Add_Note.TabStop = false;
-            this.pictureBox_Add_Note.Click += new System.EventHandler(this.pictureBox_Add_Note_Click);
             // 
             // label_Menu
             // 
@@ -87,19 +72,20 @@
             this.label_Title.Location = new System.Drawing.Point(41, 1);
             this.label_Title.Margin = new System.Windows.Forms.Padding(0);
             this.label_Title.Name = "label_Title";
-            this.label_Title.Size = new System.Drawing.Size(207, 48);
+            this.label_Title.Size = new System.Drawing.Size(400, 48);
             this.label_Title.TabIndex = 0;
             this.label_Title.Text = "Bulletin Board";
-            this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panel_Menu
             // 
-            this.panel_Menu.Controls.Add(this.button4);
-            this.panel_Menu.Controls.Add(this.button3);
-            this.panel_Menu.Controls.Add(this.button2);
-            this.panel_Menu.Controls.Add(this.button1);
-            this.panel_Menu.Controls.Add(this.button_Label);
-            this.panel_Menu.Controls.Add(this.button_Store);
+            this.panel_Menu.Controls.Add(this.button_Label_Common);
+            this.panel_Menu.Controls.Add(this.button_Label_Blue);
+            this.panel_Menu.Controls.Add(this.button_Label_Green);
+            this.panel_Menu.Controls.Add(this.button_Label_Yellow);
+            this.panel_Menu.Controls.Add(this.button_Label_Orange);
+            this.panel_Menu.Controls.Add(this.button_Label_Red);
+            this.panel_Menu.Controls.Add(this.button_Archive);
             this.panel_Menu.Controls.Add(this.button_Alarm);
             this.panel_Menu.Controls.Add(this.button_Memo);
             this.panel_Menu.Dock = System.Windows.Forms.DockStyle.Left;
@@ -108,42 +94,138 @@
             this.panel_Menu.Size = new System.Drawing.Size(120, 400);
             this.panel_Menu.TabIndex = 1;
             // 
-            // button_Label
+            // button_Label_Common
             // 
-            this.button_Label.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button_Label.FlatAppearance.BorderSize = 0;
-            this.button_Label.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button_Label.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_Label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_Label.Image = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.button_Label.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button_Label.Location = new System.Drawing.Point(0, 120);
-            this.button_Label.Margin = new System.Windows.Forms.Padding(0);
-            this.button_Label.Name = "button_Label";
-            this.button_Label.Size = new System.Drawing.Size(120, 40);
-            this.button_Label.TabIndex = 4;
-            this.button_Label.Text = "라벨(빨강)";
-            this.button_Label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button_Label.UseVisualStyleBackColor = true;
-            this.button_Label.Click += new System.EventHandler(this.button_Label_Click);
+            this.button_Label_Common.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Common.FlatAppearance.BorderSize = 0;
+            this.button_Label_Common.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Common.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Common.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Common.Image = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.button_Label_Common.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Common.Location = new System.Drawing.Point(0, 320);
+            this.button_Label_Common.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Common.Name = "button_Label_Common";
+            this.button_Label_Common.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Common.TabIndex = 9;
+            this.button_Label_Common.Text = "라벨(해제)";
+            this.button_Label_Common.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Common.UseVisualStyleBackColor = true;
+            this.button_Label_Common.Click += new System.EventHandler(this.button_Label_Click);
             // 
-            // button_Store
+            // button_Label_Blue
             // 
-            this.button_Store.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button_Store.FlatAppearance.BorderSize = 0;
-            this.button_Store.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button_Store.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_Store.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_Store.Image = global::WellaTodo.Properties.Resources.outline_archive_black_24dp;
-            this.button_Store.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button_Store.Location = new System.Drawing.Point(0, 80);
-            this.button_Store.Margin = new System.Windows.Forms.Padding(0);
-            this.button_Store.Name = "button_Store";
-            this.button_Store.Size = new System.Drawing.Size(120, 40);
-            this.button_Store.TabIndex = 3;
-            this.button_Store.Text = "보관";
-            this.button_Store.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button_Store.UseVisualStyleBackColor = true;
+            this.button_Label_Blue.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Blue.FlatAppearance.BorderSize = 0;
+            this.button_Label_Blue.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Blue.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Blue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Blue.Image = global::WellaTodo.Properties.Resources.outline_label_blue_24dp;
+            this.button_Label_Blue.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Blue.Location = new System.Drawing.Point(0, 280);
+            this.button_Label_Blue.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Blue.Name = "button_Label_Blue";
+            this.button_Label_Blue.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Blue.TabIndex = 8;
+            this.button_Label_Blue.Text = "라벨(파랑)";
+            this.button_Label_Blue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Blue.UseVisualStyleBackColor = true;
+            this.button_Label_Blue.Click += new System.EventHandler(this.button_Label_Click);
+            // 
+            // button_Label_Green
+            // 
+            this.button_Label_Green.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Green.FlatAppearance.BorderSize = 0;
+            this.button_Label_Green.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Green.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Green.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Green.Image = global::WellaTodo.Properties.Resources.outline_label_green_24dp;
+            this.button_Label_Green.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Green.Location = new System.Drawing.Point(0, 240);
+            this.button_Label_Green.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Green.Name = "button_Label_Green";
+            this.button_Label_Green.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Green.TabIndex = 7;
+            this.button_Label_Green.Text = "라벨(초록)";
+            this.button_Label_Green.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Green.UseVisualStyleBackColor = true;
+            this.button_Label_Green.Click += new System.EventHandler(this.button_Label_Click);
+            // 
+            // button_Label_Yellow
+            // 
+            this.button_Label_Yellow.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Yellow.FlatAppearance.BorderSize = 0;
+            this.button_Label_Yellow.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Yellow.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Yellow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Yellow.Image = global::WellaTodo.Properties.Resources.outline_label_yellow_24dp;
+            this.button_Label_Yellow.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Yellow.Location = new System.Drawing.Point(0, 200);
+            this.button_Label_Yellow.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Yellow.Name = "button_Label_Yellow";
+            this.button_Label_Yellow.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Yellow.TabIndex = 6;
+            this.button_Label_Yellow.Text = "라벨(노랑)";
+            this.button_Label_Yellow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Yellow.UseVisualStyleBackColor = true;
+            this.button_Label_Yellow.Click += new System.EventHandler(this.button_Label_Click);
+            // 
+            // button_Label_Orange
+            // 
+            this.button_Label_Orange.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Orange.FlatAppearance.BorderSize = 0;
+            this.button_Label_Orange.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Orange.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Orange.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Orange.Image = global::WellaTodo.Properties.Resources.outline_label_orange_24dp___복사본;
+            this.button_Label_Orange.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Orange.Location = new System.Drawing.Point(0, 160);
+            this.button_Label_Orange.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Orange.Name = "button_Label_Orange";
+            this.button_Label_Orange.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Orange.TabIndex = 5;
+            this.button_Label_Orange.Text = "라벨(주황)";
+            this.button_Label_Orange.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Orange.UseVisualStyleBackColor = true;
+            this.button_Label_Orange.Click += new System.EventHandler(this.button_Label_Click);
+            // 
+            // button_Label_Red
+            // 
+            this.button_Label_Red.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Label_Red.FlatAppearance.BorderSize = 0;
+            this.button_Label_Red.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Label_Red.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Label_Red.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Label_Red.Image = global::WellaTodo.Properties.Resources.outline_label_red_24dp;
+            this.button_Label_Red.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Label_Red.Location = new System.Drawing.Point(0, 120);
+            this.button_Label_Red.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Label_Red.Name = "button_Label_Red";
+            this.button_Label_Red.Size = new System.Drawing.Size(120, 40);
+            this.button_Label_Red.TabIndex = 4;
+            this.button_Label_Red.Text = "라벨(빨강)";
+            this.button_Label_Red.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Label_Red.UseVisualStyleBackColor = true;
+            this.button_Label_Red.Click += new System.EventHandler(this.button_Label_Click);
+            // 
+            // button_Archive
+            // 
+            this.button_Archive.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button_Archive.FlatAppearance.BorderSize = 0;
+            this.button_Archive.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
+            this.button_Archive.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_Archive.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Archive.Image = global::WellaTodo.Properties.Resources.outline_archive_black_24dp;
+            this.button_Archive.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button_Archive.Location = new System.Drawing.Point(0, 80);
+            this.button_Archive.Margin = new System.Windows.Forms.Padding(0);
+            this.button_Archive.Name = "button_Archive";
+            this.button_Archive.Size = new System.Drawing.Size(120, 40);
+            this.button_Archive.TabIndex = 3;
+            this.button_Archive.Text = "보관처리";
+            this.button_Archive.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button_Archive.UseVisualStyleBackColor = true;
+            this.button_Archive.Click += new System.EventHandler(this.button_Archive_Click);
             // 
             // button_Alarm
             // 
@@ -159,9 +241,10 @@
             this.button_Alarm.Name = "button_Alarm";
             this.button_Alarm.Size = new System.Drawing.Size(120, 40);
             this.button_Alarm.TabIndex = 2;
-            this.button_Alarm.Text = "알람";
+            this.button_Alarm.Text = "알  람";
             this.button_Alarm.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button_Alarm.UseVisualStyleBackColor = true;
+            this.button_Alarm.Click += new System.EventHandler(this.button_Alarm_Click);
             // 
             // button_Memo
             // 
@@ -177,9 +260,10 @@
             this.button_Memo.Name = "button_Memo";
             this.button_Memo.Size = new System.Drawing.Size(120, 40);
             this.button_Memo.TabIndex = 1;
-            this.button_Memo.Text = "메모";
+            this.button_Memo.Text = "메  모";
             this.button_Memo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button_Memo.UseVisualStyleBackColor = true;
+            this.button_Memo.Click += new System.EventHandler(this.button_Memo_Click);
             // 
             // panel_Bulletin
             // 
@@ -190,78 +274,6 @@
             this.panel_Bulletin.Name = "panel_Bulletin";
             this.panel_Bulletin.Size = new System.Drawing.Size(680, 400);
             this.panel_Bulletin.TabIndex = 2;
-            // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Image = global::WellaTodo.Properties.Resources.outline_new_label_black_24dp;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(0, 160);
-            this.button1.Margin = new System.Windows.Forms.Padding(0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 40);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "라벨(주황)";
-            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Image = global::WellaTodo.Properties.Resources.outline_new_label_black_24dp;
-            this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button2.Location = new System.Drawing.Point(0, 200);
-            this.button2.Margin = new System.Windows.Forms.Padding(0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(120, 40);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "라벨(노랑)";
-            this.button2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Image = global::WellaTodo.Properties.Resources.outline_new_label_black_24dp;
-            this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button3.Location = new System.Drawing.Point(0, 240);
-            this.button3.Margin = new System.Windows.Forms.Padding(0);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(120, 40);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "라벨(초록)";
-            this.button3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Cyan;
-            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Image = global::WellaTodo.Properties.Resources.outline_new_label_black_24dp;
-            this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button4.Location = new System.Drawing.Point(0, 280);
-            this.button4.Margin = new System.Windows.Forms.Padding(0);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(120, 40);
-            this.button4.TabIndex = 8;
-            this.button4.Text = "라벨(파랑)";
-            this.button4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button4.UseVisualStyleBackColor = true;
             // 
             // BulletinBoardForm
             // 
@@ -278,7 +290,6 @@
             this.Load += new System.EventHandler(this.BulletinBoardForm_Load);
             this.Resize += new System.EventHandler(this.BulletinBoardForm_Resize);
             this.panel_Header.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).EndInit();
             this.panel_Menu.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -291,14 +302,14 @@
         private System.Windows.Forms.Panel panel_Bulletin;
         private System.Windows.Forms.Label label_Title;
         private System.Windows.Forms.Label label_Menu;
-        private System.Windows.Forms.PictureBox pictureBox_Add_Note;
-        private System.Windows.Forms.Button button_Store;
+        private System.Windows.Forms.Button button_Archive;
         private System.Windows.Forms.Button button_Alarm;
         private System.Windows.Forms.Button button_Memo;
-        private System.Windows.Forms.Button button_Label;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_Label_Red;
+        private System.Windows.Forms.Button button_Label_Blue;
+        private System.Windows.Forms.Button button_Label_Green;
+        private System.Windows.Forms.Button button_Label_Yellow;
+        private System.Windows.Forms.Button button_Label_Orange;
+        private System.Windows.Forms.Button button_Label_Common;
     }
 }

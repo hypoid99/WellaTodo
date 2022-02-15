@@ -240,10 +240,22 @@ namespace WellaTodo
 			m_model.Add_BulletinBoard(dc);
 		}
 
-		public void Perform_Modify_BulletinBoard(CDataCell dc)
+		public void Perform_Modify_Memo_BulletinBoard(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Modify_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_BulletinBoard(dc);
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Memo_BulletinBoard(dc);
+		}
+
+		public void Perform_Modify_Title_BulletinBoard(CDataCell dc)
+        {
+			Send_Log_Message("2>MainController::Perform_Modify_Title_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Title_BulletinBoard(dc);
+		}
+
+		public void Perform_Modify_Archive_BulletinBoard(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Archive_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Archive_BulletinBoard(dc);
 		}
 
 		public void Perform_Delete_BulletinBoard(CDataCell dc)
@@ -357,10 +369,30 @@ namespace WellaTodo
 		public IEnumerable<CDataCell> Query_BulletineBoard()
 		{
 			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
-											 where dt.DC_bulletin
+											 where dt.DC_bulletin && (!dt.DC_archive)
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_BulletineBoard -> Counter : " + deepCopy.Count);
+			return deepCopy;
+		}
+
+		public IEnumerable<CDataCell> Query_BulletineBoard_Archive()
+		{
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+											 where dt.DC_bulletin && (dt.DC_archive)
+											 select dt;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_BulletineBoard -> Counter : " + deepCopy.Count);
+			return deepCopy;
+		}
+
+		public IEnumerable<CDataCell> Query_BulletineBoard_Tag(int tag)
+        {
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+											 where dt.DC_bulletin && (!dt.DC_archive) && dt.DC_memoTag == tag
+											 select dt;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
+			//Send_Log_Message("2>MainController::Query_BulletineBoard_Tag -> Counter : " + deepCopy.Count);
 			return deepCopy;
 		}
 

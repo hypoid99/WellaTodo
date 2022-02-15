@@ -130,17 +130,20 @@
   <data name="outline_close_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_close_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_new_label_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\outline_new_label_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="outline_redo_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_redo_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_open_in_new_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_open_in_new_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_label_blue_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_label_blue_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_format_strikethrough_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_strikethrough_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_content_copy_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\Editor\outline_content_copy_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_format_underlined_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_underlined_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -163,6 +166,9 @@
   <data name="outline_print_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_print_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_label_red_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_label_red_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_edit_note_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_edit_note_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -172,8 +178,8 @@
   <data name="outline_grade_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_grade_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_content_cut_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\Editor\outline_content_cut_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_new_label_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_new_label_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_file_open_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_file_open_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -190,14 +196,17 @@
   <data name="outline_wb_sunny_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_wb_sunny_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_content_copy_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\Editor\outline_content_copy_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_content_cut_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\Editor\outline_content_cut_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_add_circle_outline_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_add_circle_outline_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_format_align_center_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_align_center_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_label_orange_24dp - 복사본" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_label_orange_24dp - 복사본.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_archive_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_archive_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -232,8 +241,17 @@
   <data name="outline_format_indent_decrease_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_format_indent_decrease_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="outline_label_yellow_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_label_yellow_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="outline_label_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_label_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_delete_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_delete_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="outline_label_green_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_label_green_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="outline_access_alarms_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\outline_access_alarms_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -259,7 +277,7 @@
   <data name="outline_text_increase_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\icon\Editor\outline_text_increase_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="outline_delete_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icon\outline_delete_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="outline_unarchive_black_24dp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icon\outline_unarchive_black_24dp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

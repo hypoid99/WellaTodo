@@ -25,6 +25,8 @@ namespace WellaTodo
 
         MemoEditorForm memoEditorForm = new MemoEditorForm();
 
+        int m_SelectedMenu = 1;  // 메모 메뉴
+
         public BulletinBoardForm()
         {
             InitializeComponent();
@@ -39,12 +41,12 @@ namespace WellaTodo
         {
             Initiate();
 
-            Update_BulletinBoard();
+            Update_Notes_Position();
         }
 
         private void BulletinBoardForm_Resize(object sender, EventArgs e)
         {
-            Update_BulletinBoard();
+            Update_Notes_Position();
         }
 
         private void BulletinBoardForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -61,9 +63,10 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Initiate()
         {
-            pictureBox_Add_Note.Location = new Point(panel_Header.Width - 45, 4);
-
             Load_Data();
+
+            m_SelectedMenu = 1;  // 메모 메뉴
+            label_Title.Text = "Bulleting Board - 메모";
 
             Update_BulletinBoard();
         }
@@ -81,17 +84,52 @@ namespace WellaTodo
                 note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
                 note.Post_it_Click -= new Post_it_Event(Post_it_Click);
                 note.Post_it_Click += new Post_it_Event(Post_it_Click);
-                note.TextBoxRTFString = dc.DC_memoRTF;
+
+                note.MemoTitle = dc.DC_title;
+                note.MemoRTFString = dc.DC_memoRTF;
+                note.IsBulletin = dc.DC_bulletin;
+                note.IsArchive = dc.DC_archive;
+                note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
 
                 panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
             }
         }
 
         private void Update_BulletinBoard()
         {
-            pictureBox_Add_Note.Location = new Point(panel_Header.Width - 45, 4);
-
+            /*
+            switch (m_SelectedMenu)
+            {
+                case 1:  // 메모
+                    List_Note();
+                    break;
+                case 2:  // 알람
+                    break;
+                case 3:  // 보관처리
+                    List_Archive();
+                    break;
+                case 4:  // 빨강
+                    List_Note(1);
+                    break;
+                case 5:  // 주황
+                    List_Note(2);
+                    break;
+                case 6:  // 노랑
+                    List_Note(3);
+                    break;
+                case 7:  // 초록
+                    List_Note(4);
+                    break;
+                case 8:  // 파랑
+                    List_Note(5);
+                    break;
+                case 9:  // 해제
+                    List_Note(0);
+                    break;
+            }
+            */
             Update_Notes_Position();
         }
 
@@ -146,12 +184,19 @@ namespace WellaTodo
                 case WParam.WM_BULLETINBOARD_ADD:
                     Update_New_Note(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY:
-                    Update_Modify_BulletinBoard(dc);
+                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
+                    Update_Modify_Memo_BulletinBoard(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_DELETE:
                     Update_Delete_BulletinBoard(dc);
                     break;
+                case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
+                    Update_Modify_Title_BulletinBoard(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
+                    Update_Modify_Archive_BulletinBoard(dc);
+                    break;
+                    
                 default:
                     break;
             }
@@ -162,26 +207,32 @@ namespace WellaTodo
             Post_it note = new Post_it(dc);
 
             note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+
             note.Post_it_Click -= new Post_it_Event(Post_it_Click);
             note.Post_it_Click += new Post_it_Event(Post_it_Click);
-            note.TextBoxRTFString = dc.DC_memoRTF;
+
+            note.MemoTitle = dc.DC_title;
+            Console.WriteLine(note.MemoTitle);
+            note.MemoRTFString = dc.DC_memoRTF;
+            note.IsBulletin = dc.DC_bulletin;
+            note.IsArchive = dc.DC_archive;
+            note.MemoTag = dc.DC_memoTag;
             note.MemoColor = Color.FromName(dc.DC_memoColor);
+
             panel_Bulletin.Controls.Add(note);
 
-            Update_Notes_Position();
+            Update_BulletinBoard();
             Send_Log_Message("4>BulletinBoard::Update_New_Note -> Add Note : " + dc.DC_title);
         }
 
-        private void Update_Modify_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Title_BulletinBoard(CDataCell dc)
         {
-            Post_it note = null;
-
             int counter = 0;
-            foreach (Post_it po in panel_Bulletin.Controls)
+            foreach (Post_it note in panel_Bulletin.Controls)
             {
-                if (dc.DC_task_ID == po.DataCell.DC_task_ID)
+                if (dc.DC_task_ID == note.DataCell.DC_task_ID)
                 {
-                    note = po;
+                    note.MemoTitle = dc.DC_title;
 
                     counter++;
                     break;
@@ -194,40 +245,57 @@ namespace WellaTodo
                 return;
             }
 
-            if (dc.DC_bulletin)
-            {
+            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Title_BulletinBoard : -> Completed" + dc.DC_title);
+        }
 
-            }
-            if (dc.DC_archive)
+        private void Update_Modify_Archive_BulletinBoard(CDataCell dc)
+        {
+            int counter = 0;
+            foreach (Post_it note in panel_Bulletin.Controls)
             {
-                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
-                panel_Bulletin.Controls.Remove(note);
-                note.Dispose();
-            }
+                if (dc.DC_task_ID == note.DataCell.DC_task_ID)
+                {
+                    note.IsArchive = dc.DC_archive;
 
-            switch (dc.DC_memoTag)
-            {
-                case 0:
+                    counter++;
                     break;
-                case 1:
-                    break;
-            }
-
-            switch (dc.DC_memoColor)
-            {
-                case "Yellow":
-                    break;
-                case "Violet":
-                    break;
-                case "PaleGreen":
-                    break;
-                case "Orange":
-                    break;
-                case "SkyBlue":
-                    break;
+                }
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_BulletinBoard : -> Completed" + dc.DC_title);
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Archive_BulletinBoard -> No matching Data!!");
+                return;
+            }
+
+            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Completed" + dc.DC_title);
+        }
+
+        private void Update_Modify_Memo_BulletinBoard(CDataCell dc)
+        {
+            int counter = 0;
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                if (dc.DC_task_ID == note.DataCell.DC_task_ID)
+                {
+                    note.MemoRTFString = dc.DC_memoRTF;
+                    note.MemoString = dc.DC_memo;
+
+                    counter++;
+                    break;
+                }
+            }
+
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_BulletinBoard -> No matching Data!!");
+                return;
+            }
+
+            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_BulletinBoard : -> Completed" + dc.DC_title);
         }
 
         private void Update_Delete_BulletinBoard(CDataCell dc)
@@ -251,8 +319,7 @@ namespace WellaTodo
                 Send_Log_Message("Warning>BulletinBoardForm::Update_Delete_BulletinBoard -> No matching Data!!");
             }
 
-            Update_Notes_Position();
-
+            Update_BulletinBoard();
             Send_Log_Message("4>BulletinBoardForm::Update_Delete_BulletinBoard : -> Completed" + dc.DC_title);
         }
 
@@ -291,11 +358,16 @@ namespace WellaTodo
                 case "Archive":
                     Archive_Note(note);
                     break;
-                case "Changed":
-
-                    break;
                 case "Color":
                     Change_Color(note);
+                    break;
+                case "Tag":
+                    Change_Tag(note);
+                    break;
+                case "Title":
+                    Change_Title(note);
+                    break;
+                case "Changed":
                     break;
             }
         }
@@ -304,10 +376,34 @@ namespace WellaTodo
         {
             CDataCell dc = new CDataCell();
 
-            dc.DC_listName = "메모";
-            dc.DC_title = "새로운 메모를 작성하세요";
-            dc.DC_bulletin = true;
+            dc.DC_listName = "작업";
+            dc.DC_title = "메모";
+
             dc.DC_memoRTF = "";
+            dc.DC_bulletin = true;
+            dc.DC_archive = false;
+            dc.DC_memoTag = 0;
+            switch (m_SelectedMenu)
+            {
+                case 4:  // 빨강
+                    dc.DC_memoTag = 1;
+                    break;
+                case 5:  // 주황
+                    dc.DC_memoTag = 2;
+                    break;
+                case 6:  // 노랑
+                    dc.DC_memoTag = 3;
+                    break;
+                case 7:  // 초록
+                    dc.DC_memoTag = 4;
+                    break;
+                case 8:  // 파랑
+                    dc.DC_memoTag = 5;
+                    break;
+                case 9:  // 해제
+                    dc.DC_memoTag = 0;
+                    break;
+            }
             dc.DC_memoColor = "Yellow";
 
             Send_Log_Message("1>BulletinBoard::New_Note -> Add Note : " + dc.DC_title);
@@ -316,17 +412,17 @@ namespace WellaTodo
 
         private void Edit_Note(Post_it note)
         {
-            memoEditorForm.TextBoxRTFString = note.TextBoxRTFString;
+            memoEditorForm.TextBoxRTFString = note.MemoRTFString;
             memoEditorForm.StartPosition = FormStartPosition.CenterParent;
 
             memoEditorForm.ShowDialog();
 
-            note.TextBoxRTFString = memoEditorForm.TextBoxRTFString;
+            note.MemoRTFString = memoEditorForm.TextBoxRTFString;
             note.DataCell.DC_memoRTF = memoEditorForm.TextBoxRTFString;
             note.DataCell.DC_memo = memoEditorForm.TextBoxString;
 
             Send_Log_Message("1>BulletinBoardForm::Edit_Note -> Note Changed :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Memo_BulletinBoard(note.DataCell);
         }
 
         private void Delete_Note(Post_it note)
@@ -334,42 +430,202 @@ namespace WellaTodo
             Send_Log_Message("1>BulletinBoardForm::Delete_Note :" + note.DataCell.DC_title);
             m_Controller.Perform_Delete_BulletinBoard(note.DataCell);
 
+            if (panel_Bulletin.Controls.Count == 0)
+            {
+                New_Note();
+            }
+        }
+
+        private void Change_Title(Post_it note)
+        {
+            note.DataCell.DC_title = note.MemoTitle;
+
+            Send_Log_Message("1>BulletinBoardForm::Change_Title -> Title is Changed :" + note.DataCell.DC_title);
+            m_Controller.Perform_Modify_Title_BulletinBoard(note.DataCell);
         }
 
         private void Change_Color(Post_it note)
         {
             note.DataCell.DC_memoColor = note.BackColor.Name;
 
-            Send_Log_Message("1>BulletinBoardForm::Change_Pallet_Color -> Pallet Color Changed :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+            Send_Log_Message("1>BulletinBoardForm::Change_Color -> Pallet Color Changed :" + note.DataCell.DC_title);
+            //m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+        }
+
+        private void Change_Tag(Post_it note)
+        {
+            note.DataCell.DC_memoTag = note.MemoTag;
+
+            Send_Log_Message("1>BulletinBoardForm::Change_Tag -> Tag Color Changed :" + note.DataCell.DC_title);
+            //m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
         }
 
         private void Archive_Note(Post_it note)
         {
-            note.DataCell.DC_archive = true;
+            note.DataCell.DC_archive = note.IsArchive = !note.IsArchive;
 
             Send_Log_Message("1>BulletinBoardForm::Archive_Note :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Archive_BulletinBoard(note.DataCell);
+        }
+
+        private void List_Note()
+        {
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                panel_Bulletin.Controls.Remove(note);
+                note.Dispose();
+            }
+            panel_Bulletin.Controls.Clear();
+
+            Load_Data();
+
+            Update_BulletinBoard();
+
+            Send_Log_Message("1>BulletinBoardForm::List_Note : ");
+        }
+
+        private void List_Note(int tag)
+        {
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                panel_Bulletin.Controls.Remove(note);
+                note.Dispose();
+            }
+            panel_Bulletin.Controls.Clear();
+
+            IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard_Tag(tag);
+
+            foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
+            {
+                Post_it note = new Post_it(dc);
+
+                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                note.Post_it_Click += new Post_it_Event(Post_it_Click);
+
+                note.MemoTitle = dc.DC_title;
+                note.MemoRTFString = dc.DC_memoRTF;
+                note.IsBulletin = dc.DC_bulletin;
+                note.IsArchive = dc.DC_archive;
+                note.MemoTag = dc.DC_memoTag;
+                note.MemoColor = Color.FromName(dc.DC_memoColor);
+
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+            }
+
+            Update_BulletinBoard();
+
+            Send_Log_Message("1>BulletinBoardForm::List_Note -> TAG : " + tag);
+        }
+
+        private void List_Archive()
+        {
+            foreach (Post_it note in panel_Bulletin.Controls)
+            {
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                panel_Bulletin.Controls.Remove(note);
+                note.Dispose();
+            }
+            panel_Bulletin.Controls.Clear();
+
+            IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard_Archive();
+
+            foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
+            {
+                Post_it note = new Post_it(dc);
+
+                note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
+                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                note.Post_it_Click += new Post_it_Event(Post_it_Click);
+
+                note.MemoTitle = dc.DC_title;
+                note.MemoRTFString = dc.DC_memoRTF;
+                note.IsBulletin = dc.DC_bulletin;
+                note.IsArchive = dc.DC_archive;
+                note.MemoTag = dc.DC_memoTag;
+                note.MemoColor = Color.FromName(dc.DC_memoColor);
+
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+            }
+
+            Update_BulletinBoard();
+
+            Send_Log_Message("1>BulletinBoardForm::List_Archive : ");
         }
 
         // ----------------------------------------------------------
         // 메뉴, 툴바
         // ----------------------------------------------------------
-        private void pictureBox_Add_Note_Click(object sender, EventArgs e)
-        {
-            //Console.WriteLine("BulletinBoardForm::pictureBox_Add_Note_Click");
-            New_Note();
-        }
-
-        private void button_Label_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine("BulletinBoardForm::button_Label_Click");
-        }
-
         private void label_Menu_Click(object sender, EventArgs e)
         {
             Console.WriteLine("BulletinBoardForm::label_Menu_Click");
         }
 
+        private void button_Memo_Click(object sender, EventArgs e)
+        {
+            //Console.WriteLine("BulletinBoardForm::button_Memo_Click");
+            label_Title.Text = "Bulleting Board - 메모";
+            m_SelectedMenu = 1;
+            List_Note();
+        }
+
+        private void button_Alarm_Click(object sender, EventArgs e)
+        {
+            //Console.WriteLine("BulletinBoardForm::button_Alarm_Click");
+            label_Title.Text = "Bulleting Board - 알람";
+            m_SelectedMenu = 2;
+        }
+
+        private void button_Archive_Click(object sender, EventArgs e)
+        {
+            label_Title.Text = "Bulleting Board - 보관처리";
+            m_SelectedMenu = 3;
+            List_Archive();
+        }
+
+        private void button_Label_Click(object sender, EventArgs e)
+        {
+            //Console.WriteLine("BulletinBoardForm::button_Label_Click");
+
+            Button sd = (Button)sender;
+
+            switch (sd.Name)
+            {
+                case "button_Label_Common":
+                    m_SelectedMenu = 9;
+                    label_Title.Text = "Bulleting Board - 라벨(해제)";
+                    List_Note(0);
+                    break;
+                case "button_Label_Red":
+                    label_Title.Text = "Bulleting Board - 라벨(빨강)";
+                    m_SelectedMenu = 4;
+                    List_Note(1);
+                    break;
+                case "button_Label_Orange":
+                    label_Title.Text = "Bulleting Board - 라벨(주황)";
+                    m_SelectedMenu = 5;
+                    List_Note(2);
+                    break;
+                case "button_Label_Yellow":
+                    label_Title.Text = "Bulleting Board - 라벨(노랑)";
+                    m_SelectedMenu = 6;
+                    List_Note(3);
+                    break;
+                case "button_Label_Green":
+                    label_Title.Text = "Bulleting Board - 라벨(초록)";
+                    m_SelectedMenu = 7;
+                    List_Note(4);
+                    break;
+                case "button_Label_Blue":
+                    label_Title.Text = "Bulleting Board - 라벨(파랑)";
+                    m_SelectedMenu = 8;
+                    List_Note(5);
+                    break;
+            }
+        }
     }
 }

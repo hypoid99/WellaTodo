@@ -29,14 +29,22 @@
         private void InitializeComponent()
         {
             this.panel_Header = new System.Windows.Forms.Panel();
+            this.pictureBox_New = new System.Windows.Forms.PictureBox();
             this.pictureBox_Edit = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Delete = new System.Windows.Forms.PictureBox();
             this.panel_Footer = new System.Windows.Forms.Panel();
+            this.pictureBox_Delete = new System.Windows.Forms.PictureBox();
             this.pictureBox_Label = new System.Windows.Forms.PictureBox();
             this.pictureBox_Archive = new System.Windows.Forms.PictureBox();
             this.pictureBox_ColorPallet = new System.Windows.Forms.PictureBox();
             this.pictureBox_Alarm = new System.Windows.Forms.PictureBox();
             this.panel_Body = new System.Windows.Forms.Panel();
+            this.panel_Tag = new System.Windows.Forms.Panel();
+            this.pictureBox_Tag0 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Tag5 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Tag4 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Tag3 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Tag2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Tag1 = new System.Windows.Forms.PictureBox();
             this.panel_ColorPallet = new System.Windows.Forms.Panel();
             this.pictureBox_Color5 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Color4 = new System.Windows.Forms.PictureBox();
@@ -44,47 +52,59 @@
             this.pictureBox_Color2 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Color1 = new System.Windows.Forms.PictureBox();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
-            this.pictureBox_New = new System.Windows.Forms.PictureBox();
-            this.panel_Tag = new System.Windows.Forms.Panel();
-            this.pictureBox_Tag5 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Tag4 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Tag3 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Tag2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Tag1 = new System.Windows.Forms.PictureBox();
+            this.label_Title = new System.Windows.Forms.Label();
+            this.textBox_Title = new System.Windows.Forms.TextBox();
             this.panel_Header.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Edit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).BeginInit();
             this.panel_Footer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Label)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Archive)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ColorPallet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Alarm)).BeginInit();
             this.panel_Body.SuspendLayout();
+            this.panel_Tag.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag1)).BeginInit();
             this.panel_ColorPallet.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).BeginInit();
-            this.panel_Tag.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel_Header
             // 
+            this.panel_Header.Controls.Add(this.textBox_Title);
+            this.panel_Header.Controls.Add(this.label_Title);
             this.panel_Header.Controls.Add(this.pictureBox_New);
             this.panel_Header.Controls.Add(this.pictureBox_Edit);
             this.panel_Header.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel_Header.Location = new System.Drawing.Point(0, 0);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(202, 40);
+            this.panel_Header.Size = new System.Drawing.Size(223, 40);
             this.panel_Header.TabIndex = 0;
-            this.panel_Header.DoubleClick += new System.EventHandler(this.panel_Header_DoubleClick);
+            // 
+            // pictureBox_New
+            // 
+            this.pictureBox_New.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_New.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
+            this.pictureBox_New.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_New.Location = new System.Drawing.Point(184, 4);
+            this.pictureBox_New.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_New.Name = "pictureBox_New";
+            this.pictureBox_New.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_New.TabIndex = 0;
+            this.pictureBox_New.TabStop = false;
+            this.pictureBox_New.Click += new System.EventHandler(this.pictureBox_New_Click);
+            this.pictureBox_New.MouseEnter += new System.EventHandler(this.pictureBox_New_MouseEnter);
+            this.pictureBox_New.MouseLeave += new System.EventHandler(this.pictureBox_New_MouseLeave);
             // 
             // pictureBox_Edit
             // 
@@ -101,21 +121,6 @@
             this.pictureBox_Edit.MouseEnter += new System.EventHandler(this.pictureBox_Edit_MouseEnter);
             this.pictureBox_Edit.MouseLeave += new System.EventHandler(this.pictureBox_Edit_MouseLeave);
             // 
-            // pictureBox_Delete
-            // 
-            this.pictureBox_Delete.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_Delete.BackgroundImage = global::WellaTodo.Properties.Resources.outline_delete_black_24dp;
-            this.pictureBox_Delete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Delete.Location = new System.Drawing.Point(167, 4);
-            this.pictureBox_Delete.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Delete.Name = "pictureBox_Delete";
-            this.pictureBox_Delete.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Delete.TabIndex = 0;
-            this.pictureBox_Delete.TabStop = false;
-            this.pictureBox_Delete.Click += new System.EventHandler(this.pictureBox_Delete_Click);
-            this.pictureBox_Delete.MouseEnter += new System.EventHandler(this.pictureBox_Delete_MouseEnter);
-            this.pictureBox_Delete.MouseLeave += new System.EventHandler(this.pictureBox_Delete_MouseLeave);
-            // 
             // panel_Footer
             // 
             this.panel_Footer.Controls.Add(this.pictureBox_Delete);
@@ -126,8 +131,23 @@
             this.panel_Footer.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel_Footer.Location = new System.Drawing.Point(0, 180);
             this.panel_Footer.Name = "panel_Footer";
-            this.panel_Footer.Size = new System.Drawing.Size(202, 40);
+            this.panel_Footer.Size = new System.Drawing.Size(223, 40);
             this.panel_Footer.TabIndex = 1;
+            // 
+            // pictureBox_Delete
+            // 
+            this.pictureBox_Delete.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_Delete.BackgroundImage = global::WellaTodo.Properties.Resources.outline_delete_black_24dp;
+            this.pictureBox_Delete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Delete.Location = new System.Drawing.Point(184, 4);
+            this.pictureBox_Delete.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Delete.Name = "pictureBox_Delete";
+            this.pictureBox_Delete.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Delete.TabIndex = 0;
+            this.pictureBox_Delete.TabStop = false;
+            this.pictureBox_Delete.Click += new System.EventHandler(this.pictureBox_Delete_Click);
+            this.pictureBox_Delete.MouseEnter += new System.EventHandler(this.pictureBox_Delete_MouseEnter);
+            this.pictureBox_Delete.MouseLeave += new System.EventHandler(this.pictureBox_Delete_MouseLeave);
             // 
             // pictureBox_Label
             // 
@@ -198,12 +218,104 @@
             this.panel_Body.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Body.Location = new System.Drawing.Point(0, 40);
             this.panel_Body.Name = "panel_Body";
-            this.panel_Body.Size = new System.Drawing.Size(202, 140);
+            this.panel_Body.Size = new System.Drawing.Size(223, 140);
             this.panel_Body.TabIndex = 2;
+            // 
+            // panel_Tag
+            // 
+            this.panel_Tag.BackColor = System.Drawing.SystemColors.Control;
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag0);
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag5);
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag4);
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag3);
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag2);
+            this.panel_Tag.Controls.Add(this.pictureBox_Tag1);
+            this.panel_Tag.Location = new System.Drawing.Point(4, 58);
+            this.panel_Tag.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_Tag.Name = "panel_Tag";
+            this.panel_Tag.Size = new System.Drawing.Size(212, 40);
+            this.panel_Tag.TabIndex = 2;
+            // 
+            // pictureBox_Tag0
+            // 
+            this.pictureBox_Tag0.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag0.Location = new System.Drawing.Point(175, 4);
+            this.pictureBox_Tag0.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag0.Name = "pictureBox_Tag0";
+            this.pictureBox_Tag0.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag0.TabIndex = 0;
+            this.pictureBox_Tag0.TabStop = false;
+            this.pictureBox_Tag0.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            // 
+            // pictureBox_Tag5
+            // 
+            this.pictureBox_Tag5.BackColor = System.Drawing.Color.Blue;
+            this.pictureBox_Tag5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag5.Location = new System.Drawing.Point(140, 4);
+            this.pictureBox_Tag5.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag5.Name = "pictureBox_Tag5";
+            this.pictureBox_Tag5.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag5.TabIndex = 0;
+            this.pictureBox_Tag5.TabStop = false;
+            this.pictureBox_Tag5.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            // 
+            // pictureBox_Tag4
+            // 
+            this.pictureBox_Tag4.BackColor = System.Drawing.Color.Green;
+            this.pictureBox_Tag4.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag4.Location = new System.Drawing.Point(106, 4);
+            this.pictureBox_Tag4.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag4.Name = "pictureBox_Tag4";
+            this.pictureBox_Tag4.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag4.TabIndex = 0;
+            this.pictureBox_Tag4.TabStop = false;
+            this.pictureBox_Tag4.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            // 
+            // pictureBox_Tag3
+            // 
+            this.pictureBox_Tag3.BackColor = System.Drawing.Color.Yellow;
+            this.pictureBox_Tag3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag3.Location = new System.Drawing.Point(72, 4);
+            this.pictureBox_Tag3.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag3.Name = "pictureBox_Tag3";
+            this.pictureBox_Tag3.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag3.TabIndex = 0;
+            this.pictureBox_Tag3.TabStop = false;
+            this.pictureBox_Tag3.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            // 
+            // pictureBox_Tag2
+            // 
+            this.pictureBox_Tag2.BackColor = System.Drawing.Color.Orange;
+            this.pictureBox_Tag2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag2.Location = new System.Drawing.Point(38, 4);
+            this.pictureBox_Tag2.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag2.Name = "pictureBox_Tag2";
+            this.pictureBox_Tag2.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag2.TabIndex = 0;
+            this.pictureBox_Tag2.TabStop = false;
+            this.pictureBox_Tag2.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            // 
+            // pictureBox_Tag1
+            // 
+            this.pictureBox_Tag1.BackColor = System.Drawing.Color.Red;
+            this.pictureBox_Tag1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
+            this.pictureBox_Tag1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Tag1.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Tag1.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Tag1.Name = "pictureBox_Tag1";
+            this.pictureBox_Tag1.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag1.TabIndex = 0;
+            this.pictureBox_Tag1.TabStop = false;
+            this.pictureBox_Tag1.Click += new System.EventHandler(this.pictureBox_Tag_Click);
             // 
             // panel_ColorPallet
             // 
-            this.panel_ColorPallet.BackColor = System.Drawing.Color.GreenYellow;
+            this.panel_ColorPallet.BackColor = System.Drawing.SystemColors.Control;
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color5);
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color4);
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color3);
@@ -289,105 +401,33 @@
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.richTextBox.Size = new System.Drawing.Size(202, 140);
+            this.richTextBox.Size = new System.Drawing.Size(223, 140);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
             this.richTextBox.DoubleClick += new System.EventHandler(this.richTextBox_DoubleClick);
             // 
-            // pictureBox_New
+            // label_Title
             // 
-            this.pictureBox_New.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_New.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
-            this.pictureBox_New.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_New.Location = new System.Drawing.Point(167, 4);
-            this.pictureBox_New.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_New.Name = "pictureBox_New";
-            this.pictureBox_New.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_New.TabIndex = 0;
-            this.pictureBox_New.TabStop = false;
-            this.pictureBox_New.Click += new System.EventHandler(this.pictureBox_New_Click);
-            this.pictureBox_New.MouseEnter += new System.EventHandler(this.pictureBox_New_MouseEnter);
-            this.pictureBox_New.MouseLeave += new System.EventHandler(this.pictureBox_New_MouseLeave);
+            this.label_Title.Location = new System.Drawing.Point(39, 4);
+            this.label_Title.Name = "label_Title";
+            this.label_Title.Size = new System.Drawing.Size(142, 32);
+            this.label_Title.TabIndex = 1;
+            this.label_Title.Text = "제목";
+            this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label_Title.Click += new System.EventHandler(this.label_Title_Click);
             // 
-            // panel_Tag
+            // textBox_Title
             // 
-            this.panel_Tag.BackColor = System.Drawing.Color.GreenYellow;
-            this.panel_Tag.Controls.Add(this.pictureBox_Tag5);
-            this.panel_Tag.Controls.Add(this.pictureBox_Tag4);
-            this.panel_Tag.Controls.Add(this.pictureBox_Tag3);
-            this.panel_Tag.Controls.Add(this.pictureBox_Tag2);
-            this.panel_Tag.Controls.Add(this.pictureBox_Tag1);
-            this.panel_Tag.Location = new System.Drawing.Point(4, 58);
-            this.panel_Tag.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_Tag.Name = "panel_Tag";
-            this.panel_Tag.Size = new System.Drawing.Size(175, 40);
-            this.panel_Tag.TabIndex = 2;
-            // 
-            // pictureBox_Tag5
-            // 
-            this.pictureBox_Tag5.BackColor = System.Drawing.Color.Blue;
-            this.pictureBox_Tag5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.pictureBox_Tag5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag5.Location = new System.Drawing.Point(140, 4);
-            this.pictureBox_Tag5.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Tag5.Name = "pictureBox_Tag5";
-            this.pictureBox_Tag5.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Tag5.TabIndex = 0;
-            this.pictureBox_Tag5.TabStop = false;
-            this.pictureBox_Tag5.Click += new System.EventHandler(this.pictureBox_Tag_Click);
-            // 
-            // pictureBox_Tag4
-            // 
-            this.pictureBox_Tag4.BackColor = System.Drawing.Color.Green;
-            this.pictureBox_Tag4.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.pictureBox_Tag4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag4.Location = new System.Drawing.Point(106, 4);
-            this.pictureBox_Tag4.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Tag4.Name = "pictureBox_Tag4";
-            this.pictureBox_Tag4.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Tag4.TabIndex = 0;
-            this.pictureBox_Tag4.TabStop = false;
-            this.pictureBox_Tag4.Click += new System.EventHandler(this.pictureBox_Tag_Click);
-            // 
-            // pictureBox_Tag3
-            // 
-            this.pictureBox_Tag3.BackColor = System.Drawing.Color.Yellow;
-            this.pictureBox_Tag3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.pictureBox_Tag3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag3.Location = new System.Drawing.Point(72, 4);
-            this.pictureBox_Tag3.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Tag3.Name = "pictureBox_Tag3";
-            this.pictureBox_Tag3.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Tag3.TabIndex = 0;
-            this.pictureBox_Tag3.TabStop = false;
-            this.pictureBox_Tag3.Click += new System.EventHandler(this.pictureBox_Tag_Click);
-            // 
-            // pictureBox_Tag2
-            // 
-            this.pictureBox_Tag2.BackColor = System.Drawing.Color.Orange;
-            this.pictureBox_Tag2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.pictureBox_Tag2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag2.Location = new System.Drawing.Point(38, 4);
-            this.pictureBox_Tag2.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Tag2.Name = "pictureBox_Tag2";
-            this.pictureBox_Tag2.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Tag2.TabIndex = 0;
-            this.pictureBox_Tag2.TabStop = false;
-            this.pictureBox_Tag2.Click += new System.EventHandler(this.pictureBox_Tag_Click);
-            // 
-            // pictureBox_Tag1
-            // 
-            this.pictureBox_Tag1.BackColor = System.Drawing.Color.Red;
-            this.pictureBox_Tag1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
-            this.pictureBox_Tag1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag1.Location = new System.Drawing.Point(4, 4);
-            this.pictureBox_Tag1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Tag1.Name = "pictureBox_Tag1";
-            this.pictureBox_Tag1.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Tag1.TabIndex = 0;
-            this.pictureBox_Tag1.TabStop = false;
-            this.pictureBox_Tag1.Click += new System.EventHandler(this.pictureBox_Tag_Click);
+            this.textBox_Title.Location = new System.Drawing.Point(39, 8);
+            this.textBox_Title.Name = "textBox_Title";
+            this.textBox_Title.Size = new System.Drawing.Size(142, 25);
+            this.textBox_Title.TabIndex = 2;
+            this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
+            this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
+            this.textBox_Title.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyUp);
+            this.textBox_Title.Leave += new System.EventHandler(this.textBox_Title_Leave);
+            this.textBox_Title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Title_MouseDown);
             // 
             // Post_it
             // 
@@ -400,31 +440,33 @@
             this.Controls.Add(this.panel_Header);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Post_it";
-            this.Size = new System.Drawing.Size(202, 220);
+            this.Size = new System.Drawing.Size(223, 220);
             this.Load += new System.EventHandler(this.Post_it_Load);
             this.Resize += new System.EventHandler(this.Post_it_Resize);
             this.panel_Header.ResumeLayout(false);
+            this.panel_Header.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Edit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).EndInit();
             this.panel_Footer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Label)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Archive)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_ColorPallet)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Alarm)).EndInit();
             this.panel_Body.ResumeLayout(false);
+            this.panel_Tag.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag1)).EndInit();
             this.panel_ColorPallet.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).EndInit();
-            this.panel_Tag.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Tag1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -454,5 +496,8 @@
         private System.Windows.Forms.PictureBox pictureBox_Tag3;
         private System.Windows.Forms.PictureBox pictureBox_Tag2;
         private System.Windows.Forms.PictureBox pictureBox_Tag1;
+        private System.Windows.Forms.PictureBox pictureBox_Tag0;
+        private System.Windows.Forms.Label label_Title;
+        private System.Windows.Forms.TextBox textBox_Title;
     }
 }
