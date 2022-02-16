@@ -54,6 +54,11 @@
             this.pictureBox_Color2 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Color1 = new System.Windows.Forms.PictureBox();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
+            this.panel_Alarm = new System.Windows.Forms.Panel();
+            this.button_Alarm_Set = new System.Windows.Forms.Button();
+            this.button_Alarm_Reset = new System.Windows.Forms.Button();
+            this.panel_Alarm_Date = new System.Windows.Forms.Panel();
+            this.label_AlarmDate = new System.Windows.Forms.Label();
             this.panel_Header.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Edit)).BeginInit();
@@ -77,6 +82,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).BeginInit();
+            this.panel_Alarm.SuspendLayout();
+            this.panel_Alarm_Date.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_Header
@@ -87,15 +94,17 @@
             this.panel_Header.Controls.Add(this.pictureBox_Edit);
             this.panel_Header.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel_Header.Location = new System.Drawing.Point(0, 0);
+            this.panel_Header.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(223, 40);
+            this.panel_Header.Size = new System.Drawing.Size(195, 32);
             this.panel_Header.TabIndex = 0;
             // 
             // textBox_Title
             // 
-            this.textBox_Title.Location = new System.Drawing.Point(39, 8);
+            this.textBox_Title.Location = new System.Drawing.Point(34, 6);
+            this.textBox_Title.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Title.Name = "textBox_Title";
-            this.textBox_Title.Size = new System.Drawing.Size(142, 25);
+            this.textBox_Title.Size = new System.Drawing.Size(125, 21);
             this.textBox_Title.TabIndex = 2;
             this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
             this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
@@ -105,9 +114,9 @@
             // 
             // label_Title
             // 
-            this.label_Title.Location = new System.Drawing.Point(39, 4);
+            this.label_Title.Location = new System.Drawing.Point(34, 3);
             this.label_Title.Name = "label_Title";
-            this.label_Title.Size = new System.Drawing.Size(142, 32);
+            this.label_Title.Size = new System.Drawing.Size(124, 26);
             this.label_Title.TabIndex = 1;
             this.label_Title.Text = "제목";
             this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -118,10 +127,10 @@
             this.pictureBox_New.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_New.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
             this.pictureBox_New.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_New.Location = new System.Drawing.Point(184, 4);
+            this.pictureBox_New.Location = new System.Drawing.Point(161, 3);
             this.pictureBox_New.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_New.Name = "pictureBox_New";
-            this.pictureBox_New.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_New.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_New.TabIndex = 0;
             this.pictureBox_New.TabStop = false;
             this.pictureBox_New.Click += new System.EventHandler(this.pictureBox_New_Click);
@@ -133,10 +142,10 @@
             this.pictureBox_Edit.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_Edit.BackgroundImage = global::WellaTodo.Properties.Resources.outline_mode_edit_black_24dp;
             this.pictureBox_Edit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Edit.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Edit.Location = new System.Drawing.Point(4, 3);
             this.pictureBox_Edit.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Edit.Name = "pictureBox_Edit";
-            this.pictureBox_Edit.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Edit.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Edit.TabIndex = 0;
             this.pictureBox_Edit.TabStop = false;
             this.pictureBox_Edit.Click += new System.EventHandler(this.pictureBox_Edit_Click);
@@ -151,9 +160,10 @@
             this.panel_Footer.Controls.Add(this.pictureBox_ColorPallet);
             this.panel_Footer.Controls.Add(this.pictureBox_Alarm);
             this.panel_Footer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel_Footer.Location = new System.Drawing.Point(0, 180);
+            this.panel_Footer.Location = new System.Drawing.Point(0, 144);
+            this.panel_Footer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Footer.Name = "panel_Footer";
-            this.panel_Footer.Size = new System.Drawing.Size(223, 40);
+            this.panel_Footer.Size = new System.Drawing.Size(195, 32);
             this.panel_Footer.TabIndex = 1;
             // 
             // pictureBox_Delete
@@ -161,10 +171,10 @@
             this.pictureBox_Delete.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_Delete.BackgroundImage = global::WellaTodo.Properties.Resources.outline_delete_black_24dp;
             this.pictureBox_Delete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Delete.Location = new System.Drawing.Point(184, 4);
+            this.pictureBox_Delete.Location = new System.Drawing.Point(161, 3);
             this.pictureBox_Delete.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Delete.Name = "pictureBox_Delete";
-            this.pictureBox_Delete.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Delete.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Delete.TabIndex = 0;
             this.pictureBox_Delete.TabStop = false;
             this.pictureBox_Delete.Click += new System.EventHandler(this.pictureBox_Delete_Click);
@@ -176,10 +186,10 @@
             this.pictureBox_Label.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_Label.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Label.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Label.Location = new System.Drawing.Point(74, 4);
+            this.pictureBox_Label.Location = new System.Drawing.Point(65, 3);
             this.pictureBox_Label.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Label.Name = "pictureBox_Label";
-            this.pictureBox_Label.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Label.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Label.TabIndex = 0;
             this.pictureBox_Label.TabStop = false;
             this.pictureBox_Label.Click += new System.EventHandler(this.pictureBox_Label_Click);
@@ -191,10 +201,10 @@
             this.pictureBox_Archive.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_Archive.BackgroundImage = global::WellaTodo.Properties.Resources.outline_archive_black_24dp;
             this.pictureBox_Archive.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Archive.Location = new System.Drawing.Point(109, 4);
+            this.pictureBox_Archive.Location = new System.Drawing.Point(95, 3);
             this.pictureBox_Archive.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Archive.Name = "pictureBox_Archive";
-            this.pictureBox_Archive.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Archive.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Archive.TabIndex = 0;
             this.pictureBox_Archive.TabStop = false;
             this.pictureBox_Archive.Click += new System.EventHandler(this.pictureBox_Archive_Click);
@@ -206,10 +216,10 @@
             this.pictureBox_ColorPallet.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_ColorPallet.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_ColorPallet.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_ColorPallet.Location = new System.Drawing.Point(39, 4);
+            this.pictureBox_ColorPallet.Location = new System.Drawing.Point(34, 3);
             this.pictureBox_ColorPallet.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_ColorPallet.Name = "pictureBox_ColorPallet";
-            this.pictureBox_ColorPallet.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_ColorPallet.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_ColorPallet.TabIndex = 0;
             this.pictureBox_ColorPallet.TabStop = false;
             this.pictureBox_ColorPallet.Click += new System.EventHandler(this.pictureBox_ColorPallet_Click);
@@ -221,10 +231,10 @@
             this.pictureBox_Alarm.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox_Alarm.BackgroundImage = global::WellaTodo.Properties.Resources.outline_access_alarms_black_24dp;
             this.pictureBox_Alarm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Alarm.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Alarm.Location = new System.Drawing.Point(4, 3);
             this.pictureBox_Alarm.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Alarm.Name = "pictureBox_Alarm";
-            this.pictureBox_Alarm.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Alarm.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Alarm.TabIndex = 0;
             this.pictureBox_Alarm.TabStop = false;
             this.pictureBox_Alarm.Click += new System.EventHandler(this.pictureBox_Alarm_Click);
@@ -234,13 +244,16 @@
             // panel_Body
             // 
             this.panel_Body.BackColor = System.Drawing.Color.White;
+            this.panel_Body.Controls.Add(this.panel_Alarm_Date);
+            this.panel_Body.Controls.Add(this.panel_Alarm);
             this.panel_Body.Controls.Add(this.panel_Tag);
             this.panel_Body.Controls.Add(this.panel_ColorPallet);
             this.panel_Body.Controls.Add(this.richTextBox);
             this.panel_Body.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_Body.Location = new System.Drawing.Point(0, 40);
+            this.panel_Body.Location = new System.Drawing.Point(0, 32);
+            this.panel_Body.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Body.Name = "panel_Body";
-            this.panel_Body.Size = new System.Drawing.Size(223, 140);
+            this.panel_Body.Size = new System.Drawing.Size(195, 112);
             this.panel_Body.TabIndex = 2;
             // 
             // panel_Tag
@@ -252,20 +265,20 @@
             this.panel_Tag.Controls.Add(this.pictureBox_Tag3);
             this.panel_Tag.Controls.Add(this.pictureBox_Tag2);
             this.panel_Tag.Controls.Add(this.pictureBox_Tag1);
-            this.panel_Tag.Location = new System.Drawing.Point(4, 58);
+            this.panel_Tag.Location = new System.Drawing.Point(4, 38);
             this.panel_Tag.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Tag.Name = "panel_Tag";
-            this.panel_Tag.Size = new System.Drawing.Size(212, 40);
+            this.panel_Tag.Size = new System.Drawing.Size(186, 32);
             this.panel_Tag.TabIndex = 2;
             // 
             // pictureBox_Tag0
             // 
             this.pictureBox_Tag0.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag0.Location = new System.Drawing.Point(175, 4);
+            this.pictureBox_Tag0.Location = new System.Drawing.Point(153, 3);
             this.pictureBox_Tag0.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag0.Name = "pictureBox_Tag0";
-            this.pictureBox_Tag0.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag0.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag0.TabIndex = 0;
             this.pictureBox_Tag0.TabStop = false;
             this.pictureBox_Tag0.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -275,10 +288,10 @@
             this.pictureBox_Tag5.BackColor = System.Drawing.Color.Blue;
             this.pictureBox_Tag5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag5.Location = new System.Drawing.Point(140, 4);
+            this.pictureBox_Tag5.Location = new System.Drawing.Point(122, 3);
             this.pictureBox_Tag5.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag5.Name = "pictureBox_Tag5";
-            this.pictureBox_Tag5.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag5.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag5.TabIndex = 0;
             this.pictureBox_Tag5.TabStop = false;
             this.pictureBox_Tag5.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -288,10 +301,10 @@
             this.pictureBox_Tag4.BackColor = System.Drawing.Color.Green;
             this.pictureBox_Tag4.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag4.Location = new System.Drawing.Point(106, 4);
+            this.pictureBox_Tag4.Location = new System.Drawing.Point(93, 3);
             this.pictureBox_Tag4.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag4.Name = "pictureBox_Tag4";
-            this.pictureBox_Tag4.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag4.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag4.TabIndex = 0;
             this.pictureBox_Tag4.TabStop = false;
             this.pictureBox_Tag4.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -301,10 +314,10 @@
             this.pictureBox_Tag3.BackColor = System.Drawing.Color.Yellow;
             this.pictureBox_Tag3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag3.Location = new System.Drawing.Point(72, 4);
+            this.pictureBox_Tag3.Location = new System.Drawing.Point(63, 3);
             this.pictureBox_Tag3.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag3.Name = "pictureBox_Tag3";
-            this.pictureBox_Tag3.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag3.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag3.TabIndex = 0;
             this.pictureBox_Tag3.TabStop = false;
             this.pictureBox_Tag3.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -314,10 +327,10 @@
             this.pictureBox_Tag2.BackColor = System.Drawing.Color.Orange;
             this.pictureBox_Tag2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag2.Location = new System.Drawing.Point(38, 4);
+            this.pictureBox_Tag2.Location = new System.Drawing.Point(33, 3);
             this.pictureBox_Tag2.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag2.Name = "pictureBox_Tag2";
-            this.pictureBox_Tag2.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag2.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag2.TabIndex = 0;
             this.pictureBox_Tag2.TabStop = false;
             this.pictureBox_Tag2.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -327,10 +340,10 @@
             this.pictureBox_Tag1.BackColor = System.Drawing.Color.Red;
             this.pictureBox_Tag1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_label_black_24dp;
             this.pictureBox_Tag1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Tag1.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Tag1.Location = new System.Drawing.Point(4, 3);
             this.pictureBox_Tag1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Tag1.Name = "pictureBox_Tag1";
-            this.pictureBox_Tag1.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Tag1.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Tag1.TabIndex = 0;
             this.pictureBox_Tag1.TabStop = false;
             this.pictureBox_Tag1.Click += new System.EventHandler(this.pictureBox_Tag_Click);
@@ -343,10 +356,10 @@
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color3);
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color2);
             this.panel_ColorPallet.Controls.Add(this.pictureBox_Color1);
-            this.panel_ColorPallet.Location = new System.Drawing.Point(4, 3);
+            this.panel_ColorPallet.Location = new System.Drawing.Point(4, 2);
             this.panel_ColorPallet.Margin = new System.Windows.Forms.Padding(0);
             this.panel_ColorPallet.Name = "panel_ColorPallet";
-            this.panel_ColorPallet.Size = new System.Drawing.Size(175, 40);
+            this.panel_ColorPallet.Size = new System.Drawing.Size(153, 32);
             this.panel_ColorPallet.TabIndex = 1;
             // 
             // pictureBox_Color5
@@ -354,10 +367,10 @@
             this.pictureBox_Color5.BackColor = System.Drawing.Color.SkyBlue;
             this.pictureBox_Color5.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color5.Location = new System.Drawing.Point(140, 4);
+            this.pictureBox_Color5.Location = new System.Drawing.Point(122, 3);
             this.pictureBox_Color5.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Color5.Name = "pictureBox_Color5";
-            this.pictureBox_Color5.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color5.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Color5.TabIndex = 0;
             this.pictureBox_Color5.TabStop = false;
             this.pictureBox_Color5.Click += new System.EventHandler(this.pictureBox_Color_Click);
@@ -367,10 +380,10 @@
             this.pictureBox_Color4.BackColor = System.Drawing.Color.Orange;
             this.pictureBox_Color4.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color4.Location = new System.Drawing.Point(106, 4);
+            this.pictureBox_Color4.Location = new System.Drawing.Point(93, 3);
             this.pictureBox_Color4.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Color4.Name = "pictureBox_Color4";
-            this.pictureBox_Color4.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color4.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Color4.TabIndex = 0;
             this.pictureBox_Color4.TabStop = false;
             this.pictureBox_Color4.Click += new System.EventHandler(this.pictureBox_Color_Click);
@@ -380,10 +393,10 @@
             this.pictureBox_Color3.BackColor = System.Drawing.Color.PaleGreen;
             this.pictureBox_Color3.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color3.Location = new System.Drawing.Point(72, 4);
+            this.pictureBox_Color3.Location = new System.Drawing.Point(63, 3);
             this.pictureBox_Color3.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Color3.Name = "pictureBox_Color3";
-            this.pictureBox_Color3.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color3.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Color3.TabIndex = 0;
             this.pictureBox_Color3.TabStop = false;
             this.pictureBox_Color3.Click += new System.EventHandler(this.pictureBox_Color_Click);
@@ -393,10 +406,10 @@
             this.pictureBox_Color2.BackColor = System.Drawing.Color.Violet;
             this.pictureBox_Color2.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color2.Location = new System.Drawing.Point(38, 4);
+            this.pictureBox_Color2.Location = new System.Drawing.Point(33, 3);
             this.pictureBox_Color2.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Color2.Name = "pictureBox_Color2";
-            this.pictureBox_Color2.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color2.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Color2.TabIndex = 0;
             this.pictureBox_Color2.TabStop = false;
             this.pictureBox_Color2.Click += new System.EventHandler(this.pictureBox_Color_Click);
@@ -406,10 +419,10 @@
             this.pictureBox_Color1.BackColor = System.Drawing.Color.Yellow;
             this.pictureBox_Color1.BackgroundImage = global::WellaTodo.Properties.Resources.outline_palette_black_24dp;
             this.pictureBox_Color1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Color1.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Color1.Location = new System.Drawing.Point(4, 3);
             this.pictureBox_Color1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Color1.Name = "pictureBox_Color1";
-            this.pictureBox_Color1.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Color1.Size = new System.Drawing.Size(28, 26);
             this.pictureBox_Color1.TabIndex = 0;
             this.pictureBox_Color1.TabStop = false;
             this.pictureBox_Color1.Click += new System.EventHandler(this.pictureBox_Color_Click);
@@ -421,17 +434,70 @@
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox.HideSelection = false;
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.richTextBox.Size = new System.Drawing.Size(223, 140);
+            this.richTextBox.Size = new System.Drawing.Size(195, 112);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
             this.richTextBox.Leave += new System.EventHandler(this.richTextBox_Leave);
             // 
+            // panel_Alarm
+            // 
+            this.panel_Alarm.BackColor = System.Drawing.SystemColors.Control;
+            this.panel_Alarm.Controls.Add(this.button_Alarm_Reset);
+            this.panel_Alarm.Controls.Add(this.button_Alarm_Set);
+            this.panel_Alarm.Location = new System.Drawing.Point(4, 74);
+            this.panel_Alarm.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_Alarm.Name = "panel_Alarm";
+            this.panel_Alarm.Size = new System.Drawing.Size(91, 32);
+            this.panel_Alarm.TabIndex = 3;
+            // 
+            // button_Alarm_Set
+            // 
+            this.button_Alarm_Set.Location = new System.Drawing.Point(3, 3);
+            this.button_Alarm_Set.Name = "button_Alarm_Set";
+            this.button_Alarm_Set.Size = new System.Drawing.Size(40, 26);
+            this.button_Alarm_Set.TabIndex = 0;
+            this.button_Alarm_Set.Text = "설정";
+            this.button_Alarm_Set.UseVisualStyleBackColor = true;
+            this.button_Alarm_Set.Click += new System.EventHandler(this.button_Alarm_Set_Click);
+            // 
+            // button_Alarm_Reset
+            // 
+            this.button_Alarm_Reset.Location = new System.Drawing.Point(46, 3);
+            this.button_Alarm_Reset.Name = "button_Alarm_Reset";
+            this.button_Alarm_Reset.Size = new System.Drawing.Size(40, 26);
+            this.button_Alarm_Reset.TabIndex = 0;
+            this.button_Alarm_Reset.Text = "해제";
+            this.button_Alarm_Reset.UseVisualStyleBackColor = true;
+            this.button_Alarm_Reset.Click += new System.EventHandler(this.button_Alarm_Reset_Click);
+            // 
+            // panel_Alarm_Date
+            // 
+            this.panel_Alarm_Date.BackColor = System.Drawing.SystemColors.Control;
+            this.panel_Alarm_Date.Controls.Add(this.label_AlarmDate);
+            this.panel_Alarm_Date.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel_Alarm_Date.Location = new System.Drawing.Point(0, 88);
+            this.panel_Alarm_Date.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_Alarm_Date.Name = "panel_Alarm_Date";
+            this.panel_Alarm_Date.Size = new System.Drawing.Size(195, 24);
+            this.panel_Alarm_Date.TabIndex = 3;
+            // 
+            // label_AlarmDate
+            // 
+            this.label_AlarmDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label_AlarmDate.Location = new System.Drawing.Point(0, 0);
+            this.label_AlarmDate.Name = "label_AlarmDate";
+            this.label_AlarmDate.Size = new System.Drawing.Size(195, 24);
+            this.label_AlarmDate.TabIndex = 0;
+            this.label_AlarmDate.Text = "알림 : ";
+            this.label_AlarmDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Post_it
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gold;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -440,7 +506,7 @@
             this.Controls.Add(this.panel_Header);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Post_it";
-            this.Size = new System.Drawing.Size(223, 220);
+            this.Size = new System.Drawing.Size(195, 176);
             this.Load += new System.EventHandler(this.Post_it_Load);
             this.Resize += new System.EventHandler(this.Post_it_Resize);
             this.panel_Header.ResumeLayout(false);
@@ -467,6 +533,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Color1)).EndInit();
+            this.panel_Alarm.ResumeLayout(false);
+            this.panel_Alarm_Date.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -499,5 +567,10 @@
         private System.Windows.Forms.PictureBox pictureBox_Tag0;
         private System.Windows.Forms.Label label_Title;
         private System.Windows.Forms.TextBox textBox_Title;
+        private System.Windows.Forms.Panel panel_Alarm_Date;
+        private System.Windows.Forms.Label label_AlarmDate;
+        private System.Windows.Forms.Panel panel_Alarm;
+        private System.Windows.Forms.Button button_Alarm_Reset;
+        private System.Windows.Forms.Button button_Alarm_Set;
     }
 }

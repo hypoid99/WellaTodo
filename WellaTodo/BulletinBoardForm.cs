@@ -434,8 +434,11 @@ namespace WellaTodo
                 case "Delete":
                     Delete_Note(note);
                     break;
-                case "Alarm":
-                    Alarm_Note(note);
+                case "AlarmSet":
+                    AlarmSet_Note(note);
+                    break;
+                case "AlarmReset":
+                    AlarmReset_Note(note);
                     break;
                 case "Archive":
                     Archive_Note(note);
@@ -533,7 +536,7 @@ namespace WellaTodo
             m_Controller.Perform_Modify_Memo_BulletinBoard(note.DataCell);
         }
 
-        private void Alarm_Note(Post_it note)
+        private void AlarmSet_Note(Post_it note)
         {
             DateTimePickerForm calendar = new DateTimePickerForm();
             calendar.ShowDialog();
@@ -542,7 +545,7 @@ namespace WellaTodo
 
             if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
-                Send_Log_Message("1>BulletinBoardForm::Alarm_Note -> Modify Planned Canceled");
+                Send_Log_Message("1>BulletinBoardForm::AlarmSet_Note -> Modify Planned Canceled");
                 return;
             }
             calendar.IsSelected = false;
@@ -555,7 +558,20 @@ namespace WellaTodo
             note.DataCell.DC_deadlineType = 4;
             note.DataCell.DC_deadlineTime = dt;
 
-            Send_Log_Message("1>BulletinBoardForm::Alarm_Note -> Modify Selected Day Planned!!");
+            note.SetAlarm = true;
+
+            Send_Log_Message("1>BulletinBoardForm::AlarmSet_Note -> Modify Selected Day Planned!!");
+            m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
+        }
+
+        private void AlarmReset_Note(Post_it note)
+        {
+            note.DataCell.DC_deadlineType = 0;
+            note.DataCell.DC_deadlineTime = default;
+
+            note.SetAlarm = false;
+
+            Send_Log_Message("1>BulletinBoardForm::AlarmReset_Note -> Cancel Planned!!");
             m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
         }
 
@@ -650,6 +666,9 @@ namespace WellaTodo
             {
                 Post_it note = new Post_it(dc);
 
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+
                 note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
                 note.Post_it_Click -= new Post_it_Event(Post_it_Click);
                 note.Post_it_Click += new Post_it_Event(Post_it_Click);
@@ -660,9 +679,7 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-
-                panel_Bulletin.Controls.Add(note);
-                panel_Bulletin.Controls.SetChildIndex(note, 0);
+                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
             }
 
             Update_Notes_Position();
@@ -685,6 +702,9 @@ namespace WellaTodo
             {
                 Post_it note = new Post_it(dc);
 
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+
                 note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
                 note.Post_it_Click -= new Post_it_Event(Post_it_Click);
                 note.Post_it_Click += new Post_it_Event(Post_it_Click);
@@ -695,9 +715,7 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-
-                panel_Bulletin.Controls.Add(note);
-                panel_Bulletin.Controls.SetChildIndex(note, 0);
+                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
             }
 
             Update_Notes_Position();
@@ -720,6 +738,9 @@ namespace WellaTodo
             {
                 Post_it note = new Post_it(dc);
 
+                panel_Bulletin.Controls.Add(note);
+                panel_Bulletin.Controls.SetChildIndex(note, 0);
+
                 note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
                 note.Post_it_Click -= new Post_it_Event(Post_it_Click);
                 note.Post_it_Click += new Post_it_Event(Post_it_Click);
@@ -730,9 +751,7 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-
-                panel_Bulletin.Controls.Add(note);
-                panel_Bulletin.Controls.SetChildIndex(note, 0);
+                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
             }
 
             Update_Notes_Position();

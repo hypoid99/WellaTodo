@@ -62,6 +62,28 @@ namespace WellaTodo
             }
         }
 
+        private bool _setAlarm;
+        public bool SetAlarm
+        {
+            get
+            {
+                return _setAlarm;
+            }
+            set
+            {
+                _setAlarm = value;
+                if (value)
+                {
+                    panel_Alarm_Date.Visible = true;
+                    label_AlarmDate.Text = "알림 : " + DataCell.DC_deadlineTime.ToShortDateString();
+                }
+                else
+                {
+                    panel_Alarm_Date.Visible = false;
+                }
+            }
+        }
+
         private Color _memoColor;
         public Color MemoColor 
         {
@@ -73,7 +95,7 @@ namespace WellaTodo
             set 
             { 
                 _memoColor = value;
-                BackColor = richTextBox.BackColor = _memoColor;
+                BackColor = richTextBox.BackColor = label_AlarmDate.BackColor = _memoColor;
             }
         }
 
@@ -158,6 +180,8 @@ namespace WellaTodo
             textBox_Title .Visible = false;
             panel_ColorPallet.Visible = false;
             panel_Tag.Visible = false;
+            panel_Alarm.Visible = false;
+            panel_Alarm_Date.Visible = false;
         }
 
         private void Update_Post_it()
@@ -192,10 +216,22 @@ namespace WellaTodo
             this.Invalidate();
         }
 
+        private void button_Alarm_Set_Click(object sender, EventArgs e)
+        {
+            popup.Close();
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("AlarmSet"));
+        }
+
+        private void button_Alarm_Reset_Click(object sender, EventArgs e)
+        {
+            popup.Close();
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("AlarmReset"));
+        }
+
         private void pictureBox_Color_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_Color_Click");
-
             PictureBox sd = (PictureBox)sender;
 
             switch (sd.Name)
@@ -218,7 +254,6 @@ namespace WellaTodo
             }
 
             popup.Close();
-
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Color"));
         }
 
@@ -268,7 +303,6 @@ namespace WellaTodo
 
         private void pictureBox_Edit_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_Edit_Click");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs ("Edit"));
         }
 
@@ -284,7 +318,6 @@ namespace WellaTodo
 
         private void pictureBox_New_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_New_Click");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("New"));
         }
 
@@ -300,7 +333,10 @@ namespace WellaTodo
 
         private void pictureBox_Alarm_Click(object sender, EventArgs e)
         {
-            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Alarm"));
+            panel_Alarm.Size = new Size(100, 40);
+
+            popup = new Popup(panel_Alarm);
+            popup.Show(sender as PictureBox);
         }
 
         private void pictureBox_ColorPallet_MouseEnter(object sender, EventArgs e)
@@ -366,7 +402,6 @@ namespace WellaTodo
 
         private void pictureBox_Delete_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("pictureBox_Delete_Click");
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Delete"));
         }
 
