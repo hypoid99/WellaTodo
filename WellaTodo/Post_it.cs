@@ -35,7 +35,11 @@ namespace WellaTodo
         private string _textBoxString;
         public string MemoString
         {
-            get => _textBoxString;
+            get
+            {
+                _textBoxString = richTextBox.Text;
+                return _textBoxString;
+            }
             set
             {
                 _textBoxString = value;
@@ -46,7 +50,11 @@ namespace WellaTodo
         private string _textBoxRTFString;
         public string MemoRTFString
         {
-            get => _textBoxRTFString;
+            get
+            {
+                _textBoxRTFString = richTextBox.Rtf;
+                return _textBoxRTFString;
+            }
             set
             {
                 _textBoxRTFString = value;
@@ -103,6 +111,16 @@ namespace WellaTodo
         private bool _bulletin;
         public bool IsBulletin { get => _bulletin; set => _bulletin = value; }
 
+        public int GetMemoLength
+        {
+            get
+            {
+                return richTextBox.TextLength;
+            }
+        }
+
+        bool isRichTextBox_Changed = false;
+        public bool IsRichTextBox_Changed { get => isRichTextBox_Changed; set => isRichTextBox_Changed = value; }
         bool isTextbox_Title_Clicked = false;
 
         public Post_it(CDataCell dc)
@@ -131,7 +149,8 @@ namespace WellaTodo
 
         private void Initiate()
         {
-            richTextBox.ReadOnly = true;
+            IsRichTextBox_Changed = false;
+            pictureBox_Edit.BackColor = Color.Transparent;
 
             pictureBox_New.Location = new Point(panel_Header.Width - 28, 4);
             pictureBox_Delete.Location = new Point(panel_Header.Width - 28, 4);
@@ -281,7 +300,7 @@ namespace WellaTodo
 
         private void pictureBox_Alarm_Click(object sender, EventArgs e)
         {
-
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Alarm"));
         }
 
         private void pictureBox_ColorPallet_MouseEnter(object sender, EventArgs e)
@@ -351,15 +370,19 @@ namespace WellaTodo
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Delete"));
         }
 
-        private void richTextBox_DoubleClick(object sender, EventArgs e)
-        {
-            //Console.WriteLine("richTextBox_DoubleClick");
-            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Edit"));
-        }
-
         private void richTextBox_TextChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine("richTextBox_TextChanged");
+            isRichTextBox_Changed = true;
+            pictureBox_Edit.BackColor = Color.White;
+        }
+
+        private void richTextBox_Leave(object sender, EventArgs e)
+        {
+            if (!isRichTextBox_Changed)
+            {
+                return;
+            }
+
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Changed"));
         }
 
@@ -384,13 +407,18 @@ namespace WellaTodo
                 return;
             }
 
-            MemoTitle = textBox_Title.Text;
+            if (!textBox_Title.Visible)  // 엔터키 이벤트후 Leave 이벤트 막기
+            {
+                return;
+            }
 
-            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Title"));
+            MemoTitle = textBox_Title.Text;
 
             isTextbox_Title_Clicked = false;
             textBox_Title.Text = "";
             textBox_Title.Visible = false;
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Title"));
         }
 
         private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
@@ -417,11 +445,11 @@ namespace WellaTodo
 
                 MemoTitle = textBox_Title.Text;
 
-                if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Title"));
-
                 isTextbox_Title_Clicked = false;
                 textBox_Title.Text = "";
                 textBox_Title.Visible = false;
+
+                if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Title"));
             }
         }
 

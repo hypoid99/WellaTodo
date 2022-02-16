@@ -47,6 +47,7 @@ namespace WellaTodo
 		WM_BULLETINBOARD_DELETE,
 		WM_BULLETINBOARD_MODIFY_TITLE,
 		WM_BULLETINBOARD_MODIFY_MEMO,
+		WM_BULLETINBOARD_MODIFY_ALARM,
 		WM_BULLETINBOARD_MODIFY_ARCHIVE,
 		WM_BULLETINBOARD_MODIFY_COLOR,
 		WM_BULLETINBOARD_MODIFY_TAG
@@ -726,6 +727,8 @@ namespace WellaTodo
 			}
 
 			data.DC_title = dc.DC_title;
+			data.DC_memo = dc.DC_memo;
+			data.DC_memoRTF = dc.DC_memoRTF;
 
 			Notify_Log_Message("3>MainModel::Modify_Title_BulletinBoard -> Modify Title [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_TITLE));  // deep copy 할 것!
@@ -742,6 +745,9 @@ namespace WellaTodo
 			}
 
 			data.DC_archive = dc.DC_archive;
+			data.DC_memo = dc.DC_memo;
+			data.DC_memoRTF = dc.DC_memoRTF;
+
 			if (data.DC_archive)
             {
 				data.DC_complete = dc.DC_complete = true;
@@ -784,6 +790,24 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_MEMO));  // deep copy 할 것!
 		}
 
+		public void Modify_Alarm_BulletinBoard(CDataCell dc)
+        {
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Alarm_BulletinBoard -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_deadlineType = dc.DC_deadlineType;
+			data.DC_deadlineTime = dc.DC_deadlineTime;
+
+			Notify_Log_Message("3>MainModel::Modify_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_ALARM));  // deep copy 할 것!
+
+		}
+
 		public void Modify_Color_BulletinBoard(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
@@ -795,6 +819,8 @@ namespace WellaTodo
 			}
 
 			data.DC_memoColor = dc.DC_memoColor;
+			data.DC_memo = dc.DC_memo;
+			data.DC_memoRTF = dc.DC_memoRTF;
 
 			Notify_Log_Message("3>MainModel::Modify_Color_BulletinBoard -> Modify Color [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_COLOR));  // deep copy 할 것!
@@ -811,6 +837,8 @@ namespace WellaTodo
 			}
 
 			data.DC_memoTag = dc.DC_memoTag;
+			data.DC_memo = dc.DC_memo;
+			data.DC_memoRTF = dc.DC_memoRTF;
 
 			Notify_Log_Message("3>MainModel::Modify_Tag_BulletinBoard -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_TAG));  // deep copy 할 것!

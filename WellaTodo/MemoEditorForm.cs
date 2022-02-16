@@ -15,7 +15,11 @@ namespace WellaTodo
         private string _textBoxString;
         public string TextBoxString 
         { 
-            get => _textBoxString;
+            get
+            {
+                _textBoxString = richTextBox.Text;
+                return _textBoxString;
+            }
             set 
             { 
                 _textBoxString = value;
@@ -26,13 +30,20 @@ namespace WellaTodo
         private string _textBoxRTFString;
         public string TextBoxRTFString
         {
-            get => _textBoxRTFString;
+            get
+            {
+                _textBoxRTFString = richTextBox.Rtf;
+                return _textBoxRTFString;
+            }
             set
             {
                 _textBoxRTFString = value;
                 richTextBox.Rtf = _textBoxRTFString;
             }
         }
+
+        bool isRichTextBox_Changed = false;
+        public bool IsRichTextBox_Changed { get => isRichTextBox_Changed; set => isRichTextBox_Changed = value; }
 
         public MemoEditorForm()
         {
@@ -51,12 +62,14 @@ namespace WellaTodo
 
         private void MemoEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            TextBoxRTFString = richTextBox.Rtf;
-            TextBoxString = richTextBox.Text;
+
         }
 
         private void Initiate()
         {
+            IsRichTextBox_Changed = false;
+            pictureBox_Add_Note.BackColor = Color.Transparent;
+
             panel_Header.BackColor = Color.Gold;
             panel_Footer.BackColor = Color.Gold;
             richTextBox.BackColor = Color.Gold;
@@ -72,6 +85,17 @@ namespace WellaTodo
         }
 
         private void pictureBox_Delete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox_TextChanged(object sender, EventArgs e)
+        {
+            isRichTextBox_Changed = true;
+            pictureBox_Add_Note.BackColor = Color.White;
+        }
+
+        private void richTextBox_Leave(object sender, EventArgs e)
         {
 
         }

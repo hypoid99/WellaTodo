@@ -690,11 +690,22 @@ namespace WellaTodo
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
                     Update_Modify_Task_Title(dc);
+                    Update_Modify_Task_Memo(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
                     Update_Complete_Process(dc);
+                    Update_Modify_Task_Memo(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
+                    Update_Modify_Task_Memo(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
+                    Update_Modify_Planned(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
+                    Update_Modify_Task_Memo(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
                     Update_Modify_Task_Memo(dc);
                     break;
                 default:

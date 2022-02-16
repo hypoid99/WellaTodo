@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel_Header = new System.Windows.Forms.Panel();
+            this.textBox_Title = new System.Windows.Forms.TextBox();
+            this.label_Title = new System.Windows.Forms.Label();
             this.pictureBox_New = new System.Windows.Forms.PictureBox();
             this.pictureBox_Edit = new System.Windows.Forms.PictureBox();
             this.panel_Footer = new System.Windows.Forms.Panel();
@@ -52,8 +54,6 @@
             this.pictureBox_Color2 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Color1 = new System.Windows.Forms.PictureBox();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
-            this.label_Title = new System.Windows.Forms.Label();
-            this.textBox_Title = new System.Windows.Forms.TextBox();
             this.panel_Header.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_New)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Edit)).BeginInit();
@@ -90,6 +90,28 @@
             this.panel_Header.Name = "panel_Header";
             this.panel_Header.Size = new System.Drawing.Size(223, 40);
             this.panel_Header.TabIndex = 0;
+            // 
+            // textBox_Title
+            // 
+            this.textBox_Title.Location = new System.Drawing.Point(39, 8);
+            this.textBox_Title.Name = "textBox_Title";
+            this.textBox_Title.Size = new System.Drawing.Size(142, 25);
+            this.textBox_Title.TabIndex = 2;
+            this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
+            this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
+            this.textBox_Title.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyUp);
+            this.textBox_Title.Leave += new System.EventHandler(this.textBox_Title_Leave);
+            this.textBox_Title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Title_MouseDown);
+            // 
+            // label_Title
+            // 
+            this.label_Title.Location = new System.Drawing.Point(39, 4);
+            this.label_Title.Name = "label_Title";
+            this.label_Title.Size = new System.Drawing.Size(142, 32);
+            this.label_Title.TabIndex = 1;
+            this.label_Title.Text = "제목";
+            this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label_Title.Click += new System.EventHandler(this.label_Title_Click);
             // 
             // pictureBox_New
             // 
@@ -405,29 +427,7 @@
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
-            this.richTextBox.DoubleClick += new System.EventHandler(this.richTextBox_DoubleClick);
-            // 
-            // label_Title
-            // 
-            this.label_Title.Location = new System.Drawing.Point(39, 4);
-            this.label_Title.Name = "label_Title";
-            this.label_Title.Size = new System.Drawing.Size(142, 32);
-            this.label_Title.TabIndex = 1;
-            this.label_Title.Text = "제목";
-            this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label_Title.Click += new System.EventHandler(this.label_Title_Click);
-            // 
-            // textBox_Title
-            // 
-            this.textBox_Title.Location = new System.Drawing.Point(39, 8);
-            this.textBox_Title.Name = "textBox_Title";
-            this.textBox_Title.Size = new System.Drawing.Size(142, 25);
-            this.textBox_Title.TabIndex = 2;
-            this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
-            this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
-            this.textBox_Title.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyUp);
-            this.textBox_Title.Leave += new System.EventHandler(this.textBox_Title_Leave);
-            this.textBox_Title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Title_MouseDown);
+            this.richTextBox.Leave += new System.EventHandler(this.richTextBox_Leave);
             // 
             // Post_it
             // 

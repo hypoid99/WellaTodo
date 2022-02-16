@@ -29,28 +29,28 @@
         private void InitializeComponent()
         {
             this.panel_Header = new System.Windows.Forms.Panel();
+            this.pictureBox_More_Hori = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Delete = new System.Windows.Forms.PictureBox();
+            this.pictureBox_Add_Note = new System.Windows.Forms.PictureBox();
             this.panel_Footer = new System.Windows.Forms.Panel();
-            this.panel_Body = new System.Windows.Forms.Panel();
-            this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.pictureBox_Image = new System.Windows.Forms.PictureBox();
             this.pictureBox_Strikeout = new System.Windows.Forms.PictureBox();
             this.pictureBox_Underline = new System.Windows.Forms.PictureBox();
             this.pictureBox_Italic = new System.Windows.Forms.PictureBox();
             this.pictureBox_Bold = new System.Windows.Forms.PictureBox();
-            this.pictureBox_More_Hori = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Delete = new System.Windows.Forms.PictureBox();
-            this.pictureBox_Add_Note = new System.Windows.Forms.PictureBox();
+            this.panel_Body = new System.Windows.Forms.Panel();
+            this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.panel_Header.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_More_Hori)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).BeginInit();
             this.panel_Footer.SuspendLayout();
-            this.panel_Body.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Image)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Strikeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Underline)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Italic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Bold)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_More_Hori)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).BeginInit();
+            this.panel_Body.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_Header
@@ -64,6 +64,43 @@
             this.panel_Header.Size = new System.Drawing.Size(534, 40);
             this.panel_Header.TabIndex = 0;
             // 
+            // pictureBox_More_Hori
+            // 
+            this.pictureBox_More_Hori.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_More_Hori.BackgroundImage = global::WellaTodo.Properties.Resources.outline_more_horiz_black_24dp;
+            this.pictureBox_More_Hori.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_More_Hori.Location = new System.Drawing.Point(457, 4);
+            this.pictureBox_More_Hori.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_More_Hori.Name = "pictureBox_More_Hori";
+            this.pictureBox_More_Hori.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_More_Hori.TabIndex = 4;
+            this.pictureBox_More_Hori.TabStop = false;
+            // 
+            // pictureBox_Delete
+            // 
+            this.pictureBox_Delete.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_Delete.BackgroundImage = global::WellaTodo.Properties.Resources.outline_delete_black_24dp;
+            this.pictureBox_Delete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Delete.Location = new System.Drawing.Point(489, 4);
+            this.pictureBox_Delete.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Delete.Name = "pictureBox_Delete";
+            this.pictureBox_Delete.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Delete.TabIndex = 5;
+            this.pictureBox_Delete.TabStop = false;
+            this.pictureBox_Delete.Click += new System.EventHandler(this.pictureBox_Delete_Click);
+            // 
+            // pictureBox_Add_Note
+            // 
+            this.pictureBox_Add_Note.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_Add_Note.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
+            this.pictureBox_Add_Note.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_Add_Note.Location = new System.Drawing.Point(4, 4);
+            this.pictureBox_Add_Note.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_Add_Note.Name = "pictureBox_Add_Note";
+            this.pictureBox_Add_Note.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_Add_Note.TabIndex = 3;
+            this.pictureBox_Add_Note.TabStop = false;
+            // 
             // panel_Footer
             // 
             this.panel_Footer.Controls.Add(this.pictureBox_Image);
@@ -76,26 +113,6 @@
             this.panel_Footer.Name = "panel_Footer";
             this.panel_Footer.Size = new System.Drawing.Size(534, 40);
             this.panel_Footer.TabIndex = 1;
-            // 
-            // panel_Body
-            // 
-            this.panel_Body.Controls.Add(this.richTextBox);
-            this.panel_Body.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_Body.Location = new System.Drawing.Point(0, 40);
-            this.panel_Body.Name = "panel_Body";
-            this.panel_Body.Size = new System.Drawing.Size(534, 280);
-            this.panel_Body.TabIndex = 2;
-            // 
-            // richTextBox
-            // 
-            this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox.HideSelection = false;
-            this.richTextBox.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(534, 280);
-            this.richTextBox.TabIndex = 1;
-            this.richTextBox.Text = "";
             // 
             // pictureBox_Image
             // 
@@ -157,42 +174,27 @@
             this.pictureBox_Bold.TabIndex = 5;
             this.pictureBox_Bold.TabStop = false;
             // 
-            // pictureBox_More_Hori
+            // panel_Body
             // 
-            this.pictureBox_More_Hori.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_More_Hori.BackgroundImage = global::WellaTodo.Properties.Resources.outline_more_horiz_black_24dp;
-            this.pictureBox_More_Hori.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_More_Hori.Location = new System.Drawing.Point(457, 4);
-            this.pictureBox_More_Hori.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_More_Hori.Name = "pictureBox_More_Hori";
-            this.pictureBox_More_Hori.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_More_Hori.TabIndex = 4;
-            this.pictureBox_More_Hori.TabStop = false;
+            this.panel_Body.Controls.Add(this.richTextBox);
+            this.panel_Body.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_Body.Location = new System.Drawing.Point(0, 40);
+            this.panel_Body.Name = "panel_Body";
+            this.panel_Body.Size = new System.Drawing.Size(534, 280);
+            this.panel_Body.TabIndex = 2;
             // 
-            // pictureBox_Delete
+            // richTextBox
             // 
-            this.pictureBox_Delete.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_Delete.BackgroundImage = global::WellaTodo.Properties.Resources.outline_delete_black_24dp;
-            this.pictureBox_Delete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Delete.Location = new System.Drawing.Point(489, 4);
-            this.pictureBox_Delete.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Delete.Name = "pictureBox_Delete";
-            this.pictureBox_Delete.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Delete.TabIndex = 5;
-            this.pictureBox_Delete.TabStop = false;
-            this.pictureBox_Delete.Click += new System.EventHandler(this.pictureBox_Delete_Click);
-            // 
-            // pictureBox_Add_Note
-            // 
-            this.pictureBox_Add_Note.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_Add_Note.BackgroundImage = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
-            this.pictureBox_Add_Note.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_Add_Note.Location = new System.Drawing.Point(4, 4);
-            this.pictureBox_Add_Note.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_Add_Note.Name = "pictureBox_Add_Note";
-            this.pictureBox_Add_Note.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_Add_Note.TabIndex = 3;
-            this.pictureBox_Add_Note.TabStop = false;
+            this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox.HideSelection = false;
+            this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Name = "richTextBox";
+            this.richTextBox.Size = new System.Drawing.Size(534, 280);
+            this.richTextBox.TabIndex = 1;
+            this.richTextBox.Text = "";
+            this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
+            this.richTextBox.Leave += new System.EventHandler(this.richTextBox_Leave);
             // 
             // MemoEditorForm
             // 
@@ -209,16 +211,16 @@
             this.Load += new System.EventHandler(this.MemoEditorForm_Load);
             this.Resize += new System.EventHandler(this.MemoEditorForm_Resize);
             this.panel_Header.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_More_Hori)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).EndInit();
             this.panel_Footer.ResumeLayout(false);
-            this.panel_Body.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Image)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Strikeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Underline)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Italic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Bold)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_More_Hori)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Delete)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Add_Note)).EndInit();
+            this.panel_Body.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

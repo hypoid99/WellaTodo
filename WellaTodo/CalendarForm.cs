@@ -104,6 +104,26 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
+                case WParam.WM_BULLETINBOARD_ADD:
+                    break;
+                case WParam.WM_BULLETINBOARD_DELETE:
+                    Update_Delete_Task(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
+                    Update_Modify_Task_Title(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
+                    Update_Complete_Process(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
+                    Update_Modify_Planned(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
+                    break;
                 default:
                     break;
             }
@@ -615,7 +635,7 @@ namespace WellaTodo
             if (FindCalendarItem(dc))
             {
                 Send_Log_Message("4>CalendarForm::Update_Complete_Process -> Find matching item : " + dc.DC_title);
-                m_Find_Result_Item.Font = dc.DC_complete
+                m_Find_Result_Item.Font = (dc.DC_complete || dc.DC_archive)
                                        ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                                        : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
             }
