@@ -584,7 +584,7 @@ namespace WellaTodo
             note.DataCell.DC_remindType = 4;
             note.DataCell.DC_remindTime = dt;
 
-            note.SetAlarmVisible = true;
+            note.IsAlarmVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Alarm_Note");
             m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
@@ -595,7 +595,7 @@ namespace WellaTodo
             note.DataCell.DC_remindType = 0;
             note.DataCell.DC_remindTime = default;
 
-            note.SetAlarmVisible = false;
+            note.IsAlarmVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Alarm_Note");
             m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
@@ -623,7 +623,7 @@ namespace WellaTodo
             note.DataCell.DC_deadlineType = 4;
             note.DataCell.DC_deadlineTime = dt;
 
-            note.SetScheduleVisible = true;
+            note.IsScheduleVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note");
             m_Controller.Perform_Modify_Schedule_BulletinBoard(note.DataCell);
@@ -634,7 +634,7 @@ namespace WellaTodo
             note.DataCell.DC_deadlineType = 0;
             note.DataCell.DC_deadlineTime = default;
 
-            note.SetScheduleVisible = false;
+            note.IsScheduleVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Schedule_Note");
             m_Controller.Perform_Modify_Schedule_BulletinBoard(note.DataCell);
@@ -692,7 +692,7 @@ namespace WellaTodo
 
         private void Archive_Note(Post_it note)
         {
-            if (note.IsArchive == false && note.GetMemoLength == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
+            if (note.IsArchive == false && note.GetMemoLength() == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
             {
                 MessageBox.Show("메모 내용이 없어 보관처리되지 않읍니다.");
                 Send_Log_Message("1>BulletinBoardForm::Archive_Note -> Can't Archive for Empty");
@@ -745,8 +745,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
-                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
+                if (dc.DC_remindType > 0) note.IsAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.IsScheduleVisible = true;
             }
 
             Update_Notes_Position();
@@ -782,8 +782,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
-                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
+                if (dc.DC_remindType > 0) note.IsAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.IsScheduleVisible = true;
             }
 
             Update_Notes_Position();
@@ -819,8 +819,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
-                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
+                if (dc.DC_remindType > 0) note.IsAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.IsScheduleVisible = true;
             }
 
             Update_Notes_Position();

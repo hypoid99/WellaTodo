@@ -63,7 +63,7 @@ namespace WellaTodo
         }
 
         private bool _setAlarm;
-        public bool SetAlarmVisible
+        public bool IsAlarmVisible
         {
             get
             {
@@ -72,20 +72,12 @@ namespace WellaTodo
             set
             {
                 _setAlarm = value;
-                if (value)
-                {
-                    panel_Alarm_Date.Visible = true;
-                    label_AlarmDate.Text = "알림 : " + DataCell.DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
-                }
-                else
-                {
-                    panel_Alarm_Date.Visible = false;
-                }
+                Update_Information();
             }
         }
 
         private bool _setSchedule;
-        public bool SetScheduleVisible
+        public bool IsScheduleVisible
         {
             get
             {
@@ -94,15 +86,7 @@ namespace WellaTodo
             set
             {
                 _setSchedule = value;
-                if (value)
-                {
-                    panel_Alarm_Date.Visible = true;
-                    label_ScheduleDate.Text = "기한 : " + DataCell.DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
-                }
-                else
-                {
-                    panel_Alarm_Date.Visible = false;
-                }
+                Update_Information();
             }
         }
 
@@ -117,7 +101,8 @@ namespace WellaTodo
             set 
             { 
                 _memoColor = value;
-                BackColor = richTextBox.BackColor = label_AlarmDate.BackColor = _memoColor;
+                BackColor = richTextBox.BackColor = _memoColor;
+                label_AlarmDate.BackColor = label_ScheduleDate.BackColor = _memoColor;
             }
         }
 
@@ -139,33 +124,22 @@ namespace WellaTodo
             set
             {
                 _archive = value;
-                if (value)
-                {
-                    pictureBox_Archive.BackgroundImage = Properties.Resources.outline_unarchive_black_24dp;
-                    pictureBox_New.Visible = false;
-                }
-                else
-                {
-                    pictureBox_Archive.BackgroundImage = Properties.Resources.outline_archive_black_24dp;
-                    pictureBox_New.Visible = true;
-                }
+                Update_Archive();
             }
         }
 
         private bool _bulletin;
         public bool IsBulletin { get => _bulletin; set => _bulletin = value; }
 
-        public int GetMemoLength
-        {
-            get
-            {
-                return richTextBox.TextLength;
-            }
-        }
-
         bool isRichTextBox_Changed = false;
-        public bool IsRichTextBox_Changed { get => isRichTextBox_Changed; set => isRichTextBox_Changed = value; }
+        public bool IsRichTextBox_Changed 
+        { 
+            get => isRichTextBox_Changed; 
+            set => isRichTextBox_Changed = value; 
+        }
+        
         bool isTextbox_Title_Clicked = false;
+
 
         public Post_it(CDataCell dc)
         {
@@ -204,7 +178,7 @@ namespace WellaTodo
             panel_Tag.Visible = false;
             panel_Alarm.Visible = false;
             panel_Schedule.Visible = false;
-            panel_Alarm_Date.Visible = false;
+            panel_Information.Visible = false;
         }
 
         private void Update_Post_it()
@@ -218,27 +192,92 @@ namespace WellaTodo
             switch (MemoTag)
             {
                 case 0:
-                    pictureBox_Label.BackColor = BackColor;
+                    //pictureBox_Label.BackColor = BackColor;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_black_24dp;
                     break;
                 case 1:
-                    pictureBox_Label.BackColor = Color.Red;
+                    //pictureBox_Label.BackColor = Color.Red;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_red_24dp;
                     break;
                 case 2:
-                    pictureBox_Label.BackColor = Color.Orange;
+                    //pictureBox_Label.BackColor = Color.Orange;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_orange_24dp;
                     break;
                 case 3:
-                    pictureBox_Label.BackColor = Color.Yellow;
+                    //pictureBox_Label.BackColor = Color.Yellow;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_yellow_24dp;
                     break;
                 case 4:
-                    pictureBox_Label.BackColor = Color.Green;
+                    //pictureBox_Label.BackColor = Color.Green;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_green_24dp;
                     break;
                 case 5:
-                    pictureBox_Label.BackColor = Color.Blue;
+                    //pictureBox_Label.BackColor = Color.Blue;
+                    pictureBox_Label.BackgroundImage = Properties.Resources.outline_label_blue_24dp;
                     break;
             }
             this.Invalidate();
         }
 
+        private void Update_Archive()
+        {
+            if (IsArchive)
+            {
+                pictureBox_Archive.BackgroundImage = Properties.Resources.outline_unarchive_black_24dp;
+                pictureBox_New.Visible = false;
+            }
+            else
+            {
+                pictureBox_Archive.BackgroundImage = Properties.Resources.outline_archive_black_24dp;
+                pictureBox_New.Visible = true;
+            }
+        }
+
+        private void Update_Information()
+        {
+            if (IsAlarmVisible && IsScheduleVisible)
+            {
+                panel_Information.Visible = true;
+                panel_Information.Size = new Size(panel_Header.Width - 28, 48);
+                label_AlarmDate.Visible = true;
+                label_AlarmDate.Dock = DockStyle.Bottom;
+                label_AlarmDate.Text = "알림 : " + DataCell.DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                label_ScheduleDate.Visible = true;
+                label_ScheduleDate.Dock = DockStyle.Bottom;
+                label_ScheduleDate.Text = "기한 : " + DataCell.DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
+            }
+            else if (IsAlarmVisible && !IsScheduleVisible)
+            {
+                panel_Information.Visible = true;
+                panel_Information.Size = new Size(panel_Header.Width - 28, 24);
+                label_AlarmDate.Visible = true;
+                label_AlarmDate.Dock = DockStyle.Bottom;
+                label_AlarmDate.Text = "알림 : " + DataCell.DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                label_ScheduleDate.Visible = false;
+            }
+            else if (!IsAlarmVisible && IsScheduleVisible)
+            {
+                panel_Information.Visible = true;
+                panel_Information.Size = new Size(panel_Header.Width - 28, 24);
+                label_ScheduleDate.Visible = true;
+                label_ScheduleDate.Dock = DockStyle.Bottom;
+                label_ScheduleDate.Text = "기한 : " + DataCell.DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
+                label_AlarmDate.Visible = false;
+            }
+            else
+            {
+                panel_Information.Visible = false;
+            }
+        }
+
+        public int GetMemoLength()
+        {
+            return richTextBox.TextLength;
+        }
+
+        // --------------------------------------------------------------
+        // 툴바 2차 이벤트
+        // --------------------------------------------------------------
         private void button_Alarm_Set_Click(object sender, EventArgs e)
         {
             popup.Close();

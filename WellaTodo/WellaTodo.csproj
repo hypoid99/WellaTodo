@@ -324,12 +324,12 @@
     <None Include="icon\outline_mode_edit_black_24dp.png" />
     <None Include="icon\outline_delete_black_24dp.png" />
     <None Include="icon\outline_label_red_24dp.png" />
-    <None Include="icon\outline_label_orange_24dp - 복사본.png" />
     <None Include="icon\outline_label_yellow_24dp.png" />
     <None Include="icon\outline_label_green_24dp.png" />
     <None Include="icon\outline_label_blue_24dp.png" />
     <None Include="icon\outline_unarchive_black_24dp.png" />
     <None Include="icon\outline_schedule_black_24dp.png" />
+    <None Include="icon\outline_label_orange_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />
