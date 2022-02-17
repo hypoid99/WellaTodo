@@ -258,6 +258,12 @@ namespace WellaTodo
 			m_model.Modify_Alarm_BulletinBoard(dc);
 		}
 
+		public void Perform_Modify_Schedule_BulletinBoard(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Schedule_BulletinBoard : " + dc.DC_title);
+			m_model.Modify_Schedule_BulletinBoard(dc);
+		}
+
 		public void Perform_Modify_Archive_BulletinBoard(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Archive_BulletinBoard : " + dc.DC_title);

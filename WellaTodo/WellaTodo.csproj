@@ -329,6 +329,7 @@
     <None Include="icon\outline_label_green_24dp.png" />
     <None Include="icon\outline_label_blue_24dp.png" />
     <None Include="icon\outline_unarchive_black_24dp.png" />
+    <None Include="icon\outline_schedule_black_24dp.png" />
     <Content Include="wella.ico" />
     <None Include="icon\outline_wb_sunny_black_24dp.png" />
     <None Include="icon\outline_grade_black_24dp.png" />

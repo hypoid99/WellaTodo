@@ -118,6 +118,8 @@ namespace WellaTodo
                 case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE:
                     Update_Modify_Planned(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
@@ -560,9 +562,6 @@ namespace WellaTodo
             Calendar_Item sd = (Calendar_Item)sender;
 
             taskEditForm.StartPosition = FormStartPosition.CenterParent;
-
-            //taskEditForm.StartPosition = FormStartPosition.Manual;
-            //taskEditForm.Location = new Point(Location.X + (Width - taskEditForm.Width) / 2, Location.Y + (Height - taskEditForm.Height) / 2);
 
             IEnumerable<CDataCell> dataset = m_Controller.Query_Task_Calendar(sd.CD_DataCell);
             CDataCell dc = dataset.First();

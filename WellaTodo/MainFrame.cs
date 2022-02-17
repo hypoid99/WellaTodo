@@ -700,6 +700,9 @@ namespace WellaTodo
                     Update_Modify_Task_Memo(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
+                    Update_Modify_Remind(dc);
+                    break;
+                case WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE:
                     Update_Modify_Planned(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_COLOR:

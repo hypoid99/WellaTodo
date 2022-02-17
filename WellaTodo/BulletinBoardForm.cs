@@ -189,6 +189,12 @@ namespace WellaTodo
             WParam param = e.Param;
             switch (param)
             {
+                case WParam.WM_MODIFY_TASK_TITLE:
+                    Update_Modify_Title_BulletinBoard(dc);
+                    break;
+                case WParam.WM_COMPLETE_PROCESS:
+                    Update_Modify_Archive_BulletinBoard(dc);
+                    break;
                 case WParam.WM_MODIFY_PLANNED:
                     Update_Alarm_BulletinBoard(dc);
                     break;
@@ -273,6 +279,20 @@ namespace WellaTodo
 
         private void Update_Modify_Archive_BulletinBoard(CDataCell dc)
         {
+            if (m_Selected_Menu == MemoMenuList.MEMO_MENU && dc.DC_archive == false) // 출력
+            {
+                Display_Memo_Menu();
+                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Display_Memo_Menu" + dc.DC_title);
+                return;
+            }
+
+            if (m_Selected_Menu == MemoMenuList.ARCHIVE_MENU && dc.DC_archive == true) // 출력
+            {
+                Display_Archive_Menu();
+                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Display_Archive_Menu" + dc.DC_title);
+                return;
+            }
+
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
             {
@@ -435,10 +455,16 @@ namespace WellaTodo
                     Delete_Note(note);
                     break;
                 case "AlarmSet":
-                    AlarmSet_Note(note);
+                    Set_Alarm_Note(note);
                     break;
                 case "AlarmReset":
-                    AlarmReset_Note(note);
+                    Reset_Alarm_Note(note);
+                    break;
+                case "ScheduleSet":
+                    Set_Schedule_Note(note);
+                    break;
+                case "ScheduleReset":
+                    Reset_Schedule_Note(note);
                     break;
                 case "Archive":
                     Archive_Note(note);
@@ -536,7 +562,7 @@ namespace WellaTodo
             m_Controller.Perform_Modify_Memo_BulletinBoard(note.DataCell);
         }
 
-        private void AlarmSet_Note(Post_it note)
+        private void Set_Alarm_Note(Post_it note)
         {
             DateTimePickerForm calendar = new DateTimePickerForm();
             calendar.ShowDialog();
@@ -545,7 +571,46 @@ namespace WellaTodo
 
             if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
-                Send_Log_Message("1>BulletinBoardForm::AlarmSet_Note -> Modify Planned Canceled");
+                Send_Log_Message("1>BulletinBoardForm::Set_Alarm_Note -> Canceled!!!");
+                return;
+            }
+            calendar.IsSelected = false;
+
+            if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+            {
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+            }
+
+            note.DataCell.DC_remindType = 4;
+            note.DataCell.DC_remindTime = dt;
+
+            note.SetAlarmVisible = true;
+
+            Send_Log_Message("1>BulletinBoardForm::Set_Alarm_Note");
+            m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
+        }
+
+        private void Reset_Alarm_Note(Post_it note)
+        {
+            note.DataCell.DC_remindType = 0;
+            note.DataCell.DC_remindTime = default;
+
+            note.SetAlarmVisible = false;
+
+            Send_Log_Message("1>BulletinBoardForm::Reset_Alarm_Note");
+            m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
+        }
+
+        private void Set_Schedule_Note(Post_it note)
+        {
+            DateTimePickerForm calendar = new DateTimePickerForm();
+            calendar.ShowDialog();
+
+            DateTime dt = calendar.SelectedDateTime;
+
+            if (!calendar.IsSelected || calendar.SelectedDateTime == default)
+            {
+                Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note -> Canceled!!!");
                 return;
             }
             calendar.IsSelected = false;
@@ -558,21 +623,21 @@ namespace WellaTodo
             note.DataCell.DC_deadlineType = 4;
             note.DataCell.DC_deadlineTime = dt;
 
-            note.SetAlarm = true;
+            note.SetScheduleVisible = true;
 
-            Send_Log_Message("1>BulletinBoardForm::AlarmSet_Note -> Modify Selected Day Planned!!");
-            m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
+            Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note");
+            m_Controller.Perform_Modify_Schedule_BulletinBoard(note.DataCell);
         }
 
-        private void AlarmReset_Note(Post_it note)
+        private void Reset_Schedule_Note(Post_it note)
         {
             note.DataCell.DC_deadlineType = 0;
             note.DataCell.DC_deadlineTime = default;
 
-            note.SetAlarm = false;
+            note.SetScheduleVisible = false;
 
-            Send_Log_Message("1>BulletinBoardForm::AlarmReset_Note -> Cancel Planned!!");
-            m_Controller.Perform_Modify_Alarm_BulletinBoard(note.DataCell);
+            Send_Log_Message("1>BulletinBoardForm::Reset_Schedule_Note");
+            m_Controller.Perform_Modify_Schedule_BulletinBoard(note.DataCell);
         }
 
         private void Delete_Note(Post_it note)
@@ -627,8 +692,9 @@ namespace WellaTodo
 
         private void Archive_Note(Post_it note)
         {
-            if (note.GetMemoLength == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
+            if (note.IsArchive == false && note.GetMemoLength == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
             {
+                MessageBox.Show("메모 내용이 없어 보관처리되지 않읍니다.");
                 Send_Log_Message("1>BulletinBoardForm::Archive_Note -> Can't Archive for Empty");
                 return;
             }
@@ -679,7 +745,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
+                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
             }
 
             Update_Notes_Position();
@@ -715,7 +782,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
+                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
             }
 
             Update_Notes_Position();
@@ -751,7 +819,8 @@ namespace WellaTodo
                 note.IsArchive = dc.DC_archive;
                 note.MemoTag = dc.DC_memoTag;
                 note.MemoColor = Color.FromName(dc.DC_memoColor);
-                if (dc.DC_deadlineType > 0) note.SetAlarm = true;
+                if (dc.DC_remindType > 0) note.SetAlarmVisible = true;
+                if (dc.DC_deadlineType > 0) note.SetScheduleVisible = true;
             }
 
             Update_Notes_Position();

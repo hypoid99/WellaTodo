@@ -48,6 +48,7 @@ namespace WellaTodo
 		WM_BULLETINBOARD_MODIFY_TITLE,
 		WM_BULLETINBOARD_MODIFY_MEMO,
 		WM_BULLETINBOARD_MODIFY_ALARM,
+		WM_BULLETINBOARD_MODIFY_SCHEDULE,
 		WM_BULLETINBOARD_MODIFY_ARCHIVE,
 		WM_BULLETINBOARD_MODIFY_COLOR,
 		WM_BULLETINBOARD_MODIFY_TAG
@@ -427,6 +428,19 @@ namespace WellaTodo
 
 			data.DC_complete = dc.DC_complete;
 
+			data.DC_archive = dc.DC_archive;
+			data.DC_memo = dc.DC_memo;
+			data.DC_memoRTF = dc.DC_memoRTF;
+
+			if (dc.DC_complete)
+			{
+				data.DC_archive = dc.DC_archive = true;
+			}
+			else
+			{
+				data.DC_archive = dc.DC_archive = false;
+			}
+
 			if (data.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
 			{
 				myTaskItems.Remove(data); // 삭제
@@ -786,7 +800,7 @@ namespace WellaTodo
 			data.DC_memo = dc.DC_memo;
 			data.DC_memoRTF = dc.DC_memoRTF;
 
-			Notify_Log_Message("3>MainModel::Modify_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
+			Notify_Log_Message("3>MainModel::Modify_Memo_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_MEMO));  // deep copy 할 것!
 		}
 
@@ -800,11 +814,29 @@ namespace WellaTodo
 				return;
 			}
 
+			data.DC_remindType = dc.DC_remindType;
+			data.DC_remindTime = dc.DC_remindTime;
+
+			Notify_Log_Message("3>MainModel::Modify_Alarm_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_ALARM));  // deep copy 할 것!
+
+		}
+
+		public void Modify_Schedule_BulletinBoard(CDataCell dc)
+		{
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Schedule_BulletinBoard -> Find() Not Found Item!!");
+				return;
+			}
+
 			data.DC_deadlineType = dc.DC_deadlineType;
 			data.DC_deadlineTime = dc.DC_deadlineTime;
 
-			Notify_Log_Message("3>MainModel::Modify_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_ALARM));  // deep copy 할 것!
+			Notify_Log_Message("3>MainModel::Modify_Schedule_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE));  // deep copy 할 것!
 
 		}
 

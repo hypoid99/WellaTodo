@@ -63,7 +63,7 @@ namespace WellaTodo
         }
 
         private bool _setAlarm;
-        public bool SetAlarm
+        public bool SetAlarmVisible
         {
             get
             {
@@ -75,7 +75,29 @@ namespace WellaTodo
                 if (value)
                 {
                     panel_Alarm_Date.Visible = true;
-                    label_AlarmDate.Text = "알림 : " + DataCell.DC_deadlineTime.ToShortDateString();
+                    label_AlarmDate.Text = "알림 : " + DataCell.DC_remindTime.ToString("MM/dd(ddd)tthh:mm");
+                }
+                else
+                {
+                    panel_Alarm_Date.Visible = false;
+                }
+            }
+        }
+
+        private bool _setSchedule;
+        public bool SetScheduleVisible
+        {
+            get
+            {
+                return _setSchedule;
+            }
+            set
+            {
+                _setSchedule = value;
+                if (value)
+                {
+                    panel_Alarm_Date.Visible = true;
+                    label_ScheduleDate.Text = "기한 : " + DataCell.DC_deadlineTime.ToString("MM/dd(ddd)tthh:mm");
                 }
                 else
                 {
@@ -181,6 +203,7 @@ namespace WellaTodo
             panel_ColorPallet.Visible = false;
             panel_Tag.Visible = false;
             panel_Alarm.Visible = false;
+            panel_Schedule.Visible = false;
             panel_Alarm_Date.Visible = false;
         }
 
@@ -228,6 +251,20 @@ namespace WellaTodo
             popup.Close();
 
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("AlarmReset"));
+        }
+
+        private void button_Schedule_Set_Click(object sender, EventArgs e)
+        {
+            popup.Close();
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("ScheduleSet"));
+        }
+
+        private void button_Schedule_Reset_Click(object sender, EventArgs e)
+        {
+            popup.Close();
+
+            if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("ScheduleReset"));
         }
 
         private void pictureBox_Color_Click(object sender, EventArgs e)
@@ -333,9 +370,27 @@ namespace WellaTodo
 
         private void pictureBox_Alarm_Click(object sender, EventArgs e)
         {
-            panel_Alarm.Size = new Size(100, 40);
+            panel_Alarm.Size = new Size(90, 40);
 
             popup = new Popup(panel_Alarm);
+            popup.Show(sender as PictureBox);
+        }
+
+        private void pictureBox_Schedule_MouseEnter(object sender, EventArgs e)
+        {
+            ((PictureBox)sender).BorderStyle = BorderStyle.FixedSingle;
+        }
+
+        private void pictureBox_Schedule_MouseLeave(object sender, EventArgs e)
+        {
+            ((PictureBox)sender).BorderStyle = BorderStyle.None;
+        }
+
+        private void pictureBox_Schedule_Click(object sender, EventArgs e)
+        {
+            panel_Schedule.Size = new Size(90, 40);
+
+            popup = new Popup(panel_Schedule);
             popup.Show(sender as PictureBox);
         }
 
@@ -517,5 +572,7 @@ namespace WellaTodo
         private void OnCopyMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Copy(); }
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
+
+        
     }
 }
