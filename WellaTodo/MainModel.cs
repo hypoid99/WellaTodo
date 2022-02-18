@@ -43,12 +43,6 @@ namespace WellaTodo
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK,
-		WM_BULLETINBOARD_ADD,
-		WM_BULLETINBOARD_DELETE,
-		WM_BULLETINBOARD_MODIFY_TITLE,
-		WM_BULLETINBOARD_MODIFY_MEMO,
-		WM_BULLETINBOARD_MODIFY_ALARM,
-		WM_BULLETINBOARD_MODIFY_SCHEDULE,
 		WM_BULLETINBOARD_MODIFY_ARCHIVE,
 		WM_BULLETINBOARD_MODIFY_COLOR,
 		WM_BULLETINBOARD_MODIFY_TAG
@@ -430,7 +424,6 @@ namespace WellaTodo
 
 			data.DC_archive = dc.DC_archive;
 			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
 
 			if (dc.DC_complete)
 			{
@@ -715,39 +708,9 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REPEAT));
 		}
 
-		public void Add_BulletinBoard(CDataCell dc)
-        {
-			CDataCell data = (CDataCell)dc.Clone();
-
-			m_Task_ID_Num++;
-
-			data.DC_task_ID = m_Task_ID_Num;
-			data.DC_dateCreated = DateTime.Now;
-
-			myTaskItems.Insert(0, data);
-
-			Notify_Log_Message("3>MainModel::Add_BulletinBoard -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_ADD));  // deep copy 할 것!
-		}
-
-		public void Modify_Title_BulletinBoard(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Modify_Title_BulletinBoard -> Find() Not Found Item!!");
-				return;
-			}
-
-			data.DC_title = dc.DC_title;
-			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
-
-			Notify_Log_Message("3>MainModel::Modify_Title_BulletinBoard -> Modify Title [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_TITLE));  // deep copy 할 것!
-		}
-
+		// -----------------------------------------------------------
+		// BulletinBoard 전용 처리 함수
+		// -----------------------------------------------------------
 		public void Modify_Archive_BulletinBoard(CDataCell dc)
         {
 			CDataCell data = Find(dc);
@@ -760,7 +723,6 @@ namespace WellaTodo
 
 			data.DC_archive = dc.DC_archive;
 			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
 
 			if (data.DC_archive)
             {
@@ -787,59 +749,6 @@ namespace WellaTodo
 
 		}
 
-		public void Modify_Memo_BulletinBoard(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Modify_Memo_BulletinBoard -> Find() Not Found Item!!");
-				return;
-			}
-
-			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
-
-			Notify_Log_Message("3>MainModel::Modify_Memo_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_MEMO));  // deep copy 할 것!
-		}
-
-		public void Modify_Alarm_BulletinBoard(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Modify_Alarm_BulletinBoard -> Find() Not Found Item!!");
-				return;
-			}
-
-			data.DC_remindType = dc.DC_remindType;
-			data.DC_remindTime = dc.DC_remindTime;
-
-			Notify_Log_Message("3>MainModel::Modify_Alarm_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_ALARM));  // deep copy 할 것!
-
-		}
-
-		public void Modify_Schedule_BulletinBoard(CDataCell dc)
-		{
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Modify_Schedule_BulletinBoard -> Find() Not Found Item!!");
-				return;
-			}
-
-			data.DC_deadlineType = dc.DC_deadlineType;
-			data.DC_deadlineTime = dc.DC_deadlineTime;
-
-			Notify_Log_Message("3>MainModel::Modify_Schedule_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE));  // deep copy 할 것!
-
-		}
-
 		public void Modify_Color_BulletinBoard(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
@@ -852,7 +761,6 @@ namespace WellaTodo
 
 			data.DC_memoColor = dc.DC_memoColor;
 			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
 
 			Notify_Log_Message("3>MainModel::Modify_Color_BulletinBoard -> Modify Color [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_COLOR));  // deep copy 할 것!
@@ -870,37 +778,14 @@ namespace WellaTodo
 
 			data.DC_memoTag = dc.DC_memoTag;
 			data.DC_memo = dc.DC_memo;
-			data.DC_memoRTF = dc.DC_memoRTF;
 
 			Notify_Log_Message("3>MainModel::Modify_Tag_BulletinBoard -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_TAG));  // deep copy 할 것!
 		}
 
-		public void Delete_BulletinBoard(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Delete_BulletinBoard -> Find() Not Found Item!!");
-				return;
-			}
-
-			if (myTaskItems.Remove(data))
-			{
-				Notify_Log_Message("3>MainModel::Delete_BulletinBoard -> Data is Deleted!! [" + data.DC_task_ID + "]" + data.DC_title);
-			}
-			else
-			{
-				Notify_Log_Message("Warning>MainModel::Delete_BulletinBoard -> Remove() Not Found Item!!");
-				return;
-			}
-
-			Notify_Log_Message("3>MainModel::Delete_BulletinBoard -> Modify Note [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_DELETE));  // deep copy 할 것!
-
-		}
-
+		// -----------------------------------------------------------
+		// Find
+		// -----------------------------------------------------------
 		private CDataCell Find(CDataCell dc)
 		{
 			int task_ID = dc.DC_task_ID;

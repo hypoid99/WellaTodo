@@ -140,21 +140,15 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
-		public void Perform_Modify_Remind(CDataCell dc, int type, DateTime dt)
+		public void Perform_Modify_Remind(CDataCell dc)
 		{
-			dc.DC_remindType = type;
-			dc.DC_remindTime = dt;
-
-			Send_Log_Message("2>MainController::Perform_Modify_Remind : type [" + type + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Modify_Remind : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
 		}
 
-		public void Perform_Modify_Planned(CDataCell dc, int type, DateTime dt)
+		public void Perform_Modify_Planned(CDataCell dc)
 		{
-			dc.DC_deadlineType = type;
-			dc.DC_deadlineTime = dt;
-
-			Send_Log_Message("2>MainController::Perform_Modify_Planned : type [" + type + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Modify_Planned : type " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
 		}
 
@@ -234,36 +228,6 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
-		public void Perform_Add_BulletinBoard(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Add_BulletinBoard : " + dc.DC_title);
-			m_model.Add_BulletinBoard(dc);
-		}
-
-		public void Perform_Modify_Memo_BulletinBoard(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Memo_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Memo_BulletinBoard(dc);
-		}
-
-		public void Perform_Modify_Title_BulletinBoard(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Modify_Title_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Title_BulletinBoard(dc);
-		}
-
-		public void Perform_Modify_Alarm_BulletinBoard(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Alarm_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Alarm_BulletinBoard(dc);
-		}
-
-		public void Perform_Modify_Schedule_BulletinBoard(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Schedule_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Schedule_BulletinBoard(dc);
-		}
-
 		public void Perform_Modify_Archive_BulletinBoard(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Archive_BulletinBoard : " + dc.DC_title);
@@ -280,12 +244,6 @@ namespace WellaTodo
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Tag_BulletinBoard : " + dc.DC_title);
 			m_model.Modify_Tag_BulletinBoard(dc);
-		}
-
-		public void Perform_Delete_BulletinBoard(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Delete_BulletinBoard : " + dc.DC_title);
-			m_model.Delete_BulletinBoard(dc);
 		}
 
 		// -----------------------------------------------------------

@@ -608,9 +608,11 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
-            //Console.WriteLine(">MainFrame::Update_View");
             CDataCell dc = e.Item;
             WParam param = e.Param;
+
+            SendDataCellToTodoItem(dc); // 변경된 내용을 현재 화면 아이템의 DataCell 내용을 변경한다
+
             switch (param)
             {
                 case WParam.WM_LOAD_DATA:
@@ -682,28 +684,9 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_ADD:
-                    Update_Add_Task(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_DELETE:
-                    Update_Delete_Task(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
-                    Update_Modify_Task_Title(dc);
-                    Update_Modify_Task_Memo(dc);
-                    break;
                 case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
                     Update_Complete_Process(dc);
                     Update_Modify_Task_Memo(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
-                    Update_Modify_Task_Memo(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
-                    Update_Modify_Remind(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE:
-                    Update_Modify_Planned(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
                     Update_Modify_Task_Memo(dc);
@@ -2033,6 +2016,26 @@ namespace WellaTodo
             Task_Delete(m_Selected_Item.TD_DataCell);
         }
 
+        private void SendDataCellToTodoItem(CDataCell dc)
+        {
+            if (dc == null)  // Save, Load, Open, Print 명령은 dc가 null 임
+            {
+                return;
+            }
+
+            // 화면에 dc가 있는지 확인후 item.TD_DataCell에 복사한다
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
+                {
+                    item.TD_DataCell = (CDataCell)dc.Clone();
+
+                    Send_Log_Message(">MainFrame::SendDataCellToTodoItem -> Completed!!");
+                    break;
+                }
+            }
+        }
+
         private void SendDataCellToDetailWindow(CDataCell dc)
         {
             textBox_Title.Text = dc.DC_title;
@@ -2511,8 +2514,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
 
+            m_Selected_Item.TD_DataCell.DC_remindType = 1;
+            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnTodayRemind_Click -> Modify Today Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 1, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
@@ -2520,8 +2526,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
 
+            m_Selected_Item.TD_DataCell.DC_remindType = 2;
+            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnTomorrowRemind_Click -> Modify Tomorrow Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 2, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
@@ -2529,8 +2538,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(8-(int)dt.DayOfWeek);
 
+            m_Selected_Item.TD_DataCell.DC_remindType = 3;
+            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnNextWeekRemind_Click -> Modify NextWeek Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 3, new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00));
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
@@ -2539,20 +2551,27 @@ namespace WellaTodo
 
             calendar.ShowDialog();
 
-            if (calendar.IsSelected && (calendar.SelectedDateTime != default))
+            if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
-                calendar.IsSelected = false;
-
-                Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Selected Day Remind!!");
-                m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 4, calendar.SelectedDateTime);
+                Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Remind Canceled");
+                return;
             }
-            Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Remind Canceled");
+            calendar.IsSelected = false;
+
+            m_Selected_Item.TD_DataCell.DC_remindType = 4;
+            m_Selected_Item.TD_DataCell.DC_remindTime = calendar.SelectedDateTime;
+
+            Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Selected Day Remind!!");
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
         }
 
         private void OnDeleteRemind_Click(object sender, EventArgs e)
         {
+            m_Selected_Item.TD_DataCell.DC_remindType = 0;
+            m_Selected_Item.TD_DataCell.DC_remindTime = default;
+
             Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Delete Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell, 0, default);
+            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
         }
 
         // -------------------------------------------------
@@ -2596,11 +2615,13 @@ namespace WellaTodo
             {
                 roundLabel3.Text = "기한 설정됨";
                 roundLabel3.BackColor = PSEUDO_SELECTED_COLOR;
+                Send_Log_Message("4>MainFrame::Update_Modify_Planned -> 기한 설정됨");
             }
             else
             {
                 roundLabel3.Text = "기한 설정";
                 roundLabel3.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
+                Send_Log_Message("4>MainFrame::Update_Modify_Planned -> 기한 해제됨");
             }
 
             Send_Log_Message("4>MainFrame::Update_Modify_Planned -> Modify Planned Completed!!");
@@ -2615,8 +2636,11 @@ namespace WellaTodo
         {
             DateTime dt = DateTime.Now;
 
+            m_Selected_Item.TD_DataCell.DC_deadlineType = 1;
+            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnTodayDeadline_Click -> Modify Today Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 1, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
         }
 
         private void OnTomorrowDeadline_Click(object sender, EventArgs e)
@@ -2624,8 +2648,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
 
+            m_Selected_Item.TD_DataCell.DC_deadlineType = 2;
+            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnTomorrowDeadline_Click -> Modify Tomorrow Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 2, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
         }
 
         private void OnNextWeekDeadline_Click(object sender, EventArgs e)
@@ -2633,8 +2660,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(8 - (int)dt.DayOfWeek);
 
+            m_Selected_Item.TD_DataCell.DC_deadlineType = 3;
+            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
             Send_Log_Message("1>MainFrame::OnNextWeekDeadline_Click -> Modify NextWeek Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 3, new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00));
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
         }
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
@@ -2643,25 +2673,34 @@ namespace WellaTodo
             calendar.ShowDialog();
 
             DateTime dt = calendar.SelectedDateTime;
-            if (calendar.IsSelected && (calendar.SelectedDateTime != default))
+
+            if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
-                if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
-                {
-                    dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-                }
-
-                calendar.IsSelected = false;
-
-                Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Selected Day Planned!!");
-                m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 4, dt);
+                Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Planned Canceled");
+                return;
             }
-            Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Planned Canceled");
+
+            if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+            {
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+            }
+
+            calendar.IsSelected = false;
+
+            m_Selected_Item.TD_DataCell.DC_deadlineType = 4;
+            m_Selected_Item.TD_DataCell.DC_deadlineTime = dt;
+
+            Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Selected Day Planned!!");
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
         }
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
+            m_Selected_Item.TD_DataCell.DC_deadlineType = 0;
+            m_Selected_Item.TD_DataCell.DC_deadlineTime = default;
+
             Send_Log_Message("1>MainFrame::OnDeleteDeadline_Click -> Delete Planned");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell, 0, default);
+            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
 
             if (m_Selected_Item.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때
             {

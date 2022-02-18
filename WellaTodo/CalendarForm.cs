@@ -104,23 +104,8 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_ADD:
-                    break;
-                case WParam.WM_BULLETINBOARD_DELETE:
-                    Update_Delete_Task(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_TITLE:
-                    Update_Modify_Task_Title(dc);
-                    break;
                 case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
                     Update_Complete_Process(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_MEMO:
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_ALARM:
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_SCHEDULE:
-                    Update_Modify_Planned(dc);
                     break;
                 case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
                     break;
@@ -279,7 +264,11 @@ namespace WellaTodo
 
                 DateTime dt = planned_day.Present_Day;
                 dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-                m_Controller.Perform_Modify_Planned(item.TD_DataCell, 4, dt);
+
+                item.TD_DataCell.DC_deadlineType = 4;
+                item.TD_DataCell.DC_deadlineTime = dt;
+
+                m_Controller.Perform_Modify_Planned(item.TD_DataCell);
             }
             else if (e.Data.GetDataPresent(typeof(Calendar_Item)))
             {
@@ -303,7 +292,11 @@ namespace WellaTodo
 
                 DateTime dt = planned_day.Present_Day;
                 dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-                m_Controller.Perform_Modify_Planned(item.CD_DataCell , 4, dt);
+
+                item.CD_DataCell.DC_deadlineType = 4;
+                item.CD_DataCell.DC_deadlineTime = dt;
+
+                m_Controller.Perform_Modify_Planned(item.CD_DataCell);
             }
             else
             {
@@ -609,15 +602,20 @@ namespace WellaTodo
 
             if (taskEditForm.IsPlannedChanged) // 기한 설정 변경
             {
+                dc.DC_deadlineType = 4;
+
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
-                m_Controller.Perform_Modify_Planned(dc, 4, dc.DC_deadlineTime);
+                m_Controller.Perform_Modify_Planned(dc);
                 taskEditForm.IsPlannedChanged = false;
             }
 
             if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
             {
+                dc.DC_deadlineType = 0;
+                dc.DC_deadlineTime = default;
+
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
-                m_Controller.Perform_Modify_Planned(dc, 0, default);
+                m_Controller.Perform_Modify_Planned(dc);
                 taskEditForm.IsPlannedDeleted = false;
             }
         }

@@ -25,7 +25,6 @@ namespace WellaTodo
         private int _repeatType;
         private DateTime _repeatTime;
 
-        private string _memoRTF;
         private bool _bulletin;
         private bool _archive;
         private int _memoTag;
@@ -47,7 +46,6 @@ namespace WellaTodo
         public int DC_repeatType { get => _repeatType; set => _repeatType = value; }
         public DateTime DC_repeatTime { get => _repeatTime; set => _repeatTime = value; }
 
-        public string DC_memoRTF { get => _memoRTF; set => _memoRTF = value; }
         public bool DC_bulletin { get => _bulletin; set => _bulletin = value; }
         public bool DC_archive { get => _archive; set => _archive = value; }
         public int DC_memoTag { get => _memoTag; set => _memoTag = value; }
@@ -72,7 +70,6 @@ namespace WellaTodo
             _repeatType = 0;
             _repeatTime = default;
 
-            _memoRTF = "";
             _bulletin = false;
             _archive = false;
             _memoTag = 0;
@@ -97,7 +94,6 @@ namespace WellaTodo
             _repeatType = 0;
             _repeatTime = default;
 
-            _memoRTF = "";
             _bulletin = false;
             _archive = false;
             _memoTag = 0;

@@ -32,33 +32,19 @@ namespace WellaTodo
             }
         }
 
-        private string _textBoxString;
-        public string MemoString
+        private string _memoText;
+        public string MemoText
         {
             get
             {
-                _textBoxString = richTextBox.Text;
-                return _textBoxString;
+                _memoText = textBox_Memo.Text;
+                return _memoText;
             }
             set
             {
-                _textBoxString = value;
-                richTextBox.Text = _textBoxString;
-            }
-        }
-
-        private string _textBoxRTFString;
-        public string MemoRTFString
-        {
-            get
-            {
-                _textBoxRTFString = richTextBox.Rtf;
-                return _textBoxRTFString;
-            }
-            set
-            {
-                _textBoxRTFString = value;
-                richTextBox.Rtf = _textBoxRTFString;
+                _memoText = value;
+                textBox_Memo.Text = value;
+                textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
             }
         }
 
@@ -101,7 +87,7 @@ namespace WellaTodo
             set 
             { 
                 _memoColor = value;
-                BackColor = richTextBox.BackColor = _memoColor;
+                BackColor = textBox_Memo.BackColor = _memoColor;
                 label_AlarmDate.BackColor = label_ScheduleDate.BackColor = _memoColor;
             }
         }
@@ -131,15 +117,33 @@ namespace WellaTodo
         private bool _bulletin;
         public bool IsBulletin { get => _bulletin; set => _bulletin = value; }
 
-        bool isRichTextBox_Changed = false;
-        public bool IsRichTextBox_Changed 
-        { 
-            get => isRichTextBox_Changed; 
-            set => isRichTextBox_Changed = value; 
+        bool isMemoTextChanged = false;
+        public bool IsMemoTextChanged
+        {
+            get => isMemoTextChanged;
+            set 
+            { 
+                isMemoTextChanged = value;
+                if (value)
+                {
+                    pictureBox_Edit.BackColor = Color.White;
+                }
+                else
+                {
+                    pictureBox_Edit.BackColor = Color.Transparent;
+                }
+                
+            }
         }
-        
-        bool isTextbox_Title_Clicked = false;
 
+        bool isTitleTextChanged = false;
+        public bool IsTitleTextChanged
+        {
+            get => isTitleTextChanged;
+            set => isTitleTextChanged = value;
+        }
+
+        bool isTextbox_Title_Clicked = false;
 
         public Post_it(CDataCell dc)
         {
@@ -148,7 +152,6 @@ namespace WellaTodo
             DataCell = dc;
 
             MemoTitle = dc.DC_title;
-            MemoRTFString = dc.DC_memoRTF;
             IsBulletin = dc.DC_bulletin;
             IsArchive = dc.DC_archive;
             MemoTag = dc.DC_memoTag;
@@ -167,11 +170,12 @@ namespace WellaTodo
 
         private void Initiate()
         {
-            IsRichTextBox_Changed = false;
             pictureBox_Edit.BackColor = Color.Transparent;
 
             pictureBox_New.Location = new Point(panel_Header.Width - 28, 4);
             pictureBox_Delete.Location = new Point(panel_Header.Width - 28, 4);
+
+            textBox_Memo.Dock = DockStyle.Fill;
 
             textBox_Title .Visible = false;
             panel_ColorPallet.Visible = false;
@@ -179,6 +183,8 @@ namespace WellaTodo
             panel_Alarm.Visible = false;
             panel_Schedule.Visible = false;
             panel_Information.Visible = false;
+
+            IsMemoTextChanged = false;
         }
 
         private void Update_Post_it()
@@ -272,7 +278,17 @@ namespace WellaTodo
 
         public int GetMemoLength()
         {
-            return richTextBox.TextLength;
+            return textBox_Memo.TextLength;
+        }
+
+        private string ConvertToRtf(string value)
+        {
+            RichTextBox richTextBox = new RichTextBox();
+            richTextBox.Text = value;
+            int offset = richTextBox.Rtf.IndexOf(@"\f0\fs17") + 8; // offset = 118;
+            int len = richTextBox.Rtf.LastIndexOf(@"\par") - offset;
+            string result = richTextBox.Rtf.Substring(offset, len).Trim();
+            return result;
         }
 
         // --------------------------------------------------------------
@@ -313,19 +329,19 @@ namespace WellaTodo
             switch (sd.Name)
             {
                 case "pictureBox_Color1":
-                    BackColor = richTextBox.BackColor = pictureBox_Color1.BackColor;
+                    BackColor = textBox_Memo.BackColor = pictureBox_Color1.BackColor;
                     break;
                 case "pictureBox_Color2":
-                    BackColor = richTextBox.BackColor = pictureBox_Color2.BackColor;
+                    BackColor = textBox_Memo.BackColor = pictureBox_Color2.BackColor;
                     break;
                 case "pictureBox_Color3":
-                    BackColor = richTextBox.BackColor = pictureBox_Color3.BackColor;
+                    BackColor = textBox_Memo.BackColor = pictureBox_Color3.BackColor;
                     break;
                 case "pictureBox_Color4":
-                    BackColor = richTextBox.BackColor = pictureBox_Color4.BackColor;
+                    BackColor = textBox_Memo.BackColor = pictureBox_Color4.BackColor;
                     break;
                 case "pictureBox_Color5":
-                    BackColor = richTextBox.BackColor = pictureBox_Color5.BackColor;
+                    BackColor = textBox_Memo.BackColor = pictureBox_Color5.BackColor;
                     break;
             }
 
@@ -499,18 +515,18 @@ namespace WellaTodo
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Delete"));
         }
 
-        private void richTextBox_TextChanged(object sender, EventArgs e)
+        private void textBox_Memo_TextChanged(object sender, EventArgs e)
         {
-            isRichTextBox_Changed = true;
-            pictureBox_Edit.BackColor = Color.White;
+            IsMemoTextChanged = true;
         }
 
-        private void richTextBox_Leave(object sender, EventArgs e)
+        private void textBox_Memo_Leave(object sender, EventArgs e)
         {
-            if (!isRichTextBox_Changed)
+            if (!IsMemoTextChanged)
             {
                 return;
             }
+            IsMemoTextChanged = false;
 
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Changed"));
         }
@@ -549,6 +565,36 @@ namespace WellaTodo
 
             if (Post_it_Click != null) Post_it_Click?.Invoke(this, new UserCommandEventArgs("Title"));
         }
+
+        private void textBox_Memo_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_Memo_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_Memo_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_Memo_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_Memo);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox_Memo.ContextMenu = textboxMenu;
+
+                textBox_Memo.ContextMenu.Show(textBox_Memo, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox_Memo(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox_Memo.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox_Memo.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+        private void OnCopyMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Copy(); }
+        private void OnCutMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Cut(); }
+        private void OnPasteMenu_textBox_Memo_Click(object sender, EventArgs e) { textBox_Memo.Paste(); }
 
         private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
         {
@@ -611,7 +657,5 @@ namespace WellaTodo
         private void OnCopyMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Copy(); }
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
-
-        
     }
 }

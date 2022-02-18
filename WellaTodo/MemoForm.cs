@@ -15,6 +15,13 @@ namespace WellaTodo
         private string _textBoxString;
         public string TextBoxString { get => _textBoxString; set => _textBoxString = value; }
 
+        bool isTextBoxChanged = false;
+        public bool IsTextBoxChanged
+        {
+            get => isTextBoxChanged;
+            set => isTextBoxChanged = value;
+        }
+
         public MemoForm()
         {
             InitializeComponent();
@@ -25,10 +32,14 @@ namespace WellaTodo
             textBox1.Text = TextBoxString;
             textBox1.SelectionStart = textBox1.Text.Length;
             textBox1.Font = new Font("돋움", 14.0f, FontStyle.Regular);
+
+            IsTextBoxChanged = false;
         }
 
         private void MemoForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            IsTextBoxChanged = false;
+
             TextBoxString = textBox1.Text;
         }
 
@@ -49,6 +60,11 @@ namespace WellaTodo
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            isTextBoxChanged = true;
         }
 
         private void textBox1_MouseDown(object sender, MouseEventArgs e)
