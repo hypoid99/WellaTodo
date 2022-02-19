@@ -108,10 +108,11 @@
             // 
             // textBox_Title
             // 
+            this.textBox_Title.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox_Title.Location = new System.Drawing.Point(39, 8);
             this.textBox_Title.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Title.Name = "textBox_Title";
-            this.textBox_Title.Size = new System.Drawing.Size(142, 25);
+            this.textBox_Title.Size = new System.Drawing.Size(142, 18);
             this.textBox_Title.TabIndex = 2;
             this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
             this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
@@ -128,6 +129,9 @@
             this.label_Title.Text = "제목";
             this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label_Title.Click += new System.EventHandler(this.label_Title_Click);
+            this.label_Title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_Title_MouseDown);
+            this.label_Title.MouseMove += new System.Windows.Forms.MouseEventHandler(this.label_Title_MouseMove);
+            this.label_Title.MouseUp += new System.Windows.Forms.MouseEventHandler(this.label_Title_MouseUp);
             // 
             // pictureBox_New
             // 
@@ -579,6 +583,7 @@
             this.Name = "Post_it";
             this.Size = new System.Drawing.Size(223, 350);
             this.Load += new System.EventHandler(this.Post_it_Load);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Post_it_MouseDown);
             this.Resize += new System.EventHandler(this.Post_it_Resize);
             this.panel_Header.ResumeLayout(false);
             this.panel_Header.PerformLayout();

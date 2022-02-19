@@ -684,6 +684,9 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
+                case WParam.WM_MEMO_MOVE_TO:
+                    Update_Memo_Move_To(dc);
+                    break;
                 default:
                     break;
             }
@@ -2966,6 +2969,26 @@ namespace WellaTodo
                     break;
                 }
                 pos++;
+            }
+        }
+
+        private void Update_Memo_Move_To(CDataCell dc)
+        {
+            int counter = 0;
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
+                {
+                    Update_Selected_Menu();
+
+                    counter++;
+                    break;
+                }
+            }
+
+            if (counter == 0)
+            {
+                Send_Log_Message("Warning>MainFrame::Update_Task_Move_Up -> There is no matching item!");
             }
         }
 

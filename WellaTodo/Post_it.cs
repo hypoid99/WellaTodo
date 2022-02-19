@@ -152,7 +152,11 @@ namespace WellaTodo
         }
 
         bool isTextbox_Title_Clicked = false;
-        public bool IsTextbox_Title_Clicked { get => isTextbox_Title_Clicked; set => isTextbox_Title_Clicked = value; }
+        public bool IsTextbox_Title_Clicked 
+        { 
+            get => isTextbox_Title_Clicked; 
+            set => isTextbox_Title_Clicked = value; 
+        }
 
         public Post_it(CDataCell dc)
         {
@@ -161,10 +165,15 @@ namespace WellaTodo
             DataCell = dc;
 
             MemoTitle = dc.DC_title;
+            MemoText = dc.DC_memo;
+
             IsBulletin = dc.DC_bulletin;
             IsArchive = dc.DC_archive;
             MemoTag = dc.DC_memoTag;
             MemoColor = Color.FromName(dc.DC_memoColor);
+
+            if (dc.DC_remindType > 0) IsAlarmVisible = true;
+            if (dc.DC_deadlineType > 0) IsScheduleVisible = true;
         }
 
         private void Post_it_Load(object sender, EventArgs e)
@@ -179,6 +188,8 @@ namespace WellaTodo
 
         private void Initiate()
         {
+            AllowDrop = true;
+
             pictureBox_Edit.BackColor = Color.Transparent;
 
             pictureBox_New.Location = new Point(panel_Header.Width - 28, 4);
@@ -194,6 +205,9 @@ namespace WellaTodo
             panel_Information.Visible = false;
 
             IsMemoTextChanged = false;
+
+            if (DataCell.DC_remindType > 0) IsAlarmVisible = true;
+            if (DataCell.DC_deadlineType > 0) IsScheduleVisible = true;
         }
 
         private void Update_Post_it()
@@ -661,5 +675,50 @@ namespace WellaTodo
         private void OnCopyMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Copy(); }
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
+
+        // ---------------------------------------------------------------------------
+        // Post it 드래그앤드롭 Drag & Drop - Source
+        // ---------------------------------------------------------------------------
+        bool isDragging = false;
+        Point DragStartPoint;
+
+        private void Post_it_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Post_it_MouseDown");
+        }
+
+        private void label_Title_MouseDown(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
+            DragStartPoint = PointToScreen(new Point(e.X, e.Y));
+        }
+
+        private void label_Title_MouseUp(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
+        }
+
+        private void label_Title_MouseMove(object sender, MouseEventArgs e)
+        {
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
+            deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
+            if (!isDragging)
+            {
+                if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+                {
+                    if ((deltaX < threshold) && (deltaY < threshold))
+                    {
+                        //Todo_Item_Click(sender, e);  // click
+                        DoDragDrop(this, DragDropEffects.All);
+                        isDragging = true;
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

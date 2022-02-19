@@ -44,7 +44,8 @@ namespace WellaTodo
 		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK,
 		WM_MODIFY_MEMO_COLOR,
-		WM_MODIFY_MEMO_TAG
+		WM_MODIFY_MEMO_TAG,
+		WM_MEMO_MOVE_TO
 	}
 
 	public class MainModel : IModel
@@ -514,13 +515,14 @@ namespace WellaTodo
 				if (source.DC_task_ID == myTaskItems[i].DC_task_ID) src_index = i;
 				if (target.DC_task_ID == myTaskItems[i].DC_task_ID) tar_index = i;
             }
-			Console.WriteLine("source" + source.DC_title + "-" + src_index);
-			Console.WriteLine("target" + target.DC_title + "-" + tar_index);
+			//Console.WriteLine("source" + source.DC_title + "-" + src_index);
+			//Console.WriteLine("target" + target.DC_title + "-" + tar_index);
 
 			CDataCell temp = myTaskItems[src_index]; //추출
 			myTaskItems.RemoveAt(src_index); //삭제
 			myTaskItems.Insert(tar_index, temp); // 삽입
 
+			Notify_Log_Message("3>MainModel::Task_Move_To -> Source : " + src.DC_title + " Target : " + tgt.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)target.Clone(), WParam.WM_TASK_MOVE_TO));
 		}
 
@@ -768,6 +770,26 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::Modify_Memo_Tag -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MEMO_TAG));  // deep copy 할 것!
+		}
+
+		public void Memo_Move_To(CDataCell source, CDataCell target)
+		{
+			CDataCell src = Find(source);
+			CDataCell tgt = Find(target);
+			int src_index = 0;
+			int tar_index = 0; ;
+			for (int i = 0; i <= myTaskItems.Count - 1; i++)
+			{
+				if (source.DC_task_ID == myTaskItems[i].DC_task_ID) src_index = i;
+				if (target.DC_task_ID == myTaskItems[i].DC_task_ID) tar_index = i;
+			}
+
+			CDataCell temp = myTaskItems[src_index]; //추출
+			myTaskItems.RemoveAt(src_index); //삭제
+			myTaskItems.Insert(tar_index, temp); // 삽입
+
+			Notify_Log_Message("3>MainModel::Memo_Move_To -> Source : " + src.DC_title + " Target : " + tgt.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)target.Clone(), WParam.WM_MEMO_MOVE_TO));
 		}
 
 		// -----------------------------------------------------------

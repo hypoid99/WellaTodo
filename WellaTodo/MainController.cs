@@ -246,6 +246,12 @@ namespace WellaTodo
 			m_model.Modify_Memo_Tag(dc);
 		}
 
+		public void Perform_Memo_Move_To(CDataCell source, CDataCell target)
+		{
+			Send_Log_Message("2>MainController::Perform_Memo_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
+			m_model.Memo_Move_To(source, target);
+		}
+
 		// -----------------------------------------------------------
 		// DB Query
 		// -----------------------------------------------------------
