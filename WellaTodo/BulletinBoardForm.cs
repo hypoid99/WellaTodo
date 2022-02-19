@@ -195,31 +195,28 @@ namespace WellaTodo
                     Update_New_Note(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_TITLE:
-                    Update_Modify_Title_BulletinBoard(dc);
+                    Update_Modify_Memo_Title(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_MEMO:
-                    Update_Modify_Memo_BulletinBoard(dc);
+                    Update_Modify_Memo(dc);
                     break;
                 case WParam.WM_TASK_DELETE:
-                    Update_Delete_BulletinBoard(dc);
+                    Update_Delete_Memo(dc);
                     break;
                 case WParam.WM_MODIFY_REMIND:
-                    Update_Modify_Alarm_BulletinBoard(dc);
+                    Update_Modify_Memo_Alarm(dc);
                     break;
                 case WParam.WM_MODIFY_PLANNED:
-                    Update_Modify_Schedule_BulletinBoard(dc);
+                    Update_Modify_Memo_Schedule(dc);
                     break;
                 case WParam.WM_COMPLETE_PROCESS:
-                    Update_Modify_Archive_BulletinBoard(dc);
+                    Update_Modify_Memo_Archive(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
-                    Update_Modify_Archive_BulletinBoard(dc);
+                case WParam.WM_MODIFY_MEMO_COLOR:
+                    Update_Modify_Memo_Color(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
-                    Update_Modify_Color_BulletinBoard(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
-                    Update_Modify_Tag_BulletinBoard(dc);
+                case WParam.WM_MODIFY_MEMO_TAG:
+                    Update_Modify_Memo_Tag(dc);
                     break;
                 default:
                     break;
@@ -250,7 +247,7 @@ namespace WellaTodo
             Update_BulletinBoard();
         }
 
-        private void Update_Modify_Alarm_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Alarm(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -275,16 +272,16 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Alarm_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo_Alarm -> No matching Data!!");
                 return;
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Alarm_BulletinBoard : -> Completed" + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Alarm : -> Completed" + dc.DC_title);
 
             //Update_BulletinBoard();
         }
 
-        private void Update_Modify_Schedule_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Schedule(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -309,16 +306,16 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Schedule_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo_Schedule -> No matching Data!!");
                 return;
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Schedule_BulletinBoard : -> Completed" + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Schedule : -> Completed" + dc.DC_title);
 
             //Update_BulletinBoard();
         }
 
-        private void Update_Modify_Title_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Title(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -334,7 +331,7 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo_Title -> No matching Data!!");
                 return;
             }
 
@@ -343,19 +340,19 @@ namespace WellaTodo
             //Update_BulletinBoard();
         }
 
-        private void Update_Modify_Archive_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Archive(CDataCell dc)
         {
             if (m_Selected_Menu == MemoMenuList.MEMO_MENU && dc.DC_archive == false) // 출력
             {
                 Display_Memo_Menu();
-                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Display_Memo_Menu" + dc.DC_title);
+                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Archive : -> Display_Memo_Menu" + dc.DC_title);
                 return;
             }
 
             if (m_Selected_Menu == MemoMenuList.ARCHIVE_MENU && dc.DC_archive == true) // 출력
             {
                 Display_Archive_Menu();
-                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Display_Archive_Menu" + dc.DC_title);
+                Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Archive : -> Display_Archive_Menu" + dc.DC_title);
                 return;
             }
 
@@ -379,16 +376,16 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Archive_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo_Archive -> No matching Data!!");
                 return;
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Archive_BulletinBoard : -> Completed" + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Archive : -> Completed" + dc.DC_title);
 
             //Update_BulletinBoard();
         }
 
-        private void Update_Modify_Memo_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -404,15 +401,15 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo -> No matching Data!!");
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_BulletinBoard : -> Completed" + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo : -> Completed" + dc.DC_title);
 
             //Update_BulletinBoard();  // 다시 Query함
         }
 
-        private void Update_Modify_Color_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Color(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -434,10 +431,10 @@ namespace WellaTodo
 
             Send_Log_Message("4>BulletinBoardForm::Update_Modify_Color_BulletinBoard : -> Completed" + dc.DC_title);
 
-            Update_BulletinBoard();
+            //Update_BulletinBoard();
         }
 
-        private void Update_Modify_Tag_BulletinBoard(CDataCell dc)
+        private void Update_Modify_Memo_Tag(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -459,10 +456,10 @@ namespace WellaTodo
 
             Send_Log_Message("4>BulletinBoardForm::Update_Modify_Tag_BulletinBoard : -> Completed" + dc.DC_title);
 
-            Update_BulletinBoard();
+            //Update_BulletinBoard();
         }
 
-        private void Update_Delete_BulletinBoard(CDataCell dc)
+        private void Update_Delete_Memo(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -473,6 +470,8 @@ namespace WellaTodo
                     panel_Bulletin.Controls.Remove(note);
                     note.Dispose();
 
+                    
+
                     counter++;
                     break;
                 }
@@ -480,12 +479,12 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Delete_BulletinBoard -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Delete_Memo -> No matching Data!!");
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Delete_BulletinBoard : -> Completed" + dc.DC_title);
+            Update_Notes_Position();
 
-            Update_BulletinBoard();
+            Send_Log_Message("4>BulletinBoardForm::Update_Delete_Memo : -> Completed" + dc.DC_title);
         }
 
         private void Send_Log_Message(string msg)
@@ -616,7 +615,6 @@ namespace WellaTodo
             note.DataCell.DC_memo = note.MemoText;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Memo -> Memo Changed :" + note.DataCell.DC_title);
-            //m_Controller.Perform_Modify_Memo_BulletinBoard(note.DataCell);
             m_Controller.Perform_Modify_Task_Memo(note.DataCell);
         }
 
@@ -728,25 +726,38 @@ namespace WellaTodo
 
         private void Change_Color(Post_it note)
         {
+            if (note.IsMemoTextChanged)
+            {
+                Change_Memo(note);
+            }
+
             note.DataCell.DC_memoColor = note.BackColor.Name;
-            note.DataCell.DC_memo = note.MemoText;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Color -> Pallet Color Changed : " + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Color_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Color(note.DataCell);
         }
 
         private void Change_Tag(Post_it note)
         {
+            if (note.IsMemoTextChanged)
+            {
+                Change_Memo(note);
+            }
+
             note.DataCell.DC_memoTag = note.MemoTag;
-            note.DataCell.DC_memo = note.MemoText;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Tag -> Tag Color Changed :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Tag_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Tag(note.DataCell);
         }
 
         private void Archive_Note(Post_it note)
         {
-            if (note.IsArchive == false && note.GetMemoLength() == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
+            if (note.IsMemoTextChanged)
+            {
+                Change_Memo(note);
+            }
+
+            if (note.IsArchive == false && note.Memo_TextLength == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴
             {
                 MessageBox.Show("메모 내용이 없어 보관처리되지 않읍니다.");
                 Send_Log_Message("1>BulletinBoardForm::Archive_Note -> Can't Archive for Empty");
@@ -754,10 +765,9 @@ namespace WellaTodo
             }
 
             note.DataCell.DC_archive = note.IsArchive = !note.IsArchive;
-            note.DataCell.DC_memo = note.MemoText;
 
             Send_Log_Message("1>BulletinBoardForm::Archive_Note :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Archive_BulletinBoard(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Archive(note.DataCell);
 
             if (m_Selected_Menu == MemoMenuList.MEMO_MENU) // 보관처리시 판넬이 비면 새로운 메모 생성
             {
@@ -770,7 +780,7 @@ namespace WellaTodo
         }
 
         // -----------------------------------------------------------------
-        // 메뉴 처리 (메모/알람/보관처리/태그)
+        // 메뉴 Display 처리 (메모/알람/보관처리/태그)
         // -----------------------------------------------------------------
         private void Display_Memo_Menu()
         {
@@ -802,12 +812,18 @@ namespace WellaTodo
 
         private void Add_Memo_To_BulletinBoard(IEnumerable<CDataCell> dataset)
         {
+            int counter = 0;
+            Console.WriteLine("BulletinBoard -> COUNT : " + dataset.Count());
             foreach (Post_it note in panel_Bulletin.Controls)
             {
-                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
-                panel_Bulletin.Controls.Remove(note);
-                note.Dispose();
+                Console.WriteLine("BulletinBoard -> " + note.DataCell.DC_title);
+                //note.Post_it_Click -= new Post_it_Event(Post_it_Click);
+                //panel_Bulletin.Controls.Remove(note);
+                //note.Dispose();
+                //MessageBox.Show("hi");
+                counter++;
             }
+            Console.WriteLine("BulletinBoard -> counter : " + counter);
             panel_Bulletin.Controls.Clear();
         
             foreach (CDataCell dc in dataset)  // Post_it 생성 및 m_Post_it에 저장
@@ -839,7 +855,7 @@ namespace WellaTodo
         }
 
         // ----------------------------------------------------------
-        // 메뉴, 툴바
+        // 메뉴, 툴바 이벤트
         // ----------------------------------------------------------
         private void label_Menu_Click(object sender, EventArgs e)
         {

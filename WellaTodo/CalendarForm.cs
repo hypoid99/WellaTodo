@@ -104,13 +104,6 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
-                    Update_Complete_Process(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
-                    break;
                 default:
                     break;
             }

@@ -228,22 +228,22 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
-		public void Perform_Modify_Archive_BulletinBoard(CDataCell dc)
+		public void Perform_Modify_Memo_Archive(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Modify_Archive_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Archive_BulletinBoard(dc);
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Archive : " + dc.DC_title);
+			m_model.Modify_Memo_Archive(dc);
 		}
 
-		public void Perform_Modify_Color_BulletinBoard(CDataCell dc)
+		public void Perform_Modify_Memo_Color(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Modify_Color_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Color_BulletinBoard(dc);
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Color : " + dc.DC_title);
+			m_model.Modify_Memo_Color(dc);
 		}
 
-		public void Perform_Modify_Tag_BulletinBoard(CDataCell dc)
+		public void Perform_Modify_Memo_Tag(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Modify_Tag_BulletinBoard : " + dc.DC_title);
-			m_model.Modify_Tag_BulletinBoard(dc);
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Tag : " + dc.DC_title);
+			m_model.Modify_Memo_Tag(dc);
 		}
 
 		// -----------------------------------------------------------

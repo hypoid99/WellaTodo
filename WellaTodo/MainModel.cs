@@ -43,9 +43,8 @@ namespace WellaTodo
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK,
-		WM_BULLETINBOARD_MODIFY_ARCHIVE,
-		WM_BULLETINBOARD_MODIFY_COLOR,
-		WM_BULLETINBOARD_MODIFY_TAG
+		WM_MODIFY_MEMO_COLOR,
+		WM_MODIFY_MEMO_TAG
 	}
 
 	public class MainModel : IModel
@@ -711,7 +710,7 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// BulletinBoard 전용 처리 함수
 		// -----------------------------------------------------------
-		public void Modify_Archive_BulletinBoard(CDataCell dc)
+		public void Modify_Memo_Archive(CDataCell dc)
         {
 			CDataCell data = Find(dc);
 
@@ -721,17 +720,7 @@ namespace WellaTodo
 				return;
 			}
 
-			data.DC_archive = dc.DC_archive;
-			data.DC_memo = dc.DC_memo;
-
-			if (data.DC_archive)
-            {
-				data.DC_complete = dc.DC_complete = true;
-			}
-            else
-            {
-				data.DC_complete = dc.DC_complete = false;
-			}
+			data.DC_complete = data.DC_archive = dc.DC_complete  = dc.DC_archive;
 
 			if (data.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
 			{
@@ -744,43 +733,41 @@ namespace WellaTodo
 				myTaskItems.Insert(0, data);
 			}
 
-			Notify_Log_Message("3>MainModel::Modify_Archive_BulletinBoard -> Modify Archive [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE));  // deep copy 할 것!
+			Notify_Log_Message("3>MainModel::Modify_Memo_Archive -> Modify Archive [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_COMPLETE_PROCESS));  // deep copy 할 것!
 
 		}
 
-		public void Modify_Color_BulletinBoard(CDataCell dc)
+		public void Modify_Memo_Color(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
 
 			if (data == null)
 			{
-				Notify_Log_Message("Warning>MainModel::Modify_Color_BulletinBoard -> Find() Not Found Item!!");
+				Notify_Log_Message("Warning>MainModel::Modify_Memo_Color -> Find() Not Found Item!!");
 				return;
 			}
 
 			data.DC_memoColor = dc.DC_memoColor;
-			data.DC_memo = dc.DC_memo;
 
-			Notify_Log_Message("3>MainModel::Modify_Color_BulletinBoard -> Modify Color [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_COLOR));  // deep copy 할 것!
+			Notify_Log_Message("3>MainModel::Modify_Memo_Color -> Modify Color [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MEMO_COLOR));  // deep copy 할 것!
 		}
 
-		public void Modify_Tag_BulletinBoard(CDataCell dc)
+		public void Modify_Memo_Tag(CDataCell dc)
 		{
 			CDataCell data = Find(dc);
 
 			if (data == null)
 			{
-				Notify_Log_Message("Warning>MainModel::Modify_Tag_BulletinBoard -> Find() Not Found Item!!");
+				Notify_Log_Message("Warning>MainModel::Modify_Memo_Tag -> Find() Not Found Item!!");
 				return;
 			}
 
 			data.DC_memoTag = dc.DC_memoTag;
-			data.DC_memo = dc.DC_memo;
 
-			Notify_Log_Message("3>MainModel::Modify_Tag_BulletinBoard -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_BULLETINBOARD_MODIFY_TAG));  // deep copy 할 것!
+			Notify_Log_Message("3>MainModel::Modify_Memo_Tag -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MEMO_TAG));  // deep copy 할 것!
 		}
 
 		// -----------------------------------------------------------

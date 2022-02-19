@@ -143,7 +143,16 @@ namespace WellaTodo
             set => isTitleTextChanged = value;
         }
 
+        public int Memo_TextLength
+        {
+            get
+            {
+                return textBox_Memo.TextLength;
+            }
+        }
+
         bool isTextbox_Title_Clicked = false;
+        public bool IsTextbox_Title_Clicked { get => isTextbox_Title_Clicked; set => isTextbox_Title_Clicked = value; }
 
         public Post_it(CDataCell dc)
         {
@@ -274,11 +283,6 @@ namespace WellaTodo
             {
                 panel_Information.Visible = false;
             }
-        }
-
-        public int GetMemoLength()
-        {
-            return textBox_Memo.TextLength;
         }
 
         private string ConvertToRtf(string value)
@@ -540,8 +544,8 @@ namespace WellaTodo
 
         private void textBox_Title_Enter(object sender, EventArgs e)
         {
-            if (!isTextbox_Title_Clicked) textBox_Title.Text = MemoTitle;
-            isTextbox_Title_Clicked = true;
+            if (!IsTextbox_Title_Clicked) textBox_Title.Text = MemoTitle;
+            IsTextbox_Title_Clicked = true;
         }
 
         private void textBox_Title_Leave(object sender, EventArgs e)
@@ -559,7 +563,7 @@ namespace WellaTodo
 
             MemoTitle = textBox_Title.Text;
 
-            isTextbox_Title_Clicked = false;
+            IsTextbox_Title_Clicked = false;
             textBox_Title.Text = "";
             textBox_Title.Visible = false;
 
@@ -620,7 +624,7 @@ namespace WellaTodo
 
                 MemoTitle = textBox_Title.Text;
 
-                isTextbox_Title_Clicked = false;
+                IsTextbox_Title_Clicked = false;
                 textBox_Title.Text = "";
                 textBox_Title.Visible = false;
 

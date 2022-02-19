@@ -684,16 +684,6 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
-                case WParam.WM_BULLETINBOARD_MODIFY_ARCHIVE:
-                    Update_Complete_Process(dc);
-                    Update_Modify_Task_Memo(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_COLOR:
-                    Update_Modify_Task_Memo(dc);
-                    break;
-                case WParam.WM_BULLETINBOARD_MODIFY_TAG:
-                    Update_Modify_Task_Memo(dc);
-                    break;
                 default:
                     break;
             }
@@ -2029,8 +2019,6 @@ namespace WellaTodo
                 if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
                     item.TD_DataCell = (CDataCell)dc.Clone();
-
-                    Send_Log_Message(">MainFrame::SendDataCellToTodoItem -> Completed!!");
                     break;
                 }
             }
