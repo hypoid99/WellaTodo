@@ -292,6 +292,7 @@
             this.Text = "BulletinBoardForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BulletinBoardForm_FormClosing);
             this.Load += new System.EventHandler(this.BulletinBoardForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.BulletinBoardForm_Paint);
             this.Resize += new System.EventHandler(this.BulletinBoardForm_Resize);
             this.panel_Header.ResumeLayout(false);
             this.panel_Menu.ResumeLayout(false);

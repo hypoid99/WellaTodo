@@ -28,7 +28,7 @@ namespace WellaTodo
         static readonly string WINDOW_CAPTION = "Wella Todo v0.95";
         static readonly int WINDOW_WIDTH = 1200;
         static readonly int WINDOW_HEIGHT = 700;
-        static readonly int MENU_WINDOW_WIDTH = 300;
+        static readonly int MENU_WINDOW_WIDTH = 250;
         static readonly int DETAIL_WINDOW_WIDTH = 260;
         static readonly int DETAIL_WINDOW_X1 = 5;
         static readonly int TASK_HEIGHT = 40;
@@ -166,7 +166,7 @@ namespace WellaTodo
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
             Update_Display();
-            //Console.WriteLine("MainFrame_Paint");
+            Console.WriteLine("MainFrame_Paint");
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
@@ -195,7 +195,9 @@ namespace WellaTodo
         {
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
             splitContainer1.Panel1.BackColor = PSEUDO_BACK_COLOR;
+            splitContainer1.Panel1MinSize = 200;
             splitContainer1.Panel2.BackColor = PSEUDO_BACK_COLOR;
+            splitContainer1.Panel2MinSize = 300;
 
             labelUserName.Image = ICON_ACCOUNT;
             labelUserName.ImageAlign = ContentAlignment.MiddleLeft;
@@ -417,7 +419,7 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
             //Console.WriteLine("splitContainer1.Panel1.Width [{0}]", splitContainer1.Panel1.Width);
             //Console.WriteLine("splitContainer1.Panel2.Width [{0}]", splitContainer1.Panel2.Width);
-
+            /*
             if (WindowState == FormWindowState.Maximized)
             {
                 splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
@@ -427,7 +429,7 @@ namespace WellaTodo
             {
                 splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
             }
-
+            */
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
             flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT;
             //Console.WriteLine("flowLayoutPanel_Menulist.Width [{0}]", flowLayoutPanel_Menulist.Width);
@@ -684,8 +686,17 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
+                case WParam.WM_PLAN_ADD:
+                    Update_Add_Task(dc);
+                    break;
+                case WParam.WM_MEMO_ADD:
+                    Update_Add_Task(dc);
+                    break;
                 case WParam.WM_MEMO_MOVE_TO:
                     Update_Memo_Move_To(dc);
+                    break;
+                case WParam.WM_CONVERT_NOTEPAD:
+                    Update_Convert_NotePad(dc);
                     break;
                 default:
                     break;
@@ -1534,27 +1545,28 @@ namespace WellaTodo
         // 할일 추가 화면 갱신
         public void Update_Add_Task(CDataCell dc)
         {
+            string msg;
             switch (enum_Selected_Menu)
             {
-                case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
-                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to MYTODAY_MENU");
+                case MenuList.MYTODAY_MENU: // 오늘 할 일 메뉴에서 입력됨
+                    msg = "MYTODAY_MENU";
                     break;
-                case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
-                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to IMPORTANT_MENU");
+                case MenuList.IMPORTANT_MENU: // 중요 메뉴에서 입력됨
+                    msg = "IMPORTANT_MENU";
                     break;
-                case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
-                    Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to PLANNED_MENU");
+                case MenuList.DEADLINE_MENU: // 계획된 일정 메뉴에서 입력됨
+                    msg = "PLANNED_MENU";
                     break;
                 default:
-                    if (dc.DC_listName != m_Selected_Menu.PrimaryText)
+                    if (dc.DC_listName != m_Selected_Menu.PrimaryText) // 보이지 않는 다른 메뉴
                     {
-                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Anothor List");
+                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Anothor Menu List");
                         Update_Menu_Metadata();
                         return;
                     }
                     else
                     {
-                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item to Current List");
+                        msg = "Current Menu List"; // 현재 메뉴에서 생성됨
                     }
                     break;
             }
@@ -1574,12 +1586,12 @@ namespace WellaTodo
 
             flowLayoutPanel2.VerticalScroll.Value = 0;
 
-            Send_Log_Message("4>MainFrame::Update_Add_Task -> Created New Todo_Item : [" + item.TD_DataCell.DC_task_ID + "]" + item.TD_title);
-
             Close_DetailWindow();
             Update_Task_Width();
             Update_Task_Infomation(dc);
             Update_Menu_Metadata();
+
+            Send_Log_Message("4>MainFrame::Update_Add_Task : " + msg + " [" + item.TD_DataCell.DC_task_ID + "]" + item.TD_title);
         }
 
         //--------------------------------------------------------------
@@ -1896,6 +1908,7 @@ namespace WellaTodo
             MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click)); // 재활용
             MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadline_Click)); // 재활용
             MenuItem menuEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
+            MenuItem notepadItem = new MenuItem("노트패트로 전환", new EventHandler(OnNotePadMenuItem_Click));
             MenuItem moveItem = new MenuItem("항목 이동");
             MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteItem_Click));
 
@@ -1909,6 +1922,7 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add(deleteDeadlineItem);
             todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(menuEditItem);
+            todoItemContextMenu.MenuItems.Add(notepadItem);
             todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(moveItem);
             todoItemContextMenu.MenuItems.Add(deleteItem);
@@ -1932,6 +1946,8 @@ namespace WellaTodo
             ctm.MenuItems[4].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 1;
             ctm.MenuItems[5].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 2;
             ctm.MenuItems[7].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType > 0;
+
+            ctm.MenuItems[10].Text = m_Selected_Item.TD_DataCell.DC_notepad ? "노트패드에서 편집" : "노트패드로 전환";
         }
 
         private void OnMyToday_Click(object sender, EventArgs e)
@@ -1967,6 +1983,27 @@ namespace WellaTodo
         private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
         {
             Edit_Task_Memo();
+        }
+
+        private void OnNotePadMenuItem_Click(object sender, EventArgs e)
+        {
+            Send_Log_Message("1>MainFrame::OnNotePadMenuItem_Click : " + m_Selected_Item.TD_DataCell.DC_title);
+            m_Controller.Perform_Convert_NotePad(m_Selected_Item.TD_DataCell);
+        }
+
+        private void Update_Convert_NotePad(CDataCell dc)
+        {
+            foreach (Todo_Item item in flowLayoutPanel2.Controls)  // dc로 td 찾기
+            {
+                if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
+                {
+                    item.TD_DataCell.DC_notepad = true;
+                    item.Refresh();
+                    item.Invalidate();
+                }
+            }
+
+            Send_Log_Message("4>MainFrame::Update_Convert_NotePad -> Completed!!" + dc.DC_title + "-" + dc.DC_notepad);
         }
 
         private void Update_Transfer_Task(CDataCell dc)
@@ -2116,14 +2153,8 @@ namespace WellaTodo
                 e.Handled = false;
                 e.SuppressKeyPress = false;
 
-                //textBox_Task.Text = textBox_Task.Text.Replace("&", "&&");
-
                 if (textBox_Task.Text.Trim().Length == 0) return;
-
-                Send_Log_Message("1>MainFrame::textBox_Task_KeyUp -> Add Task!!");
-
-                Task_Add(textBox_Task.Text);  // 입력 사항에 오류가 있는지 체크할 것
-
+                Task_Add(textBox_Task.Text);  // 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
                 textBox_Task.Text = "";
             }
         }

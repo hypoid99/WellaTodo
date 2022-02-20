@@ -72,6 +72,11 @@ namespace WellaTodo
             Update_Display();
         }
 
+        private void BulletinBoardForm_Paint(object sender, PaintEventArgs e)
+        {
+            Console.WriteLine("BulletinBoardForm_Paint");
+        }
+
         private void BulletinBoardForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -187,7 +192,7 @@ namespace WellaTodo
             WParam param = e.Param;
             switch (param)
             {
-                case WParam.WM_TASK_ADD:
+                case WParam.WM_MEMO_ADD:
                     Update_New_Note(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_TITLE:
@@ -591,7 +596,7 @@ namespace WellaTodo
             }
 
             Send_Log_Message("1>BulletinBoard::New_Note -> Add Note : " + dc.DC_title);
-            m_Controller.Perform_Add_Task(dc);
+            m_Controller.Perform_Add_Memo(dc);
         }
 
         private void Edit_Note(Post_it note)

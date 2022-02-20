@@ -37,9 +37,10 @@
             // 
             // pictureBox_Icon
             // 
-            this.pictureBox_Icon.Location = new System.Drawing.Point(8, 9);
+            this.pictureBox_Icon.Location = new System.Drawing.Point(7, 4);
+            this.pictureBox_Icon.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox_Icon.Name = "pictureBox_Icon";
-            this.pictureBox_Icon.Size = new System.Drawing.Size(30, 32);
+            this.pictureBox_Icon.Size = new System.Drawing.Size(24, 24);
             this.pictureBox_Icon.TabIndex = 0;
             this.pictureBox_Icon.TabStop = false;
             this.pictureBox_Icon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
@@ -49,9 +50,9 @@
             // label_PrimaryText
             // 
             this.label_PrimaryText.AutoSize = true;
-            this.label_PrimaryText.Location = new System.Drawing.Point(39, 6);
+            this.label_PrimaryText.Location = new System.Drawing.Point(34, 6);
             this.label_PrimaryText.Name = "label_PrimaryText";
-            this.label_PrimaryText.Size = new System.Drawing.Size(89, 15);
+            this.label_PrimaryText.Size = new System.Drawing.Size(78, 12);
             this.label_PrimaryText.TabIndex = 1;
             this.label_PrimaryText.Text = "Primary Text";
             this.label_PrimaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
@@ -61,9 +62,9 @@
             // label_SecondaryText
             // 
             this.label_SecondaryText.AutoSize = true;
-            this.label_SecondaryText.Location = new System.Drawing.Point(39, 27);
+            this.label_SecondaryText.Location = new System.Drawing.Point(34, 15);
             this.label_SecondaryText.Name = "label_SecondaryText";
-            this.label_SecondaryText.Size = new System.Drawing.Size(112, 15);
+            this.label_SecondaryText.Size = new System.Drawing.Size(95, 12);
             this.label_SecondaryText.TabIndex = 2;
             this.label_SecondaryText.Text = "Secondary Text";
             this.label_SecondaryText.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
@@ -73,9 +74,9 @@
             // label_Metadata
             // 
             this.label_Metadata.AutoSize = true;
-            this.label_Metadata.Location = new System.Drawing.Point(171, 15);
+            this.label_Metadata.Location = new System.Drawing.Point(150, 10);
             this.label_Metadata.Name = "label_Metadata";
-            this.label_Metadata.Size = new System.Drawing.Size(67, 15);
+            this.label_Metadata.Size = new System.Drawing.Size(57, 12);
             this.label_Metadata.TabIndex = 3;
             this.label_Metadata.Text = "Metadata";
             this.label_Metadata.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
@@ -84,14 +85,15 @@
             // 
             // TwoLineList
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label_Metadata);
             this.Controls.Add(this.label_SecondaryText);
             this.Controls.Add(this.label_PrimaryText);
             this.Controls.Add(this.pictureBox_Icon);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "TwoLineList";
-            this.Size = new System.Drawing.Size(250, 50);
+            this.Size = new System.Drawing.Size(219, 32);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.TwoLineList_Paint);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.List_MouseClick);
             this.MouseEnter += new System.EventHandler(this.List_MouseEnter);

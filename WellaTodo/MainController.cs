@@ -228,6 +228,33 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
+		// ----------------------------------------------------------
+		// NotePad 문서편집
+		// ----------------------------------------------------------
+		public void Perform_Convert_NotePad(CDataCell dc)
+        {
+			Send_Log_Message("2>MainController::Perform_Convert_NotePad : " + dc.DC_title);
+			m_model.Convert_NotePad(dc);
+		}
+
+		// ----------------------------------------------------------
+		// Calendar 일정 
+		// ----------------------------------------------------------
+		public void Perform_Add_Plan(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Add_Memo : " + dc.DC_title);
+			m_model.Add_Plan(dc);
+		}
+
+		// ----------------------------------------------------------
+		// BulletinBoard 메모
+		// ----------------------------------------------------------
+		public void Perform_Add_Memo(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Add_Memo : " + dc.DC_title);
+			m_model.Add_Memo(dc);
+		}
+
 		public void Perform_Modify_Memo_Archive(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Memo_Archive : " + dc.DC_title);

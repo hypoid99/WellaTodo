@@ -43,6 +43,12 @@ namespace WellaTodo
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
 		WM_TRANSFER_TASK,
+		// NotePad
+		WM_CONVERT_NOTEPAD,
+		// Calendar
+		WM_PLAN_ADD,
+		// BulletinBoard
+		WM_MEMO_ADD,
 		WM_MODIFY_MEMO_COLOR,
 		WM_MODIFY_MEMO_TAG,
 		WM_MEMO_MOVE_TO
@@ -710,8 +716,61 @@ namespace WellaTodo
 		}
 
 		// -----------------------------------------------------------
-		// BulletinBoard 전용 처리 함수
+		// NotePad 문서편집
 		// -----------------------------------------------------------
+		public void Convert_NotePad(CDataCell dc)
+        {
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Convert_NotePad -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_notepad = true;
+			data.DC_bulletin = false;
+
+			Notify_Log_Message("3>MainModel::Convert_NotePad" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_CONVERT_NOTEPAD));
+		}
+
+		// -----------------------------------------------------------
+		// Calendar 일정
+		// -----------------------------------------------------------
+		public void Add_Plan(CDataCell dc)
+		{
+			CDataCell data = (CDataCell)dc.Clone();
+
+			m_Task_ID_Num++;
+
+			data.DC_task_ID = m_Task_ID_Num;
+			data.DC_dateCreated = DateTime.Now;
+
+			myTaskItems.Insert(0, data);
+
+			Notify_Log_Message("3>MainModel::Add_Plan -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_PLAN_ADD));  // deep copy 할 것!
+		}
+
+		// -----------------------------------------------------------
+		// BulletinBoard 메모
+		// -----------------------------------------------------------
+		public void Add_Memo(CDataCell dc)
+		{
+			CDataCell data = (CDataCell)dc.Clone();
+
+			m_Task_ID_Num++;
+
+			data.DC_task_ID = m_Task_ID_Num;
+			data.DC_dateCreated = DateTime.Now;
+
+			myTaskItems.Insert(0, data);
+
+			Notify_Log_Message("3>MainModel::Add_Memo -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MEMO_ADD));  // deep copy 할 것!
+		}
+
 		public void Modify_Memo_Archive(CDataCell dc)
         {
 			CDataCell data = Find(dc);

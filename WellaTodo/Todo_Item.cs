@@ -17,7 +17,14 @@ namespace WellaTodo
         public event TodoItemList_Event UserControl_Click;
 
         static readonly int TODO_ITEM_WIDTH = 180;
-        static readonly int TODO_ITEM_HEIGHT = 40;
+        static readonly int TODO_ITEM_HEIGHT = 32;
+        static readonly int PRIMARY_LOCATION_X = 45;
+        static readonly int PRIMARY_LOCATION_Y1 = 7;
+        static readonly int PRIMARY_LOCATION_Y2 = 2;
+        static readonly int SECONDARY_LOCATION_Y = 20;
+        static readonly int ROUNDCHECK_LOCATION_X = 12;
+        static readonly int ROUNDCHECK_LOCATION_Y = 2;
+        static readonly int STARCHECK_LOCATION_Y = 3;
 
         static readonly Color PSEUDO_BACK_COLOR = Color.White;
         static readonly Color PSEUDO_HIGHLIGHT_COLOR = Color.LightCyan;
@@ -30,7 +37,7 @@ namespace WellaTodo
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
         static readonly string FONT_NAME = "돋움";
-        static readonly float FONT_SIZE_TITLE = 14.0f;
+        static readonly float FONT_SIZE_TITLE = 11.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;
 
         CDataCell m_DataCell;
@@ -75,6 +82,8 @@ namespace WellaTodo
         Label label2 = new Label();
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
         StarCheckbox starCheckbox1 = new StarCheckbox();
+        PictureBox pictureBox_Bulletin = new PictureBox();
+        PictureBox pictureBox_Notepad = new PictureBox();
         
         GraphicsPath outerBorderPath = null;
         int cornerRadius = 10;
@@ -100,23 +109,46 @@ namespace WellaTodo
 
         private void Todo_Item_Resize(object sender, EventArgs e)
         {
-            starCheckbox1.Location = new Point(Width - 40, 5);
+            starCheckbox1.Location = new Point(Width - 40, STARCHECK_LOCATION_Y);
         }
 
         private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
         {
+            if (TD_DataCell.DC_bulletin)
+            {
+                roundCheckbox1.Visible = false;
+                starCheckbox1 .Visible = false;
+                pictureBox_Bulletin.Visible = true;
+                pictureBox_Notepad.Visible = false;
+            }
+            else if (TD_DataCell.DC_notepad)
+            {
+                roundCheckbox1.Visible = false;
+                starCheckbox1.Visible = false;
+                pictureBox_Bulletin.Visible = false;
+                pictureBox_Notepad.Visible = true;
+            }
+            else
+            {
+                roundCheckbox1.Visible = true;
+                starCheckbox1.Visible = true;
+                pictureBox_Bulletin.Visible = false;
+                pictureBox_Notepad.Visible = false;
+            }
+
             if (TD_infomation.Length == 0) // 가운데
             {
-                label1.Location = new Point(45, 8);
-                label2.Location = new Point(245, 20);
+                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y1);
+                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
+                label2.Visible = false;
                 label2.Text = "";
                 label2.AutoSize = false;
             }
             else
             {
-                label1.Location = new Point(45, 2);  // 윗쪽
-                label2.Location = new Point(45, 26);
-                label2.Size = new Size(0, 15);
+                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y2);  // 윗쪽
+                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
+                label2.Visible = true;
                 label2.Text = TD_infomation;
                 label2.AutoSize = true;
             }
@@ -141,7 +173,7 @@ namespace WellaTodo
                 label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
             }
 
-            starCheckbox1.Location = new Point(Width - 40, 7);
+            starCheckbox1.Location = new Point(Width - PRIMARY_LOCATION_X, STARCHECK_LOCATION_Y);
 
             Graphics g = pevent.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -170,7 +202,7 @@ namespace WellaTodo
             roundCheckbox1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
             roundCheckbox1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             roundCheckbox1.MouseClick += new MouseEventHandler(roundCheckbox1_MouseClick);
-            roundCheckbox1.Location = new Point(12, 6);
+            roundCheckbox1.Location = new Point(ROUNDCHECK_LOCATION_X, ROUNDCHECK_LOCATION_Y);
             roundCheckbox1.Size = new Size(25, 25);
             roundCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(roundCheckbox1);
@@ -178,7 +210,7 @@ namespace WellaTodo
             starCheckbox1.MouseEnter += new EventHandler(Todo_Item_MouseEnter);
             starCheckbox1.MouseLeave += new EventHandler(Todo_Item_MouseLeave);
             starCheckbox1.MouseClick += new MouseEventHandler(starCheckbox1_MouseClick);
-            starCheckbox1.Location = new Point(Width - 40, 5);
+            starCheckbox1.Location = new Point(Width - 40, STARCHECK_LOCATION_Y);
             starCheckbox1.Size = new Size(25, 25);
             starCheckbox1.BackColor = PSEUDO_BACK_COLOR;
             Controls.Add(starCheckbox1);
@@ -189,7 +221,7 @@ namespace WellaTodo
             label1.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
             label1.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
             label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-            label1.Location = new Point(45, 13);
+            label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y1);
             label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
             label1.BackColor = PSEUDO_BACK_COLOR;
             label1.AutoSize = true;
@@ -202,11 +234,25 @@ namespace WellaTodo
             label2.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
             label2.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
             label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
-            label2.Location = new Point(245, 20);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
-            label2.Size = new Size(0, 13);
             Controls.Add(label2);
+
+            pictureBox_Bulletin.BackColor = Color.Transparent;
+            pictureBox_Bulletin.BackgroundImage = Properties.Resources.outline_note_alt_black_24dp;
+            pictureBox_Bulletin.BackgroundImageLayout = ImageLayout.Zoom;
+            pictureBox_Bulletin.Location = new Point(ROUNDCHECK_LOCATION_X, ROUNDCHECK_LOCATION_Y);
+            pictureBox_Bulletin.Margin = new Padding(0);
+            pictureBox_Bulletin.Size = new Size(28, 26);
+            Controls.Add(pictureBox_Bulletin);
+
+            pictureBox_Notepad.BackColor = Color.Transparent;
+            pictureBox_Notepad.BackgroundImage = Properties.Resources.outline_edit_note_black_24dp;
+            pictureBox_Notepad.BackgroundImageLayout = ImageLayout.Zoom;
+            pictureBox_Notepad.Location = new Point(ROUNDCHECK_LOCATION_X, ROUNDCHECK_LOCATION_Y);
+            pictureBox_Notepad.Margin = new Padding(0);
+            pictureBox_Notepad.Size = new Size(28, 26);
+            Controls.Add(pictureBox_Notepad);
         }
 
         public void Display_Event_Status()

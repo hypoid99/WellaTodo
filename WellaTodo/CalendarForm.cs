@@ -63,9 +63,6 @@ namespace WellaTodo
             WParam param = e.Param;
             switch (param)
             {
-                case WParam.WM_LOG_MESSAGE:
-                    //m_Controller.Notify_Log_Message("4>CalendarForm::Update_View -> SetDate(m_dtValue)");
-                    break;
                 case WParam.WM_OPEN_DATA:
                     Update_Open_Data();
                     break;
@@ -79,9 +76,6 @@ namespace WellaTodo
                     Update_Modify_Task_Title(dc);
                     break;
                 case WParam.WM_MODIFY_TASK_MEMO:
-                    break;
-                case WParam.WM_TASK_ADD:
-                    Update_Add_Task(dc);
                     break;
                 case WParam.WM_TASK_DELETE:
                     Update_Delete_Task(dc);
@@ -103,6 +97,9 @@ namespace WellaTodo
                     break;
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
+                    break;
+                case WParam.WM_PLAN_ADD:
+                    Update_Add_Plan(dc);
                     break;
                 default:
                     break;
@@ -193,7 +190,7 @@ namespace WellaTodo
                 Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> New Task Created : " + taskEditForm.TE_DataCell.DC_title
                     + "[" + taskEditForm.TE_DataCell.DC_deadlineTime.ToLongDateString() + "]");
 
-                m_Controller.Perform_Add_Task(taskEditForm.TE_DataCell);
+                m_Controller.Perform_Add_Plan(taskEditForm.TE_DataCell);
             }
             else
             {
@@ -299,6 +296,7 @@ namespace WellaTodo
 
         private void CalendarForm_Paint(object sender, PaintEventArgs e)
         {
+            Console.WriteLine("CalendarForm_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -638,19 +636,16 @@ namespace WellaTodo
 
         private void Update_Modify_Task_Title(CDataCell dc)
         {
-            Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title");
-
             if (FindCalendarItem(dc))
             {
                 Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title -> Find matching item : " + dc.DC_title);
                 m_Find_Result_Item.PrimaryText = dc.DC_title;
             }
+            Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title");
         }
 
-        private void Update_Add_Task(CDataCell dc)
+        private void Update_Add_Plan(CDataCell dc)
         {
-            Send_Log_Message("4>CalendarForm::Update_Add_Task : " + dc.DC_title);
-
             DateTime dt = dc.DC_deadlineTime;
 
             if (IsCurrentPage(dt))  // New Task가 현재 화면에 있나?
@@ -686,7 +681,7 @@ namespace WellaTodo
 
                 if (counter == 0)
                 {
-                    Send_Log_Message("Warning>CalendarForm::Update_Add_Task -> Can not Found Item");
+                    Send_Log_Message("Warning>CalendarForm::Update_Add_Plan -> Can not Found Item");
                 }
 
                 label_planned.Width = dayPanel[pos].Width;
@@ -694,7 +689,7 @@ namespace WellaTodo
                 m_TaskToolTip.SetToolTip(label_planned, dc.DC_title);
                 dayPanel[pos].Controls.Add(label_planned);
 
-                Send_Log_Message("4>CalendarForm::Update_Add_Task -> Current Month Calendar " + dt.ToLongDateString());
+                Send_Log_Message("4>CalendarForm::Update_Add_Plan -> Current Month Calendar " + dt.ToLongDateString());
             }
         }
 

@@ -30,6 +30,9 @@ namespace WellaTodo
         private int _memoTag;
         private string _memoColor;
 
+        private bool _notepad;
+        private string _RTF;
+
         public int DC_task_ID { get => _task_ID; set => _task_ID = value; }
         public string DC_listName { get => _listName; set => _listName = value; }
         public string DC_title { get => _title; set => _title = value; }
@@ -51,6 +54,8 @@ namespace WellaTodo
         public int DC_memoTag { get => _memoTag; set => _memoTag = value; }
         public string DC_memoColor { get => _memoColor; set => _memoColor = value; }
 
+        public bool DC_notepad { get => _notepad; set => _notepad = value; }
+        public string DC_RTF { get => _RTF; set => _RTF = value; }
 
         public CDataCell()
         {
@@ -74,6 +79,9 @@ namespace WellaTodo
             _archive = false;
             _memoTag = 0;
             _memoColor = "";
+
+            _notepad = false;
+            _RTF = String.Empty;
         }
 
         public CDataCell(int id, string list, string title)
@@ -98,6 +106,9 @@ namespace WellaTodo
             _archive = false;
             _memoTag = 0;
             _memoColor = "";
+
+            _notepad = false;
+            _RTF = String.Empty;
         }
 
         public CDataCell ShallowCopy()

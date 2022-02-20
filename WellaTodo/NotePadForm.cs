@@ -34,7 +34,9 @@ namespace WellaTodo
         private string OpenedDocumentPath { get; set; } = "NoName";
         //public string DefaultSaveDirectory { get; set; } = "c:\\";
         public string DefaultSaveDirectory { get; set; }
+
         public bool IsOpened { get; set; } = false;
+
         private bool isUnsaved = false;
         public bool IsUnsaved
         {
@@ -61,7 +63,17 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
+            CDataCell dc = e.Item;
+            WParam param = e.Param;
 
+            switch (param)
+            {
+                case WParam.WM_CONVERT_NOTEPAD:
+                    Update_Convert_NotePad(dc);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void NotePadForm_Load(object sender, EventArgs e)
@@ -274,6 +286,21 @@ namespace WellaTodo
             }
         }
 
+        private void Save_Data()
+        {
+            
+        }
+
+        private void Update_Convert_NotePad(CDataCell dc)
+        {
+            richTextBox.Clear();
+
+            // 편집 초기화
+            Text = dc.DC_title;
+
+            richTextBox.Text = dc.DC_memo;
+        }
+
         // ------------------------------------------------------------
         // 메뉴
         // ------------------------------------------------------------
@@ -416,7 +443,8 @@ namespace WellaTodo
 
         private void button_Save_Click(object sender, EventArgs e)
         {
-            Save_File();
+            //Save_File();
+            Save_Data();
         }
 
         private void button_Print_Click(object sender, EventArgs e)
