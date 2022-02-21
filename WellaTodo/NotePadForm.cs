@@ -153,7 +153,6 @@ namespace WellaTodo
         private void UpdatePath()
         {
             m_FileName = $"{(IsUnsaved ? "*" : "")}{OpenedDocumentPath} - NotePad";
-            //Console.WriteLine("m_FileName : " + m_FileName);
             Text = m_FileName;
         }
 
@@ -294,10 +293,13 @@ namespace WellaTodo
         private void Update_Convert_NotePad(CDataCell dc)
         {
             richTextBox.Clear();
+            richTextBox.Text = String.Empty;
 
             // 편집 초기화
-            Text = dc.DC_title;
+            OpenedDocumentPath = dc.DC_title;
+            UpdatePath();
 
+            IsOpened = true;
             richTextBox.Text = dc.DC_memo;
         }
 
@@ -316,7 +318,15 @@ namespace WellaTodo
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Save_File();
+            if (!IsOpened)
+            {
+                Save_File();
+            }
+            else
+            {
+                Save_Data();
+            }
+            
         }
 
         private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)

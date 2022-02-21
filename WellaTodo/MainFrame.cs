@@ -1999,7 +1999,6 @@ namespace WellaTodo
                 {
                     item.TD_DataCell.DC_notepad = true;
                     item.Refresh();
-                    item.Invalidate();
                 }
             }
 
