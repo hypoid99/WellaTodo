@@ -23,7 +23,7 @@ namespace WellaTodo
 
         static readonly string FONT_NAME = "맑은 고딕";
         static readonly float FONT_SIZE_TEXT = 14.0f;
-        static readonly int FONT_MAX_SIZE = 50;
+        static readonly int MAX_COUNT_FONT_SIZE = 16;
 
         MainController m_Controller;
 
@@ -141,11 +141,18 @@ namespace WellaTodo
             richTextBox.WordWrap = false;
             //richTextBox.SelectionCharOffset = 0;
 
+            foreach (FontFamily font in System.Drawing.FontFamily.Families)
+            {
+                m_FontName.Add(font.Name);
+            }
+
+            /*
             FontFamily[] fontList = new System.Drawing.Text.InstalledFontCollection().Families;
             foreach (var item in fontList)
             {
                 m_FontName.Add(item.Name);
             }
+            */
             comboBox_FontSelect.DataSource = m_FontName;
 
             int cnt = 0;    
@@ -153,25 +160,53 @@ namespace WellaTodo
             {
                 if (m_FontName[i] == FONT_NAME)
                 {
+                    // 초기화 폰트가 있는지 확인한다
                     comboBox_FontSelect.SelectedIndex = i;
                     cnt++;
                 }
             }
             if (cnt == 0)
             {
+                // 초기화 폰트가 없으면 2번째를 선택한다
                 comboBox_FontSelect.SelectedIndex = 2;
             }
 
-            for (int i = 1; i <= FONT_MAX_SIZE; i++)
-            {
-                m_FontSize.Add(i);
-            }
+            m_FontSize.Add(6);
+            m_FontSize.Add(8);
+            m_FontSize.Add(9);
+            m_FontSize.Add(10);
+            m_FontSize.Add(11);
+            m_FontSize.Add(12);
+            m_FontSize.Add(14);
+            m_FontSize.Add(16);
+            m_FontSize.Add(18);
+            m_FontSize.Add(20);
+            m_FontSize.Add(22);
+            m_FontSize.Add(24);
+            m_FontSize.Add(26);
+            m_FontSize.Add(28);
+            m_FontSize.Add(36);
+            m_FontSize.Add(48);
+            m_FontSize.Add(72);
+
             comboBox_FontSize.DataSource = m_FontSize;
-            comboBox_FontSize.SelectedIndex = 15;
+            comboBox_FontSize.SelectedIndex = 4;
 
             checkBox_AlignLeft.Click += new EventHandler(checkBox_TextAlign_Click);
             checkBox_AlignCenter.Click += new EventHandler(checkBox_TextAlign_Click);
             checkBox_AlignRight.Click += new EventHandler(checkBox_TextAlign_Click);
+
+            string fontName = comboBox_FontSelect.SelectedItem.ToString();
+            float fontSize = (float)comboBox_FontSize.SelectedItem;
+            FontStyle fontStyle = (checkBox_Bold.Checked ? FontStyle.Bold : 0)
+                                 | (checkBox_Italic.Checked ? FontStyle.Italic : 0)
+                                 | (checkBox_Underline.Checked ? FontStyle.Underline : 0)
+                                 | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
+
+            richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
+
+            // IME(입력기) 및 아시아 언어 지원
+            richTextBox.LanguageOption = 0;
         }
 
         private void UpdatePath()
@@ -626,18 +661,18 @@ namespace WellaTodo
 
         private void button_FontSizeUp_Click(object sender, EventArgs e)
         {
-            int size = (int)comboBox_FontSize.SelectedIndex;
-            size++;
-            if (size > FONT_MAX_SIZE) size = FONT_MAX_SIZE;
-            comboBox_FontSize.SelectedIndex = size;
+            int counter = (int)comboBox_FontSize.SelectedIndex;
+            counter++;
+            if (counter > MAX_COUNT_FONT_SIZE) counter = MAX_COUNT_FONT_SIZE;
+            comboBox_FontSize.SelectedIndex = counter;
         }
 
         private void button_FontSizeDown_Click(object sender, EventArgs e)
         {
-            int size = (int)comboBox_FontSize.SelectedIndex;
-            size--;
-            if (size < 1) size = 1;
-            comboBox_FontSize.SelectedIndex = size;
+            int counter = (int)comboBox_FontSize.SelectedIndex;
+            counter--;
+            if (counter < 0) counter = 0;
+            comboBox_FontSize.SelectedIndex = counter;
         }
 
         private void checkBox_Bold_CheckedChanged(object sender, EventArgs e)
@@ -802,23 +837,15 @@ namespace WellaTodo
         // ------------------------------------------------------------
         private void richTextBox_SelectionChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine("richTextBox_SelectionChanged"); // 변화를 툴바에 알린다
-
             if (richTextBox.SelectionFont == null)
             {
-                MessageBox.Show("richTextBox.SelectionFont == null");
+                // If the current text selection has more than one font specified, this property is null
                 return;
             }
 
             comboBox_FontSelect.SelectedIndex = m_FontName.IndexOf(richTextBox.SelectionFont.FontFamily.Name);
             comboBox_FontSize.SelectedItem = richTextBox.SelectionFont.Size;
-            /*
-            Console.WriteLine("richTextBox_SelectionChanged -> "
-                              + richTextBox.SelectionFont.FontFamily.Name
-                              + "["
-                              + richTextBox.SelectionFont.Size
-                              + "]");
-            */
+
             checkBox_Bold.Checked = richTextBox.SelectionFont.Bold;
             checkBox_Italic.Checked = richTextBox.SelectionFont.Italic;
             checkBox_Underline.Checked = richTextBox.SelectionFont.Underline;
