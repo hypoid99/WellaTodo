@@ -676,6 +676,7 @@
             this.richTextBox.WordWrap = false;
             this.richTextBox.SelectionChanged += new System.EventHandler(this.richTextBox_SelectionChanged);
             this.richTextBox.TextChanged += new System.EventHandler(this.richTextBox_TextChanged);
+            this.richTextBox.Leave += new System.EventHandler(this.richTextBox_Leave);
             // 
             // printPreviewDialog1
             // 

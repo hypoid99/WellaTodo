@@ -74,7 +74,7 @@ namespace WellaTodo
 
         private void BulletinBoardForm_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("BulletinBoardForm_Paint");
+            //Console.WriteLine("BulletinBoardForm_Paint");
         }
 
         private void BulletinBoardForm_FormClosing(object sender, FormClosingEventArgs e)

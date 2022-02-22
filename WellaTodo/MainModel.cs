@@ -45,6 +45,8 @@ namespace WellaTodo
 		WM_TRANSFER_TASK,
 		// NotePad
 		WM_CONVERT_NOTEPAD,
+		WM_TRANSFER_RTF_NOTEPAD,
+		WM_SAVE_RTF_NOTEPAD,
 		// Calendar
 		WM_PLAN_ADD,
 		// BulletinBoard
@@ -728,11 +730,49 @@ namespace WellaTodo
 				return;
 			}
 
-			data.DC_notepad = true;
-			data.DC_bulletin = false;
+			if (data.DC_notepad)
+            {
+				data.DC_notepad = false;
+				data.DC_bulletin = false;
+			}
+			else
+            {
+				data.DC_notepad = true;
+				data.DC_bulletin = false;
+			}
 
 			Notify_Log_Message("3>MainModel::Convert_NotePad" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_CONVERT_NOTEPAD));
+		}
+
+		public void Transfer_RTF_Data(CDataCell dc)
+        {
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Transfer_RTF_Data -> Find() Not Found Item!!");
+				return;
+			}
+
+			Notify_Log_Message("3>MainModel::Transfer_RTF_Data" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TRANSFER_RTF_NOTEPAD));
+		}
+
+		public void Save_RTF_Data(CDataCell dc)
+		{
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Save_RTF_Data -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_RTF = dc.DC_RTF;
+
+			Notify_Log_Message("3>MainModel::Save_RTF_Data" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_SAVE_RTF_NOTEPAD));
 		}
 
 		// -----------------------------------------------------------

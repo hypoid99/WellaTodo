@@ -237,6 +237,18 @@ namespace WellaTodo
 			m_model.Convert_NotePad(dc);
 		}
 
+		public void Perform_Transfer_RTF_Data(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Transfer_RTF_Data : " + dc.DC_title);
+			m_model.Transfer_RTF_Data(dc);
+		}
+
+		public void Perform_Save_RTF_Data(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Save_RTF_Data : " + dc.DC_title);
+			m_model.Save_RTF_Data(dc);
+		}
+
 		// ----------------------------------------------------------
 		// Calendar 일정 
 		// ----------------------------------------------------------

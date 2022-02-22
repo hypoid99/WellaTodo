@@ -1729,6 +1729,11 @@ namespace WellaTodo
 
                         sd.IsImportantClicked = false;
                     }
+                    if (sd.TD_DataCell.DC_notepad)
+                    {
+                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + sd.TD_title);
+                        m_Controller.Perform_Transfer_RTF_Data(sd.TD_DataCell);
+                    }
                     break;
                 case MouseButtons.Right:
                     Task_ContextMenu();
@@ -1947,7 +1952,7 @@ namespace WellaTodo
             ctm.MenuItems[5].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 2;
             ctm.MenuItems[7].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType > 0;
 
-            ctm.MenuItems[10].Text = m_Selected_Item.TD_DataCell.DC_notepad ? "노트패드에서 편집" : "노트패드로 전환";
+            ctm.MenuItems[10].Text = m_Selected_Item.TD_DataCell.DC_notepad ? "할 일로 전환" : "노트패드로 전환";
         }
 
         private void OnMyToday_Click(object sender, EventArgs e)
@@ -1997,7 +2002,7 @@ namespace WellaTodo
             {
                 if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
-                    item.TD_DataCell.DC_notepad = true;
+                    item.TD_DataCell.DC_notepad = dc.DC_notepad;
                     item.Refresh();
                 }
             }
@@ -3044,7 +3049,7 @@ namespace WellaTodo
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 data = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                Console.WriteLine("TodoItem_DragDrop -> source : " + data.TD_title);
+                //Console.WriteLine("TodoItem_DragDrop -> source : " + data.TD_title);
             }
             
             Point p = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
@@ -3052,13 +3057,13 @@ namespace WellaTodo
 
             if (data.TD_title == item.TD_title)
             {
-                Console.WriteLine("TodoItem_DragDrop -> Same task can't move");
+                //Console.WriteLine("TodoItem_DragDrop -> Same task can't move");
                 return;
             }
 
             if (item.TD_complete)
             {
-                Console.WriteLine("TodoItem_DragDrop -> Can't move over Complete Task");
+                //Console.WriteLine("TodoItem_DragDrop -> Can't move over Complete Task");
                 return;
             }
             

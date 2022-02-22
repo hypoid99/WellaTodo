@@ -30,6 +30,9 @@ namespace WellaTodo
         List<string> m_FontName = new List<string>();
         List<float> m_FontSize = new List<float>();
 
+        CDataCell m_DataCell;
+        public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
+
         private string m_FileName;
         private string OpenedDocumentPath { get; set; } = "NoName";
         //public string DefaultSaveDirectory { get; set; } = "c:\\";
@@ -61,6 +64,9 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
+        //--------------------------------------------------------------
+        // Model 이벤트
+        //--------------------------------------------------------------
         public void Update_View(IModel m, ModelEventArgs e)
         {
             CDataCell dc = e.Item;
@@ -71,8 +77,26 @@ namespace WellaTodo
                 case WParam.WM_CONVERT_NOTEPAD:
                     Update_Convert_NotePad(dc);
                     break;
+                case WParam.WM_TRANSFER_RTF_NOTEPAD:
+                    Update_Transfer_RTF_Data(dc);
+                    break;
+                case WParam.WM_SAVE_RTF_NOTEPAD:
+                    Update_Save_RTF_Data(dc);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private void Send_Log_Message(string msg)
+        {
+            try
+            {
+                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please enter a valid number");
             }
         }
 
@@ -112,7 +136,7 @@ namespace WellaTodo
 
         private void Initiate()
         {
-            //Console.WriteLine("Initiate");
+            DataCell = new CDataCell();
 
             richTextBox.WordWrap = false;
             //richTextBox.SelectionCharOffset = 0;
@@ -152,20 +176,25 @@ namespace WellaTodo
 
         private void UpdatePath()
         {
-            m_FileName = $"{(IsUnsaved ? "*" : "")}{OpenedDocumentPath} - NotePad";
+            m_FileName = $"NotePad - {(IsUnsaved ? "*" : "")}{OpenedDocumentPath}";
             Text = m_FileName;
         }
 
         private void New_File()
         {
+            DataCell.DC_notepad = false;
+
             IsOpened = false;
             richTextBox.Text = String.Empty;
             OpenedDocumentPath = "NoName";
+
             UpdatePath();
         }
 
         private void Open_File()
         {
+            DataCell.DC_notepad = false;
+
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = DefaultSaveDirectory;
@@ -184,7 +213,10 @@ namespace WellaTodo
                     {
                         if (OpenedDocumentPath.EndsWith(".rtf"))
                         {
+                            Console.WriteLine("Open RTF File");
                             richTextBox.LoadFile(OpenedDocumentPath);
+                            IsUnsaved = false;
+                            UpdatePath();
                         }
                         else if (OpenedDocumentPath.EndsWith(".pdf"))
                         {
@@ -201,7 +233,10 @@ namespace WellaTodo
                             var fileStream = openFileDialog.OpenFile();
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
+                                Console.WriteLine("Open Common File");
                                 richTextBox.Text = reader.ReadToEnd();
+                                IsUnsaved = false;
+                                UpdatePath();
                             }
                         }
                     }
@@ -226,6 +261,9 @@ namespace WellaTodo
                     // rtf인 경우 서식을 사용하여 저장
                     richTextBox.SaveFile(OpenedDocumentPath,
                                          OpenedDocumentPath.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText);
+                    IsOpened = true;
+                    IsUnsaved = false;
+                    UpdatePath();
                 }
                 else // 파일이 새 파일이면 저장 대화 상자를 호출
                 {
@@ -287,7 +325,23 @@ namespace WellaTodo
 
         private void Save_Data()
         {
-            
+            if (!DataCell.DC_notepad) return;
+
+            DataCell.DC_RTF = richTextBox.Rtf;
+
+            IsUnsaved = false;
+            UpdatePath();
+
+            Send_Log_Message("1>NotePadForm::Save_Data");
+            m_Controller.Perform_Save_RTF_Data(DataCell);
+        }
+
+        private void Update_Save_RTF_Data(CDataCell dc)
+        {
+            IsUnsaved = false;
+            UpdatePath();
+
+            Send_Log_Message("4>NotePadForm::Update_Save_RTF_Data : " + dc.DC_title);
         }
 
         private void Update_Convert_NotePad(CDataCell dc)
@@ -296,11 +350,43 @@ namespace WellaTodo
             richTextBox.Text = String.Empty;
 
             // 편집 초기화
-            OpenedDocumentPath = dc.DC_title;
+            if (dc.DC_notepad)
+            {
+                DataCell = dc;
+
+                OpenedDocumentPath = dc.DC_title;
+
+                IsOpened = true;
+                richTextBox.Rtf = dc.DC_RTF;
+            }
+            else
+            {
+                New_File();
+            }
+
+            IsUnsaved = false;
             UpdatePath();
 
-            IsOpened = true;
-            richTextBox.Text = dc.DC_memo;
+            Send_Log_Message("4>NotePadForm::Update_Convert_NotePad : " + dc.DC_title);
+        }
+
+        private void Update_Transfer_RTF_Data(CDataCell dc)
+        {
+            richTextBox.Clear();
+            richTextBox.Text = String.Empty;
+
+            if (dc.DC_notepad)
+            {
+                DataCell = dc;
+
+                OpenedDocumentPath = dc.DC_title;
+                richTextBox.Rtf = dc.DC_RTF;
+
+                IsUnsaved = false;
+                UpdatePath();
+            }
+
+            Send_Log_Message("4>NotePadForm::Update_Transfer_RTF_Data : " + dc.DC_title);
         }
 
         // ------------------------------------------------------------
@@ -318,20 +404,22 @@ namespace WellaTodo
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!IsOpened)
-            {
-                Save_File();
-            }
-            else
+            if (DataCell.DC_notepad)
             {
                 Save_Data();
             }
-            
+            else
+            {
+                Save_File();
+            }
         }
 
         private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Save_As_File();
+            if (!DataCell.DC_notepad)
+            {
+                Save_As_File();
+            }
         }
 
         private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -453,13 +541,25 @@ namespace WellaTodo
 
         private void button_Save_Click(object sender, EventArgs e)
         {
-            //Save_File();
-            Save_Data();
+            if (DataCell.DC_notepad)
+            {
+                Console.WriteLine("button_Save_Click -> notepad");
+                Save_Data();
+            }
+            else
+            {
+                Console.WriteLine("button_Save_Click -> savefile");
+                Save_File();
+            }
         }
 
         private void button_Print_Click(object sender, EventArgs e)
         {
-
+            printDialog1.Document = printDocument1;
+            if (printDialog1.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
         }
 
         private void button_Undo_Click(object sender, EventArgs e)
@@ -492,8 +592,6 @@ namespace WellaTodo
 
         private void comboBox_FontSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine("comboBox_FontSelect_SelectedIndexChanged");
-
             string fontName = comboBox_FontSelect.SelectedItem.ToString();
             float fontSize;
 
@@ -516,8 +614,6 @@ namespace WellaTodo
 
         private void comboBox_FontSize_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine("comboBox_FontSize_SelectedIndexChanged");
-
             string fontName = comboBox_FontSelect.SelectedItem.ToString();
             float fontSize = (float)comboBox_FontSize.SelectedItem;
             FontStyle fontStyle = (checkBox_Bold.Checked ? FontStyle.Bold : 0)
@@ -530,8 +626,6 @@ namespace WellaTodo
 
         private void button_FontSizeUp_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("button_FontSizeUp_Click");
-
             int size = (int)comboBox_FontSize.SelectedIndex;
             size++;
             if (size > FONT_MAX_SIZE) size = FONT_MAX_SIZE;
@@ -540,8 +634,6 @@ namespace WellaTodo
 
         private void button_FontSizeDown_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("button_FontSizeDown_Click");
-
             int size = (int)comboBox_FontSize.SelectedIndex;
             size--;
             if (size < 1) size = 1;
@@ -552,7 +644,6 @@ namespace WellaTodo
         {
             //Console.WriteLine("checkBox_Bold_CheckedChanged : " + checkBox_Bold.Checked);
             //Console.WriteLine("checkBox_Bold_CheckedChanged -> font size : " + richTextBox.SelectionFont.Size);
-
             if (checkBox_Bold.Checked)
             {
                 richTextBox.SelectionFont = new Font(richTextBox.SelectionFont, richTextBox.SelectionFont.Style | FontStyle.Bold);
@@ -757,6 +848,16 @@ namespace WellaTodo
         private void richTextBox_TextChanged(object sender, EventArgs e)
         {
             IsUnsaved = true;
+        }
+
+        private void richTextBox_Leave(object sender, EventArgs e)
+        {
+            if (isUnsaved)
+            {
+                Send_Log_Message(">NotePadForm::richTextBox_Leave -> Save Data");
+                Save_Data();
+            }
+            isUnsaved = false;
         }
     }
 }
