@@ -16,6 +16,7 @@ namespace WellaTodo
         private bool _important;
         private string _memo;
         private DateTime _dateCreated;
+
         private bool _myToday;
         private DateTime _myTodayTime;
         private int _remindType;
@@ -40,6 +41,7 @@ namespace WellaTodo
         public bool DC_important { get => _important; set => _important = value; }
         public string DC_memo { get => _memo; set => _memo = value; }
         public DateTime DC_dateCreated { get => _dateCreated; set => _dateCreated = value; }
+
         public bool DC_myToday { get => _myToday; set => _myToday = value; }
         public DateTime DC_myTodayTime { get => _myTodayTime; set => _myTodayTime = value; }
         public int DC_remindType { get => _remindType; set => _remindType = value; }

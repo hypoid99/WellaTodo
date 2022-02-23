@@ -62,6 +62,9 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
+        // --------------------------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------------------------
         private void BulletinBoardForm_Load(object sender, EventArgs e)
         {
             Initiate();
@@ -87,7 +90,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 초기화 및 데이터 로딩, 디스플레이 업데이트
+        // 초기화 및 데이터 로딩, Update Display
         //--------------------------------------------------------------
         private void Initiate()
         {
@@ -102,7 +105,13 @@ namespace WellaTodo
         private void Load_Data()
         {
             IEnumerable<CDataCell> dataset = m_Controller.Query_BulletineBoard();
-
+            
+            // 저장된 메모가 없을 경우
+            if (dataset.Count () == 0)
+            {
+                return;
+            }
+            
             foreach (CDataCell dc in dataset)
             {
                 Post_it note = new Post_it(dc);
@@ -122,9 +131,13 @@ namespace WellaTodo
 
         private void Update_Display()
         {
+            label_Add_Note.Location = new Point(panel_Header .Width - 40, 9);
             Update_Notes_Position();
         }
 
+        //--------------------------------------------------------------
+        // 화면 폭 맞추기 등 필요한 메서드
+        //--------------------------------------------------------------
         private void Update_Notes_Position()
         {
             int posX = 10;
@@ -567,7 +580,7 @@ namespace WellaTodo
             dc.DC_listName = "작업";
 
             dc.DC_title = "메모";
-            dc.DC_memo = "";
+            dc.DC_memo = "새로운 메모를 작성하세요";
             dc.DC_bulletin = true;
             dc.DC_archive = false;
             dc.DC_memoTag = 0;
@@ -896,7 +909,13 @@ namespace WellaTodo
         // ----------------------------------------------------------
         private void label_Menu_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("BulletinBoardForm::label_Menu_Click");
+            //Console.WriteLine("BulletinBoardForm::label_Menu_Click");
+        }
+
+        private void label_Add_Note_Click(object sender, EventArgs e)
+        {
+            //Console.WriteLine("BulletinBoardForm::label_Add_Note_Click");
+            New_Note();
         }
 
         private void button_Memo_Click(object sender, EventArgs e)
@@ -986,13 +1005,13 @@ namespace WellaTodo
             
             if (data.DataCell.DC_task_ID == note.DataCell.DC_task_ID)
             {
-                Console.WriteLine("TodoItem_DragDrop -> Same memo can't move");
+                //Console.WriteLine("TodoItem_DragDrop -> Same memo can't move");
                 return;
             }
             
             if (note.IsArchive)
             {
-                Console.WriteLine("Post_it_DragDrop -> Can't move over Archive Memo");
+                //Console.WriteLine("Post_it_DragDrop -> Can't move over Archive Memo");
                 return;
             }
 

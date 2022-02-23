@@ -96,10 +96,15 @@ namespace WellaTodo
             InitializeComponent();
 
             TD_DataCell = dc;
+
             TD_title = dc.DC_title;
             TD_complete = dc.DC_complete;
             TD_important = dc.DC_important;
             TD_infomation = "";
+
+            //Console.WriteLine("TodoItem 1 " + dc.DC_title);
+            //Console.WriteLine("TodoItem 2 " + TD_title);
+            //Console.WriteLine("TodoItem 3 " + TD_DataCell.DC_title);
         }
 
         private void Todo_Item_Load(object sender, EventArgs e)

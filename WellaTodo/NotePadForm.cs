@@ -64,47 +64,13 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
-        //--------------------------------------------------------------
-        // Model 이벤트
-        //--------------------------------------------------------------
-        public void Update_View(IModel m, ModelEventArgs e)
-        {
-            CDataCell dc = e.Item;
-            WParam param = e.Param;
-
-            switch (param)
-            {
-                case WParam.WM_CONVERT_NOTEPAD:
-                    Update_Convert_NotePad(dc);
-                    break;
-                case WParam.WM_TRANSFER_RTF_NOTEPAD:
-                    Update_Transfer_RTF_Data(dc);
-                    break;
-                case WParam.WM_SAVE_RTF_NOTEPAD:
-                    Update_Save_RTF_Data(dc);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void Send_Log_Message(string msg)
-        {
-            try
-            {
-                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Please enter a valid number");
-            }
-        }
-
+        // --------------------------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------------------------
         private void NotePadForm_Load(object sender, EventArgs e)
         {
             Initiate();
         }
-
 
         private void NotePadForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -134,6 +100,9 @@ namespace WellaTodo
             }
         }
 
+        //--------------------------------------------------------------
+        // 초기화 및 데이터 로딩, Update Display
+        //--------------------------------------------------------------
         private void Initiate()
         {
             DataCell = new CDataCell();
@@ -155,7 +124,7 @@ namespace WellaTodo
             */
             comboBox_FontSelect.DataSource = m_FontName;
 
-            int cnt = 0;    
+            int cnt = 0;
             for (int i = 0; i < m_FontName.Count; i++)
             {
                 if (m_FontName[i] == FONT_NAME)
@@ -215,6 +184,98 @@ namespace WellaTodo
             Text = m_FileName;
         }
 
+        //--------------------------------------------------------------
+        // Model 이벤트
+        //--------------------------------------------------------------
+        public void Update_View(IModel m, ModelEventArgs e)
+        {
+            CDataCell dc = e.Item;
+            WParam param = e.Param;
+
+            switch (param)
+            {
+                case WParam.WM_CONVERT_NOTEPAD:
+                    Update_Convert_NotePad(dc);
+                    break;
+                case WParam.WM_TRANSFER_RTF_NOTEPAD:
+                    Update_Transfer_RTF_Data(dc);
+                    break;
+                case WParam.WM_SAVE_RTF_NOTEPAD:
+                    Update_Save_RTF_Data(dc);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Send_Log_Message(string msg)
+        {
+            try
+            {
+                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please enter a valid number");
+            }
+        }
+
+        private void Update_Save_RTF_Data(CDataCell dc)
+        {
+            IsUnsaved = false;
+            UpdatePath();
+
+            Send_Log_Message("4>NotePadForm::Update_Save_RTF_Data : " + dc.DC_title);
+        }
+
+        private void Update_Convert_NotePad(CDataCell dc)
+        {
+            richTextBox.Clear();
+            richTextBox.Text = String.Empty;
+
+            // 편집 초기화
+            if (dc.DC_notepad)
+            {
+                DataCell = dc;
+
+                OpenedDocumentPath = dc.DC_title;
+
+                IsOpened = true;
+                richTextBox.Rtf = dc.DC_RTF;
+            }
+            else
+            {
+                New_File();
+            }
+
+            IsUnsaved = false;
+            UpdatePath();
+
+            Send_Log_Message("4>NotePadForm::Update_Convert_NotePad : " + dc.DC_title);
+        }
+
+        private void Update_Transfer_RTF_Data(CDataCell dc)
+        {
+            richTextBox.Clear();
+            richTextBox.Text = String.Empty;
+
+            if (dc.DC_notepad)
+            {
+                DataCell = dc;
+
+                OpenedDocumentPath = dc.DC_title;
+                richTextBox.Rtf = dc.DC_RTF;
+
+                IsUnsaved = false;
+                UpdatePath();
+            }
+
+            Send_Log_Message("4>NotePadForm::Update_Transfer_RTF_Data : " + dc.DC_title);
+        }
+
+        //--------------------------------------------------------------
+        // 명령 처리
+        //--------------------------------------------------------------
         private void New_File()
         {
             DataCell.DC_notepad = false;
@@ -371,61 +432,8 @@ namespace WellaTodo
             m_Controller.Perform_Save_RTF_Data(DataCell);
         }
 
-        private void Update_Save_RTF_Data(CDataCell dc)
-        {
-            IsUnsaved = false;
-            UpdatePath();
-
-            Send_Log_Message("4>NotePadForm::Update_Save_RTF_Data : " + dc.DC_title);
-        }
-
-        private void Update_Convert_NotePad(CDataCell dc)
-        {
-            richTextBox.Clear();
-            richTextBox.Text = String.Empty;
-
-            // 편집 초기화
-            if (dc.DC_notepad)
-            {
-                DataCell = dc;
-
-                OpenedDocumentPath = dc.DC_title;
-
-                IsOpened = true;
-                richTextBox.Rtf = dc.DC_RTF;
-            }
-            else
-            {
-                New_File();
-            }
-
-            IsUnsaved = false;
-            UpdatePath();
-
-            Send_Log_Message("4>NotePadForm::Update_Convert_NotePad : " + dc.DC_title);
-        }
-
-        private void Update_Transfer_RTF_Data(CDataCell dc)
-        {
-            richTextBox.Clear();
-            richTextBox.Text = String.Empty;
-
-            if (dc.DC_notepad)
-            {
-                DataCell = dc;
-
-                OpenedDocumentPath = dc.DC_title;
-                richTextBox.Rtf = dc.DC_RTF;
-
-                IsUnsaved = false;
-                UpdatePath();
-            }
-
-            Send_Log_Message("4>NotePadForm::Update_Transfer_RTF_Data : " + dc.DC_title);
-        }
-
         // ------------------------------------------------------------
-        // 메뉴
+        // 메뉴 처리
         // ------------------------------------------------------------
         private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -578,12 +586,12 @@ namespace WellaTodo
         {
             if (DataCell.DC_notepad)
             {
-                Console.WriteLine("button_Save_Click -> notepad");
+                //Console.WriteLine("button_Save_Click -> notepad");
                 Save_Data();
             }
             else
             {
-                Console.WriteLine("button_Save_Click -> savefile");
+                //Console.WriteLine("button_Save_Click -> savefile");
                 Save_File();
             }
         }

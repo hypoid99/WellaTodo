@@ -296,7 +296,7 @@ namespace WellaTodo
 
         private void CalendarForm_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("CalendarForm_Paint");
+            //Console.WriteLine("CalendarForm_Paint");
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;

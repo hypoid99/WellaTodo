@@ -875,6 +875,7 @@ namespace WellaTodo
 		{
 			CDataCell src = Find(source);
 			CDataCell tgt = Find(target);
+
 			int src_index = 0;
 			int tar_index = 0; ;
 			for (int i = 0; i <= myTaskItems.Count - 1; i++)

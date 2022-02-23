@@ -684,7 +684,7 @@ namespace WellaTodo
 
         private void Post_it_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Post_it_MouseDown");
+            //Console.WriteLine("Post_it_MouseDown");
         }
 
         private void label_Title_MouseDown(object sender, MouseEventArgs e)
