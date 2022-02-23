@@ -2324,6 +2324,8 @@ namespace WellaTodo
             m_Selected_Item = sd;
             m_Selected_Item.IsItemSelected = true;
 
+            m_Controller.Send_DataCell(sd.TD_DataCell);
+
             Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
 
             //Console.WriteLine("TodoItem_UserControl_Click1 " + sd.TD_title);

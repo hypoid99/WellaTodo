@@ -92,6 +92,12 @@
     <Compile Include="Calendar_Item.Designer.cs">
       <DependentUpon>Calendar_Item.cs</DependentUpon>
     </Compile>
+    <Compile Include="CDataCellForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CDataCellForm.Designer.cs">
+      <DependentUpon>CDataCellForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DateTimePickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -217,6 +223,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Calendar_Item.resx">
       <DependentUpon>Calendar_Item.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CDataCellForm.resx">
+      <DependentUpon>CDataCellForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DateTimePickerForm.resx">
       <DependentUpon>DateTimePickerForm.cs</DependentUpon>

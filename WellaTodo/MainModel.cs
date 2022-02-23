@@ -53,7 +53,9 @@ namespace WellaTodo
 		WM_MEMO_ADD,
 		WM_MODIFY_MEMO_COLOR,
 		WM_MODIFY_MEMO_TAG,
-		WM_MEMO_MOVE_TO
+		WM_MEMO_MOVE_TO,
+		// DataCell
+		WM_DATACELL
 	}
 
 	public class MainModel : IModel
@@ -116,6 +118,18 @@ namespace WellaTodo
 			myListNames = list_collections;
 		}
 
+		public void Notify_Log_Message(string msg)
+		{
+			CDataCell dc = new CDataCell();
+			dc.DC_title = msg;
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_LOG_MESSAGE));
+		}
+
+		public void Notify_DataCell(CDataCell dc)
+		{
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_DATACELL));
+		}
 
 		public void Load_Data()
         {
@@ -218,14 +232,6 @@ namespace WellaTodo
         {
 			Notify_Log_Message(">MainModel::Print_Data");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_PRINT_DATA));
-		}
-
-		public void Notify_Log_Message(string msg)
-		{
-			CDataCell dc = new CDataCell();
-			dc.DC_title = msg;
-
-			Update_View.Invoke(this, new ModelEventArgs(dc, WParam.WM_LOG_MESSAGE));
 		}
 
 		public void Menulist_Add(string target)

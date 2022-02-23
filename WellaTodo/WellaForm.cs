@@ -24,6 +24,7 @@ namespace WellaTodo
         NotePadForm notePad = new NotePadForm();
         BulletinBoardForm bulletinBoard = new BulletinBoardForm();
         OutputForm output = new OutputForm();
+        CDataCellForm datacell = new CDataCellForm();
         MainModel model = new MainModel();
         MainController controller;
 
@@ -37,12 +38,14 @@ namespace WellaTodo
 
         private void WellaForm_Load(object sender, EventArgs e)
         {
+            // Controller를 통해 Model의 Observer로 View를 등록한다
             controller = new MainController(model);
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
             controller.Add_View(bulletinBoard);
             controller.Add_View(notePad );
             controller.Add_View(output);
+            controller.Add_View(datacell);
 
             controller.Load_Data_File();
 
@@ -133,6 +136,11 @@ namespace WellaTodo
         private void 출력창ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             output = (OutputForm)ShowActiveForm(output, typeof(OutputForm));
+        }
+
+        private void cDataCellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            datacell = (CDataCellForm)ShowActiveForm(datacell, typeof(CDataCellForm));
         }
 
         private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -444,8 +452,6 @@ namespace WellaTodo
             info.StartPosition = FormStartPosition.CenterParent;
             info.ShowDialog();
         }
-
-
     }
 }
 

@@ -57,6 +57,11 @@ namespace WellaTodo
 			m_model.Notify_Log_Message(msg);
         }
 
+		public void Send_DataCell(CDataCell dc)
+        {
+			m_model.Notify_DataCell(dc);
+        }
+
 		public void Load_Data_File()
         {
 			Send_Log_Message("2>MainController::Load_Data_File");
