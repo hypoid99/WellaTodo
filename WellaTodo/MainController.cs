@@ -192,6 +192,18 @@ namespace WellaTodo
 
 		public void Perform_Task_Move_To(CDataCell source, CDataCell target)
         {
+			if (source.DC_task_ID == target.DC_task_ID)
+			{
+				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Same task can't move");
+				return;
+			}
+
+			if (source.DC_complete || target.DC_complete)
+			{
+				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Can't move Completed Task");
+				return;
+			}
+
 			Send_Log_Message("2>MainController::Perform_Task_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
 			m_model.Task_Move_To(source, target);
 		}

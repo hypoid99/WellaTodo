@@ -83,5 +83,14 @@ namespace WellaTodo
             textBox_NotePad.Text = dc.DC_notepad ? "true" : "false";
             richTextBox.Text = dc.DC_RTF;
         }
+
+        private void CDataCellForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                Hide();
+                e.Cancel = true;
+            }
+        }
     }
 }

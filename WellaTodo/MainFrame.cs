@@ -536,54 +536,6 @@ namespace WellaTodo
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
         }
 
-        // ============================================
-        // 목록 항목 처리 (추가/목록이름변경하기)
-        // ============================================
-        private void Add_List(string txt)
-        {
-            // 동일 이름의 목록 찾기 -> 발견시 뒷자리 번호 부여
-            if (!AddList_Check_ListName(txt))
-            {
-                MessageBox.Show("목록명이 잘못되었거나 중복된 목록명입니다", WINDOW_CAPTION);
-                return;
-            }
-
-            Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
-            m_Controller.Perform_Menulist_Add(txt);
-        }
-
-        private bool AddList_Check_ListName(string txt)
-        {
-            if (txt == "오늘 할 일" || txt == "중요" || txt == "계획된 일정" || txt == "완료됨" || txt == "작업")
-            {
-                Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Reserved Menu!!");
-                return false;
-            }
-
-            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
-            {
-                if (item.PrimaryText == txt)
-                {
-                    Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Same menu name exist!!");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private void Menulist_Rename_Process(object sender, MouseEventArgs e)
-        {
-            TwoLineList sd = (TwoLineList)sender;
-
-            string source = sd.PrimaryText;
-            string target = sd.PrimaryText_Renamed;
-
-            Send_Log_Message("1-3>MainFrame::Menulist_Rename_Process -> Rename from " + source + " to " + target);
-
-            m_Controller.Perform_Menulist_Rename(source, target);
-        }
-
         //--------------------------------------------------------------
         // 할일 항목 폭 맞추기 등 필요한 메서드
         //--------------------------------------------------------------
@@ -1881,7 +1833,10 @@ namespace WellaTodo
                     break;
                 case MouseButtons.Middle:
                     Send_Log_Message(">MainFrame::TwoLineList_Click -> Middle Button : " + m_Selected_Menu.PrimaryText);
-                    Menulist_Rename_Process(sender, me);  // 목록명 변경되어 실행됨
+                    string source = sd.PrimaryText;
+                    string target = sd.PrimaryText_Renamed;
+                    Send_Log_Message("1-3>MainFrame::Menulist_Rename_Process -> Rename from " + source + " to " + target);
+                    m_Controller.Perform_Menulist_Rename(source, target);
                     break;
             }
         }
@@ -2173,7 +2128,6 @@ namespace WellaTodo
 
             // 화면 맨위 항목을 선택한다
             Todo_Item sd = null;
-
             foreach (Todo_Item item in flowLayoutPanel2.Controls)
             {
                 if (item is Todo_Item)
@@ -2184,20 +2138,16 @@ namespace WellaTodo
             }
 
             if (m_Pre_Selected_Item == null) m_Pre_Selected_Item = sd;
-
-            if (m_Pre_Selected_Item.Equals(sd))
-            {
-
-            }
-            else
+            if (!m_Pre_Selected_Item.Equals(sd))
             {
                 m_Pre_Selected_Item.IsItemSelected = false;
             }
-            //Console.WriteLine("sd : " + sd.TD_DataCell.DC_title);
+
             m_Pre_Selected_Item = sd;
             m_Selected_Item = sd;
             m_Selected_Item.IsItemSelected = true;
 
+            m_Controller.Send_DataCell(m_Selected_Item.TD_DataCell);
             SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
         }
 
@@ -2249,7 +2199,26 @@ namespace WellaTodo
 
                 Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add List!! " + textBox_AddList.Text);
 
-                Add_List(textBox_AddList.Text);
+                string txt = textBox_AddList.Text;
+                // 동일 이름의 목록 찾기 -> 발견시 뒷자리 번호 부여
+                if (txt == "오늘 할 일" || txt == "중요" || txt == "계획된 일정" || txt == "완료됨" || txt == "작업")
+                {
+                    Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Reserved Menu!!");
+                    return;
+                }
+
+                foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+                {
+                    if (item.PrimaryText == txt)
+                    {
+                        Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Same menu name exist!!");
+                        return;
+                    }
+                }
+
+                Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
+
+                m_Controller.Perform_Menulist_Add(txt);
 
                 textBox_AddList.Text = "";
             }
@@ -2324,8 +2293,6 @@ namespace WellaTodo
             m_Selected_Item = sd;
             m_Selected_Item.IsItemSelected = true;
 
-            m_Controller.Send_DataCell(sd.TD_DataCell);
-
             Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
 
             //Console.WriteLine("TodoItem_UserControl_Click1 " + sd.TD_title);
@@ -2333,8 +2300,8 @@ namespace WellaTodo
             //Console.WriteLine("TodoItem_UserControl_Click3 " + sd.TD_DataCell.DC_title);
             //Console.WriteLine("TodoItem_UserControl_Click4 " + m_Selected_Item.TD_DataCell.DC_title);
 
+            m_Controller.Send_DataCell(m_Selected_Item.TD_DataCell);
             SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
-            Update_Task_Width();
 
             switch (me.Button)
             {
@@ -2362,11 +2329,14 @@ namespace WellaTodo
                         Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + sd.TD_title);
                         m_Controller.Perform_Transfer_RTF_Data(sd.TD_DataCell);
                     }
+
                     break;
                 case MouseButtons.Right:
                     Task_ContextMenu();
                     break;
             }
+
+            Update_Task_Width();
         }
 
         private void Task_ContextMenu()
@@ -3117,6 +3087,7 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddMonths(1); // 매달 말일 계산 필요 - 28/29/30/31일 경우
             m_Controller.Perform_Modify_Repeat(data, 4, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+
             if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
                 OnTodayDeadline_Click(this, new EventArgs());
@@ -3133,6 +3104,7 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddYears(1);  // 윤년 계산 필요 2월29일
             m_Controller.Perform_Modify_Repeat(data, 5, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
+
             if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
             {
                 OnTodayDeadline_Click(this, new EventArgs());
@@ -3250,7 +3222,6 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void TodoItem_DragEnter(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("TodoItem_DragEnter");
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 e.Effect = DragDropEffects.Copy;
@@ -3263,33 +3234,18 @@ namespace WellaTodo
 
         private void TodoItem_DragDrop(object sender, DragEventArgs e)
         {
-            Todo_Item data = null;
+            Todo_Item source = null;
+
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
-                data = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                //Console.WriteLine("TodoItem_DragDrop -> source : " + data.TD_title);
+                source = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
             }
             
             Point p = flowLayoutPanel2.PointToClient(new Point(e.X, e.Y));
-            Todo_Item item = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
+            Todo_Item target = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
 
-            if (data.TD_title == item.TD_title)
-            {
-                //Console.WriteLine("TodoItem_DragDrop -> Same task can't move");
-                return;
-            }
-
-            if (item.TD_complete)
-            {
-                //Console.WriteLine("TodoItem_DragDrop -> Can't move over Complete Task");
-                return;
-            }
-            
-            Send_Log_Message("1>MainFrame::TodoItem_DragDrop -> Source : "
-                             + data.TD_DataCell.DC_title
-                             + " Target : "
-                             + item.TD_DataCell.DC_title);
-            m_Controller.Perform_Task_Move_To(data.TD_DataCell, item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::TodoItem_DragDrop -> Source : " + source.TD_DataCell.DC_title + " Target : " + target.TD_DataCell.DC_title);
+            m_Controller.Perform_Task_Move_To(source.TD_DataCell, target.TD_DataCell);
         }
 
         //--------------------------------------------------------------
@@ -3310,16 +3266,14 @@ namespace WellaTodo
 
         private void TwoLineList_DragDrop(object sender, DragEventArgs e)
         {
-            //Console.WriteLine("TwoLineList_DragDrop");
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                //Console.WriteLine("TwoLineList_DragDrop -> source : " + item.TD_title);
             }
-            TwoLineList sd = (TwoLineList)sender;
-            //Console.WriteLine("TwoLineList_DragDrop -> target : " + sd.PrimaryText);
 
-            if (sd.PrimaryText == m_Selected_Menu.PrimaryText)
+            TwoLineList sd = (TwoLineList)sender;
+
+            if (sd.PrimaryText == m_Selected_Menu.PrimaryText) // text 비교는 잘못됨
             {
                 Send_Log_Message("Warning>MainFrame::TwoLineList_DragDrop -> Can't transfer item as same list");
                 return;
