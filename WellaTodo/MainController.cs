@@ -14,6 +14,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace WellaTodo
 {
 	public class MainController : IController
@@ -57,9 +61,9 @@ namespace WellaTodo
 			m_model.Notify_Log_Message(msg);
         }
 
-		public void Send_DataCell(CDataCell dc)
+		public void Verify_DataCell(CDataCell dc)
         {
-			m_model.Notify_DataCell(dc);
+			m_model.Verify_DataCell(dc);
         }
 
 		public void Load_Data_File()
@@ -220,7 +224,7 @@ namespace WellaTodo
 			m_model.Task_Move_Down(dc);
 		}
 
-		public void Perform_Trasnfer_Task(CDataCell dc, string target)
+		public void Perform_Transfer_Task(CDataCell dc, string target)
         {
 			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
 			m_model.Transfer_Task(dc, target);
@@ -445,16 +449,98 @@ namespace WellaTodo
 			List<CDataCell> deepCopy = new List<CDataCell>();
 			foreach (CDataCell dc in dataset)
 			{
-				deepCopy.Add((CDataCell)dc.Clone());
+				//deepCopy.Add((CDataCell)dc.Clone());
+				//deepCopy.Add((CDataCell)DeepClone(dc));
+				deepCopy.Add((CDataCell)SerializableDeepClone(dc));
 			}
 			return deepCopy;
 		}
 
-		public void Perform_Display_Data()
-        {
-			m_model.Display_Data();
-        }
+		// ----------------------------------------------------
+		// Serializable 객체에 대한  Deep Clone 구현
+		// ----------------------------------------------------
+		private static T SerializableDeepClone<T>(T obj)
+		{
+			using (var ms = new MemoryStream())
+			{
+				BinaryFormatter formatter = new BinaryFormatter();
+				formatter.Serialize(ms, obj);
+				ms.Position = 0;
 
+				return (T)formatter.Deserialize(ms);
+			}
+		}
+
+		// ----------------------------------------------------
+		// Deep Clone 구현
+		// ----------------------------------------------------
+		private static T DeepClone<T>(T obj)
+		{
+			if (obj == null)
+				throw new ArgumentNullException("Object cannot be null.");
+
+			return (T)Process(obj, new Dictionary<object, object>() { });
+		}
+
+		private static object Process(object obj, Dictionary<object, object> circular)
+		{
+			if (obj == null) return null;
+
+			Type type = obj.GetType();
+
+			if (type.IsValueType || type == typeof(string)) return obj;
+
+			if (type.IsArray)
+			{
+				if (circular.ContainsKey(obj)) return circular[obj];
+
+				string typeNoArray = type.FullName.Replace("[]", string.Empty);
+				Type elementType = Type.GetType(typeNoArray + ", " + type.Assembly.FullName);
+				var array = obj as Array;
+				Array arrCopied = Array.CreateInstance(elementType, array.Length);
+
+				circular[obj] = arrCopied;
+
+				for (int i = 0; i < array.Length; i++)
+				{
+					object element = array.GetValue(i);
+					object objCopy = null;
+
+					if (element != null && circular.ContainsKey(element))
+						objCopy = circular[element];
+					else
+						objCopy = Process(element, circular);
+
+					arrCopied.SetValue(objCopy, i);
+				}
+				return Convert.ChangeType(arrCopied, obj.GetType());
+			}
+
+			if (type.IsClass)
+			{
+				if (circular.ContainsKey(obj)) return circular[obj];
+
+				object objValue = Activator.CreateInstance(obj.GetType());
+				circular[obj] = objValue;
+				FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+				foreach (FieldInfo field in fields)
+				{
+					object fieldValue = field.GetValue(obj);
+
+					if (fieldValue == null)
+						continue;
+
+					object objCopy = circular.ContainsKey(fieldValue) ? circular[fieldValue] : Process(fieldValue, circular);
+					field.SetValue(objValue, objCopy);
+				}
+				return objValue;
+			}
+			else
+			{
+				throw new ArgumentException("Unknown type");
+			}
+		}
 	}
 }
 

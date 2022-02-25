@@ -36,11 +36,12 @@ namespace WellaTodo
 
             switch (param)
             {
+                case WParam.WM_DATACELL:
+                    Update_DataCell(dc);
+                    break;
                 default:
                     break;
             }
-
-            Show_Data(dc);
         }
 
         private void Send_Log_Message(string msg)
@@ -55,7 +56,7 @@ namespace WellaTodo
             }
         }
 
-        private void Show_Data(CDataCell dc)
+        private void Update_DataCell(CDataCell dc)
         {
             if (dc == null) return;
             textBox_Task_ID.Text = dc.DC_task_ID.ToString();

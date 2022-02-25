@@ -25,7 +25,6 @@ namespace WellaTodo
         static readonly int SECONDARY_LOCATION_Y = 20;
         static readonly int METADATA_LOCATION_Y = 3;
 
-
         static readonly Color BACK_COLOR = Color.White;
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
@@ -116,6 +115,50 @@ namespace WellaTodo
             Initialize();
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
+        private void TwoLineList_Paint(object sender, PaintEventArgs pevent)
+        {
+            if (isDivider)
+            {
+                Graphics g = pevent.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                Rectangle rc = ClientRectangle;
+                int x1 = rc.Left;
+                int y1 = rc.Top;
+                int x2 = rc.Left + rc.Width - 1;
+                int y2 = rc.Top + rc.Height - 1;
+                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y1, x2, y1);
+                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y2, x2, y2);
+                return;
+            }
+
+            if (SecondaryText.Length == 0)
+            {
+                label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y1);
+
+                label_SecondaryText.Location = new Point(245, SECONDARY_LOCATION_Y);
+                label_SecondaryText.Size = new Size(0, 13);
+                label_SecondaryText.Text = "";
+                label_SecondaryText.AutoSize = false;
+            }
+            else
+            {
+                label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y2);
+
+                label_SecondaryText.Location = new Point(30, SECONDARY_LOCATION_Y);
+                label_SecondaryText.Text = SecondaryText;
+                label_SecondaryText.AutoSize = true;
+            }
+
+            label_Metadata.Location = new Point(Width - 35, METADATA_LOCATION_Y);
+        }
+
+        //--------------------------------------------------------------
+        // 초기화 및 Update Display
+        //--------------------------------------------------------------
         private void Initialize()
         {
             if (isDivider)
@@ -170,48 +213,41 @@ namespace WellaTodo
             Controls.Add(textBox_Rename);
         }
 
-        private void TwoLineList_Paint(object sender, PaintEventArgs pevent)
+        // --------------------------------------------
+        // 헬프 메서드
+        // --------------------------------------------
+        public void Rename_Process()
         {
-            if (isDivider)
-            {
-                Graphics g = pevent.Graphics;
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                Rectangle rc = ClientRectangle;
-                int x1 = rc.Left;
-                int y1 = rc.Top;
-                int x2 = rc.Left + rc.Width - 1;
-                int y2 = rc.Top + rc.Height - 1;
-                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y1, x2, y1);
-                g.DrawLine(new Pen(BORDER_COLOR, 1.0f), x1, y2, x2, y2);
-                return;
-            }
-
-            if (SecondaryText.Length == 0)
-            {
-                label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y1);
-
-                label_SecondaryText.Location = new Point(245, SECONDARY_LOCATION_Y);
-                label_SecondaryText.Size = new Size(0, 13);
-                label_SecondaryText.Text = "";
-                label_SecondaryText.AutoSize = false;
-            }
-            else
-            {
-                label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y2);
-
-                label_SecondaryText.Location = new Point(30, SECONDARY_LOCATION_Y);
-                label_SecondaryText.Text = SecondaryText;
-                label_SecondaryText.AutoSize = true;
-            }
-
-            label_Metadata.Location = new Point(Width - 35, METADATA_LOCATION_Y);
+            textBox_Rename.Visible = true;
+            label_PrimaryText.Visible = false;
+            textBox_Rename.Text = PrimaryText;
+            textBox_Rename.Focus();
         }
 
+        //---------------------------------------------------------
+        // 사용자 이벤트 처리 - Control Event
+        //---------------------------------------------------------
         private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
             Focus();
             if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
+        }
+
+        private void List_MouseEnter(object sender, EventArgs e)
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+        }
+
+        private void List_MouseLeave(object sender, EventArgs e)
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+        }
+
+        private void List_MouseClick(object sender, MouseEventArgs e)
+        {
+            Mouse_Clicked(sender, e);
         }
 
         private void textBox_Rename_Enter(object sender, EventArgs e)
@@ -291,34 +327,9 @@ namespace WellaTodo
 
         }
 
-        public void Rename_Process()
-        {
-            textBox_Rename.Visible = true;
-            label_PrimaryText.Visible = false;
-            textBox_Rename.Text = PrimaryText;
-            textBox_Rename.Focus();
-        }
-
-        //---------------------------------------------------------
-        // control event
-        //---------------------------------------------------------
-        private void List_MouseEnter(object sender, EventArgs e)
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-        }
-
-        private void List_MouseLeave(object sender, EventArgs e)
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-        }
-
-        private void List_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
+        // ----------------------------------------------------------------------
+        // 드래그앤드롭 Drag & Drop
+        // ----------------------------------------------------------------------
         private void List_DragEnter(object sender, DragEventArgs e)
         {
             //Console.WriteLine("List_DragEnter");

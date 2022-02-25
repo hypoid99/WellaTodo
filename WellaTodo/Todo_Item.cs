@@ -43,25 +43,22 @@ namespace WellaTodo
         CDataCell m_DataCell;
         public CDataCell TD_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
-        private string _title;
         public string TD_title
         {
-            get => _title;
-            set { _title = value; label1.Text = value; }
+            get => TD_DataCell.DC_title;
+            set { TD_DataCell.DC_title = value; label1.Text = value; }
         }
 
-        private bool _complete;
         public bool TD_complete
         {
-            get => _complete;
-            set { _complete = value; roundCheckbox1.Checked = value; }
+            get => TD_DataCell.DC_complete;
+            set { TD_DataCell.DC_complete = value; roundCheckbox1.Checked = value; }
         }
 
-        private bool _important;
         public bool TD_important
         {
-            get => _important;
-            set { _important = value; starCheckbox1.Checked = value; }
+            get => TD_DataCell.DC_important;
+            set { TD_DataCell.DC_important = value; starCheckbox1.Checked = value; }
         }
 
         public string TD_infomation { get; set; }
@@ -96,17 +93,12 @@ namespace WellaTodo
             InitializeComponent();
 
             TD_DataCell = dc;
-
-            TD_title = dc.DC_title;
-            TD_complete = dc.DC_complete;
-            TD_important = dc.DC_important;
             TD_infomation = "";
-
-            //Console.WriteLine("TodoItem 1 " + dc.DC_title);
-            //Console.WriteLine("TodoItem 2 " + TD_title);
-            //Console.WriteLine("TodoItem 3 " + TD_DataCell.DC_title);
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
         private void Todo_Item_Load(object sender, EventArgs e)
         {
             Initiate_View();
@@ -119,67 +111,8 @@ namespace WellaTodo
 
         private void Todo_Item_Paint(object sender, PaintEventArgs pevent)
         {
-            if (TD_DataCell.DC_bulletin)
-            {
-                roundCheckbox1.Visible = false;
-                starCheckbox1 .Visible = false;
-                pictureBox_Bulletin.Visible = true;
-                pictureBox_Notepad.Visible = false;
-            }
-            else if (TD_DataCell.DC_notepad)
-            {
-                roundCheckbox1.Visible = false;
-                starCheckbox1.Visible = false;
-                pictureBox_Bulletin.Visible = false;
-                pictureBox_Notepad.Visible = true;
-            }
-            else
-            {
-                roundCheckbox1.Visible = true;
-                starCheckbox1.Visible = true;
-                pictureBox_Bulletin.Visible = false;
-                pictureBox_Notepad.Visible = false;
-            }
-
-            if (TD_infomation.Length == 0) // 가운데
-            {
-                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y1);
-                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
-                label2.Visible = false;
-                label2.Text = "";
-                label2.AutoSize = false;
-            }
-            else
-            {
-                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y2);  // 윗쪽
-                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
-                label2.Visible = true;
-                label2.Text = TD_infomation;
-                label2.AutoSize = true;
-            }
-
-            if (TD_complete)
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
-                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
-                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
-
-            }
-            else if (TD_important)
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Bold);
-                label1.ForeColor = PSEUDO_IMPORTANT_TEXT_COLOR;
-                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
-            }
-            else
-            {
-                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
-                label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
-                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
-            }
-
-            starCheckbox1.Location = new Point(Width - PRIMARY_LOCATION_X, STARCHECK_LOCATION_Y);
-
+            Update_Display();
+            
             Graphics g = pevent.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -193,6 +126,9 @@ namespace WellaTodo
             g.DrawLine(new Pen(PSEUDO_BORDER_COLOR, PSEUDO_PEN_THICKNESS), x1, y2, x2, y2);
         }
 
+        //--------------------------------------------------------------
+        // 초기화 및 Update Display
+        //--------------------------------------------------------------
         private void Initiate_View()
         {
             Size = new Size(TODO_ITEM_WIDTH, TODO_ITEM_HEIGHT);
@@ -260,17 +196,77 @@ namespace WellaTodo
             Controls.Add(pictureBox_Notepad);
         }
 
-        public void Display_Event_Status()
+        private void Update_Display()
         {
-            if (this.UserControl_Click != null)
+            label1.Text = TD_DataCell.DC_title;
+            roundCheckbox1.Checked = TD_DataCell.DC_complete;
+            starCheckbox1.Checked = TD_DataCell.DC_important;
+
+            if (TD_DataCell.DC_bulletin)
             {
-                foreach (Delegate d in UserControl_Click.GetInvocationList())
-                {
-                    Console.WriteLine(TD_title + "-" + d.Method.ToString());
-                }
+                roundCheckbox1.Visible = false;
+                starCheckbox1.Visible = false;
+                pictureBox_Bulletin.Visible = true;
+                pictureBox_Notepad.Visible = false;
             }
+            else if (TD_DataCell.DC_notepad)
+            {
+                roundCheckbox1.Visible = false;
+                starCheckbox1.Visible = false;
+                pictureBox_Bulletin.Visible = false;
+                pictureBox_Notepad.Visible = true;
+            }
+            else
+            {
+                roundCheckbox1.Visible = true;
+                starCheckbox1.Visible = true;
+                pictureBox_Bulletin.Visible = false;
+                pictureBox_Notepad.Visible = false;
+            }
+
+            if (TD_infomation.Length == 0) // 가운데
+            {
+                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y1);
+                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
+                label2.Visible = false;
+                label2.Text = "";
+                label2.AutoSize = false;
+            }
+            else
+            {
+                label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y2);  // 윗쪽
+                label2.Location = new Point(PRIMARY_LOCATION_X, SECONDARY_LOCATION_Y);
+                label2.Visible = true;
+                label2.Text = TD_infomation;
+                label2.AutoSize = true;
+            }
+
+            if (TD_DataCell.DC_complete)
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
+                label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
+
+            }
+            else if (TD_DataCell.DC_important)
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Bold);
+                label1.ForeColor = PSEUDO_IMPORTANT_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
+            else
+            {
+                label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
+                label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
+                label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
+            }
+
+            starCheckbox1.Location = new Point(Width - PRIMARY_LOCATION_X, STARCHECK_LOCATION_Y);
         }
 
+        // --------------------------------------------
+        // 헬프 메서드
+        // --------------------------------------------
         private void SetPathOuterBorder()
         {
             Rectangle rectangle = ClientRectangle;
@@ -295,21 +291,32 @@ namespace WellaTodo
             outerBorderPath = path;
         }
 
-        private void Todo_Item_Click(object sender, MouseEventArgs e)
-        {
-            Focus();
-            if (UserControl_Click != null) UserControl_Click?.Invoke(this, e);
-        }
-
         private void ChangeItemSelectedColor()
         {
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
         }
 
+        public void Display_Event_Status()
+        {
+            if (this.UserControl_Click != null)
+            {
+                foreach (Delegate d in UserControl_Click.GetInvocationList())
+                {
+                    Console.WriteLine(TD_DataCell.DC_title + "-" + d.Method.ToString());
+                }
+            }
+        }
+
         //---------------------------------------------------------
-        // control event
+        // 사용자 이벤트 처리 - Control Event
         //---------------------------------------------------------
+        private void Todo_Item_Click(object sender, MouseEventArgs e)
+        {
+            Focus();
+            if (UserControl_Click != null) UserControl_Click?.Invoke(this, e);
+        }
+
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
             Todo_Item_Click(sender, e);
@@ -329,9 +336,9 @@ namespace WellaTodo
 
         private void roundCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
-            TD_complete = roundCheckbox1.Checked;
+            TD_DataCell.DC_complete = roundCheckbox1.Checked;
 
-            if (TD_complete)
+            if (TD_DataCell.DC_complete)
             {
                 label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Strikeout);
                 label1.ForeColor = PSEUDO_COMPLETE_TEXT_COLOR;
@@ -350,7 +357,7 @@ namespace WellaTodo
 
         private void starCheckbox1_MouseClick(object sender, MouseEventArgs e)
         {
-            TD_important = starCheckbox1.Checked;
+            TD_DataCell.DC_important = starCheckbox1.Checked;
 
             IsImportantClicked = true;
             Todo_Item_Click(sender, e);
@@ -361,10 +368,8 @@ namespace WellaTodo
         // ---------------------------------------------------------------------------
         private void Todo_Item_MouseDown(object sender, MouseEventArgs e)
         {
-            //Console.WriteLine("Todo_Item_MouseDown X: " + e.X + " Y: " + e.Y);
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
-            //Todo_Item_Click(sender, e);  // click
         }
 
         private void Todo_Item_MouseUp(object sender, MouseEventArgs e)

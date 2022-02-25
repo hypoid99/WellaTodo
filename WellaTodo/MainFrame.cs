@@ -96,8 +96,9 @@ namespace WellaTodo
         bool isTextbox_List_Clicked = false;
         bool isTextbox_Momo_Changed = false;
 
-        Todo_Item m_Pre_Selected_Item;
-        Todo_Item m_Selected_Item;
+        Todo_Item m_Pre_Selected_Task;
+        Todo_Item m_Selected_Task;
+
         TwoLineList m_Pre_Selected_Menu;
         TwoLineList m_Selected_Menu;
         MenuList enum_Selected_Menu;
@@ -509,31 +510,22 @@ namespace WellaTodo
             }
         }
 
-        private void Task_Delete(CDataCell dc)
-        {
-            string txt = "항목 삭제? [" + dc.DC_title + "]";
-            if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
-
-            Send_Log_Message("1>MainFrame::Task_Delete : " + dc.DC_title);
-            m_Controller.Perform_Delete_Task(dc);
-        }
-
         private void Edit_Task_Memo()
         {
             memoForm.StartPosition = FormStartPosition.CenterParent;
 
             memoForm.TextBoxString = textBox_Memo.Text;
-            memoForm.Text = m_Selected_Item.TD_DataCell.DC_title;
+            memoForm.Text = m_Selected_Task.TD_DataCell.DC_title;
             memoForm.ShowDialog();
 
             textBox_Memo.Text = memoForm.TextBoxString;
             textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
 
-            //메모 내용에 변경이 있는지 확인(?)
-            m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            //메모 내용에 변경이 있는지 확인하고 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;
 
-            Send_Log_Message("1>MainFrame::Edit_Task_Memo : " + m_Selected_Item.TD_DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::Edit_Task_Memo : " + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Task.TD_DataCell);
         }
 
         //--------------------------------------------------------------
@@ -714,7 +706,7 @@ namespace WellaTodo
             return infoText;
         }
 
-        private void SendDataCellToTodoItem(CDataCell dc)
+        private void Update_Present_TodoItem(CDataCell dc)
         {
             if (dc == null)  // Save, Load, Open, Print 명령은 dc가 null 임
             {
@@ -1011,7 +1003,8 @@ namespace WellaTodo
             CDataCell dc = e.Item;
             WParam param = e.Param;
 
-            SendDataCellToTodoItem(dc); // 변경된 내용을 현재 화면 아이템의 DataCell 내용을 변경한다
+            // 변경된 dc 내용을 현재 화면 Todo Item의 DataCell 내용을 변경한다
+            Update_Present_TodoItem(dc);
 
             switch (param)
             {
@@ -1766,7 +1759,7 @@ namespace WellaTodo
             {
                 if (dc.DC_task_ID == item.TD_DataCell.DC_task_ID)
                 {
-                    flowLayoutPanel2.Controls.SetChildIndex(m_Selected_Item, pos);
+                    flowLayoutPanel2.Controls.SetChildIndex(m_Selected_Task, pos);
 
                     break;
                 }
@@ -1800,7 +1793,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // 메뉴 리스트를 클릭했을때 처리
+        // 사용자 입력 처리 -> 메뉴 리스트를 클릭했을때 처리
         //--------------------------------------------------------------
         private void TwoLineList_Click(object sender, EventArgs e)
         {
@@ -2077,17 +2070,13 @@ namespace WellaTodo
                 m_Task[i].UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 m_Task[i].DragEnter -= new DragEventHandler(TodoItem_DragEnter);
                 m_Task[i].DragDrop -= new DragEventHandler(TodoItem_DragDrop);
-                //m_Task[i].Dispose();
+                //m_Task[i].Dispose(); // Dispose시 처리시간이 엄청 걸림
             }
             m_Task.Clear();
 
             foreach (CDataCell data in dataset)  // Todo_Item 생성 및 m_Task에 저장
             {
                 Todo_Item item = new Todo_Item(data);
-
-                //Console.WriteLine("TodoItem 1 " + data.DC_title);
-                //Console.WriteLine("TodoItem 2 " + item.TD_title);
-                //Console.WriteLine("TodoItem 3 " + item.TD_DataCell.DC_title);
 
                 item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
@@ -2137,18 +2126,18 @@ namespace WellaTodo
                 }
             }
 
-            if (m_Pre_Selected_Item == null) m_Pre_Selected_Item = sd;
-            if (!m_Pre_Selected_Item.Equals(sd))
+            if (m_Pre_Selected_Task == null) m_Pre_Selected_Task = sd;
+            if (!m_Pre_Selected_Task.Equals(sd))
             {
-                m_Pre_Selected_Item.IsItemSelected = false;
+                m_Pre_Selected_Task.IsItemSelected = false;
             }
 
-            m_Pre_Selected_Item = sd;
-            m_Selected_Item = sd;
-            m_Selected_Item.IsItemSelected = true;
+            m_Pre_Selected_Task = sd;
+            m_Selected_Task = sd;
+            m_Selected_Task.IsItemSelected = true;
 
-            m_Controller.Send_DataCell(m_Selected_Item.TD_DataCell);
-            SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
+            m_Controller.Verify_DataCell(m_Selected_Task.TD_DataCell);
+            SendDataCellToDetailWindow(m_Selected_Task.TD_DataCell);
         }
 
         private void Add_Task_To_Panel_ScrollDown()
@@ -2272,9 +2261,9 @@ namespace WellaTodo
 
             MouseEventArgs me = (MouseEventArgs)e;
 
-            if (m_Pre_Selected_Item == null) m_Pre_Selected_Item = sd;
+            if (m_Pre_Selected_Task == null) m_Pre_Selected_Task = sd;
 
-            if (m_Pre_Selected_Item.Equals(sd))
+            if (m_Pre_Selected_Task.Equals(sd))
             {
                 if (!(sd.IsCompleteClicked || sd.IsImportantClicked))
                 {
@@ -2286,22 +2275,22 @@ namespace WellaTodo
             }
             else
             {
-                m_Pre_Selected_Item.IsItemSelected = false;
+                m_Pre_Selected_Task.IsItemSelected = false;
             }
 
-            m_Pre_Selected_Item = sd;
-            m_Selected_Item = sd;
-            m_Selected_Item.IsItemSelected = true;
+            m_Pre_Selected_Task = sd;
+            m_Selected_Task = sd;
+            m_Selected_Task.IsItemSelected = true;
 
-            Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Item.TD_title);
+            Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Task.TD_title);
 
             //Console.WriteLine("TodoItem_UserControl_Click1 " + sd.TD_title);
-            //Console.WriteLine("TodoItem_UserControl_Click2 " + m_Selected_Item.TD_title);
+            //Console.WriteLine("TodoItem_UserControl_Click2 " + m_Selected_Task.TD_title);
             //Console.WriteLine("TodoItem_UserControl_Click3 " + sd.TD_DataCell.DC_title);
-            //Console.WriteLine("TodoItem_UserControl_Click4 " + m_Selected_Item.TD_DataCell.DC_title);
+            //Console.WriteLine("TodoItem_UserControl_Click4 " + m_Selected_Task.TD_DataCell.DC_title);
 
-            m_Controller.Send_DataCell(m_Selected_Item.TD_DataCell);
-            SendDataCellToDetailWindow(m_Selected_Item.TD_DataCell);
+            m_Controller.Verify_DataCell(m_Selected_Task.TD_DataCell);
+            SendDataCellToDetailWindow(m_Selected_Task.TD_DataCell);
 
             switch (me.Button)
             {
@@ -2384,30 +2373,31 @@ namespace WellaTodo
         {
             ContextMenu ctm = (ContextMenu)sender;
             
-            ctm.MenuItems[0].Text = m_Selected_Item.TD_DataCell.DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
-            ctm.MenuItems[1].Text = m_Selected_Item.TD_DataCell.DC_important ? "중요도 제거" : "중요로 표시";
-            ctm.MenuItems[2].Text = m_Selected_Item.TD_DataCell.DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
-            ctm.MenuItems[4].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 1;
-            ctm.MenuItems[5].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType != 2;
-            ctm.MenuItems[7].Enabled = m_Selected_Item.TD_DataCell.DC_deadlineType > 0;
+            ctm.MenuItems[0].Text = m_Selected_Task.TD_DataCell.DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
+            ctm.MenuItems[1].Text = m_Selected_Task.TD_DataCell.DC_important ? "중요도 제거" : "중요로 표시";
+            ctm.MenuItems[2].Text = m_Selected_Task.TD_DataCell.DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
+            ctm.MenuItems[4].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 1;
+            ctm.MenuItems[5].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 2;
+            ctm.MenuItems[7].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType > 0;
 
-            ctm.MenuItems[10].Text = m_Selected_Item.TD_DataCell.DC_notepad ? "할 일로 전환" : "노트패드로 전환";
+            ctm.MenuItems[10].Text = m_Selected_Task.TD_DataCell.DC_notepad ? "할 일로 전환" : "노트패드로 전환";
         }
 
         private void OnMyToday_Click(object sender, EventArgs e)
         {
-            m_Controller.Perform_MyToday_Process(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnMyToday_Click -> MyToday Process!!");
+
+            m_Controller.Perform_MyToday_Process(m_Selected_Task.TD_DataCell);
         }
 
         private void OnCompleteMenuItem_Click(object sender, EventArgs e)
         {
             roundCheckbox1.Checked = !roundCheckbox1.Checked;
 
-            m_Selected_Item.TD_complete = roundCheckbox1.Checked;
-            m_Selected_Item.TD_DataCell.DC_complete = roundCheckbox1.Checked;
+            m_Selected_Task.TD_DataCell.DC_complete = roundCheckbox1.Checked;
 
-            Send_Log_Message("1>MainFrame::OnCompleteMenuItem_Click -> Complete :" + m_Selected_Item.TD_DataCell.DC_complete);
-            m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnCompleteMenuItem_Click -> Complete :" + m_Selected_Task.TD_DataCell.DC_complete);
+            m_Controller.Perform_Complete_Process(m_Selected_Task.TD_DataCell);
 
             Update_Menu_Metadata();
         }
@@ -2416,10 +2406,10 @@ namespace WellaTodo
         {
             starCheckbox1.Checked = !starCheckbox1.Checked;
 
-            m_Selected_Item.TD_important = starCheckbox1.Checked;
-            m_Selected_Item.TD_DataCell.DC_important = starCheckbox1.Checked;
-            Send_Log_Message("1>MainFrame::OnImportantMenuItem_Click -> Important :" + m_Selected_Item.TD_DataCell.DC_important);
-            m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
+            m_Selected_Task.TD_DataCell.DC_important = starCheckbox1.Checked;
+
+            Send_Log_Message("1>MainFrame::OnImportantMenuItem_Click -> Important :" + m_Selected_Task.TD_DataCell.DC_important);
+            m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
 
             Update_Menu_Metadata();
         }
@@ -2431,8 +2421,8 @@ namespace WellaTodo
 
         private void OnNotePadMenuItem_Click(object sender, EventArgs e)
         {
-            Send_Log_Message("1>MainFrame::OnNotePadMenuItem_Click : " + m_Selected_Item.TD_DataCell.DC_title);
-            m_Controller.Perform_Convert_NotePad(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnNotePadMenuItem_Click : " + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Convert_NotePad(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTransferItem_Click(object sender, EventArgs e)
@@ -2445,16 +2435,21 @@ namespace WellaTodo
                 return;
             }
 
-            Send_Log_Message("1>MainFrame::OnTransferItem_Click -> Transfer Item Click!! : from " + m_Selected_Item.TD_DataCell.DC_listName + " to " + list.Text);
+            Send_Log_Message("1>MainFrame::OnTransferItem_Click -> Transfer Item Click!! : from " + m_Selected_Task.TD_DataCell.DC_listName + " to " + list.Text);
             
-            m_Controller.Perform_Trasnfer_Task(m_Selected_Item.TD_DataCell, list.Text);
+            m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, list.Text);
         }
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
         {
-            Send_Log_Message("1>MainFrame::OnDeleteItem_Click -> Delete Task : " + m_Selected_Item.TD_DataCell.DC_title);
+            string txt = "선택 항목을 삭제할까요? [" + m_Selected_Task.TD_DataCell.DC_title + "]";
+            if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
 
-            Task_Delete(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnDeleteItem_Click -> Delete Task : " + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Delete_Task(m_Selected_Task.TD_DataCell);
         }
 
         // -----------------------------------------------------------
@@ -2545,14 +2540,14 @@ namespace WellaTodo
 
                 if (textBox_Title.Text.Trim().Length == 0)
                 {
-                    textBox_Title.Text = m_Selected_Item.TD_DataCell.DC_title;
+                    textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
                     return;
                 }
 
-                m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+                m_Selected_Task.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
 
-                Send_Log_Message("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Item.TD_DataCell.DC_title);
-                m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
+                Send_Log_Message("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+                m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell);
             }
         }
 
@@ -2560,14 +2555,14 @@ namespace WellaTodo
         {
             if (textBox_Title.Text.Trim().Length == 0)
             {
-                textBox_Title.Text = m_Selected_Item.TD_DataCell.DC_title;
+                textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
                 return;
             }
 
-            m_Selected_Item.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Task.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
 
-            Send_Log_Message("1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Item.TD_DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Title(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell);
         }
 
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
@@ -2614,11 +2609,11 @@ namespace WellaTodo
                 return;
             }
 
-            m_Selected_Item.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
 
             Send_Log_Message("1>MainFrame::textBox_Memo_Leave -> Changed Memo!!");
 
-            m_Controller.Perform_Modify_Task_Memo(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Task.TD_DataCell);
         }
 
         private void textBox_Memo_TextChanged(object sender, EventArgs e)
@@ -2687,9 +2682,14 @@ namespace WellaTodo
         // 상세창 삭제 버튼
         private void button2_Click_1(object sender, EventArgs e)
         {
-            Send_Log_Message("1>MainFrame::button2_Click_1 -> Delete Task");
+            string txt = "선택 항목을 삭제할까요? [" + m_Selected_Task.TD_DataCell.DC_title + "]";
+            if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
 
-            Task_Delete(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::button2_Click_1 -> Delete Task : " + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Delete_Task(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------
@@ -2697,11 +2697,11 @@ namespace WellaTodo
         // -------------------------------------------------
         private void roundCheckbox1_MouseClick(object sender, EventArgs e)
         {
-            m_Selected_Item.TD_complete = roundCheckbox1.Checked;
-            m_Selected_Item.TD_DataCell.DC_complete = roundCheckbox1.Checked;
+            // 두가지를 변경해야하니 불합리함 -> TD_DataCell로 통합
+            m_Selected_Task.TD_DataCell.DC_complete = roundCheckbox1.Checked;
 
-            Send_Log_Message("1>MainFrame::roundCheckbox1_MouseClick -> Complete :" + m_Selected_Item.TD_DataCell.DC_complete);
-            m_Controller.Perform_Complete_Process(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::roundCheckbox1_MouseClick -> Complete :" + m_Selected_Task.TD_DataCell.DC_complete);
+            m_Controller.Perform_Complete_Process(m_Selected_Task.TD_DataCell);
         }
 
         private void roundCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -2719,11 +2719,10 @@ namespace WellaTodo
         // -------------------------------------------------
         private void starCheckbox1_MouseClick(object sender, EventArgs e)
         {
-            m_Selected_Item.TD_important = starCheckbox1.Checked;
-            m_Selected_Item.TD_DataCell.DC_important = starCheckbox1.Checked;
+            m_Selected_Task.TD_DataCell.DC_important = starCheckbox1.Checked;
 
-            Send_Log_Message("1>MainFrame::starCheckbox1_MouseClick -> Important :" + m_Selected_Item.TD_DataCell.DC_important);
-            m_Controller.Perform_Important_Process(m_Selected_Item.TD_DataCell);
+            Send_Log_Message("1>MainFrame::starCheckbox1_MouseClick -> Important :" + m_Selected_Task.TD_DataCell.DC_important);
+            m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
         }
 
         private void starCheckbox1_MouseEnter(object sender, EventArgs e)
@@ -2743,7 +2742,7 @@ namespace WellaTodo
         {
             Send_Log_Message("1>MainFrame::roundLabel1_Click -> MyToday Process!!");
 
-            m_Controller.Perform_MyToday_Process(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_MyToday_Process(m_Selected_Task.TD_DataCell);
         }
 
         private void roundLabel1_MouseEnter(object sender, EventArgs e)
@@ -2753,7 +2752,7 @@ namespace WellaTodo
 
         private void roundLabel1_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel1.BackColor = m_Selected_Item.TD_DataCell.DC_myToday ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel1.BackColor = m_Selected_Task.TD_DataCell.DC_myToday ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         // -------------------------------------------------
@@ -2766,7 +2765,7 @@ namespace WellaTodo
 
         private void roundLabel2_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel2.BackColor = m_Selected_Item.TD_DataCell.DC_remindType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel2.BackColor = m_Selected_Task.TD_DataCell.DC_remindType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel2_Click(object sender, MouseEventArgs e)
@@ -2796,11 +2795,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
 
-            m_Selected_Item.TD_DataCell.DC_remindType = 1;
-            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_remindType = 1;
+            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnTodayRemind_Click -> Modify Today Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
@@ -2808,11 +2807,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
 
-            m_Selected_Item.TD_DataCell.DC_remindType = 2;
-            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_remindType = 2;
+            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnTomorrowRemind_Click -> Modify Tomorrow Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
@@ -2820,11 +2819,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(8-(int)dt.DayOfWeek);
 
-            m_Selected_Item.TD_DataCell.DC_remindType = 3;
-            m_Selected_Item.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_remindType = 3;
+            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnNextWeekRemind_Click -> Modify NextWeek Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
@@ -2840,20 +2839,20 @@ namespace WellaTodo
             }
             calendar.IsSelected = false;
 
-            m_Selected_Item.TD_DataCell.DC_remindType = 4;
-            m_Selected_Item.TD_DataCell.DC_remindTime = calendar.SelectedDateTime;
+            m_Selected_Task.TD_DataCell.DC_remindType = 4;
+            m_Selected_Task.TD_DataCell.DC_remindTime = calendar.SelectedDateTime;
 
             Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Selected Day Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
         }
 
         private void OnDeleteRemind_Click(object sender, EventArgs e)
         {
-            m_Selected_Item.TD_DataCell.DC_remindType = 0;
-            m_Selected_Item.TD_DataCell.DC_remindTime = default;
+            m_Selected_Task.TD_DataCell.DC_remindType = 0;
+            m_Selected_Task.TD_DataCell.DC_remindTime = default;
 
             Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Delete Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------
@@ -2866,7 +2865,7 @@ namespace WellaTodo
 
         private void roundLabel3_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel3.BackColor = m_Selected_Item.TD_DataCell.DC_deadlineType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel3.BackColor = m_Selected_Task.TD_DataCell.DC_deadlineType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel3_Click(object sender, MouseEventArgs e)
@@ -2895,11 +2894,11 @@ namespace WellaTodo
         {
             DateTime dt = DateTime.Now;
 
-            m_Selected_Item.TD_DataCell.DC_deadlineType = 1;
-            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_deadlineType = 1;
+            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnTodayDeadline_Click -> Modify Today Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTomorrowDeadline_Click(object sender, EventArgs e)
@@ -2907,11 +2906,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(1);
 
-            m_Selected_Item.TD_DataCell.DC_deadlineType = 2;
-            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_deadlineType = 2;
+            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnTomorrowDeadline_Click -> Modify Tomorrow Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
         }
 
         private void OnNextWeekDeadline_Click(object sender, EventArgs e)
@@ -2919,11 +2918,11 @@ namespace WellaTodo
             DateTime dt = DateTime.Now;
             dt = dt.AddDays(8 - (int)dt.DayOfWeek);
 
-            m_Selected_Item.TD_DataCell.DC_deadlineType = 3;
-            m_Selected_Item.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+            m_Selected_Task.TD_DataCell.DC_deadlineType = 3;
+            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
             Send_Log_Message("1>MainFrame::OnNextWeekDeadline_Click -> Modify NextWeek Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
         }
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
@@ -2946,22 +2945,22 @@ namespace WellaTodo
 
             calendar.IsSelected = false;
 
-            m_Selected_Item.TD_DataCell.DC_deadlineType = 4;
-            m_Selected_Item.TD_DataCell.DC_deadlineTime = dt;
+            m_Selected_Task.TD_DataCell.DC_deadlineType = 4;
+            m_Selected_Task.TD_DataCell.DC_deadlineTime = dt;
 
             Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Selected Day Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
         }
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
-            m_Selected_Item.TD_DataCell.DC_deadlineType = 0;
-            m_Selected_Item.TD_DataCell.DC_deadlineTime = default;
+            m_Selected_Task.TD_DataCell.DC_deadlineType = 0;
+            m_Selected_Task.TD_DataCell.DC_deadlineTime = default;
 
             Send_Log_Message("1>MainFrame::OnDeleteDeadline_Click -> Delete Planned");
-            m_Controller.Perform_Modify_Planned(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
 
-            if (m_Selected_Item.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때
+            if (m_Selected_Task.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때
             {
                 Send_Log_Message("1>MainFrame::OnDeleteDeadline_Click -> There is Repeat, it is Deleted");
                 OnDeleteRepeat_Click(this, new EventArgs());
@@ -2978,7 +2977,7 @@ namespace WellaTodo
 
         private void roundLabel4_MouseLeave(object sender, EventArgs e)
         {
-            roundLabel4.BackColor = m_Selected_Item.TD_DataCell.DC_repeatType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
+            roundLabel4.BackColor = m_Selected_Task.TD_DataCell.DC_repeatType > 0 ? PSEUDO_SELECTED_COLOR : COLOR_DETAIL_WINDOW_BACK_COLOR;
         }
 
         private void roundLabel4_Click(object sender, MouseEventArgs e)
@@ -3007,7 +3006,7 @@ namespace WellaTodo
 
         private void OnEveryDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryDay(m_Selected_Item.TD_DataCell);
+            Repeat_EveryDay(m_Selected_Task.TD_DataCell);
         }
 
         private void Repeat_EveryDay(CDataCell data)
@@ -3023,7 +3022,7 @@ namespace WellaTodo
 
         private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_WorkingDay(m_Selected_Item.TD_DataCell);
+            Repeat_WorkingDay(m_Selected_Task.TD_DataCell);
         }
 
         private void Repeat_WorkingDay(CDataCell data)
@@ -3063,7 +3062,7 @@ namespace WellaTodo
 
         private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryWeek(m_Selected_Item.TD_DataCell);
+            Repeat_EveryWeek(m_Selected_Task.TD_DataCell);
         }
 
         private void Repeat_EveryWeek(CDataCell data)
@@ -3079,7 +3078,7 @@ namespace WellaTodo
 
         private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryMonth(m_Selected_Item.TD_DataCell);
+            Repeat_EveryMonth(m_Selected_Task.TD_DataCell);
         }
 
         private void Repeat_EveryMonth(CDataCell data)
@@ -3096,7 +3095,7 @@ namespace WellaTodo
 
         private void OnEveryYearRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryYear(m_Selected_Item.TD_DataCell);
+            Repeat_EveryYear(m_Selected_Task.TD_DataCell);
         }
 
         private void Repeat_EveryYear(CDataCell data)
@@ -3113,7 +3112,7 @@ namespace WellaTodo
 
         private void OnDeleteRepeat_Click(object sender, EventArgs e)
         {
-            m_Controller.Perform_Modify_Repeat(m_Selected_Item.TD_DataCell, 0, default);
+            m_Controller.Perform_Modify_Repeat(m_Selected_Task.TD_DataCell, 0, default);
         }
 
         // -------------------------------------------------------
@@ -3133,7 +3132,7 @@ namespace WellaTodo
         {
             upArrow.Focus();
             Send_Log_Message("1>MainFrame::upArrow_Click -> Task Move Up!");
-            m_Controller.Perform_Task_Move_Up(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Task_Move_Up(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------------
@@ -3153,7 +3152,7 @@ namespace WellaTodo
         {
             downArrow.Focus();
             Send_Log_Message("1>MainFrame::downArrow_Click -> Task Move Down!");
-            m_Controller.Perform_Task_Move_Down(m_Selected_Item.TD_DataCell);
+            m_Controller.Perform_Task_Move_Down(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------------------
@@ -3280,11 +3279,11 @@ namespace WellaTodo
             }
 
             Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
-                             + m_Selected_Item.TD_DataCell.DC_listName
+                             + m_Selected_Task.TD_DataCell.DC_listName
                              + " to "
                              + sd.PrimaryText);
 
-            m_Controller.Perform_Trasnfer_Task(m_Selected_Item.TD_DataCell, sd.PrimaryText);
+            m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText);
         }
 
         // ---------------------------------------------------------------------------

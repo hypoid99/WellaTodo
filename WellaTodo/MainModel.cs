@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
 namespace WellaTodo
 {
@@ -126,7 +127,7 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_LOG_MESSAGE));
 		}
 
-		public void Notify_DataCell(CDataCell dc)
+		public void Verify_DataCell(CDataCell dc)
 		{
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_DATACELL));
 		}
@@ -242,7 +243,7 @@ namespace WellaTodo
 			list.DC_listName = target;
 
 			Notify_Log_Message("3>MainModel::Menulist_Add -> Created New Menulist : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)list.Clone(), WParam.WM_MENULIST_ADD));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(list), WParam.WM_MENULIST_ADD));  // deep copy 할 것!
 		}
 
 		public void Menulist_Rename(string source, string target)
@@ -273,7 +274,7 @@ namespace WellaTodo
 			rename.DC_title = source;
 
 			Notify_Log_Message("3>MainModel::Menulist_Rename -> from " + rename.DC_title + " to " + rename.DC_listName);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)rename.Clone(), WParam.WM_MENULIST_RENAME));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(rename), WParam.WM_MENULIST_RENAME));
 		}
 
 		public void Menulist_Delete(string target)
@@ -311,7 +312,7 @@ namespace WellaTodo
 			dc.DC_listName = target;
 
 			Notify_Log_Message("3>MainModel::Menulist_Delete -> Delete Task & Menu : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_MENULIST_DELETE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(dc), WParam.WM_MENULIST_DELETE));
 		}
 
 		public void Menulist_Up(string target)
@@ -338,7 +339,7 @@ namespace WellaTodo
 			CDataCell data = new CDataCell();
 
 			Notify_Log_Message("3>MainModel::Menulist_Up : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_UP));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_UP));
 		}
 
 		public void Menulist_Down(string target)
@@ -365,7 +366,7 @@ namespace WellaTodo
 			CDataCell data = new CDataCell();
 
 			Notify_Log_Message("3>MainModel::Menulist_Down : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MENULIST_DOWN));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_DOWN));
 		}
 
 		public void Transfer_Task(CDataCell dc, string target)
@@ -382,7 +383,7 @@ namespace WellaTodo
 			data.DC_listName = target;
 
 			Notify_Log_Message("3>MainModel::Transfer_Task : from " + source + " to " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TRANSFER_TASK));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TRANSFER_TASK));
 		}
 
 		public void Add_Task(CDataCell dc)
@@ -397,7 +398,7 @@ namespace WellaTodo
 			myTaskItems.Insert(0, data);
 
 			Notify_Log_Message("3>MainModel::Add_Task -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_ADD));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TASK_ADD));  // deep copy 할 것!
 		}
 
 		public bool Delete_Task(CDataCell dc)
@@ -420,7 +421,7 @@ namespace WellaTodo
 				return false;
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_DELETE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TASK_DELETE));
 			return true;
 		}
 
@@ -461,7 +462,7 @@ namespace WellaTodo
 				Notify_Log_Message("3>MainModel::Complete_Process -> Reset Complete to Top " + data.DC_complete);
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_COMPLETE_PROCESS));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_COMPLETE_PROCESS));
 		}
 
 		public void Important_Process(CDataCell dc)
@@ -483,7 +484,7 @@ namespace WellaTodo
             }
 
 			Notify_Log_Message("3>MainModel::Important_Process : " + data.DC_important);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_IMPORTANT_PROCESS));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_IMPORTANT_PROCESS));
 		}
 
 		public void Modify_Task_Title(CDataCell dc)
@@ -499,7 +500,7 @@ namespace WellaTodo
 			data.DC_title = dc.DC_title;
 
 			Notify_Log_Message("3>MainModel::Modify_Task_Title : " + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_TASK_TITLE));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_TASK_TITLE));
 		}
 
 		public void Modify_Task_Memo(CDataCell dc)
@@ -515,7 +516,7 @@ namespace WellaTodo
 			data.DC_memo = dc.DC_memo;
 
 			Notify_Log_Message("3>MainModel::Modify_Task_Memo : " + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_TASK_MEMO));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_TASK_MEMO));
 		}
 
 		public void Task_Move_To(CDataCell source, CDataCell target)
@@ -537,7 +538,7 @@ namespace WellaTodo
 			myTaskItems.Insert(tar_index, temp); // 삽입
 
 			Notify_Log_Message("3>MainModel::Task_Move_To -> Source : " + src.DC_title + " Target : " + tgt.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)target.Clone(), WParam.WM_TASK_MOVE_TO));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(target), WParam.WM_TASK_MOVE_TO));
 		}
 
 		public bool Task_Move_Up(CDataCell dc)
@@ -591,7 +592,7 @@ namespace WellaTodo
 				return false;
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_MOVE_UP));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TASK_MOVE_UP));
 			return true;
 		}
 
@@ -651,7 +652,7 @@ namespace WellaTodo
 				return false; 
 			}
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TASK_MOVE_DOWN));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TASK_MOVE_DOWN));
 			return true;
 		}
 
@@ -669,7 +670,7 @@ namespace WellaTodo
 			data.DC_myTodayTime = dc.DC_myTodayTime;
 
 			Notify_Log_Message("3>MainModel::Modifiy_MyToday : type " + data.DC_myToday);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MYTODAY));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MYTODAY));
 		}
 
 		public void Modifiy_Remind(CDataCell dc)
@@ -686,7 +687,7 @@ namespace WellaTodo
 			data.DC_remindTime = dc.DC_remindTime;
 
 			Notify_Log_Message("3>MainModel::Modifiy_Remind : type " + data.DC_remindType);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REMIND));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_REMIND));
 		}
 
 		public void Modifiy_Planned(CDataCell dc)
@@ -703,7 +704,7 @@ namespace WellaTodo
 			data.DC_deadlineTime = dc.DC_deadlineTime;
 
 			Notify_Log_Message("3>MainModel::Modifiy_Planned : type " + data.DC_deadlineType);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_PLANNED));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_PLANNED));
 		}
 
 		public void Modifiy_Repeat(CDataCell dc)
@@ -720,7 +721,7 @@ namespace WellaTodo
 			data.DC_repeatTime = dc.DC_repeatTime;
 
 			Notify_Log_Message("3>MainModel::Modifiy_Repeat : type " + data.DC_repeatType);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_REPEAT));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_REPEAT));
 		}
 
 		// -----------------------------------------------------------
@@ -748,7 +749,7 @@ namespace WellaTodo
 			}
 
 			Notify_Log_Message("3>MainModel::Convert_NotePad" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_CONVERT_NOTEPAD));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_CONVERT_NOTEPAD));
 		}
 
 		public void Transfer_RTF_Data(CDataCell dc)
@@ -762,7 +763,7 @@ namespace WellaTodo
 			}
 
 			Notify_Log_Message("3>MainModel::Transfer_RTF_Data" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_TRANSFER_RTF_NOTEPAD));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TRANSFER_RTF_NOTEPAD));
 		}
 
 		public void Save_RTF_Data(CDataCell dc)
@@ -778,7 +779,7 @@ namespace WellaTodo
 			data.DC_RTF = dc.DC_RTF;
 
 			Notify_Log_Message("3>MainModel::Save_RTF_Data" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_SAVE_RTF_NOTEPAD));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_SAVE_RTF_NOTEPAD));
 		}
 
 		// -----------------------------------------------------------
@@ -796,7 +797,7 @@ namespace WellaTodo
 			myTaskItems.Insert(0, data);
 
 			Notify_Log_Message("3>MainModel::Add_Plan -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_PLAN_ADD));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_PLAN_ADD));  // deep copy 할 것!
 		}
 
 		// -----------------------------------------------------------
@@ -814,7 +815,7 @@ namespace WellaTodo
 			myTaskItems.Insert(0, data);
 
 			Notify_Log_Message("3>MainModel::Add_Memo -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MEMO_ADD));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MEMO_ADD));  // deep copy 할 것!
 		}
 
 		public void Modify_Memo_Archive(CDataCell dc)
@@ -841,7 +842,7 @@ namespace WellaTodo
 			}
 
 			Notify_Log_Message("3>MainModel::Modify_Memo_Archive -> Modify Archive [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_COMPLETE_PROCESS));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_COMPLETE_PROCESS));  // deep copy 할 것!
 
 		}
 
@@ -858,7 +859,7 @@ namespace WellaTodo
 			data.DC_memoColor = dc.DC_memoColor;
 
 			Notify_Log_Message("3>MainModel::Modify_Memo_Color -> Modify Color [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MEMO_COLOR));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_COLOR));  // deep copy 할 것!
 		}
 
 		public void Modify_Memo_Tag(CDataCell dc)
@@ -870,11 +871,11 @@ namespace WellaTodo
 				Notify_Log_Message("Warning>MainModel::Modify_Memo_Tag -> Find() Not Found Item!!");
 				return;
 			}
-
+	
 			data.DC_memoTag = dc.DC_memoTag;
 
 			Notify_Log_Message("3>MainModel::Modify_Memo_Tag -> Modify Tag [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)data.Clone(), WParam.WM_MODIFY_MEMO_TAG));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_TAG));  // deep copy 할 것!
 		}
 
 		public void Memo_Move_To(CDataCell source, CDataCell target)
@@ -895,7 +896,7 @@ namespace WellaTodo
 			myTaskItems.Insert(tar_index, temp); // 삽입
 
 			Notify_Log_Message("3>MainModel::Memo_Move_To -> Source : " + src.DC_title + " Target : " + tgt.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)target.Clone(), WParam.WM_MEMO_MOVE_TO));
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(target), WParam.WM_MEMO_MOVE_TO));
 		}
 
 		// -----------------------------------------------------------
@@ -914,19 +915,91 @@ namespace WellaTodo
 			return dataset.First();
 		}
 
-		public void Display_Data()
-        {
-			foreach (CDataCell dc in myTaskItems)
-            {
-				Console.WriteLine("<"+dc.DC_task_ID+">"+"[" + dc.DC_listName + "]" + dc.DC_title);
-            }
-
-			foreach (string list in myListNames)
+		// ----------------------------------------------------
+		// Serializable 객체에 대한  Deep Clone 구현
+		// ----------------------------------------------------
+		private static T SerializableDeepClone<T>(T obj)
+		{
+			using (var ms = new MemoryStream())
 			{
-				Console.WriteLine("<List Name : " + list);
+				BinaryFormatter formatter = new BinaryFormatter();
+				formatter.Serialize(ms, obj);
+				ms.Position = 0;
+
+				return (T)formatter.Deserialize(ms);
 			}
 		}
 
+		// ----------------------------------------------------
+		// Deep Clone 구현
+		// ----------------------------------------------------
+		private static T DeepClone<T>(T obj)
+		{
+			if (obj == null)
+				throw new ArgumentNullException("Object cannot be null.");
+
+			return (T)Process(obj, new Dictionary<object, object>() { });
+		}
+
+		private static object Process(object obj, Dictionary<object, object> circular)
+		{
+			if (obj == null) return null;
+
+			Type type = obj.GetType();
+
+			if (type.IsValueType || type == typeof(string)) return obj;
+
+			if (type.IsArray)
+			{
+				if (circular.ContainsKey(obj)) return circular[obj];
+
+				string typeNoArray = type.FullName.Replace("[]", string.Empty);
+				Type elementType = Type.GetType(typeNoArray + ", " + type.Assembly.FullName);
+				var array = obj as Array;
+				Array arrCopied = Array.CreateInstance(elementType, array.Length);
+
+				circular[obj] = arrCopied;
+
+				for (int i = 0; i < array.Length; i++)
+				{
+					object element = array.GetValue(i);
+					object objCopy = null;
+
+					if (element != null && circular.ContainsKey(element))
+						objCopy = circular[element];
+					else
+						objCopy = Process(element, circular);
+
+					arrCopied.SetValue(objCopy, i);
+				}
+				return Convert.ChangeType(arrCopied, obj.GetType());
+			}
+
+			if (type.IsClass)
+			{
+				if (circular.ContainsKey(obj)) return circular[obj];
+
+				object objValue = Activator.CreateInstance(obj.GetType());
+				circular[obj] = objValue;
+				FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+				foreach (FieldInfo field in fields)
+				{
+					object fieldValue = field.GetValue(obj);
+
+					if (fieldValue == null)
+						continue;
+
+					object objCopy = circular.ContainsKey(fieldValue) ? circular[fieldValue] : Process(fieldValue, circular);
+					field.SetValue(objValue, objCopy);
+				}
+				return objValue;
+			}
+			else
+			{
+				throw new ArgumentException("Unknown type");
+			}
+		}
 	}
 }
 
