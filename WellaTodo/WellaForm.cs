@@ -95,13 +95,14 @@ namespace WellaTodo
                     if (form.Visible)
                     {
                         //Console.WriteLine("ShowActiveForm -> form is visible, Hide!!!");
-                        form.Hide();
+                        //form.Hide();
                     }
                     else
                     {
                         //Console.WriteLine("ShowActiveForm -> form is hiding, Show!!!");
-                        form.Show();
+                        //form.Show();
                     }
+                    form.Show();
                 }
             }
             return form;
@@ -331,6 +332,21 @@ namespace WellaTodo
         // ------------------------------------------------------------
         // 툴바
         // ------------------------------------------------------------
+        private Control FindFocus(Control control)
+        {
+            foreach (Control ctr in control.Controls)
+            {
+                if (ctr.Focused)
+                {
+                    return ctr;
+                }
+                else if (ctr.ContainsFocus)
+                {
+                    return FindFocus(ctr);
+                }
+            }
+            return null;
+        }
 
         private void 새로만들기ToolStripButton_Click(object sender, EventArgs e)
         {
@@ -378,22 +394,6 @@ namespace WellaTodo
             {
                 controller.Print_Data_File();
             }
-        }
-
-        private Control FindFocus(Control control)
-        {
-            foreach (Control ctr in control.Controls)
-            {
-                if (ctr.Focused)
-                {
-                    return ctr;
-                }
-                else if (ctr.ContainsFocus)
-                {
-                    return FindFocus(ctr);
-                }
-            }
-            return null;
         }
 
         private void 잘라내기ToolStripButton_Click(object sender, EventArgs e)

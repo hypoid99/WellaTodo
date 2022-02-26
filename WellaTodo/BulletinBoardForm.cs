@@ -97,7 +97,7 @@ namespace WellaTodo
             Load_Data();
 
             m_Selected_Menu = MemoMenuList.MEMO_MENU;
-            label_Title.Text = "Bulleting Board - 메모";
+            label_Title.Text = "Bulletin Board - 메모";
 
             Update_Display();
         }
@@ -920,20 +920,20 @@ namespace WellaTodo
 
         private void button_Memo_Click(object sender, EventArgs e)
         {
-            label_Title.Text = "Bulleting Board - 메모";
+            label_Title.Text = "Bulletin Board - 메모";
             m_Selected_Menu = MemoMenuList.MEMO_MENU;
             Display_Memo_Menu();
         }
 
         private void button_Alarm_Click(object sender, EventArgs e)
         {
-            label_Title.Text = "Bulleting Board - 알람";
+            label_Title.Text = "Bulletin Board - 알람";
             m_Selected_Menu = MemoMenuList.ALARM_MENU;
         }
 
         private void button_Archive_Click(object sender, EventArgs e)
         {
-            label_Title.Text = "Bulleting Board - 보관처리";
+            label_Title.Text = "Bulletin Board - 보관처리";
             m_Selected_Menu = MemoMenuList.ARCHIVE_MENU;
             Display_Archive_Menu();
         }
@@ -945,33 +945,33 @@ namespace WellaTodo
             switch (sd.Name)
             {
                 case "button_Label_Red":
-                    label_Title.Text = "Bulleting Board - 라벨(빨강)";
+                    label_Title.Text = "Bulletin Board - 라벨(빨강)";
                     m_Selected_Menu = MemoMenuList.TAG_RED_MENU;
                     Display_Tag_Menu(1);
                     break;
                 case "button_Label_Orange":
-                    label_Title.Text = "Bulleting Board - 라벨(주황)";
+                    label_Title.Text = "Bulletin Board - 라벨(주황)";
                     m_Selected_Menu = MemoMenuList.TAG_ORANGE_MENU;
                     Display_Tag_Menu(2);
                     break;
                 case "button_Label_Yellow":
-                    label_Title.Text = "Bulleting Board - 라벨(노랑)";
+                    label_Title.Text = "Bulletin Board - 라벨(노랑)";
                     m_Selected_Menu = MemoMenuList.TAG_YELLOW_MENU;
                     Display_Tag_Menu(3);
                     break;
                 case "button_Label_Green":
-                    label_Title.Text = "Bulleting Board - 라벨(초록)";
+                    label_Title.Text = "Bulletin Board - 라벨(초록)";
                     m_Selected_Menu = MemoMenuList.TAG_GREEN_MENU;
                     Display_Tag_Menu(4);
                     break;
                 case "button_Label_Blue":
-                    label_Title.Text = "Bulleting Board - 라벨(파랑)";
+                    label_Title.Text = "Bulletin Board - 라벨(파랑)";
                     m_Selected_Menu = MemoMenuList.TAG_BLUE_MENU;
                     Display_Tag_Menu(5);
                     break;
                 case "button_Label_Common":
                     m_Selected_Menu = MemoMenuList.TAG_COMMON_MENU;
-                    label_Title.Text = "Bulleting Board - 라벨(해제)";
+                    label_Title.Text = "Bulletin Board - 라벨(해제)";
                     Display_Tag_Menu(0);
                     break;
             }

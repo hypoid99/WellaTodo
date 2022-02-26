@@ -90,10 +90,14 @@
             // flowLayoutPanel_Menulist
             // 
             this.flowLayoutPanel_Menulist.AllowDrop = true;
+            this.flowLayoutPanel_Menulist.AutoScroll = true;
+            this.flowLayoutPanel_Menulist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 43);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
             this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(244, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
+            this.flowLayoutPanel_Menulist.WrapContents = false;
+            this.flowLayoutPanel_Menulist.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel_Menulist_Scroll);
             // 
             // textBox_AddList
             // 

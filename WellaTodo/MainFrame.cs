@@ -109,6 +109,8 @@ namespace WellaTodo
         int m_printCounter = 0;
         int m_printPageNo = 1;
 
+        int m_VerticalScroll_Value;
+
         public MainFrame()
         {
             InitializeComponent();
@@ -166,12 +168,22 @@ namespace WellaTodo
 
         private void MainFrame_Activated(object sender, EventArgs e)
         {
+            //Console.WriteLine("flowLayoutPanel_Menulist -> " + flowLayoutPanel_Menulist.VerticalScroll.Value);
+            //Console.WriteLine("flowLayoutPanel2 -> " + flowLayoutPanel2.VerticalScroll.Value);
+
+            flowLayoutPanel_Menulist.VerticalScroll.Value = m_VerticalScroll_Value;
+
             isActivated = true;
             Update_Display();
         }
 
         private void MainFrame_Deactivate(object sender, EventArgs e)
         {
+            //Console.WriteLine("flowLayoutPanel_Menulist -> " + flowLayoutPanel_Menulist.VerticalScroll.Value);
+            //Console.WriteLine("flowLayoutPanel2 -> " + flowLayoutPanel2.VerticalScroll.Value);
+
+            m_VerticalScroll_Value = flowLayoutPanel_Menulist.VerticalScroll.Value;
+
             isActivated = false;
         }
 
@@ -351,6 +363,8 @@ namespace WellaTodo
             flowLayoutPanel_Menulist.HorizontalScroll.Enabled = false;
             flowLayoutPanel_Menulist.HorizontalScroll.Visible = false;
             flowLayoutPanel_Menulist.AutoScroll = true;
+
+            flowLayoutPanel_Menulist.MouseWheel += new MouseEventHandler(flowLayoutPanel_Menulist_MouseWheel);
 
             flowLayoutPanel_Menulist.BackColor = PSEUDO_BACK_COLOR;
             flowLayoutPanel_Menulist.Margin = new Padding(0);
@@ -1329,10 +1343,6 @@ namespace WellaTodo
             item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
             item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
 
-            //Console.WriteLine("Update_Add_Task1 " + dc.DC_title);
-            //Console.WriteLine("Update_Add_Task2 " + item.TD_title);
-            //Console.WriteLine("Update_Add_Task3 " + item.TD_DataCell.DC_title);
-
             flowLayoutPanel2.VerticalScroll.Value = 0;
 
             Close_DetailWindow();
@@ -1861,6 +1871,28 @@ namespace WellaTodo
             }
         }
 
+        private void Menulist_ScrollDown()
+        {
+            flowLayoutPanel_Menulist.Focus();
+
+            int max = flowLayoutPanel_Menulist.VerticalScroll.Maximum - flowLayoutPanel_Menulist.VerticalScroll.LargeChange;
+
+            if (flowLayoutPanel_Menulist.VerticalScroll.Value <= max) return;
+        }
+
+        private void flowLayoutPanel_Menulist_Scroll(object sender, ScrollEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_Scroll -> " + flowLayoutPanel_Menulist.VerticalScroll.Value);
+            Menulist_ScrollDown();
+        }
+
+        private void flowLayoutPanel_Menulist_MouseWheel(object sender, MouseEventArgs e)
+        {
+            //Console.WriteLine("flowLayoutPanel_Menulist_MouseWheel -> " + flowLayoutPanel_Menulist.VerticalScroll.Value);
+            m_VerticalScroll_Value = flowLayoutPanel_Menulist.VerticalScroll.Value;
+            Menulist_ScrollDown();
+        }
+
         private void MenuList_Right_Click_ContextMenu()
         {
             ContextMenu menuListContextMenu = new ContextMenu();
@@ -2283,11 +2315,6 @@ namespace WellaTodo
             m_Selected_Task.IsItemSelected = true;
 
             Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Task.TD_title);
-
-            //Console.WriteLine("TodoItem_UserControl_Click1 " + sd.TD_title);
-            //Console.WriteLine("TodoItem_UserControl_Click2 " + m_Selected_Task.TD_title);
-            //Console.WriteLine("TodoItem_UserControl_Click3 " + sd.TD_DataCell.DC_title);
-            //Console.WriteLine("TodoItem_UserControl_Click4 " + m_Selected_Task.TD_DataCell.DC_title);
 
             m_Controller.Verify_DataCell(m_Selected_Task.TD_DataCell);
             SendDataCellToDetailWindow(m_Selected_Task.TD_DataCell);
@@ -3385,6 +3412,7 @@ namespace WellaTodo
             }
             return;
         }
+
     }
 }
 
