@@ -57,55 +57,9 @@ namespace WellaTodo
             m_Controller = controller;
         }
 
-        public void Update_View(IModel m, ModelEventArgs e)
-        {
-            CDataCell dc = e.Item;
-            WParam param = e.Param;
-            switch (param)
-            {
-                case WParam.WM_OPEN_DATA:
-                    Update_Open_Data();
-                    break;
-                case WParam.WM_COMPLETE_PROCESS:
-                    Update_Complete_Process(dc);
-                    break;
-                case WParam.WM_IMPORTANT_PROCESS:
-                    Update_Important_Process(dc);
-                    break;
-                case WParam.WM_MODIFY_TASK_TITLE:
-                    Update_Modify_Task_Title(dc);
-                    break;
-                case WParam.WM_MODIFY_TASK_MEMO:
-                    break;
-                case WParam.WM_TASK_DELETE:
-                    Update_Delete_Task(dc);
-                    break;
-                case WParam.WM_MODIFY_MYTODAY:
-                    break;
-                case WParam.WM_MODIFY_REMIND:
-                    break;
-                case WParam.WM_MODIFY_PLANNED:
-                    Update_Modify_Planned(dc);
-                    break;
-                case WParam.WM_MODIFY_REPEAT:
-                    break;
-                case WParam.WM_MENULIST_RENAME:
-                    Update_Menulist_Rename(dc);
-                    break;
-                case WParam.WM_MENULIST_DELETE:
-                    Update_Menulist_Delete(dc);
-                    break;
-                case WParam.WM_TRANSFER_TASK:
-                    Update_Transfer_Task(dc);
-                    break;
-                case WParam.WM_PLAN_ADD:
-                    Update_Add_Plan(dc);
-                    break;
-                default:
-                    break;
-            }
-        }
-
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
         private void CalendarForm_Load(object sender, EventArgs e)
         {
             // 달력창
@@ -159,139 +113,6 @@ namespace WellaTodo
             }
 
             SetDate(m_dtValue); // 현재 날짜로 달력 열기
-        }
-
-        private void DayPanel_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            FlowLayoutPanel dayPanel = (FlowLayoutPanel)sender;
-            DateTime dt = DateTime.Now;
-
-            foreach (Control ctr in dayPanel.Controls)
-            {
-                if (ctr is Calendar_Day)
-                {
-                    Calendar_Day item = (Calendar_Day)ctr;
-                    dt = item.Present_Day;
-                }
-            }
-
-            taskEditForm.StartPosition = FormStartPosition.CenterParent;
-
-            taskEditForm.TE_DataCell = new CDataCell();
-            taskEditForm.TE_DataCell.DC_deadlineType = 4;
-            taskEditForm.TE_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
-            taskEditForm.IsNewTask = true;
-
-            taskEditForm.ShowDialog();
-
-            if (taskEditForm.IsCreated)
-            {
-                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> New Task Created : " + taskEditForm.TE_DataCell.DC_title
-                    + "[" + taskEditForm.TE_DataCell.DC_deadlineTime.ToLongDateString() + "]");
-
-                m_Controller.Perform_Add_Plan(taskEditForm.TE_DataCell);
-            }
-            else
-            {
-                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> Create New Task is Canceled!!");
-            }
-
-            taskEditForm.IsNewTask = false;
-            taskEditForm.IsCreated = false;
-        }
-
-        private void DayPanel_DragOver(object sender, DragEventArgs e)
-        {
-            FlowLayoutPanel dp = (FlowLayoutPanel )sender;
-            dp.BackColor = PSEUDO_HIGHLIGHT_COLOR;
-        }
-
-        private void DayPanel_DragLeave(object sender, EventArgs e)
-        {
-            FlowLayoutPanel dp = (FlowLayoutPanel)sender;
-            dp.BackColor = PSEUDO_BACK_COLOR;
-        }
-
-        private void DayPanel_DragEnter(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("DayPanel_DragEnter");
-            if (e.Data.GetDataPresent(typeof(Todo_Item)))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else if(e.Data.GetDataPresent(typeof(Calendar_Item)))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void DayPanel_DragDrop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(typeof(Todo_Item)))
-            {
-                Todo_Item item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
-                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.TD_title);
-                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
-                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
-
-                Calendar_Day planned_day = null;
-                foreach (Control ctr in dp.Controls)
-                {
-                    if (ctr is Calendar_Day)
-                    {
-                        planned_day = (Calendar_Day)ctr;
-                        break;
-                    }
-                }
-                dp.BackColor = PSEUDO_BACK_COLOR;
-
-                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Create New Task at DragDrop Selected Day");
-
-                DateTime dt = planned_day.Present_Day;
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
-                item.TD_DataCell.DC_deadlineType = 4;
-                item.TD_DataCell.DC_deadlineTime = dt;
-
-                m_Controller.Perform_Modify_Planned(item.TD_DataCell);
-            }
-            else if (e.Data.GetDataPresent(typeof(Calendar_Item)))
-            {
-                Calendar_Item item = e.Data.GetData(typeof(Calendar_Item)) as Calendar_Item;
-                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.PrimaryText);
-                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
-                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
-
-                Calendar_Day planned_day = null;
-                foreach (Control ctr in dp.Controls)
-                {
-                    if (ctr is Calendar_Day)
-                    {
-                        planned_day = (Calendar_Day)ctr;
-                        break;
-                    }
-                }
-                dp.BackColor = PSEUDO_BACK_COLOR;
-
-                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Move Task at DragDrop Selected Day");
-
-                DateTime dt = planned_day.Present_Day;
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
-                item.CD_DataCell.DC_deadlineType = 4;
-                item.CD_DataCell.DC_deadlineTime = dt;
-
-                m_Controller.Perform_Modify_Planned(item.CD_DataCell);
-            }
-            else
-            {
-                
-            }
         }
 
         private void CalendarForm_Paint(object sender, PaintEventArgs e)
@@ -368,9 +189,9 @@ namespace WellaTodo
                     dayPanel[pos].Location = new Point(line_sx + 1 + i * w_gap, line_sy + 1 + j * h_gap);
                     dayPanel[pos].Size = new Size(w_gap - 2, h_gap - 2);
                     foreach (Control ctr in dayPanel[pos].Controls)  // TASK 폭 조정
-                    { 
-                        ctr.Width = dayPanel[pos].Width; 
-                    } 
+                    {
+                        ctr.Width = dayPanel[pos].Width;
+                    }
                     pos++;
                 }
             }
@@ -390,21 +211,9 @@ namespace WellaTodo
             }
         }
 
-        private void Send_Log_Message(string msg)
-        {
-            try
-            {
-                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Please enter a valid number");
-            }
-        }
-
-        //
-        // Update_Calendar
-        //
+        //--------------------------------------------------------------
+        // 초기화 및 Update Display
+        //--------------------------------------------------------------
         private void SetDate(DateTime dt)
         {
             Send_Log_Message(">CalendarForm::SetDate -> m_dtValue : " + dt.ToLongDateString());
@@ -441,12 +250,12 @@ namespace WellaTodo
                 label_Day.Present_Day = curDate;
 
                 if (curDate.Day == 1) // 매월 1일은 월과 함께 표기
-                { 
-                    label_Day.Text = curDate.Month.ToString() + "/" + curDate.Day.ToString(); 
+                {
+                    label_Day.Text = curDate.Month.ToString() + "/" + curDate.Day.ToString();
                 }
                 else
-                { 
-                    label_Day.Text = curDate.Day.ToString(); 
+                {
+                    label_Day.Text = curDate.Day.ToString();
                 }
 
                 if (curDate.Month == startDate.Month) // 이전달 & 다음달 배경색 변경
@@ -512,6 +321,9 @@ namespace WellaTodo
             panel_Calendar.Refresh(); // refresh 해야함
         }
 
+        //--------------------------------------------------------------
+        // 처리 메서드
+        //--------------------------------------------------------------
         private int Calc_NumOfWeekInMonth(DateTime dt)
         {
             DateTime startDate = new DateTime(dt.Year, dt.Month, 1);
@@ -523,91 +335,114 @@ namespace WellaTodo
             return mod == 0 ? result : result + 1;
         }
 
-        private void buttonToday_Click(object sender, EventArgs e)
+        private bool FindCalendarItem(CDataCell dc)
         {
-            DateTime dt = DateTime.Now;
-            SetDate(dt);
+            for (int i = 0; i < dayPanel.Length; i++)
+            {
+                foreach (Control ctr in dayPanel[i].Controls)
+                {
+                    if (ctr is Calendar_Item)
+                    {
+                        Calendar_Item item = (Calendar_Item)ctr;
+                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
+                        {
+                            m_Find_Result_Day = i;
+                            m_Find_Result_Item = item;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // 없을 경우 신규 아이템 생성후 리턴
+            Calendar_Item newItem = new Calendar_Item(dc);
+            newItem.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
+            newItem.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
+            newItem.AutoSize = false;
+
+            newItem.Width = dayPanel[0].Width;
+            newItem.Height = CALENDAR_TASK_TEXT_HEIGHT;
+            m_TaskToolTip.SetToolTip(newItem, dc.DC_title);
+
+            m_Find_Result_Item = newItem;
+            return false;
         }
 
-        private void buttonPrevMonth_Click(object sender, EventArgs e)
+        private bool IsCurrentPage(DateTime dt)
         {
-            DateTime dt = m_dtValue.AddMonths(-1);
-            SetDate(dt);
+            DateTime startDate = new DateTime(m_dtValue.Year, m_dtValue.Month, 1, 0, 0, 0);
+            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
+            startDate = startDate.AddDays(-preDays);
+            DateTime endDate = startDate.AddDays(42);
+
+            if (dt.CompareTo(startDate) >= 0 && dt.CompareTo(endDate) <= 0)
+            {
+                return true;
+            }
+            return false;
         }
 
-        private void buttonNextMonth_Click(object sender, EventArgs e)
+        //--------------------------------------------------------------
+        // Model 이벤트
+        //--------------------------------------------------------------
+        public void Update_View(IModel m, ModelEventArgs e)
         {
-            DateTime dt = m_dtValue.AddMonths(1);
-            SetDate(dt);
+            CDataCell dc = e.Item;
+            WParam param = e.Param;
+            switch (param)
+            {
+                case WParam.WM_OPEN_DATA:
+                    Update_Open_Data();
+                    break;
+                case WParam.WM_COMPLETE_PROCESS:
+                    Update_Complete_Process(dc);
+                    break;
+                case WParam.WM_IMPORTANT_PROCESS:
+                    Update_Important_Process(dc);
+                    break;
+                case WParam.WM_MODIFY_TASK_TITLE:
+                    Update_Modify_Task_Title(dc);
+                    break;
+                case WParam.WM_MODIFY_TASK_MEMO:
+                    break;
+                case WParam.WM_TASK_DELETE:
+                    Update_Delete_Task(dc);
+                    break;
+                case WParam.WM_MODIFY_MYTODAY:
+                    break;
+                case WParam.WM_MODIFY_REMIND:
+                    break;
+                case WParam.WM_MODIFY_PLANNED:
+                    Update_Modify_Planned(dc);
+                    break;
+                case WParam.WM_MODIFY_REPEAT:
+                    break;
+                case WParam.WM_MENULIST_RENAME:
+                    Update_Menulist_Rename(dc);
+                    break;
+                case WParam.WM_MENULIST_DELETE:
+                    Update_Menulist_Delete(dc);
+                    break;
+                case WParam.WM_TRANSFER_TASK:
+                    Update_Transfer_Task(dc);
+                    break;
+                case WParam.WM_PLAN_ADD:
+                    Update_Add_Plan(dc);
+                    break;
+                default:
+                    break;
+            }
         }
 
-        private void Calendar_Item_Click(object sender, EventArgs e)
+        private void Send_Log_Message(string msg)
         {
-            Calendar_Item sd = (Calendar_Item)sender;
-
-            taskEditForm.StartPosition = FormStartPosition.CenterParent;
-
-            IEnumerable<CDataCell> dataset = m_Controller.Query_Task_Calendar(sd.CD_DataCell);
-            CDataCell dc = dataset.First();
-
-            taskEditForm.TE_DataCell = (CDataCell)dc.Clone();
-
-            taskEditForm.ShowDialog();
-
-            dc = taskEditForm.TE_DataCell;
-
-            if (taskEditForm.IsCompleteChanged)
+            try
             {
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Complete Changed : " + dc.DC_complete);
-                m_Controller.Perform_Complete_Process(dc);
-                taskEditForm.IsCompleteChanged = false;
+                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
             }
-
-            if (taskEditForm.IsImportantChanged)
+            catch (Exception)
             {
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Important Changed : " + dc.DC_important);
-                m_Controller.Perform_Important_Process(dc);
-                taskEditForm.IsImportantChanged = false;
-            }
-
-            if (taskEditForm.IsTitleChanged)
-            {
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
-                m_Controller.Perform_Modify_Task_Title(dc);
-                taskEditForm.IsTitleChanged = false;
-            }
-
-            if (taskEditForm.IsMemoChanged)
-            {
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Memo Changed : " + dc.DC_title);
-                m_Controller.Perform_Modify_Task_Memo(dc);
-                taskEditForm.IsMemoChanged = false;
-            }
-
-            if (taskEditForm.IsDeleted) // 목록 삭제
-            {
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Task Delete");
-                m_Controller.Perform_Delete_Task(dc);
-                taskEditForm.IsDeleted = false;
-            }
-
-            if (taskEditForm.IsPlannedChanged) // 기한 설정 변경
-            {
-                dc.DC_deadlineType = 4;
-
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
-                m_Controller.Perform_Modify_Planned(dc);
-                taskEditForm.IsPlannedChanged = false;
-            }
-
-            if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
-            {
-                dc.DC_deadlineType = 0;
-                dc.DC_deadlineTime = default;
-
-                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
-                m_Controller.Perform_Modify_Planned(dc);
-                taskEditForm.IsPlannedDeleted = false;
+                MessageBox.Show("Please enter a valid number");
             }
         }
 
@@ -670,7 +505,7 @@ namespace WellaTodo
                         if (ctr is Calendar_Day)
                         {
                             Calendar_Day item = (Calendar_Day)ctr;
-                            if (dt.Date  == item.Present_Day.Date)
+                            if (dt.Date == item.Present_Day.Date)
                             {
                                 pos = i;
                                 counter++;
@@ -769,51 +604,231 @@ namespace WellaTodo
 
         }
 
-        private bool FindCalendarItem(CDataCell dc)
+        //--------------------------------------------------------------
+        // 사용자 입력 처리
+        //--------------------------------------------------------------
+        private void DayPanel_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            for (int i = 0; i < dayPanel.Length; i++)
+            FlowLayoutPanel dayPanel = (FlowLayoutPanel)sender;
+            DateTime dt = DateTime.Now;
+
+            foreach (Control ctr in dayPanel.Controls)
             {
-                foreach (Control ctr in dayPanel[i].Controls)
+                if (ctr is Calendar_Day)
                 {
-                    if (ctr is Calendar_Item)
-                    {
-                        Calendar_Item item = (Calendar_Item)ctr;
-                        if (dc.DC_task_ID == item.CD_DataCell.DC_task_ID)
-                        {
-                            m_Find_Result_Day = i;
-                            m_Find_Result_Item = item;
-                            return true;
-                        }
-                    }
+                    Calendar_Day item = (Calendar_Day)ctr;
+                    dt = item.Present_Day;
                 }
             }
 
-            // 없을 경우 신규 아이템 생성후 리턴
-            Calendar_Item newItem = new Calendar_Item(dc);
-            newItem.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
-            newItem.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
-            newItem.AutoSize = false;
+            taskEditForm.StartPosition = FormStartPosition.CenterParent;
 
-            newItem.Width = dayPanel[0].Width;
-            newItem.Height = CALENDAR_TASK_TEXT_HEIGHT;
-            m_TaskToolTip.SetToolTip(newItem, dc.DC_title);
+            taskEditForm.TE_DataCell = new CDataCell();
+            taskEditForm.TE_DataCell.DC_deadlineType = 4;
+            taskEditForm.TE_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
-            m_Find_Result_Item = newItem;
-            return false;
+            taskEditForm.IsNewTask = true;
+
+            taskEditForm.ShowDialog();
+
+            if (taskEditForm.IsCreated)
+            {
+                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> New Task Created : " + taskEditForm.TE_DataCell.DC_title
+                    + "[" + taskEditForm.TE_DataCell.DC_deadlineTime.ToLongDateString() + "]");
+
+                m_Controller.Perform_Add_Plan(taskEditForm.TE_DataCell);
+            }
+            else
+            {
+                Send_Log_Message("1>CalendarForm::DayPanel_MouseDoubleClick -> Create New Task is Canceled!!");
+            }
+
+            taskEditForm.IsNewTask = false;
+            taskEditForm.IsCreated = false;
         }
 
-        private bool IsCurrentPage(DateTime dt)
+        private void buttonToday_Click(object sender, EventArgs e)
         {
-            DateTime startDate = new DateTime(m_dtValue.Year, m_dtValue.Month, 1, 0, 0, 0);
-            int preDays = (new int[] { 0, 1, 2, 3, 4, 5, 6 })[(int)startDate.DayOfWeek];
-            startDate = startDate.AddDays(-preDays);
-            DateTime endDate = startDate.AddDays(42);
+            DateTime dt = DateTime.Now;
+            SetDate(dt);
+        }
 
-            if (dt.CompareTo (startDate ) >= 0 && dt.CompareTo (endDate ) <= 0) 
+        private void buttonPrevMonth_Click(object sender, EventArgs e)
+        {
+            DateTime dt = m_dtValue.AddMonths(-1);
+            SetDate(dt);
+        }
+
+        private void buttonNextMonth_Click(object sender, EventArgs e)
+        {
+            DateTime dt = m_dtValue.AddMonths(1);
+            SetDate(dt);
+        }
+
+        private void Calendar_Item_Click(object sender, EventArgs e)
+        {
+            Calendar_Item sd = (Calendar_Item)sender;
+
+            taskEditForm.StartPosition = FormStartPosition.CenterParent;
+
+            IEnumerable<CDataCell> dataset = m_Controller.Query_Task_Calendar(sd.CD_DataCell);
+            CDataCell dc = dataset.First();
+
+            taskEditForm.TE_DataCell = (CDataCell)dc.Clone();
+
+            taskEditForm.ShowDialog();
+
+            dc = taskEditForm.TE_DataCell;
+
+            if (taskEditForm.IsCompleteChanged)
             {
-                return true;
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Complete Changed : " + dc.DC_complete);
+                m_Controller.Perform_Complete_Process(dc);
+                taskEditForm.IsCompleteChanged = false;
             }
-            return false;
+
+            if (taskEditForm.IsImportantChanged)
+            {
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Important Changed : " + dc.DC_important);
+                m_Controller.Perform_Important_Process(dc);
+                taskEditForm.IsImportantChanged = false;
+            }
+
+            if (taskEditForm.IsTitleChanged)
+            {
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
+                m_Controller.Perform_Modify_Task_Title(dc);
+                taskEditForm.IsTitleChanged = false;
+            }
+
+            if (taskEditForm.IsMemoChanged)
+            {
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Memo Changed : " + dc.DC_title);
+                m_Controller.Perform_Modify_Task_Memo(dc);
+                taskEditForm.IsMemoChanged = false;
+            }
+
+            if (taskEditForm.IsDeleted) // 목록 삭제
+            {
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Task Delete");
+                m_Controller.Perform_Delete_Task(dc);
+                taskEditForm.IsDeleted = false;
+            }
+
+            if (taskEditForm.IsPlannedChanged) // 기한 설정 변경
+            {
+                dc.DC_deadlineType = 4;
+
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
+                m_Controller.Perform_Modify_Planned(dc);
+                taskEditForm.IsPlannedChanged = false;
+            }
+
+            if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
+            {
+                dc.DC_deadlineType = 0;
+                dc.DC_deadlineTime = default;
+
+                Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
+                m_Controller.Perform_Modify_Planned(dc);
+                taskEditForm.IsPlannedDeleted = false;
+            }
+        }
+
+        //--------------------------------------------------------------
+        // 드래그 앤 드롭 처리
+        //--------------------------------------------------------------
+        private void DayPanel_DragOver(object sender, DragEventArgs e)
+        {
+            FlowLayoutPanel dp = (FlowLayoutPanel )sender;
+            dp.BackColor = PSEUDO_HIGHLIGHT_COLOR;
+        }
+
+        private void DayPanel_DragLeave(object sender, EventArgs e)
+        {
+            FlowLayoutPanel dp = (FlowLayoutPanel)sender;
+            dp.BackColor = PSEUDO_BACK_COLOR;
+        }
+
+        private void DayPanel_DragEnter(object sender, DragEventArgs e)
+        {
+            //Console.WriteLine("DayPanel_DragEnter");
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else if(e.Data.GetDataPresent(typeof(Calendar_Item)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void DayPanel_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Todo_Item)))
+            {
+                Todo_Item item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.TD_title);
+                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
+                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
+
+                Calendar_Day planned_day = null;
+                foreach (Control ctr in dp.Controls)
+                {
+                    if (ctr is Calendar_Day)
+                    {
+                        planned_day = (Calendar_Day)ctr;
+                        break;
+                    }
+                }
+                dp.BackColor = PSEUDO_BACK_COLOR;
+
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Create New Task at DragDrop Selected Day");
+
+                DateTime dt = planned_day.Present_Day;
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+                item.TD_DataCell.DC_deadlineType = 4;
+                item.TD_DataCell.DC_deadlineTime = dt;
+
+                m_Controller.Perform_Modify_Planned(item.TD_DataCell);
+            }
+            else if (e.Data.GetDataPresent(typeof(Calendar_Item)))
+            {
+                Calendar_Item item = e.Data.GetData(typeof(Calendar_Item)) as Calendar_Item;
+                //Console.WriteLine("DayPanel_DragDrop -> source : " + item.PrimaryText);
+                Point p = panel_Calendar.PointToClient(new Point(e.X, e.Y));
+                FlowLayoutPanel dp = (FlowLayoutPanel)panel_Calendar.GetChildAtPoint(p);
+
+                Calendar_Day planned_day = null;
+                foreach (Control ctr in dp.Controls)
+                {
+                    if (ctr is Calendar_Day)
+                    {
+                        planned_day = (Calendar_Day)ctr;
+                        break;
+                    }
+                }
+                dp.BackColor = PSEUDO_BACK_COLOR;
+
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Move Task at DragDrop Selected Day");
+
+                DateTime dt = planned_day.Present_Day;
+                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+                item.CD_DataCell.DC_deadlineType = 4;
+                item.CD_DataCell.DC_deadlineTime = dt;
+
+                m_Controller.Perform_Modify_Planned(item.CD_DataCell);
+            }
+            else
+            {
+                
+            }
         }
 
         // --------------------------------------------------
@@ -892,7 +907,7 @@ namespace WellaTodo
 
             // 음력 공휴일
             DateTime solar;
-            solar = ConvertLunarToSolar(year-1, 12, 29);
+            solar = ConvertLunarToSolar(year-1, 12, 29);  //  <-- 에러 부분임
             if (month == solar.Month && day == solar.Day) return "구정";
             solar = ConvertLunarToSolar(year, 1, 1);
             if (month == solar.Month && day == solar.Day) return "구정";
@@ -909,6 +924,5 @@ namespace WellaTodo
 
             return dayName;
         }
-
     }
 }

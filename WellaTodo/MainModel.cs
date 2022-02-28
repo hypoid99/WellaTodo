@@ -121,10 +121,10 @@ namespace WellaTodo
 
 		public void Notify_Log_Message(string msg)
 		{
-			CDataCell dc = new CDataCell();
-			dc.DC_title = msg;
+			//CDataCell dc = new CDataCell();
+			//dc.DC_title = msg;
 
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_LOG_MESSAGE));
+			Update_View.Invoke(this, new ModelEventArgs(msg, WParam.WM_LOG_MESSAGE));
 		}
 
 		public void Verify_DataCell(CDataCell dc)

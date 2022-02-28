@@ -30,12 +30,13 @@ namespace WellaTodo
 
         public void Update_View(IModel m, ModelEventArgs e)
         {
-            CDataCell dc = e.Item;
+            //CDataCell dc = e.Item;
             WParam param = e.Param;
+            string msg = e.Msg;
             switch (param)
             {
                 case WParam.WM_LOG_MESSAGE:
-                    Output_Message(dc.DC_title);
+                    Output_Message(msg);
                     break;
                 default:
                     break;

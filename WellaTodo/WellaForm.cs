@@ -36,6 +36,9 @@ namespace WellaTodo
             WindowState = FormWindowState.Maximized;
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
         private void WellaForm_Load(object sender, EventArgs e)
         {
             // Controller를 통해 Model의 Observer로 View를 등록한다
@@ -68,8 +71,11 @@ namespace WellaTodo
 
             toDoList.Activate();
             LayoutMdi(MdiLayout.TileVertical);
-    }
+        }
 
+        // --------------------------------------------------
+        // 초기화 및 Form 처리
+        // --------------------------------------------------
         private Form ShowActiveForm(Form form, Type t)
         {
             if (form == null)
@@ -105,9 +111,30 @@ namespace WellaTodo
                     form.Show();
                 }
             }
+            form.Activate();
+            form.BringToFront();
             return form;
         }
 
+        private Control FindFocus(Control control)
+        {
+            foreach (Control ctr in control.Controls)
+            {
+                if (ctr.Focused)
+                {
+                    return ctr;
+                }
+                else if (ctr.ContainsFocus)
+                {
+                    return FindFocus(ctr);
+                }
+            }
+            return null;
+        }
+
+        // ------------------------------------------------------------
+        // 메뉴
+        // ------------------------------------------------------------
         private void toDoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toDoList = (MainFrame)ShowActiveForm(toDoList, typeof(MainFrame));
@@ -116,13 +143,22 @@ namespace WellaTodo
         private void 계산기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.GetType() == typeof(CalculatorForm))
+                {
+
+                    form.Activate();
+                    form.BringToFront();
+                    return;
+                }
+            }
         }
 
         private void 달력ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
         }
-
 
         private void 노트패드ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -175,60 +211,6 @@ namespace WellaTodo
             info.StartPosition = FormStartPosition.CenterParent;
             info.ShowDialog();
         }
-
-        private void button_Todo_Click(object sender, EventArgs e)
-        {
-            toDoList = (MainFrame)ShowActiveForm(toDoList, typeof(MainFrame));
-        }
-
-        private void button_Calendar_Click(object sender, EventArgs e)
-        {
-            calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
-        }
-
-        private void button_Calculator_Click(object sender, EventArgs e)
-        {
-            calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
-        }
-
-        private void button_Memo_Click(object sender, EventArgs e)
-        {
-            bulletinBoard = (BulletinBoardForm)ShowActiveForm(bulletinBoard, typeof(BulletinBoardForm));
-        }
-
-        private void button_Notepad_Click(object sender, EventArgs e)
-        {
-            notePad = (NotePadForm)ShowActiveForm(notePad, typeof(NotePadForm));
-        }
-
-        private void button_Output_Click(object sender, EventArgs e)
-        {
-            output = (OutputForm)ShowActiveForm(output, typeof(OutputForm));
-        }
-
-        private void button_Cascade_Click(object sender, EventArgs e)
-        {
-            LayoutMdi(MdiLayout.Cascade);
-        }
-
-        private void button_Vertical_Click(object sender, EventArgs e)
-        {
-            LayoutMdi(MdiLayout.TileVertical);
-        }
-
-        private void button_Horizontal_Click(object sender, EventArgs e)
-        {
-            LayoutMdi(MdiLayout.TileHorizontal);
-        }
-
-        private void button_Exit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        // ------------------------------------------------------------
-        // 메뉴
-        // ------------------------------------------------------------
 
         private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -332,20 +314,54 @@ namespace WellaTodo
         // ------------------------------------------------------------
         // 툴바
         // ------------------------------------------------------------
-        private Control FindFocus(Control control)
+        private void button_Todo_Click(object sender, EventArgs e)
         {
-            foreach (Control ctr in control.Controls)
-            {
-                if (ctr.Focused)
-                {
-                    return ctr;
-                }
-                else if (ctr.ContainsFocus)
-                {
-                    return FindFocus(ctr);
-                }
-            }
-            return null;
+            toDoList = (MainFrame)ShowActiveForm(toDoList, typeof(MainFrame));
+        }
+
+        private void button_Calendar_Click(object sender, EventArgs e)
+        {
+            calendar = (CalendarForm)ShowActiveForm(calendar, typeof(CalendarForm));
+        }
+
+        private void button_Calculator_Click(object sender, EventArgs e)
+        {
+            calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
+        }
+
+        private void button_Memo_Click(object sender, EventArgs e)
+        {
+            bulletinBoard = (BulletinBoardForm)ShowActiveForm(bulletinBoard, typeof(BulletinBoardForm));
+        }
+
+        private void button_Notepad_Click(object sender, EventArgs e)
+        {
+            notePad = (NotePadForm)ShowActiveForm(notePad, typeof(NotePadForm));
+        }
+
+        private void button_Output_Click(object sender, EventArgs e)
+        {
+            output = (OutputForm)ShowActiveForm(output, typeof(OutputForm));
+        }
+
+        private void button_Cascade_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.Cascade);
+        }
+
+        private void button_Vertical_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileVertical);
+        }
+
+        private void button_Horizontal_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileHorizontal);
+        }
+
+        private void button_Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
         private void 새로만들기ToolStripButton_Click(object sender, EventArgs e)
