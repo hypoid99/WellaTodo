@@ -158,11 +158,13 @@ namespace WellaTodo
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
+            Console.WriteLine("MainFrame_Paint");
             Update_Display();
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
+            Console.WriteLine("MainFrame_Resize");
             Update_Display();
         }
 
@@ -422,12 +424,15 @@ namespace WellaTodo
 
         private void Update_Display()
         {
+            Console.WriteLine(">MainFrame::Update_Display");
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Height - TAIL_HEIGHT);
+
             //Rectangle rc = ClientRectangle;
             //Console.WriteLine(">ClientRectangle W[{0}] H[{1}]", rc.Width, rc.Height);
-            //Console.WriteLine("splitContainer1.SplitterDistance [{0}]", splitContainer1.SplitterDistance);
-            //Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
-            //Console.WriteLine("splitContainer1.Panel1.Width [{0}]", splitContainer1.Panel1.Width);
-            //Console.WriteLine("splitContainer1.Panel2.Width [{0}]", splitContainer1.Panel2.Width);
+            Console.WriteLine("splitContainer1.SplitterDistance [{0}]", splitContainer1.SplitterDistance);
+            Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
+            Console.WriteLine("splitContainer1.Panel1 Size W[{0}] H[{1}]", splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
+            Console.WriteLine("splitContainer1.Panel2 Size W[{0}] H[{1}]", splitContainer1.Panel2.Width, splitContainer1.Panel1.Height);
             /*
             if (WindowState == FormWindowState.Maximized)
             {
@@ -440,7 +445,7 @@ namespace WellaTodo
             }
             */
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
-            flowLayoutPanel_Menulist.Height = splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT;
+            flowLayoutPanel_Menulist.Height = splitContainer1.Height - labelUserName.Height - TAIL_HEIGHT;
             //Console.WriteLine("flowLayoutPanel_Menulist.Width [{0}]", flowLayoutPanel_Menulist.Width);
 
             labelUserName.Width = flowLayoutPanel_Menulist.Width;
@@ -455,12 +460,10 @@ namespace WellaTodo
                 : flowLayoutPanel_Menulist.Width - 2;
             }
 
-            splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Panel2.Height - TAIL_HEIGHT);
-
-            //Console.WriteLine("splitContainer2.SplitterDistance [{0}]", splitContainer2.SplitterDistance);
-            //Console.WriteLine("splitContainer2.Size W[{0}] H[{1}]", splitContainer2.Width, splitContainer2.Height);
-            //Console.WriteLine("splitContainer2.Panel1.Width [{0}]", splitContainer2.Panel1.Width);
-            //Console.WriteLine("splitContainer2.Panel2.Width [{0}]", splitContainer2.Panel2.Width);
+            Console.WriteLine("splitContainer2.SplitterDistance [{0}]", splitContainer2.SplitterDistance);
+            Console.WriteLine("splitContainer2.Size W[{0}] H[{1}]", splitContainer2.Width, splitContainer2.Height);
+            Console.WriteLine("splitContainer2.Panel1 Size W[{0}] H[{1}]", splitContainer2.Panel1.Width, splitContainer2.Panel1.Height);
+            Console.WriteLine("splitContainer2.Panel2 Size W[{0}] H[{1}]", splitContainer2.Panel2.Width, splitContainer2.Panel1.Height);
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
 
             if (isDetailWindowOpen)
@@ -470,8 +473,10 @@ namespace WellaTodo
             }
 
             panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
-            flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer2.Panel1.Height - TAIL_HEIGHT);
-            textBox_Task.Location = new Point(10, splitContainer1.Panel2.Height - TEXTBOX_HEIGHT_GAP);
+
+            flowLayoutPanel2.Size = new Size(splitContainer2.Panel1.Width, splitContainer1.Height - TAIL_HEIGHT);
+
+            textBox_Task.Location = new Point(10, splitContainer1.Height - TEXTBOX_HEIGHT_GAP);
             textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
             Update_Task_Width();
