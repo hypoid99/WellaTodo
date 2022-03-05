@@ -132,6 +132,7 @@ namespace WellaTodo
             label_PrimaryText.MouseEnter += new EventHandler(Calendar_Item_MouseEnter);
             label_PrimaryText.MouseLeave += new EventHandler(Calendar_Item_MouseLeave);
             label_PrimaryText.MouseDown += new MouseEventHandler(Calendar_Item_MouseDown);
+            label_PrimaryText.MouseUp += new MouseEventHandler(Calendar_Item_MouseUp);
             label_PrimaryText.MouseMove += new MouseEventHandler(Calendar_Item_MouseMove);
             //label_PrimaryText.Location = new Point(0, 0);
             label_PrimaryText.BackColor = BACK_COLOR;
@@ -163,11 +164,13 @@ namespace WellaTodo
         private void Calendar_Item_MouseEnter(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = HIGHLIGHT_COLOR;
+            Cursor = Cursors.Hand;
         }
 
         private void Calendar_Item_MouseLeave(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = BACK_COLOR;
+            Cursor = Cursors.Default;
         }
 
         private void Calendar_Item_MouseClick(object sender, MouseEventArgs e)
@@ -176,15 +179,18 @@ namespace WellaTodo
             if (Calendar_Item_Click != null) Calendar_Item_Click?.Invoke(this, e);
         }
 
+        //---------------------------------------------------------
+        // 드래그 앤 드롭
+        //---------------------------------------------------------
         private void Calendar_Item_MouseDown(object sender, MouseEventArgs e)
         {
-            //Console.WriteLine("Calendar_Item_MouseDown X: " + e.X + " Y: " + e.Y);
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
         }
 
         private void Calendar_Item_MouseUp(object sender, MouseEventArgs e)
         {
+            Console.WriteLine("Calendar_Item_MouseUp");
             if (isDragging)
             {
                 //Console.WriteLine("Calendar_Item_MouseUp - DragDrop");

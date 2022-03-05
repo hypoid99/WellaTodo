@@ -326,12 +326,21 @@ namespace WellaTodo
         {
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
             foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_HIGHLIGHT_COLOR;
+            if (sender is StarCheckbox)
+            {
+                Cursor = Cursors.Hand;
+            }
+            if (sender is RoundCheckbox)
+            {
+                Cursor = Cursors.Hand;
+            }
         }
 
         private void Todo_Item_MouseLeave(object sender, EventArgs e)
         {
             BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
             foreach (Control c in Controls) c.BackColor = IsItemSelected ? PSEUDO_SELECTED_COLOR : PSEUDO_BACK_COLOR;
+            Cursor = Cursors.Default;
         }
 
         private void roundCheckbox1_MouseClick(object sender, MouseEventArgs e)

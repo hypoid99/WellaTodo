@@ -158,13 +158,13 @@ namespace WellaTodo
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("MainFrame_Paint");
+            //Console.WriteLine("MainFrame_Paint");
             Update_Display();
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
-            Console.WriteLine("MainFrame_Resize");
+            //Console.WriteLine("MainFrame_Resize");
             Update_Display();
         }
 
@@ -424,15 +424,15 @@ namespace WellaTodo
 
         private void Update_Display()
         {
-            Console.WriteLine(">MainFrame::Update_Display");
+            //Console.WriteLine(">MainFrame::Update_Display");
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Height - TAIL_HEIGHT);
 
             //Rectangle rc = ClientRectangle;
             //Console.WriteLine(">ClientRectangle W[{0}] H[{1}]", rc.Width, rc.Height);
-            Console.WriteLine("splitContainer1.SplitterDistance [{0}]", splitContainer1.SplitterDistance);
-            Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
-            Console.WriteLine("splitContainer1.Panel1 Size W[{0}] H[{1}]", splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
-            Console.WriteLine("splitContainer1.Panel2 Size W[{0}] H[{1}]", splitContainer1.Panel2.Width, splitContainer1.Panel1.Height);
+            //Console.WriteLine("splitContainer1.SplitterDistance [{0}]", splitContainer1.SplitterDistance);
+            //Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
+            //Console.WriteLine("splitContainer1.Panel1 Size W[{0}] H[{1}]", splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
+            //Console.WriteLine("splitContainer1.Panel2 Size W[{0}] H[{1}]", splitContainer1.Panel2.Width, splitContainer1.Panel1.Height);
             /*
             if (WindowState == FormWindowState.Maximized)
             {
@@ -460,10 +460,10 @@ namespace WellaTodo
                 : flowLayoutPanel_Menulist.Width - 2;
             }
 
-            Console.WriteLine("splitContainer2.SplitterDistance [{0}]", splitContainer2.SplitterDistance);
-            Console.WriteLine("splitContainer2.Size W[{0}] H[{1}]", splitContainer2.Width, splitContainer2.Height);
-            Console.WriteLine("splitContainer2.Panel1 Size W[{0}] H[{1}]", splitContainer2.Panel1.Width, splitContainer2.Panel1.Height);
-            Console.WriteLine("splitContainer2.Panel2 Size W[{0}] H[{1}]", splitContainer2.Panel2.Width, splitContainer2.Panel1.Height);
+            //Console.WriteLine("splitContainer2.SplitterDistance [{0}]", splitContainer2.SplitterDistance);
+            //Console.WriteLine("splitContainer2.Size W[{0}] H[{1}]", splitContainer2.Width, splitContainer2.Height);
+            //Console.WriteLine("splitContainer2.Panel1 Size W[{0}] H[{1}]", splitContainer2.Panel1.Width, splitContainer2.Panel1.Height);
+            //Console.WriteLine("splitContainer2.Panel2 Size W[{0}] H[{1}]", splitContainer2.Panel2.Width, splitContainer2.Panel1.Height);
             //Console.WriteLine("flowLayoutPanel2.Width [{0}]", flowLayoutPanel2.Width);
 
             if (isDetailWindowOpen)
@@ -480,6 +480,29 @@ namespace WellaTodo
             textBox_Task.Size = new Size(splitContainer1.Panel2.Width - 20, 25);
 
             Update_Task_Width();
+        }
+
+        private void Create_TodoItem(CDataCell dc)
+        {
+            Todo_Item item = new Todo_Item(dc);  // Task 생성
+
+            m_Task.Insert(0, item);
+
+            flowLayoutPanel2.Controls.Add(item);
+            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
+            item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
+            item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click);
+            item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
+            item.DragEnter += new DragEventHandler(TodoItem_DragEnter);
+            item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
+            item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
+
+            flowLayoutPanel2.VerticalScroll.Value = 0;
+
+            Close_DetailWindow();
+            Update_Task_Width();
+            Update_Task_Infomation(dc);
+            Update_Menu_Metadata();
         }
 
         // ============================================
@@ -1096,16 +1119,16 @@ namespace WellaTodo
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
-                case WParam.WM_PLAN_ADD:
-                    Update_Add_Task(dc);
+                case WParam.WM_PLAN_ADD:  // Calendar
+                    Update_Add_Plan(dc);
                     break;
-                case WParam.WM_MEMO_ADD:
-                    Update_Add_Task(dc);
+                case WParam.WM_MEMO_ADD:  // Bulletin
+                    Update_Add_Memo(dc);
                     break;
-                case WParam.WM_MEMO_MOVE_TO:
+                case WParam.WM_MEMO_MOVE_TO: // Bulletin
                     Update_Memo_Move_To(dc);
                     break;
-                case WParam.WM_CONVERT_NOTEPAD:
+                case WParam.WM_CONVERT_NOTEPAD:  // NotePad
                     Update_Convert_NotePad(dc);
                     break;
                 default:
@@ -1309,53 +1332,8 @@ namespace WellaTodo
 
         public void Update_Add_Task(CDataCell dc)
         {
-            string msg = "";
-            switch (enum_Selected_Menu)
-            {
-                case MenuList.MYTODAY_MENU: // 오늘 할 일 메뉴에서 입력됨
-                    msg = "MYTODAY_MENU";
-                    break;
-                case MenuList.IMPORTANT_MENU: // 중요 메뉴에서 입력됨
-                    msg = "IMPORTANT_MENU";
-                    break;
-                case MenuList.DEADLINE_MENU: // 계획된 일정 메뉴에서 입력됨
-                    msg = "PLANNED_MENU";
-                    break;
-                default:
-                    if (dc.DC_listName != m_Selected_Menu.PrimaryText) // 보이지 않는 다른 메뉴
-                    {
-                        Send_Log_Message("4>MainFrame::Update_Add_Task -> Anothor Menu List");
-                        Update_Menu_Metadata();
-                        return;
-                    }
-                    else
-                    {
-                        msg = "Current Menu List"; // 현재 메뉴에서 생성됨
-                    }
-                    break;
-            }
-
-            Todo_Item item = new Todo_Item(dc);  // Task 생성
-
-            m_Task.Insert(0, item);
-
-            flowLayoutPanel2.Controls.Add(item);
-            flowLayoutPanel2.Controls.SetChildIndex(item, 0);
-            item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
-            item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click);
-            item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
-            item.DragEnter += new DragEventHandler(TodoItem_DragEnter);
-            item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
-            item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
-
-            flowLayoutPanel2.VerticalScroll.Value = 0;
-
-            Close_DetailWindow();
-            Update_Task_Width();
-            Update_Task_Infomation(dc);
-            Update_Menu_Metadata();
-
-            Send_Log_Message("4>MainFrame::Update_Add_Task : " + msg + " [" + item.TD_DataCell.DC_task_ID + "]" + item.TD_title);
+            Create_TodoItem(dc);
+            Send_Log_Message("4>MainFrame::Update_Add_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
         }
 
         public void Update_Delete_Task(CDataCell dc)
@@ -1782,6 +1760,36 @@ namespace WellaTodo
             }
 
             Send_Log_Message("4>MainFrame::Update_Task_Move_To");
+        }
+
+        public void Update_Add_Plan(CDataCell dc)
+        {
+
+            if (enum_Selected_Menu != MenuList.TODO_ITEM_MENU && enum_Selected_Menu != MenuList.DEADLINE_MENU)
+            {
+                Send_Log_Message("4>MainFrame::Update_Add_Plan -> Anothor Menu List");
+                Update_Menu_Metadata();
+                return;
+            }
+
+            Create_TodoItem(dc);
+
+            Send_Log_Message("4>MainFrame::Update_Add_Plan : [" + dc.DC_task_ID + "]" + dc.DC_title);
+        }
+
+        public void Update_Add_Memo(CDataCell dc)
+        {
+
+            if (enum_Selected_Menu != MenuList.TODO_ITEM_MENU)
+            {
+                Send_Log_Message("4>MainFrame::Update_Add_Memo -> Anothor Menu List");
+                Update_Menu_Metadata();
+                return;
+            }
+
+            Create_TodoItem(dc);
+
+            Send_Log_Message("4>MainFrame::Update_Add_Memo : [" + dc.DC_task_ID + "]" + dc.DC_title);
         }
 
         private void Update_Memo_Move_To(CDataCell dc)

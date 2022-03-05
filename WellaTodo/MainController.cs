@@ -275,7 +275,7 @@ namespace WellaTodo
 		// ----------------------------------------------------------
 		public void Perform_Add_Plan(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Add_Memo : " + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_Add_Plan : " + dc.DC_title);
 			m_model.Add_Plan(dc);
 		}
 

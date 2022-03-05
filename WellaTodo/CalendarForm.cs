@@ -312,7 +312,13 @@ namespace WellaTodo
 
                     label_planned.Width = dayPanel[i].Width;
                     label_planned.Height = CALENDAR_TASK_TEXT_HEIGHT;
+
+                    //m_TaskToolTip.IsBalloon = true;
+                    //m_TaskToolTip.ToolTipTitle = "Calendar";
+                    //m_TaskToolTip.ToolTipIcon = ToolTipIcon.Info;
+                    //m_TaskToolTip.ShowAlways = true;
                     m_TaskToolTip.SetToolTip(label_planned, dc.DC_title);
+
                     dayPanel[i].Controls.Add(label_planned);
                 }
                 curDate = curDate.AddDays(1);
