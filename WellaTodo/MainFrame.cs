@@ -28,8 +28,8 @@ namespace WellaTodo
         static readonly string WINDOW_CAPTION = "Wella Todo v0.95";
         static readonly int WINDOW_WIDTH = 1200;
         static readonly int WINDOW_HEIGHT = 700;
-        static readonly int MENU_WINDOW_WIDTH = 250;
-        static readonly int DETAIL_WINDOW_WIDTH = 260;
+        static readonly int MENU_WINDOW_WIDTH = 250; // menu width
+        static readonly int DETAIL_WINDOW_WIDTH = 260; // detail width
         static readonly int DETAIL_WINDOW_X1 = 5;
         static readonly int TASK_HEIGHT = 40;
         static readonly int HEADER_HEIGHT = 50;
@@ -165,6 +165,7 @@ namespace WellaTodo
         private void MainFrame_Resize(object sender, EventArgs e)
         {
             //Console.WriteLine("MainFrame_Resize");
+            splitContainer1.SplitterDistance = Calc_SplitterDistance();
             Update_Display();
         }
 
@@ -201,10 +202,11 @@ namespace WellaTodo
             DoubleBuffered = true;
 
             splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
+            splitContainer1.SplitterDistance = Calc_SplitterDistance();
             splitContainer1.Panel1.BackColor = PSEUDO_BACK_COLOR;
-            splitContainer1.Panel1MinSize = 200;
+            splitContainer1.Panel1MinSize = 25;
             splitContainer1.Panel2.BackColor = PSEUDO_BACK_COLOR;
-            splitContainer1.Panel2MinSize = 300;
+            splitContainer1.Panel2MinSize = 25;
 
             labelUserName.Image = ICON_ACCOUNT;
             labelUserName.ImageAlign = ContentAlignment.MiddleLeft;
@@ -425,7 +427,6 @@ namespace WellaTodo
         private void Update_Display()
         {
             //Console.WriteLine(">MainFrame::Update_Display");
-            splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Height - TAIL_HEIGHT);
 
             //Rectangle rc = ClientRectangle;
             //Console.WriteLine(">ClientRectangle W[{0}] H[{1}]", rc.Width, rc.Height);
@@ -433,17 +434,9 @@ namespace WellaTodo
             //Console.WriteLine("splitContainer1.Size W[{0}] H[{1}]", splitContainer1.Width, splitContainer1.Height);
             //Console.WriteLine("splitContainer1.Panel1 Size W[{0}] H[{1}]", splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
             //Console.WriteLine("splitContainer1.Panel2 Size W[{0}] H[{1}]", splitContainer1.Panel2.Width, splitContainer1.Panel1.Height);
-            /*
-            if (WindowState == FormWindowState.Maximized)
-            {
-                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
-            }
 
-            if (WindowState == FormWindowState.Normal)
-            {
-                splitContainer1.SplitterDistance = MENU_WINDOW_WIDTH;
-            }
-            */
+            splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Height - TAIL_HEIGHT);
+
             flowLayoutPanel_Menulist.Width = splitContainer1.SplitterDistance;
             flowLayoutPanel_Menulist.Height = splitContainer1.Height - labelUserName.Height - TAIL_HEIGHT;
             //Console.WriteLine("flowLayoutPanel_Menulist.Width [{0}]", flowLayoutPanel_Menulist.Width);
@@ -597,7 +590,7 @@ namespace WellaTodo
                 distance = MENU_WINDOW_WIDTH;
             } else
             {
-                distance = (int)(MENU_WINDOW_WIDTH * 0.75);
+                distance = (int)(Size.Width * 0.35);
             }
             return distance;
         }
