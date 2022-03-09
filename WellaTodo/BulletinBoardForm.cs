@@ -411,7 +411,7 @@ namespace WellaTodo
                 Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo -> No matching Data!!");
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo : -> Completed" + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo : -> Completed " + dc.DC_title);
         }
 
         private void Update_Modify_Memo_Color(CDataCell dc)

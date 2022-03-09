@@ -99,18 +99,20 @@ namespace WellaTodo
                     if (form.Visible)
                     {
                         //Console.WriteLine("ShowActiveForm -> form is visible, Hide!!!");
-                        //form.Hide();
+                        form.Hide();
                     }
                     else
                     {
                         //Console.WriteLine("ShowActiveForm -> form is hiding, Show!!!");
                         //form.Show();
+                        form.Show();
+                        form.Activate();
+                        form.BringToFront();
                     }
-                    form.Show();
+
                 }
             }
-            form.Activate();
-            form.BringToFront();
+
             return form;
         }
 
@@ -141,16 +143,6 @@ namespace WellaTodo
         private void 계산기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             calculator = (CalculatorForm)ShowActiveForm(calculator, typeof(CalculatorForm));
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form.GetType() == typeof(CalculatorForm))
-                {
-
-                    form.Activate();
-                    form.BringToFront();
-                    return;
-                }
-            }
         }
 
         private void 달력ToolStripMenuItem_Click(object sender, EventArgs e)
