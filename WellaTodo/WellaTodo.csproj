@@ -182,6 +182,7 @@
     <Compile Include="StarCheckbox.Designer.cs">
       <DependentUpon>StarCheckbox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Strategy.cs" />
     <Compile Include="TaskEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
