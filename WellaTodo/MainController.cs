@@ -43,6 +43,9 @@ namespace WellaTodo
 			m_model = m;
 		}
 
+		// ----------------------------------------------------
+		// View Event
+		// ----------------------------------------------------
 		public void Add_View(IView view)
         {
 			view.SetController(this);
@@ -66,6 +69,9 @@ namespace WellaTodo
 			m_model.Verify_DataCell(dc);
         }
 
+		// --------------------------------------------------------
+		// Load/Save/Open/Print 메서드
+		// --------------------------------------------------------
 		public void Load_Data_File()
         {
 			Send_Log_Message("2>MainController::Load_Data_File");

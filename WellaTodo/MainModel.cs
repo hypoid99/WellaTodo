@@ -75,17 +75,18 @@ namespace WellaTodo
 
 		}
 
+		// --------------------------------------------------------
+		// Observer
+		// --------------------------------------------------------
 		public void Add_Observer(IModelObserver imo)
         {
 			Update_View += new ModelHandler<MainModel>(imo.Update_View);
-
 			ObserverList.Add(imo);
 		}
 
 		public void Remove_Observer(IModelObserver imo)
         {
 			Update_View -= new ModelHandler<MainModel>(imo.Update_View);
-
 			ObserverList.Remove(imo);
 		}
 
@@ -97,6 +98,14 @@ namespace WellaTodo
 			}
 		}
 
+		public void Notify_Log_Message(string msg)
+		{
+			Update_View.Invoke(this, new ModelEventArgs(msg, WParam.WM_LOG_MESSAGE));
+		}
+
+		// --------------------------------------------------------
+		// DataBase
+		// --------------------------------------------------------
 		public List<CDataCell> GetTaskCollection()
         {
 			return myTaskItems;
@@ -119,19 +128,9 @@ namespace WellaTodo
 			myListNames = list_collections;
 		}
 
-		public void Notify_Log_Message(string msg)
-		{
-			//CDataCell dc = new CDataCell();
-			//dc.DC_title = msg;
-
-			Update_View.Invoke(this, new ModelEventArgs(msg, WParam.WM_LOG_MESSAGE));
-		}
-
-		public void Verify_DataCell(CDataCell dc)
-		{
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_DATACELL));
-		}
-
+		// --------------------------------------------------------
+		// Load/Save/Open/Print 메서드
+		// --------------------------------------------------------
 		public void Load_Data()
         {
 			List<CDataCell> todo_data = new List<CDataCell>();
@@ -235,6 +234,9 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_PRINT_DATA));
 		}
 
+		// --------------------------------------------------------
+		// Menulist 메서드
+		// --------------------------------------------------------
 		public void Menulist_Add(string target)
         {
 			myListNames.Add(target);
@@ -369,21 +371,12 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_DOWN));
 		}
 
-		public void Transfer_Task(CDataCell dc, string target)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Transfer_Task -> Find() Not Found Item!!");
-				return;
-			}
-
-			string source = data.DC_listName;
-			data.DC_listName = target;
-
-			Notify_Log_Message("3>MainModel::Transfer_Task : from " + source + " to " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TRANSFER_TASK));
+		// --------------------------------------------------------
+		// Task 메서드
+		// --------------------------------------------------------
+		public void Verify_DataCell(CDataCell dc)
+		{
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)dc.Clone(), WParam.WM_DATACELL));
 		}
 
 		public void Add_Task(CDataCell dc)
@@ -423,6 +416,23 @@ namespace WellaTodo
 
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TASK_DELETE));
 			return true;
+		}
+
+		public void Transfer_Task(CDataCell dc, string target)
+		{
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Transfer_Task -> Find() Not Found Item!!");
+				return;
+			}
+
+			string source = data.DC_listName;
+			data.DC_listName = target;
+
+			Notify_Log_Message("3>MainModel::Transfer_Task : from " + source + " to " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TRANSFER_TASK));
 		}
 
 		public void Complete_Process(CDataCell dc)
