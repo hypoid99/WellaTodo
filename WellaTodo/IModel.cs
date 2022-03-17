@@ -22,11 +22,13 @@ namespace WellaTodo
         public ModelEventArgs(CDataCell dc, WParam param ) { Item = dc; Param = param; }
     }
 
+    // IObserver
     public interface IModelObserver
     {
         void Update_View(IModel model, ModelEventArgs e);
     }
 
+    // ISubject
     public interface IModel
 	{
         void Add_Observer(IModelObserver imo);

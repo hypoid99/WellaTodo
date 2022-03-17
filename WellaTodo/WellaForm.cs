@@ -1,6 +1,9 @@
 ﻿// ----------------------------------------------------------
 // Wella Todo
 // ----------------------------------------------------------
+// View : UI 해당 dc를 Controller에 전달한다
+// Controller : 받은 dc를 유효성검사후 필요한 가공을 한 다음 Model에 전달한다
+// Model : 받은 dc를 DB에 변경하고 View에 통보한다
 
 using System;
 using System.Collections.Generic;

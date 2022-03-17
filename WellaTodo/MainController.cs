@@ -102,7 +102,7 @@ namespace WellaTodo
 		}
 
 		// -----------------------------------------------------------
-		// Perform Command
+		// Perform Command (Menulist)
 		// -----------------------------------------------------------
 		public void Perform_Menulist_Add(string target)
         {
@@ -134,6 +134,9 @@ namespace WellaTodo
 			m_model.Menulist_Down(target);
 		}
 
+		// -----------------------------------------------------------
+		// Perform Command (Task)
+		// -----------------------------------------------------------
 		public void Perform_Add_Task(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Add_Task : " + dc.DC_title);
@@ -256,7 +259,7 @@ namespace WellaTodo
 		}
 
 		// ----------------------------------------------------------
-		// NotePad 문서편집
+		// Perform Command - NotePad 문서편집
 		// ----------------------------------------------------------
 		public void Perform_Convert_NotePad(CDataCell dc)
         {
@@ -277,7 +280,7 @@ namespace WellaTodo
 		}
 
 		// ----------------------------------------------------------
-		// Calendar 일정 
+		// Perform Command - Calendar 일정 
 		// ----------------------------------------------------------
 		public void Perform_Add_Plan(CDataCell dc)
 		{
@@ -286,7 +289,7 @@ namespace WellaTodo
 		}
 
 		// ----------------------------------------------------------
-		// BulletinBoard 메모
+		// Perform Command - BulletinBoard 메모
 		// ----------------------------------------------------------
 		public void Perform_Add_Memo(CDataCell dc)
 		{
@@ -381,7 +384,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_Task(string listname)
 		{
-			IEnumerable < CDataCell > dataset = from CDataCell dc in m_model.GetTaskCollection() 
+			IEnumerable <CDataCell> dataset = from CDataCell dc in m_model.GetTaskCollection() 
 												where dc.DC_listName == listname select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_Task -> Counter : " + deepCopy.Count);
