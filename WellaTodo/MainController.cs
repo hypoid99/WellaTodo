@@ -235,6 +235,11 @@ namespace WellaTodo
 
 		public void Perform_Transfer_Task(CDataCell dc, string target)
         {
+			if (dc.DC_listName == target)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Transfer_Task -> Can't transfer item as same list");
+				return;
+			}
 			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
 			m_model.Transfer_Task(dc, target);
         }

@@ -94,7 +94,7 @@ namespace WellaTodo
         bool isDetailWindowOpen = false;
         bool isTextbox_Task_Clicked = false;
         bool isTextbox_List_Clicked = false;
-        bool isTextbox_Momo_Changed = false;
+        bool isTextbox_Memo_Changed = false;
 
         Todo_Item m_Pre_Selected_Task;
         Todo_Item m_Selected_Task;
@@ -554,7 +554,7 @@ namespace WellaTodo
             textBox_Memo.Text = dc.DC_memo;
             textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
 
-            isTextbox_Momo_Changed = false;
+            isTextbox_Memo_Changed = false;
 
             if (dc.DC_myToday)
             {
@@ -601,68 +601,6 @@ namespace WellaTodo
             }
 
             createDateLabel.Text = dc.DC_dateCreated.ToString("yyyy-MM-dd(ddd)\r\n") + "생성됨[" + dc.DC_task_ID + "]";
-        }
-
-        private void Add_Task(string text)
-        {
-            CDataCell dc = new CDataCell();
-            DateTime dt = DateTime.Now;
-
-            switch (enum_Selected_Menu)
-            {
-                case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_myToday = true;
-                    dt = dt.AddDays(1);
-                    dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in MyToday Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
-                    break;
-                case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_important = true;
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Important Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
-                    break;
-                case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_deadlineType = 1;
-                    dt = dt.AddDays(1);
-                    dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Planned Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
-                    break;
-                case MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨 -> 할일 추가 불가함
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Complete Menu -> Can't Add Task!");
-                    break;
-                default:
-                    dc.DC_listName = m_Selected_Menu.PrimaryText;
-                    dc.DC_title = text;
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Task or List Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
-                    break;
-            }
-        }
-
-        private void Edit_Task_Memo()
-        {
-            memoForm.StartPosition = FormStartPosition.CenterParent;
-
-            memoForm.TextBoxString = textBox_Memo.Text;
-            memoForm.Text = m_Selected_Task.TD_DataCell.DC_title;
-            memoForm.ShowDialog();
-
-            textBox_Memo.Text = memoForm.TextBoxString;
-            textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
-
-            //메모 내용에 변경이 있는지 확인하고 입력 사항에 오류가 있는지 체크할 것
-            m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;
-
-            Send_Log_Message("1>MainFrame::Edit_Task_Memo : " + m_Selected_Task.TD_DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Memo(m_Selected_Task.TD_DataCell);
         }
 
         private void Update_Menu_Metadata()
@@ -793,7 +731,6 @@ namespace WellaTodo
             flowLayoutPanel2.VerticalScroll.Value = 0;
 
             Close_DetailWindow();
-
             Update_Task_Width();
             Update_Task_Infomation(dc);
         }
@@ -1369,6 +1306,7 @@ namespace WellaTodo
             Delete_Present_TodoItem(dc);
 
             Close_DetailWindow();
+            Update_Task_Width();
             Update_Task_Infomation(dc);
 
             Send_Log_Message("4>MainFrame::Update_Delete_Task -> Delete Completed!");
@@ -2425,32 +2363,25 @@ namespace WellaTodo
         private void OnMyToday_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMyToday_Click -> MyToday Process!!");
-
             m_Controller.Perform_MyToday_Process(m_Selected_Task.TD_DataCell);
         }
 
         private void OnCompleteMenuItem_Click(object sender, EventArgs e)
         {
             roundCheckbox1.Checked = !roundCheckbox1.Checked;
-
             m_Selected_Task.TD_DataCell.DC_complete = roundCheckbox1.Checked;
 
             Send_Log_Message("1>MainFrame::OnCompleteMenuItem_Click -> Complete :" + m_Selected_Task.TD_DataCell.DC_complete);
             m_Controller.Perform_Complete_Process(m_Selected_Task.TD_DataCell);
-
-            Update_Menu_Metadata();
         }
 
         private void OnImportantMenuItem_Click(object sender, EventArgs e)
         {
             starCheckbox1.Checked = !starCheckbox1.Checked;
-
             m_Selected_Task.TD_DataCell.DC_important = starCheckbox1.Checked;
 
             Send_Log_Message("1>MainFrame::OnImportantMenuItem_Click -> Important :" + m_Selected_Task.TD_DataCell.DC_important);
             m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
-
-            Update_Menu_Metadata();
         }
 
         private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
@@ -2467,15 +2398,7 @@ namespace WellaTodo
         private void OnTransferItem_Click(object sender, EventArgs e)
         {
             MenuItem list = (MenuItem)sender;
-
-            if (list.Text == m_Selected_Menu.PrimaryText)
-            {
-                Send_Log_Message("Warning>MainFrame::OnTransferItem_Click -> Can't transfer item as same list");
-                return;
-            }
-
-            Send_Log_Message("1>MainFrame::OnTransferItem_Click -> Transfer Item Click!! : from " + m_Selected_Task.TD_DataCell.DC_listName + " to " + list.Text);
-            
+            Send_Log_Message("1>MainFrame::OnTransferItem_Click -> Transfer Item Click!! : from " + m_Selected_Task.TD_DataCell.DC_listName + " to " + list.Text);      
             m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, list.Text);
         }
 
@@ -2486,14 +2409,57 @@ namespace WellaTodo
             {
                 return;
             }
-
             Send_Log_Message("1>MainFrame::OnDeleteItem_Click -> Delete Task : " + m_Selected_Task.TD_DataCell.DC_title);
             m_Controller.Perform_Delete_Task(m_Selected_Task.TD_DataCell);
         }
 
         // -----------------------------------------------------------
-        // 할일 입력 처리 부분
+        // 할일 생성 및 입력 처리 부분
         // -----------------------------------------------------------
+        private void Add_Task(string text)
+        {
+            CDataCell dc = new CDataCell();
+            DateTime dt = DateTime.Now;
+
+            switch (enum_Selected_Menu)
+            {
+                case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
+                    dc.DC_listName = "작업";
+                    dc.DC_title = text;
+                    dc.DC_myToday = true;
+                    dt = dt.AddDays(1);
+                    dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in MyToday Menu : " + dc.DC_title);
+                    m_Controller.Perform_Add_Task(dc);
+                    break;
+                case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
+                    dc.DC_listName = "작업";
+                    dc.DC_title = text;
+                    dc.DC_important = true;
+                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Important Menu : " + dc.DC_title);
+                    m_Controller.Perform_Add_Task(dc);
+                    break;
+                case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
+                    dc.DC_listName = "작업";
+                    dc.DC_title = text;
+                    dc.DC_deadlineType = 1;
+                    dt = dt.AddDays(1);
+                    dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Planned Menu : " + dc.DC_title);
+                    m_Controller.Perform_Add_Task(dc);
+                    break;
+                case MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨 -> 할일 추가 불가함
+                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Complete Menu -> Can't Add Task!");
+                    break;
+                default:
+                    dc.DC_listName = m_Selected_Menu.PrimaryText;
+                    dc.DC_title = text;
+                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Task or List Menu : " + dc.DC_title);
+                    m_Controller.Perform_Add_Task(dc);
+                    break;
+            }
+        }
+
         private void textBox_Task_Enter(object sender, EventArgs e)
         {
             if (!isTextbox_Task_Clicked) textBox_Task.Text = "";
@@ -2635,13 +2601,32 @@ namespace WellaTodo
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
 
+        // 메모 편집
+        private void Edit_Task_Memo()
+        {
+            memoForm.StartPosition = FormStartPosition.CenterParent;
+
+            memoForm.TextBoxString = textBox_Memo.Text;
+            memoForm.Text = m_Selected_Task.TD_DataCell.DC_title;
+            memoForm.ShowDialog();
+
+            textBox_Memo.Text = memoForm.TextBoxString;
+            textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
+
+            //메모 내용에 변경이 있는지 확인하고 입력 사항에 오류가 있는지 체크할 것
+            m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;
+
+            Send_Log_Message("1>MainFrame::Edit_Task_Memo : " + m_Selected_Task.TD_DataCell.DC_title);
+            m_Controller.Perform_Modify_Task_Memo(m_Selected_Task.TD_DataCell);
+        }
+
         // 상세창 메모 커서 벗어남
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
             //메모 내용에 변경이 있는지 확인(?)
-            if (isTextbox_Momo_Changed) 
+            if (isTextbox_Memo_Changed) 
             { 
-                isTextbox_Momo_Changed = false; 
+                isTextbox_Memo_Changed = false; 
             }
             else 
             {
@@ -2657,7 +2642,7 @@ namespace WellaTodo
 
         private void textBox_Memo_TextChanged(object sender, EventArgs e)
         {
-            isTextbox_Momo_Changed = true;
+            isTextbox_Memo_Changed = true;
         }
 
         // 상세창 메모 컨텍스트 메뉴
@@ -2714,7 +2699,6 @@ namespace WellaTodo
         private void button1_Click(object sender, EventArgs e)
         {
             if (isDetailWindowOpen) Close_DetailWindow();
-
             Update_Task_Width();
         }
 
