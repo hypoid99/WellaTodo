@@ -2068,16 +2068,12 @@ namespace WellaTodo
             m_currentPage = 1;
             flowLayoutPanel2.SuspendLayout();
             flowLayoutPanel2.Controls.Clear();
-            int counter = 0;
             for (int i = 0; i < m_thumbsPerPage; i++)  // 한 페이지당 20개 표기, 첫페이지 표시
             {
                 if (i == m_Task.Count) break;
                 flowLayoutPanel2.Controls.Add(m_Task[i]);
                 m_Task[i].Width = flowLayoutPanel2.Width - TASK_WIDTH_GAP;
-                Console.WriteLine("counter : " + counter + " - " + m_Task[counter].TD_title);
-                counter++;
             }
-            Console.WriteLine("counter : " + counter);
             flowLayoutPanel2.ResumeLayout();
 
             // 화면이 길어 20개 길이가 부족시 한페이지 더 추가함 -> 40개 이상은 불가
