@@ -241,11 +241,11 @@ namespace WellaTodo
         {
 			myListNames.Add(target);
 
-			CDataCell list = new CDataCell();
-			list.DC_listName = target;
+			CDataCell dc = new CDataCell();
+			dc.DC_listName = target;
 
 			Notify_Log_Message("3>MainModel::Menulist_Add -> Created New Menulist : " + target);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(list), WParam.WM_MENULIST_ADD));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(dc), WParam.WM_MENULIST_ADD));
 		}
 
 		public void Menulist_Rename(string source, string target)
@@ -370,6 +370,11 @@ namespace WellaTodo
 			Notify_Log_Message("3>MainModel::Menulist_Down : " + target);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_DOWN));
 		}
+
+		public bool IsThereSameMenuName(string MenuName)
+        {
+			return myListNames.Contains(MenuName);
+        }
 
 		// --------------------------------------------------------
 		// Task 메서드

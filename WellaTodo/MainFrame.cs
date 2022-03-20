@@ -1775,10 +1775,8 @@ namespace WellaTodo
                     MenuList_Right_Click_ContextMenu();  // 컨텍스트 메뉴
                     break;
                 case MouseButtons.Middle:
-                    string source = sd.PrimaryText;
-                    string target = sd.PrimaryText_Renamed;
-                    Send_Log_Message("1-2>MainFrame::Menulist_Rename_Process -> Rename from " + source + " to " + target);
-                    m_Controller.Perform_Menulist_Rename(source, target);
+                    Send_Log_Message(">MainFrame::TwoLineList_Click -> Middle Button -> MenuList Rename!!");
+                    MenuList_Rename(sd.PrimaryText, sd.PrimaryText_Renamed);
                     break;
             }
         }
@@ -1831,6 +1829,12 @@ namespace WellaTodo
             //Console.WriteLine("flowLayoutPanel_Menulist_MouseWheel -> " + flowLayoutPanel_Menulist.VerticalScroll.Value);
             m_VerticalScroll_Value = flowLayoutPanel_Menulist.VerticalScroll.Value;
             Menulist_ScrollDown();
+        }
+
+        private void MenuList_Rename(string source, string target)
+        {
+            Send_Log_Message("1-2>MainFrame::Menulist_Rename -> Rename from " + source + " to " + target);
+            m_Controller.Perform_Menulist_Rename(source, target);
         }
 
         private void MenuList_Right_Click_ContextMenu()
@@ -2155,41 +2159,6 @@ namespace WellaTodo
             isTextbox_List_Clicked = false;
         }
 
-        private void textBox_AddList_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter) return;
-
-            e.Handled = false;
-            e.SuppressKeyPress = false;
-
-            if (textBox_AddList.Text.Trim().Length == 0) return;
-
-            Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add List!! " + textBox_AddList.Text);
-
-            string txt = textBox_AddList.Text;
-            // 동일 이름의 목록 확인할 것 -> 발견시 뒷자리 번호 부여
-            if (txt == "오늘 할 일" || txt == "중요" || txt == "계획된 일정" || txt == "완료됨" || txt == "작업")
-            {
-                Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Reserved Menu!!");
-                return;
-            }
-
-            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
-            {
-                if (item.PrimaryText == txt)
-                {
-                    Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Same menu name exist!!");
-                    return;
-                }
-            }
-
-            Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
-
-            m_Controller.Perform_Menulist_Add(txt);
-
-            textBox_AddList.Text = "";
-        }
-
         private void textBox_AddList_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -2199,23 +2168,36 @@ namespace WellaTodo
             }
         }
 
+        private void textBox_AddList_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+
+            Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add New List Menu : " + textBox_AddList.Text);
+            
+            if (!m_Controller.Perform_Menulist_Add(textBox_AddList.Text))
+            {
+                MessageBox.Show("목록 추가시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.","Warning");
+            }
+
+            textBox_AddList.Text = "";
+        }
+
         private void textBox_AddList_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextMenu textboxMenu = new ContextMenu();
-                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_AddList_Click));
-                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_AddList_Click));
-                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_AddList_Click));
+            if (e.Button != MouseButtons.Right) return;
 
-                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_AddList);
-                textboxMenu.MenuItems.Add(copyMenu);
-                textboxMenu.MenuItems.Add(cutMenu);
-                textboxMenu.MenuItems.Add(pasteMenu);
-                textBox_AddList.ContextMenu = textboxMenu;
+            ContextMenu textboxMenu = new ContextMenu();
+            MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_AddList_Click));
+            MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_AddList_Click));
+            MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_AddList_Click));
 
-                textBox_AddList.ContextMenu.Show(textBox_AddList, new Point(e.X, e.Y));
-            }
+            textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_AddList);
+            textboxMenu.MenuItems.Add(copyMenu);
+            textboxMenu.MenuItems.Add(cutMenu);
+            textboxMenu.MenuItems.Add(pasteMenu);
+            textBox_AddList.ContextMenu = textboxMenu;
+
+            textBox_AddList.ContextMenu.Show(textBox_AddList, new Point(e.X, e.Y));
         }
 
         private void OnPopupEvent_textBox_AddList(object sender, EventArgs e)

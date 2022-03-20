@@ -250,6 +250,9 @@ namespace WellaTodo
             Mouse_Clicked(sender, e);
         }
 
+        //---------------------------------------------------------
+        // Textbox Rename
+        //---------------------------------------------------------
         private void textBox_Rename_Enter(object sender, EventArgs e)
         {
             isTextboxClicked = true;
@@ -262,12 +265,14 @@ namespace WellaTodo
 
             if (isTextboxClicked)
             {
+                // 이름 길이가 zero
                 if (textBox_Rename.Text.Trim().Length == 0)
                 {
                     isTextboxClicked = false;
                     return;
                 }
 
+                // 동일 이름으로 변경시
                 if (textBox_Rename.Text == PrimaryText)
                 {
                     isTextboxClicked = false;
@@ -296,16 +301,13 @@ namespace WellaTodo
             {
                 e.Handled = false;
                 e.SuppressKeyPress = false;
-                if (textBox_Rename.Text.Trim().Length == 0) 
-                {
-                    textBox_Rename.Visible = false;
-                    label_PrimaryText.Visible = true;
-                    return;
-                }
 
-                // Change PrimaryText
                 textBox_Rename.Visible = false;
                 label_PrimaryText.Visible = true;
+
+                if (textBox_Rename.Text.Trim().Length == 0) return;
+
+                // Change PrimaryText
                 PrimaryText_Renamed = textBox_Rename.Text;
 
                 MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);

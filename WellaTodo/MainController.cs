@@ -104,14 +104,36 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// Perform Command (Menulist)
 		// -----------------------------------------------------------
-		public void Perform_Menulist_Add(string target)
+		public bool Perform_Menulist_Add(string MenuName)
         {
-			Send_Log_Message("2>MainController::Perform_Menulist_Add : " + target);
-			m_model.Menulist_Add(target);
+			if (MenuName.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Leghth of Menu Name is zero!!");
+				return false;
+			}
+
+			if (MenuName == "오늘 할 일" || MenuName == "중요" || MenuName == "계획된 일정" || MenuName == "완료됨" || MenuName == "작업")
+			{
+				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Can't Add MenuList for Reserved Menu!!");
+				return false;
+			}
+
+			if (m_model.IsThereSameMenuName(MenuName))
+            {
+				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Can't Add MenuList for Same menu name exist!!");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Menulist_Add : " + MenuName);
+			m_model.Menulist_Add(MenuName);
+			return true;
 		}
 
 		public void Perform_Menulist_Rename(string source, string target)
         {
+
+
+
 			Send_Log_Message("2>MainController::Perform_Menulist_Rename : from " + source + " to " + target);
 			m_model.Menulist_Rename(source, target);
         }
