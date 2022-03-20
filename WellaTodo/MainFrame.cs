@@ -2157,38 +2157,37 @@ namespace WellaTodo
 
         private void textBox_AddList_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter) return;
+
+            e.Handled = false;
+            e.SuppressKeyPress = false;
+
+            if (textBox_AddList.Text.Trim().Length == 0) return;
+
+            Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add List!! " + textBox_AddList.Text);
+
+            string txt = textBox_AddList.Text;
+            // 동일 이름의 목록 확인할 것 -> 발견시 뒷자리 번호 부여
+            if (txt == "오늘 할 일" || txt == "중요" || txt == "계획된 일정" || txt == "완료됨" || txt == "작업")
             {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
+                Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Reserved Menu!!");
+                return;
+            }
 
-                if (textBox_AddList.Text.Trim().Length == 0) return;
-
-                Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add List!! " + textBox_AddList.Text);
-
-                string txt = textBox_AddList.Text;
-                // 동일 이름의 목록 확인할 것 -> 발견시 뒷자리 번호 부여
-                if (txt == "오늘 할 일" || txt == "중요" || txt == "계획된 일정" || txt == "완료됨" || txt == "작업")
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                if (item.PrimaryText == txt)
                 {
-                    Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Reserved Menu!!");
+                    Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Same menu name exist!!");
                     return;
                 }
-
-                foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
-                {
-                    if (item.PrimaryText == txt)
-                    {
-                        Send_Log_Message("Warning>MainFrame::AddList_Check_ListName -> Can't Add MenuList for Same menu name exist!!");
-                        return;
-                    }
-                }
-
-                Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
-
-                m_Controller.Perform_Menulist_Add(txt);
-
-                textBox_AddList.Text = "";
             }
+
+            Send_Log_Message("1>MainFrame::Add_List -> Add New List Menu : " + txt);
+
+            m_Controller.Perform_Menulist_Add(txt);
+
+            textBox_AddList.Text = "";
         }
 
         private void textBox_AddList_KeyDown(object sender, KeyEventArgs e)
