@@ -189,10 +189,9 @@ namespace WellaTodo
 
 		public bool Perform_Add_Task_From_MyToday(string title)
         {
-			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
-			if (title.Length == 0)
+			if (!Check_Input_String(title))
 			{
-				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_MyToday -> Leghth of Title is zero!!");
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_MyToday -> Check Input String");
 				return false;
 			}
 
@@ -212,10 +211,9 @@ namespace WellaTodo
 
 		public bool Perform_Add_Task_From_Important(string title)
 		{
-			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
-			if (title.Length == 0)
+			if (!Check_Input_String(title))
 			{
-				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Important -> Leghth of Title is zero!!");
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Important -> Check Input String");
 				return false;
 			}
 
@@ -232,10 +230,9 @@ namespace WellaTodo
 
 		public bool Perform_Add_Task_From_Planned(string title)
 		{
-			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
-			if (title.Length == 0)
+			if (!Check_Input_String(title))
 			{
-				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Planned -> Leghth of Title is zero!!");
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Planned -> Check Input String");
 				return false;
 			}
 
@@ -255,16 +252,9 @@ namespace WellaTodo
 
 		public bool Perform_Add_Task_From_List(string listName, string title)
 		{
-			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
-			if (title.Length == 0)
+			if (!Check_Input_String(title))
 			{
-				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> Leghth of Title is zero!!");
-				return false;
-			}
-
-			if (title.IndexOf ("&") > -1)
-			{
-				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> 특수문자 포함");
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> Check Input String");
 				return false;
 			}
 
@@ -604,6 +594,30 @@ namespace WellaTodo
 			}
 			return deepCopy;
 		}
+
+		// ----------------------------------------------------
+		// 메서드
+		// ----------------------------------------------------
+		private bool Check_Input_String(string text)
+        {
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (text.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Check_Input_String -> Leghth of Text is zero!!");
+				return false;
+			}
+
+			if (text.IndexOf("&") > -1)
+			{
+				Send_Log_Message("Warning>MainController::Check_Input_String -> 특수문자 포함");
+				return false;
+			}
+
+			return true;
+		}
+
+
+
 
 		// ----------------------------------------------------
 		// Serializable 객체에 대한  Deep Clone 구현
