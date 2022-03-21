@@ -102,7 +102,7 @@ namespace WellaTodo
 		}
 
 		// -----------------------------------------------------------
-		// Perform Command (Menulist)
+		// Perform Command (Menulist) - Add/Delete/Rename/Up/Down
 		// -----------------------------------------------------------
 		public bool Perform_Menulist_Add(string MenuName)
         {
@@ -186,6 +186,97 @@ namespace WellaTodo
 			Send_Log_Message("2>MainController::Perform_Add_Task : " + dc.DC_title);
 			m_model.Add_Task(dc);
         }
+
+		public bool Perform_Add_Task_From_MyToday(string title)
+        {
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_MyToday -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			CDataCell dc = new CDataCell();
+			DateTime dt = DateTime.Now;
+
+			dc.DC_listName = "작업";
+			dc.DC_title = title;
+			dc.DC_myToday = true;
+			dt = dt.AddDays(1);
+			dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Add_Task_From_MyToday : " + dc.DC_title);
+			m_model.Add_Task(dc);
+			return true;
+		}
+
+		public bool Perform_Add_Task_From_Important(string title)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Important -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			CDataCell dc = new CDataCell();
+
+			dc.DC_listName = "작업";
+			dc.DC_title = title;
+			dc.DC_important = true;
+
+			Send_Log_Message("2>MainController::Perform_Add_Task_From_Important : " + dc.DC_title);
+			m_model.Add_Task(dc);
+			return true;
+		}
+
+		public bool Perform_Add_Task_From_Planned(string title)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Planned -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			CDataCell dc = new CDataCell();
+			DateTime dt = DateTime.Now;
+
+			dc.DC_listName = "작업";
+			dc.DC_title = title;
+			dc.DC_deadlineType = 1;
+			dt = dt.AddDays(1);
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
+			m_model.Add_Task(dc);
+			return true;
+		}
+
+		public bool Perform_Add_Task_From_List(string listName, string title)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			if (title.IndexOf ("&") > -1)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> 특수문자 포함");
+				return false;
+			}
+
+			CDataCell dc = new CDataCell();
+
+			dc.DC_listName = listName;
+			dc.DC_title = title;
+
+			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
+			m_model.Add_Task(dc);
+			return true;
+		}
 
 		public void Perform_Delete_Task(CDataCell dc)
         {

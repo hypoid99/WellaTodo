@@ -101,7 +101,7 @@ namespace WellaTodo
 
         TwoLineList m_Pre_Selected_Menu;
         TwoLineList m_Selected_Menu;
-        MenuList enum_Selected_Menu;
+        MenuList Enum_Selected_Menu;
 
         int m_currentPage = 1;
         int m_thumbsPerPage = 30; // 20ea -> 30ea
@@ -412,7 +412,7 @@ namespace WellaTodo
             }
 
             m_Selected_Menu = twolinelist_Menu5; // 최초로 "작업"이 선택됨
-            enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
+            Enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
             m_Pre_Selected_Menu = m_Selected_Menu;
             m_Selected_Menu.IsSelected = true;
 
@@ -654,7 +654,7 @@ namespace WellaTodo
         {
             string infoText = "";
 
-            switch (enum_Selected_Menu)
+            switch (Enum_Selected_Menu)
             {
                 case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 표시됨
                     infoText += "<" + dc.DC_listName + "> ";
@@ -951,27 +951,27 @@ namespace WellaTodo
                     switch (item.PrimaryText)
                     {
                         case "오늘 할 일":
-                            enum_Selected_Menu = MenuList.MYTODAY_MENU;
+                            Enum_Selected_Menu = MenuList.MYTODAY_MENU;
                             Menu_MyToday();
                             break;
                         case "중요":
-                            enum_Selected_Menu = MenuList.IMPORTANT_MENU;
+                            Enum_Selected_Menu = MenuList.IMPORTANT_MENU;
                             Menu_Important();
                             break;
                         case "계획된 일정":
-                            enum_Selected_Menu = MenuList.DEADLINE_MENU;
+                            Enum_Selected_Menu = MenuList.DEADLINE_MENU;
                             Menu_Planned();
                             break;
                         case "완료됨":
-                            enum_Selected_Menu = MenuList.COMPLETE_MENU;
+                            Enum_Selected_Menu = MenuList.COMPLETE_MENU;
                             Menu_Completed();
                             break;
                         case "작업":
-                            enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
+                            Enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
                             Menu_Task();
                             break;
                         default:
-                            enum_Selected_Menu = MenuList.LIST_MENU;
+                            Enum_Selected_Menu = MenuList.LIST_MENU;
                             Menu_List(item);
                             break;
                     }
@@ -1283,7 +1283,7 @@ namespace WellaTodo
             }
 
             m_Selected_Menu = list;
-            enum_Selected_Menu = MenuList.LIST_MENU;
+            Enum_Selected_Menu = MenuList.LIST_MENU;
             m_Selected_Menu.IsSelected = true;
             m_Pre_Selected_Menu = m_Selected_Menu;
 
@@ -1333,7 +1333,7 @@ namespace WellaTodo
                         || m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1)      // 전체 페이지가 출력된 경우
                         || m_Task.Count == m_currentPage * m_thumbsPerPage)             // 딱 맞게 20개 단위로 출력된 경우
                     {
-                        if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                        if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, flowLayoutPanel2.Controls.Count);
                             Send_Log_Message("4>MainFrame::Update_Complete_Process -> 완료 처리 / 일반항목 / 맨밑으로 (잔여 항목 없음)");
@@ -1347,7 +1347,7 @@ namespace WellaTodo
                     else
                     {
                         flowLayoutPanel2.Controls.Remove(item);  // 전체 페이지가 출력 안된 경우는 한개만 추가함
-                        if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                        if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                         {
                             flowLayoutPanel2.Controls.Add(m_Task[m_currentPage * m_thumbsPerPage]);
                             Send_Log_Message("4>MainFrame::Update_Complete_Process -> 완료 처리 / 일반항목 / 제거후 1개 땡김 (잔여 항목 있음)");
@@ -1361,7 +1361,7 @@ namespace WellaTodo
                     int pos = m_Task.IndexOf(item);
                     Todo_Item td = m_Task[pos]; //추출
                     m_Task.RemoveAt(pos); //삭제
-                    if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                    if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                     {
                         m_Task.Insert(m_Task.Count, td); //삽입
                     }
@@ -1372,7 +1372,7 @@ namespace WellaTodo
                         || m_currentPage >= ((m_Task.Count / m_thumbsPerPage) + 1)      // 전체 페이지가 출력된 경우
                         || m_Task.Count == m_currentPage * m_thumbsPerPage)             // 딱 맞게 20개 단위로 출력된 경우
                     {
-                        if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                        if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
                             Send_Log_Message("4>MainFrame::Update_Complete_Process -> 완료 해제 / 일반항목 / 맨위로 (잔여 항목 없음)");
@@ -1385,7 +1385,7 @@ namespace WellaTodo
                     }
                     else
                     {
-                        if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                        if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                         {
                             flowLayoutPanel2.Controls.SetChildIndex(item, 0);
                             Send_Log_Message("4>MainFrame::Update_Complete_Process -> 완료 해제 / 일반항목 / 맨위로 (잔여 항목 있음)");
@@ -1401,7 +1401,7 @@ namespace WellaTodo
                     int pos = m_Task.IndexOf(item);
                     Todo_Item td = m_Task[pos]; //추출
                     m_Task.RemoveAt(pos); //삭제
-                    if (enum_Selected_Menu == MenuList.TODO_ITEM_MENU || enum_Selected_Menu == MenuList.LIST_MENU)
+                    if (Enum_Selected_Menu == MenuList.TODO_ITEM_MENU || Enum_Selected_Menu == MenuList.LIST_MENU)
                     {
                         m_Task.Insert(0, td); //삽입
                     }
@@ -1432,7 +1432,7 @@ namespace WellaTodo
                 item.TD_important = dc.DC_important;
                 if ((item.TD_important == true) && (item.TD_complete == false))  // 중요 & 미완료시 맨위로 이동
                 {
-                    if (enum_Selected_Menu != MenuList.IMPORTANT_MENU)
+                    if (Enum_Selected_Menu != MenuList.IMPORTANT_MENU)
                     {
                         flowLayoutPanel2.Controls.SetChildIndex(item, 0);
                         flowLayoutPanel2.VerticalScroll.Value = 0;
@@ -1450,7 +1450,7 @@ namespace WellaTodo
                 }
                 else
                 {
-                    if (enum_Selected_Menu != MenuList.IMPORTANT_MENU)
+                    if (Enum_Selected_Menu != MenuList.IMPORTANT_MENU)
                     {
                         Send_Log_Message("4>MainFrame::Update_Important_Process -> 중요설정or해제 / 일반메뉴 / 그대로 ");
                     }
@@ -1556,7 +1556,7 @@ namespace WellaTodo
             {
                 roundLabel1.Text = "나의 하루에 추가";
                 roundLabel1.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
-                if (enum_Selected_Menu == MenuList.MYTODAY_MENU) // 나의하루 메뉴에서 실행시
+                if (Enum_Selected_Menu == MenuList.MYTODAY_MENU) // 나의하루 메뉴에서 실행시
                 {
                     Delete_Present_TodoItem(dc);  // 현재 화면에서 제거
                 }
@@ -1597,7 +1597,7 @@ namespace WellaTodo
                 roundLabel3.Text = "기한 설정";
                 roundLabel3.BackColor = COLOR_DETAIL_WINDOW_BACK_COLOR;
 
-                if (enum_Selected_Menu == MenuList.DEADLINE_MENU) // 기한 설정 메뉴에서 실행
+                if (Enum_Selected_Menu == MenuList.DEADLINE_MENU) // 기한 설정 메뉴에서 실행
                 {
                     Delete_Present_TodoItem(dc);  // 현재 화면에서 제거
                 }
@@ -1701,7 +1701,7 @@ namespace WellaTodo
         public void Update_Add_Plan(CDataCell dc)
         {
 
-            if (enum_Selected_Menu != MenuList.TODO_ITEM_MENU && enum_Selected_Menu != MenuList.DEADLINE_MENU)
+            if (Enum_Selected_Menu != MenuList.TODO_ITEM_MENU && Enum_Selected_Menu != MenuList.DEADLINE_MENU)
             {
                 Send_Log_Message("4>MainFrame::Update_Add_Plan -> Anothor Menu List");
                 Update_Menu_Metadata();
@@ -1715,7 +1715,7 @@ namespace WellaTodo
 
         public void Update_Add_Memo(CDataCell dc)
         {
-            if (enum_Selected_Menu != MenuList.TODO_ITEM_MENU)
+            if (Enum_Selected_Menu != MenuList.TODO_ITEM_MENU)
             {
                 Send_Log_Message("4>MainFrame::Update_Add_Memo -> Anothor Menu List");
                 Update_Menu_Metadata();
@@ -1785,7 +1785,7 @@ namespace WellaTodo
         {
             Send_Log_Message(">MainFrame::Display_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
 
-            switch (m_Selected_Menu.PrimaryText)  // 알고리즘 맞음 (메뉴 선택후 enum_Selected_Menu 상태 설정됨)
+            switch (m_Selected_Menu.PrimaryText)  // 알고리즘 맞음 (메뉴 선택후 Enum_Selected_Menu 상태 설정됨)
             {
                 case "오늘 할 일":
                     Menu_MyToday();
@@ -1863,7 +1863,7 @@ namespace WellaTodo
             menuListContextMenu.MenuItems.Add(renameList);
             menuListContextMenu.MenuItems.Add(deleteList);
 
-            if (enum_Selected_Menu == MenuList.LIST_MENU)
+            if (Enum_Selected_Menu == MenuList.LIST_MENU)
             {
                 moveListUp.Enabled = true;
                 moveListDown.Enabled = true;
@@ -1934,7 +1934,6 @@ namespace WellaTodo
         private void OnRenameMenuList_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1-1>MainFrame::OnRenameMenuList_Click -> Show TextBox for Rename Menu List");
-
             m_Selected_Menu.Rename_Process();
         }
 
@@ -1958,7 +1957,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_SUNNY;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.MYTODAY_MENU;
+            Enum_Selected_Menu = MenuList.MYTODAY_MENU;
 
             Send_Log_Message(">MainFrame::Menu_MyToday -> Query & Display MyToday Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_MyToday());
@@ -1973,7 +1972,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_GRADE;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.IMPORTANT_MENU;
+            Enum_Selected_Menu = MenuList.IMPORTANT_MENU;
 
             Send_Log_Message(">MainFrame::Menu_Important -> Query & Display Important Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Important());
@@ -1988,7 +1987,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_EVENTNOTE;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.DEADLINE_MENU;
+            Enum_Selected_Menu = MenuList.DEADLINE_MENU;
 
             Send_Log_Message(">MainFrame::Menu_Planned -> Query & Display Planned Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Planned());
@@ -2003,7 +2002,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_CHECKCIRCLE;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.COMPLETE_MENU;
+            Enum_Selected_Menu = MenuList.COMPLETE_MENU;
 
             Send_Log_Message(">MainFrame::Menu_Completed -> Query & Display Complete Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Complete());
@@ -2018,7 +2017,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_HOME;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
+            Enum_Selected_Menu = MenuList.TODO_ITEM_MENU;
 
             Send_Log_Message(">MainFrame::Menu_Task -> Query & Display Task Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Task("작업"));
@@ -2033,7 +2032,7 @@ namespace WellaTodo
             label_ListName.Image = ICON_LIST;
             label_ListName.Text = "   " + m_Selected_Menu.PrimaryText;
 
-            enum_Selected_Menu = MenuList.LIST_MENU;
+            Enum_Selected_Menu = MenuList.LIST_MENU;
 
             Send_Log_Message(">MainFrame::Menu_List -> Query & Display List Menu : " + m_Selected_Menu.PrimaryText);
             Add_Task_To_Panel_Paging(m_Controller.Query_Task(m_Selected_Menu.PrimaryText));
@@ -2395,45 +2394,33 @@ namespace WellaTodo
         // -----------------------------------------------------------
         private void Add_Task(string text)
         {
-            CDataCell dc = new CDataCell();
-            DateTime dt = DateTime.Now;
-
-            switch (enum_Selected_Menu)
+            bool Result = true;
+            switch (Enum_Selected_Menu)
             {
                 case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_myToday = true;
-                    dt = dt.AddDays(1);
-                    dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in MyToday Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
+                    Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in MyToday Menu : " + text);
+                    Result = m_Controller.Perform_Add_Task_From_MyToday(text);
                     break;
                 case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_important = true;
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Important Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
+                    Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Important Menu : " + text);
+                    Result = m_Controller.Perform_Add_Task_From_Important(text);
                     break;
                 case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
-                    dc.DC_listName = "작업";
-                    dc.DC_title = text;
-                    dc.DC_deadlineType = 1;
-                    dt = dt.AddDays(1);
-                    dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Planned Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
+                    Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Planned Menu : " + text);
+                    Result = m_Controller.Perform_Add_Task_From_Planned(text);
                     break;
                 case MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨 -> 할일 추가 불가함
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Complete Menu -> Can't Add Task!");
+                    Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Complete Menu -> Can't Add Task!");
                     break;
                 default:
-                    dc.DC_listName = m_Selected_Menu.PrimaryText;
-                    dc.DC_title = text;
-                    Send_Log_Message("1>MainFrame::Add_Task -> Add Task in Task or List Menu : " + dc.DC_title);
-                    m_Controller.Perform_Add_Task(dc);
+                    Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Task or List Menu : " + text);
+                    Result = m_Controller.Perform_Add_Task_From_List(m_Selected_Menu.PrimaryText, text);
                     break;
+            }
+
+            if (!Result)
+            {
+                MessageBox.Show("할 일 추가시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
             }
         }
 
@@ -2460,15 +2447,13 @@ namespace WellaTodo
 
         private void textBox_Task_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
 
-                if (textBox_Task.Text.Trim().Length == 0) return;
-                Add_Task(textBox_Task.Text);  // 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
-                textBox_Task.Text = "";
-            }
+            Send_Log_Message("1-1>MainFrame::textBox_Task_KeyUp -> Add New Task : " + textBox_Task.Text);
+            Add_Task(textBox_Task.Text);
+            textBox_Task.Text = "";
         }
 
         private void textBox_Task_MouseDown(object sender, MouseEventArgs e)
