@@ -930,6 +930,20 @@ namespace WellaTodo
 			return dataset.First();
 		}
 
+		public int GetDataPosition(CDataCell dc)
+		{
+			CDataCell data = Find(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Error>MainModel::GetDataPosition -> Not Found Item!!");
+				return -1;
+			}
+
+			int pos = myTaskItems.IndexOf(data);
+			return pos;
+		}
+
 		// ----------------------------------------------------
 		// Serializable 객체에 대한  Deep Clone 구현
 		// ----------------------------------------------------

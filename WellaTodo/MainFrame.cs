@@ -1834,7 +1834,10 @@ namespace WellaTodo
         private void MenuList_Rename(string source, string target)
         {
             Send_Log_Message("1-2>MainFrame::Menulist_Rename -> Rename from " + source + " to " + target);
-            m_Controller.Perform_Menulist_Rename(source, target);
+            if (!m_Controller.Perform_Menulist_Rename(source, target))
+            {
+                MessageBox.Show("목록 이름 변경시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.", "Warning");
+            }
         }
 
         private void MenuList_Right_Click_ContextMenu()
@@ -1919,14 +1922,12 @@ namespace WellaTodo
         private void OnMenuListUp_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListUp_Click -> Menulist UP : " + m_Selected_Menu.PrimaryText);
-
             m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText);
         }
 
         private void OnMenuListDown_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListDown_Click -> Menulist DOWN : " + m_Selected_Menu.PrimaryText);
-
             m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText);
         }
 
@@ -1942,7 +1943,6 @@ namespace WellaTodo
             if (MessageBox.Show("목록을 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
             Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + m_Selected_Menu.PrimaryText);
-            
             m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
         }
 

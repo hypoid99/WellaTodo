@@ -88,7 +88,8 @@ namespace WellaTodo
         }
 
         bool isTextboxClicked = false;
-        
+        public bool IsTextboxClicked { get => isTextboxClicked; set => isTextboxClicked = value; }
+
         public TwoLineList()
         {
             InitializeComponent();
@@ -253,42 +254,30 @@ namespace WellaTodo
         //---------------------------------------------------------
         // Textbox Rename
         //---------------------------------------------------------
-        private void textBox_Rename_Enter(object sender, EventArgs e)
-        {
-            isTextboxClicked = true;
-        }
-
-        private void textBox_Rename_Leave(object sender, EventArgs e)
+        private void List_Rename()
         {
             textBox_Rename.Visible = false;
             label_PrimaryText.Visible = true;
 
-            if (isTextboxClicked)
-            {
-                // 이름 길이가 zero
-                if (textBox_Rename.Text.Trim().Length == 0)
-                {
-                    isTextboxClicked = false;
-                    return;
-                }
+            // Change PrimaryText
+            PrimaryText_Renamed = textBox_Rename.Text;
 
-                // 동일 이름으로 변경시
-                if (textBox_Rename.Text == PrimaryText)
-                {
-                    isTextboxClicked = false;
-                    return;
-                }
-
-                // Change PrimaryText
-                PrimaryText_Renamed = textBox_Rename.Text;
-
-                MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
-                if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, me);
-            }
-            isTextboxClicked = false;
+            MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
+            if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, me);
         }
 
-        private void textBox_Rename_KeyUp(object sender, KeyEventArgs e)
+        private void textBox_Rename_Enter(object sender, EventArgs e)
+        {
+            IsTextboxClicked = true;
+        }
+
+        private void textBox_Rename_Leave(object sender, EventArgs e)
+        {
+            List_Rename();
+            IsTextboxClicked = false;
+        }
+
+        private void textBox_Rename_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
@@ -299,29 +288,19 @@ namespace WellaTodo
 
             if (e.KeyCode == Keys.Enter)
             {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
-
-                textBox_Rename.Visible = false;
-                label_PrimaryText.Visible = true;
-
-                if (textBox_Rename.Text.Trim().Length == 0) return;
-
-                // Change PrimaryText
-                PrimaryText_Renamed = textBox_Rename.Text;
-
-                MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
-                if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, me);
-            }
-        }
-
-        private void textBox_Rename_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void textBox_Rename_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
+
+            List_Rename();
+            IsTextboxClicked = false;
         }
 
         private void textBox_Rename_MouseDown(object sender, MouseEventArgs e)
