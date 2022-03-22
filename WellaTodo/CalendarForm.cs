@@ -726,17 +726,14 @@ namespace WellaTodo
                 dc.DC_deadlineType = 4;
 
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Changed");
-                m_Controller.Perform_Modify_Planned(dc);
+                m_Controller.Perform_Planned_Select(dc, dc.DC_deadlineTime);
                 taskEditForm.IsPlannedChanged = false;
             }
 
             if (taskEditForm.IsPlannedDeleted) // 기한 설정 해제
             {
-                dc.DC_deadlineType = 0;
-                dc.DC_deadlineTime = default;
-
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Planned Deleted");
-                m_Controller.Perform_Modify_Planned(dc);
+                m_Controller.Perform_Planned_Delete(dc);
                 taskEditForm.IsPlannedDeleted = false;
             }
         }
@@ -793,15 +790,10 @@ namespace WellaTodo
                 }
                 dp.BackColor = PSEUDO_BACK_COLOR;
 
-                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Create New Task at DragDrop Selected Day");
-
                 DateTime dt = planned_day.Present_Day;
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
-                item.TD_DataCell.DC_deadlineType = 4;
-                item.TD_DataCell.DC_deadlineTime = dt;
-
-                m_Controller.Perform_Modify_Planned(item.TD_DataCell);
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Create New Task at DragDrop Selected Day");
+                m_Controller.Perform_Planned_Select(item.TD_DataCell, dt);
             }
             else if (e.Data.GetDataPresent(typeof(Calendar_Item)))
             {
@@ -821,15 +813,10 @@ namespace WellaTodo
                 }
                 dp.BackColor = PSEUDO_BACK_COLOR;
 
-                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Move Task at DragDrop Selected Day");
-
                 DateTime dt = planned_day.Present_Day;
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
-                item.CD_DataCell.DC_deadlineType = 4;
-                item.CD_DataCell.DC_deadlineTime = dt;
-
-                m_Controller.Perform_Modify_Planned(item.CD_DataCell);
+                Send_Log_Message("1>CalendarForm::DayPanel_DragDrop -> Move Task at DragDrop Selected Day");
+                m_Controller.Perform_Planned_Select(item.CD_DataCell, dt);
             }
             else
             {

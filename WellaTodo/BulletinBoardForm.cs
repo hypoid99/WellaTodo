@@ -681,9 +681,6 @@ namespace WellaTodo
         {
             DateTimePickerForm calendar = new DateTimePickerForm();
             calendar.ShowDialog();
-
-            DateTime dt = calendar.SelectedDateTime;
-
             if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
                 Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note -> Canceled!!!");
@@ -691,29 +688,18 @@ namespace WellaTodo
             }
             calendar.IsSelected = false;
 
-            if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
-            {
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-            }
-
-            note.DataCell.DC_deadlineType = 4;
-            note.DataCell.DC_deadlineTime = dt;
-
             note.IsScheduleVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note");
-            m_Controller.Perform_Modify_Planned(note.DataCell);
+            m_Controller.Perform_Planned_Select(note.DataCell, calendar.SelectedDateTime);
         }
 
         private void Reset_Schedule_Note(Post_it note)
         {
-            note.DataCell.DC_deadlineType = 0;
-            note.DataCell.DC_deadlineTime = default;
-
             note.IsScheduleVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Schedule_Note");
-            m_Controller.Perform_Modify_Planned(note.DataCell);
+            m_Controller.Perform_Planned_Delete(note.DataCell);
         }
 
         private void Delete_Note(Post_it note)

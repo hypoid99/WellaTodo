@@ -2851,73 +2851,41 @@ namespace WellaTodo
 
         private void OnTodayDeadline_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-
-            m_Selected_Task.TD_DataCell.DC_deadlineType = 1;
-            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
             Send_Log_Message("1>MainFrame::OnTodayDeadline_Click -> Modify Today Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Planned_Today(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTomorrowDeadline_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(1);
-
-            m_Selected_Task.TD_DataCell.DC_deadlineType = 2;
-            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
             Send_Log_Message("1>MainFrame::OnTomorrowDeadline_Click -> Modify Tomorrow Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Planned_Tomorrow(m_Selected_Task.TD_DataCell);
         }
 
         private void OnNextWeekDeadline_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(8 - (int)dt.DayOfWeek);
-
-            m_Selected_Task.TD_DataCell.DC_deadlineType = 3;
-            m_Selected_Task.TD_DataCell.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-
             Send_Log_Message("1>MainFrame::OnNextWeekDeadline_Click -> Modify NextWeek Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Planned_NextWeek(m_Selected_Task.TD_DataCell);
         }
 
         private void OnSelectDeadline_Click(object sender, EventArgs e)
         {
             DateTimePickerForm calendar = new DateTimePickerForm();
             calendar.ShowDialog();
-
-            DateTime dt = calendar.SelectedDateTime;
-
             if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
                 Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Planned Canceled");
                 return;
             }
-
-            if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
-            {
-                dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-            }
-
             calendar.IsSelected = false;
 
-            m_Selected_Task.TD_DataCell.DC_deadlineType = 4;
-            m_Selected_Task.TD_DataCell.DC_deadlineTime = dt;
-
             Send_Log_Message("1>MainFrame::OnSelectDeadline_Click -> Modify Selected Day Planned!!");
-            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Planned_Select(m_Selected_Task.TD_DataCell, calendar.SelectedDateTime);
         }
 
         private void OnDeleteDeadline_Click(object sender, EventArgs e)
         {
-            m_Selected_Task.TD_DataCell.DC_deadlineType = 0;
-            m_Selected_Task.TD_DataCell.DC_deadlineTime = default;
-
             Send_Log_Message("1>MainFrame::OnDeleteDeadline_Click -> Delete Planned");
-            m_Controller.Perform_Modify_Planned(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Planned_Delete(m_Selected_Task.TD_DataCell);
 
             if (m_Selected_Task.TD_DataCell.DC_repeatType > 0) // 반복이 되어 있을때
             {

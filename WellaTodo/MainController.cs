@@ -362,9 +362,58 @@ namespace WellaTodo
 		// --------------------------------------------
 		// 계획된 일정
 		// --------------------------------------------
-		public void Perform_Modify_Planned(CDataCell dc)
+		public void Perform_Planned_Today(CDataCell dc)
 		{
-			Send_Log_Message("2>MainController::Perform_Modify_Planned : type " + dc.DC_title);
+			DateTime dt = DateTime.Now;
+			dc.DC_deadlineType = 1;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_Today : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Tomorrow(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(1);
+			dc.DC_deadlineType = 2;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_Tomorrow : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_NextWeek(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
+			dc.DC_deadlineType = 3;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_NextWeek : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Select(CDataCell dc, DateTime dt)
+		{
+			if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+			{
+				dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+			}
+
+			dc.DC_deadlineType = 4;
+			dc.DC_deadlineTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Planned_Select : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Delete(CDataCell dc)
+		{
+			dc.DC_deadlineType = 0;
+			dc.DC_deadlineTime = default;
+
+			Send_Log_Message("2>MainController::Perform_Planned_Delete : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
 		}
 
