@@ -663,24 +663,18 @@ namespace WellaTodo
                 dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
             }
 
-            note.DataCell.DC_remindType = 4;
-            note.DataCell.DC_remindTime = dt;
-
             note.IsAlarmVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Alarm_Note");
-            m_Controller.Perform_Modify_Remind(note.DataCell);
+            m_Controller.Perform_Remind_Select(note.DataCell, dt);
         }
 
         private void Reset_Alarm_Note(Post_it note)
         {
-            note.DataCell.DC_remindType = 0;
-            note.DataCell.DC_remindTime = default;
-
             note.IsAlarmVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Alarm_Note");
-            m_Controller.Perform_Modify_Remind(note.DataCell);
+            m_Controller.Perform_Remind_Delete(note.DataCell);
         }
 
         private void Set_Schedule_Note(Post_it note)

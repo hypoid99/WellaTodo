@@ -203,7 +203,7 @@ namespace WellaTodo
 			dc.DC_title = title;
 			dc.DC_myToday = true;
 			dt = dt.AddDays(1);
-			dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+			dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_MyToday : " + dc.DC_title);
 			m_model.Add_Task(dc);
@@ -246,7 +246,7 @@ namespace WellaTodo
 			dc.DC_title = title;
 			dc.DC_deadlineType = 1;
 			dt = dt.AddDays(1);
-			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
 			m_model.Add_Task(dc);
@@ -284,27 +284,93 @@ namespace WellaTodo
 			m_model.Delete_Task(dc);
 		}
 
-		public void Perform_Modify_MyToday(CDataCell dc, bool myToday, DateTime dt)
-		{
-			dc.DC_myToday = myToday;
-			dc.DC_myTodayTime = dt;
+		// --------------------------------------------
+		// 오늘 할 일
+		// --------------------------------------------
+		public void Perform_Modify_MyToday(CDataCell dc)
+        {
+			DateTime dt = DateTime.Now;
+			if (dc.DC_myToday)
+			{
+				dc.DC_myToday = false;  // 해제
+				dc.DC_myTodayTime = default;
+			}
+			else
+			{
+				dc.DC_myToday = true; // 설정
+				dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+			}
 
-			Send_Log_Message("2>MainController::Perform_Modify_MyToday : type [" + myToday + "]" + dc.DC_title);
+			Send_Log_Message("2>MainController::Perform_MyToday_Process : " + dc.DC_title);
 			m_model.Modifiy_MyToday(dc);
 		}
 
-		public void Perform_Modify_Remind(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Remind : " + dc.DC_title);
+		// --------------------------------------------
+		// 미리 알림
+		// --------------------------------------------
+		public void Perform_Remind_Today(CDataCell dc)
+        {
+			DateTime dt = DateTime.Now;
+            dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
+            dc.DC_remindType = 1;
+            dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_Today : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
 		}
 
+		public void Perform_Remind_Tomorrow(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(1);
+			dc.DC_remindType = 2;
+			dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_Tomorrow : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_NextWeek(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
+			dc.DC_remindType = 3;
+			dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_NextWeek : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_Select(CDataCell dc, DateTime dt)
+		{
+			dc.DC_remindType = 4;
+			dc.DC_remindTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_Delete(CDataCell dc)
+		{
+			dc.DC_remindType = 0;
+			dc.DC_remindTime = default;
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		// --------------------------------------------
+		// 계획된 일정
+		// --------------------------------------------
 		public void Perform_Modify_Planned(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Planned : type " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
 		}
 
+		// --------------------------------------------
+		// 반복
+		// --------------------------------------------
 		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
 		{
 			dc.DC_repeatType = type;
@@ -314,6 +380,9 @@ namespace WellaTodo
 			m_model.Modifiy_Repeat(dc);
 		}
 
+		// --------------------------------------------
+		// 완료/중요/제목/메모/이동
+		// --------------------------------------------
 		public void Perform_Complete_Process(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
@@ -378,25 +447,6 @@ namespace WellaTodo
 			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
 			m_model.Transfer_Task(dc, target);
         }
-
-		public void Perform_MyToday_Process(CDataCell dc)
-        {
-			DateTime dt = DateTime.Now;
-
-			if (dc.DC_myToday)
-			{
-				dc.DC_myToday = false;  // 해제
-				dc.DC_myTodayTime = default;
-			}
-			else
-			{
-				dc.DC_myToday = true; // 설정
-				dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
-			}
-
-			Send_Log_Message("2>MainController::Perform_MyToday_Process : " + dc.DC_title);
-			m_model.Modifiy_MyToday(dc);
-		}
 
 		// ----------------------------------------------------------
 		// Perform Command - NotePad 문서편집

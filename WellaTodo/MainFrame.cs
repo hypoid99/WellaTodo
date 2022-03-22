@@ -2339,7 +2339,7 @@ namespace WellaTodo
         private void OnMyToday_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMyToday_Click -> MyToday Process!!");
-            m_Controller.Perform_MyToday_Process(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Modify_MyToday(m_Selected_Task.TD_DataCell);
         }
 
         private void OnCompleteMenuItem_Click(object sender, EventArgs e)
@@ -2727,7 +2727,7 @@ namespace WellaTodo
         {
             Send_Log_Message("1>MainFrame::roundLabel1_Click -> MyToday Process!!");
 
-            m_Controller.Perform_MyToday_Process(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Modify_MyToday(m_Selected_Task.TD_DataCell);
         }
 
         private void roundLabel1_MouseEnter(object sender, EventArgs e)
@@ -2777,46 +2777,26 @@ namespace WellaTodo
 
         private void OnTodayRemind_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-            dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
-
-            m_Selected_Task.TD_DataCell.DC_remindType = 1;
-            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
-
-            Send_Log_Message("1>MainFrame::OnTodayRemind_Click -> Modify Today Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnTodayRemind_Click -> Remind Today");
+            m_Controller.Perform_Remind_Today(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTomorrowRemind_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(1);
-
-            m_Selected_Task.TD_DataCell.DC_remindType = 2;
-            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
-
             Send_Log_Message("1>MainFrame::OnTomorrowRemind_Click -> Modify Tomorrow Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Remind_Tomorrow(m_Selected_Task.TD_DataCell);
         }
 
         private void OnNextWeekRemind_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(8-(int)dt.DayOfWeek);
-
-            m_Selected_Task.TD_DataCell.DC_remindType = 3;
-            m_Selected_Task.TD_DataCell.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
-
             Send_Log_Message("1>MainFrame::OnNextWeekRemind_Click -> Modify NextWeek Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Remind_NextWeek(m_Selected_Task.TD_DataCell);
         }
 
         private void OnSelectRemind_Click(object sender, EventArgs e)
         {
             DateTimePickerForm calendar = new DateTimePickerForm();
-
             calendar.ShowDialog();
-
             if (!calendar.IsSelected || calendar.SelectedDateTime == default)
             {
                 Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Remind Canceled");
@@ -2824,20 +2804,14 @@ namespace WellaTodo
             }
             calendar.IsSelected = false;
 
-            m_Selected_Task.TD_DataCell.DC_remindType = 4;
-            m_Selected_Task.TD_DataCell.DC_remindTime = calendar.SelectedDateTime;
-
             Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Modify Selected Day Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
+            m_Controller.Perform_Remind_Select(m_Selected_Task.TD_DataCell, calendar.SelectedDateTime);
         }
 
         private void OnDeleteRemind_Click(object sender, EventArgs e)
         {
-            m_Selected_Task.TD_DataCell.DC_remindType = 0;
-            m_Selected_Task.TD_DataCell.DC_remindTime = default;
-
-            Send_Log_Message("1>MainFrame::OnSelectRemind_Click -> Delete Remind!!");
-            m_Controller.Perform_Modify_Remind(m_Selected_Task.TD_DataCell);
+            Send_Log_Message("1>MainFrame::OnDeleteRemind_Click -> Delete Remind!!");
+            m_Controller.Perform_Remind_Delete(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------
