@@ -181,12 +181,6 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// Perform Command (Task)
 		// -----------------------------------------------------------
-		public void Perform_Add_Task(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Add_Task : " + dc.DC_title);
-			m_model.Add_Task(dc);
-        }
-
 		public bool Perform_Add_Task_From_MyToday(string title)
         {
 			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
@@ -563,11 +557,21 @@ namespace WellaTodo
 			m_model.Important_Process(dc);
 		}
 
-		public void Perform_Modify_Task_Title(CDataCell dc)
-		{
+		public bool Perform_Modify_Task_Title(CDataCell dc, string title)
+        {
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			dc.DC_title = title;
+
 			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
-		}
+			return true;
+        }
 
 		public void Perform_Modify_Task_Memo(CDataCell dc)
 		{

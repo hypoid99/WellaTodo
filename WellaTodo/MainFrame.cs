@@ -2489,6 +2489,21 @@ namespace WellaTodo
         // --------------------------------------------------------------------------
         // 상세창 처리 부분 (제목 / 완료 / 중요 / 메모 / 위아래 / 닫기 / 삭제)
         // --------------------------------------------------------------------------
+        private void textBox_Title_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_Title_Leave(object sender, EventArgs e)
+        {
+            Send_Log_Message("1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            if (!m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text))
+            {
+                textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
+                MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
+            }
+        }
+
         private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -2500,36 +2515,16 @@ namespace WellaTodo
 
         private void textBox_Title_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = false;
-                e.SuppressKeyPress = false;
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
 
-                if (textBox_Title.Text.Trim().Length == 0)
-                {
-                    textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
-                    return;
-                }
-
-                m_Selected_Task.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-
-                Send_Log_Message("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
-                m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell);
-            }
-        }
-
-        private void textBox_Title_Leave(object sender, EventArgs e)
-        {
-            if (textBox_Title.Text.Trim().Length == 0)
+            Send_Log_Message("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            if (!m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text))
             {
                 textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
-                return;
+                MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
             }
-
-            m_Selected_Task.TD_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-
-            Send_Log_Message("1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell);
         }
 
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
@@ -3128,10 +3123,11 @@ namespace WellaTodo
             TwoLineList sd = (TwoLineList)sender;
 
             Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
-                             + m_Selected_Task.TD_DataCell.DC_listName + " to " + sd.PrimaryText);
+                             + m_Selected_Task.TD_DataCell.DC_listName 
+                             + " to " + sd.PrimaryText);
             if (!m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText))
             {
-                MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
             }
         }
 

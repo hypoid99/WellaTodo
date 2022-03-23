@@ -727,7 +727,11 @@ namespace WellaTodo
             note.DataCell.DC_title = note.MemoTitle;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Title -> Title is Changed : " + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Title(note.DataCell);
+            if (!m_Controller.Perform_Modify_Task_Title(note.DataCell, note.MemoTitle))
+            {
+                note.MemoTitle = note.DataCell.DC_title;
+                MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
+            }
         }
 
         private void Change_Color(Post_it note)
