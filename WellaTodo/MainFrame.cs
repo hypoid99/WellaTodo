@@ -2248,28 +2248,28 @@ namespace WellaTodo
             switch (me.Button)
             {
                 case MouseButtons.Left:
-                    if (sd.IsCompleteClicked) //완료됨 클릭시
+                    if (m_Selected_Task.IsCompleteClicked) //완료됨 클릭시
                     {
-                        sd.TD_DataCell.DC_complete = sd.TD_complete;
+                        m_Selected_Task.TD_DataCell.DC_complete = m_Selected_Task.TD_complete;
 
-                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Complete :" + sd.TD_complete);
-                        m_Controller.Perform_Complete_Process(sd.TD_DataCell);
+                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Complete :" + m_Selected_Task.TD_complete);
+                        m_Controller.Perform_Complete_Process(m_Selected_Task.TD_DataCell);
 
-                        sd.IsCompleteClicked = false;
+                        m_Selected_Task.IsCompleteClicked = false;
                     }
-                    if (sd.IsImportantClicked)  // 중요 항목 클릭시
+                    if (m_Selected_Task.IsImportantClicked)  // 중요 항목 클릭시
                     {
-                        sd.TD_DataCell.DC_important = sd.TD_important;
+                        m_Selected_Task.TD_DataCell.DC_important = m_Selected_Task.TD_important;
 
-                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Important :" + sd.TD_important);
-                        m_Controller.Perform_Important_Process(sd.TD_DataCell);
+                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Important :" + m_Selected_Task.TD_important);
+                        m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
 
-                        sd.IsImportantClicked = false;
+                        m_Selected_Task.IsImportantClicked = false;
                     }
-                    if (sd.TD_DataCell.DC_notepad)
+                    if (m_Selected_Task.TD_DataCell.DC_notepad)
                     {
-                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + sd.TD_title);
-                        m_Controller.Perform_Transfer_RTF_Data(sd.TD_DataCell);
+                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + m_Selected_Task.TD_title);
+                        m_Controller.Perform_Transfer_RTF_Data(m_Selected_Task.TD_DataCell);
                     }
 
                     break;
