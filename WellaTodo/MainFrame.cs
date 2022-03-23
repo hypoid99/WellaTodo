@@ -2933,113 +2933,38 @@ namespace WellaTodo
 
         private void OnEveryDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryDay(m_Selected_Task.TD_DataCell);
-        }
-
-        private void Repeat_EveryDay(CDataCell data)
-        {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(1);
-            m_Controller.Perform_Modify_Repeat(data, 1, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
-            {
-                OnTodayDeadline_Click(this, new EventArgs());
-            }
+            Send_Log_Message("1>MainFrame::OnEveryDayRepeat_Click -> Modify EveryDay Repeat");
+            m_Controller.Perform_Repeat_EveryDay(m_Selected_Task.TD_DataCell);
         }
 
         private void OnWorkingDayRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_WorkingDay(m_Selected_Task.TD_DataCell);
-        }
-
-        private void Repeat_WorkingDay(CDataCell data)
-        {
-            DateTime dt = DateTime.Now;
-            DayOfWeek dw = dt.DayOfWeek;
-            switch (dw)
-            {
-                case DayOfWeek.Monday:
-                    dt = dt.AddDays(1);
-                    break;
-                case DayOfWeek.Tuesday:
-                    dt = dt.AddDays(1);
-                    break;
-                case DayOfWeek.Wednesday:
-                    dt = dt.AddDays(1);
-                    break;
-                case DayOfWeek.Thursday:
-                    dt = dt.AddDays(1);
-                    break;
-                case DayOfWeek.Friday:
-                    dt = dt.AddDays(3);
-                    break;
-                case DayOfWeek.Saturday:
-                    dt = dt.AddDays(2);
-                    break;
-                case DayOfWeek.Sunday:
-                    dt = dt.AddDays(1);
-                    break;
-            }
-            m_Controller.Perform_Modify_Repeat(data, 2, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
-            {
-                OnTodayDeadline_Click(this, new EventArgs());
-            }
+            Send_Log_Message("1>MainFrame::OnEveryDayRepeat_Click -> Modify WorkingDay Repeat");
+            m_Controller.Perform_Repeat_WorkingDay(m_Selected_Task.TD_DataCell);
         }
 
         private void OnEveryWeekRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryWeek(m_Selected_Task.TD_DataCell);
-        }
-
-        private void Repeat_EveryWeek(CDataCell data)
-        {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddDays(7);
-            m_Controller.Perform_Modify_Repeat(data, 3, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
-            {
-                OnTodayDeadline_Click(this, new EventArgs());
-            }
+            Send_Log_Message("1>MainFrame::OnEveryWeekRepeat_Click -> Modify Every Week Repeat");
+            m_Controller.Perform_Repeat_EveryWeek(m_Selected_Task.TD_DataCell);
         }
 
         private void OnEveryMonthRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryMonth(m_Selected_Task.TD_DataCell);
-        }
-
-        private void Repeat_EveryMonth(CDataCell data)
-        {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddMonths(1); // 매달 말일 계산 필요 - 28/29/30/31일 경우
-            m_Controller.Perform_Modify_Repeat(data, 4, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
-            {
-                OnTodayDeadline_Click(this, new EventArgs());
-            }
+            Send_Log_Message("1>MainFrame::OnEveryMonthRepeat_Click -> Modify Every Month Repeat");
+            m_Controller.Perform_Repeat_EveryMonth(m_Selected_Task.TD_DataCell);
         }
 
         private void OnEveryYearRepeat_Click(object sender, EventArgs e)
         {
-            Repeat_EveryYear(m_Selected_Task.TD_DataCell);
-        }
-
-        private void Repeat_EveryYear(CDataCell data)
-        {
-            DateTime dt = DateTime.Now;
-            dt = dt.AddYears(1);  // 윤년 계산 필요 2월29일
-            m_Controller.Perform_Modify_Repeat(data, 5, new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00));
-
-            if (data.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
-            {
-                OnTodayDeadline_Click(this, new EventArgs());
-            }
+            Send_Log_Message("1>MainFrame::OnEveryYearRepeat_Click -> Modify Every Year Repeat");
+            m_Controller.Perform_Repeat_EveryMonth(m_Selected_Task.TD_DataCell);
         }
 
         private void OnDeleteRepeat_Click(object sender, EventArgs e)
         {
-            m_Controller.Perform_Modify_Repeat(m_Selected_Task.TD_DataCell, 0, default);
+            Send_Log_Message("1>MainFrame::OnDeleteRepeat_Click -> Delete Repeat");
+            m_Controller.Perform_Repeat_Delete(m_Selected_Task.TD_DataCell);
         }
 
         // -------------------------------------------------------
@@ -3171,7 +3096,10 @@ namespace WellaTodo
             Todo_Item target = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
 
             Send_Log_Message("1>MainFrame::TodoItem_DragDrop -> Source : " + source.TD_DataCell.DC_title + " Target : " + target.TD_DataCell.DC_title);
-            m_Controller.Perform_Task_Move_To(source.TD_DataCell, target.TD_DataCell);
+            if (!m_Controller.Perform_Task_Move_To(source.TD_DataCell, target.TD_DataCell))
+            {
+                //MessageBox.Show("항목 이동시 완료된 항목이나 동일 항목으로 이동할 수 없읍니다", "Warning");
+            }
         }
 
         //--------------------------------------------------------------
@@ -3199,18 +3127,12 @@ namespace WellaTodo
 
             TwoLineList sd = (TwoLineList)sender;
 
-            if (sd.PrimaryText == m_Selected_Menu.PrimaryText) // text 비교는 잘못됨
-            {
-                Send_Log_Message("Warning>MainFrame::TwoLineList_DragDrop -> Can't transfer item as same list");
-                return;
-            }
-
             Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
-                             + m_Selected_Task.TD_DataCell.DC_listName
-                             + " to "
-                             + sd.PrimaryText);
-
-            m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText);
+                             + m_Selected_Task.TD_DataCell.DC_listName + " to " + sd.PrimaryText);
+            if (!m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText))
+            {
+                MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+            }
         }
 
         // ---------------------------------------------------------------------------
