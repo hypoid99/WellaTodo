@@ -1172,6 +1172,9 @@ namespace WellaTodo
             Send_Log_Message("4>MainForm::Update_Print_Data");
         }
 
+        // --------------------------------
+        // Update Menu List
+        // --------------------------------
         private void Update_Menulist_Up(CDataCell dc)
         {
             int pos = 0;
@@ -1209,44 +1212,45 @@ namespace WellaTodo
             string source = dc.DC_title;
             string target = dc.DC_listName;
 
-            foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
             {
-                if (source == list.PrimaryText)
+                if (source == item.PrimaryText)
                 {
-                    list.PrimaryText = target;
-                    list.Refresh();
-
-                    Send_Log_Message("4>MainFrame::Menulist_Rename_Process -> Rename Completed from " + source + " to " + target);
-
-                    Menu_List();  // 목록 리스트 다시 표시
+                    item.PrimaryText = target;
+                    item.Refresh();
                     break;
                 }
             }
+
+            Send_Log_Message("4>MainFrame::Menulist_Rename_Process -> Rename Completed from " + source + " to " + target);
+
+            Menu_List();  // 목록 리스트 다시 표시
         }
 
         private void Update_Menulist_Delete(CDataCell dc)
         {
             string target = dc.DC_listName;
-            foreach (TwoLineList list in flowLayoutPanel_Menulist.Controls)
-            {
-                if (list.PrimaryText == target)
-                {
-                    Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_ListName Deleted is : " + target + "-" + list.PrimaryText);
 
-                    list.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
-                    list.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
-                    list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
-                    flowLayoutPanel_Menulist.Controls.Remove(list); // 리스트 제거
-                    list.Dispose();
+            foreach (TwoLineList item in flowLayoutPanel_Menulist.Controls)
+            {
+                if (item.PrimaryText == target)
+                {
+                    Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_ListName Deleted is : " + target + "-" + item.PrimaryText);
+
+                    item.TwoLineList_Click -= new TwoLineList_Event(TwoLineList_Click);
+                    item.DragEnter -= new DragEventHandler(TwoLineList_DragEnter);
+                    item.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
+                    flowLayoutPanel_Menulist.Controls.Remove(item); // 리스트 제거
+                    item.Dispose();
 
                     break;
                 }
                 else
                 {
-                    if (!list.IsDivider)
+                    if (!item.IsDivider)
                     {
-                        m_Pre_Selected_Menu = list;
-                        Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_Pre_Selected_Menu is " + list.PrimaryText);
+                        m_Pre_Selected_Menu = item;
+                        Send_Log_Message("4>MainFrame::Update_Menulist_Delete -> m_Pre_Selected_Menu is " + item.PrimaryText);
                     }
                 }
             }
@@ -1293,6 +1297,9 @@ namespace WellaTodo
             Send_Log_Message("4>MainFrame::Update_Menulist_Add -> Add New List Menu : " + m_Selected_Menu.PrimaryText);
         }
 
+        // --------------------------------
+        // Update Task
+        // --------------------------------
         public void Update_Add_Task(CDataCell dc)
         {
             Create_Present_TodoItem(dc);
@@ -2216,14 +2223,13 @@ namespace WellaTodo
         private void TodoItem_UserControl_Click(object sender, EventArgs e)
         {
             Todo_Item sd = (Todo_Item)sender;
-
             MouseEventArgs me = (MouseEventArgs)e;
 
             if (m_Pre_Selected_Task == null) m_Pre_Selected_Task = sd;
 
             if (m_Pre_Selected_Task.Equals(sd))
             {
-                if (!(sd.IsCompleteClicked || sd.IsImportantClicked))
+                if (!sd.IsCompleteClicked && !sd.IsImportantClicked)
                 {
                     if (me.Button == MouseButtons.Left) 
                     { 
@@ -2242,7 +2248,9 @@ namespace WellaTodo
 
             Send_Log_Message(">MainFrame::TodoItem_UserControl_Click : " + m_Selected_Task.TD_title);
 
+            // 클릭시 데이타 내용 확인하기
             m_Controller.Verify_DataCell(m_Selected_Task.TD_DataCell);
+
             SendDataCellToDetailWindow(m_Selected_Task.TD_DataCell);
 
             switch (me.Button)
@@ -2254,8 +2262,6 @@ namespace WellaTodo
 
                         Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Complete :" + m_Selected_Task.TD_complete);
                         m_Controller.Perform_Complete_Process(m_Selected_Task.TD_DataCell);
-
-                        m_Selected_Task.IsCompleteClicked = false;
                     }
                     if (m_Selected_Task.IsImportantClicked)  // 중요 항목 클릭시
                     {
@@ -2263,20 +2269,20 @@ namespace WellaTodo
 
                         Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Important :" + m_Selected_Task.TD_important);
                         m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
-
-                        m_Selected_Task.IsImportantClicked = false;
                     }
                     if (m_Selected_Task.TD_DataCell.DC_notepad)
                     {
                         Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + m_Selected_Task.TD_title);
                         m_Controller.Perform_Transfer_RTF_Data(m_Selected_Task.TD_DataCell);
                     }
-
                     break;
                 case MouseButtons.Right:
                     Task_ContextMenu();
                     break;
             }
+
+            m_Selected_Task.IsCompleteClicked = false;
+            m_Selected_Task.IsImportantClicked = false;
 
             Update_Task_Width();
         }

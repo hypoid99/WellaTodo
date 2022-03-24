@@ -818,6 +818,9 @@ namespace WellaTodo
 			return deepCopy;
 		}
 
+		// ----------------------------------------------------
+		// List Deep Copy
+		// ----------------------------------------------------
 		private List<CDataCell> List_DeepCopy(IEnumerable<CDataCell> dataset)
         {
 			List<CDataCell> deepCopy = new List<CDataCell>();
