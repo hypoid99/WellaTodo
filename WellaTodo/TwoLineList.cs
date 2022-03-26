@@ -100,6 +100,8 @@ namespace WellaTodo
             MetadataText = "";
             isDivider = true;
 
+            PrimaryText_Renamed = PrimaryText;
+
             Initialize();
         }
 
@@ -112,6 +114,8 @@ namespace WellaTodo
             SecondaryText = secondaryText;
             MetadataText = metadataText;
             isDivider = false;
+
+            PrimaryText_Renamed = PrimaryText;
 
             Initialize();
         }
@@ -208,21 +212,9 @@ namespace WellaTodo
             textBox_Rename.KeyDown += new KeyEventHandler(textBox_Rename_KeyDown);
             textBox_Rename.KeyUp += new KeyEventHandler(textBox_Rename_KeyUp);
             textBox_Rename.Leave += new EventHandler(textBox_Rename_Leave);
-            textBox_Rename.MouseDown += new MouseEventHandler(textBox_Rename_MouseDown);
             textBox_Rename.Visible = false;
             textBox_Rename.Location = new Point(30, PRIMARY_LOCATION_Y1);
             Controls.Add(textBox_Rename);
-        }
-
-        // --------------------------------------------
-        // 헬프 메서드
-        // --------------------------------------------
-        public void Rename_Process()
-        {
-            textBox_Rename.Visible = true;
-            label_PrimaryText.Visible = false;
-            textBox_Rename.Text = PrimaryText;
-            textBox_Rename.Focus();
         }
 
         //---------------------------------------------------------
@@ -254,12 +246,25 @@ namespace WellaTodo
         //---------------------------------------------------------
         // Textbox Rename
         //---------------------------------------------------------
+        public void Rename_Process()
+        {
+            textBox_Rename.Visible = true;
+            label_PrimaryText.Visible = false;
+            textBox_Rename.Text = PrimaryText;
+            textBox_Rename.Focus();
+        }
+
         private void List_Rename()
         {
             textBox_Rename.Visible = false;
             label_PrimaryText.Visible = true;
 
             // Change PrimaryText
+            if (PrimaryText_Renamed == textBox_Rename.Text)
+            {
+                //Console.WriteLine("PrimaryText_Renamed == textBox_Rename.Text");
+                return;
+            }
             PrimaryText_Renamed = textBox_Rename.Text;
 
             MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
@@ -301,11 +306,6 @@ namespace WellaTodo
 
             List_Rename();
             IsTextboxClicked = false;
-        }
-
-        private void textBox_Rename_MouseDown(object sender, MouseEventArgs e)
-        {
-
         }
 
         // ----------------------------------------------------------------------

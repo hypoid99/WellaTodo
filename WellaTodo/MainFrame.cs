@@ -2562,14 +2562,9 @@ namespace WellaTodo
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
             //메모 내용에 변경이 있는지 확인(?)
-            if (isTextbox_Memo_Changed) 
-            { 
-                isTextbox_Memo_Changed = false; 
-            }
-            else 
-            {
-                return;
-            }
+            if (!isTextbox_Memo_Changed) return;
+
+            isTextbox_Memo_Changed = false;
 
             m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
 
