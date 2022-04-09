@@ -70,7 +70,10 @@ namespace WellaTodo
 
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
 
-        public MainModel()
+		// --------------------------------------------------
+		// Constructor
+		// --------------------------------------------------
+		public MainModel()
 		{
 
 		}

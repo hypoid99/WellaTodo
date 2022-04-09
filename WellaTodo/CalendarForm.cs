@@ -41,12 +41,14 @@ namespace WellaTodo
         Button buttonNextMonth = new Button();
         FlowLayoutPanel[] dayPanel = new FlowLayoutPanel[42];
         DateTime m_dtValue = DateTime.Now;
-        //ToolTip m_TaskToolTip = new ToolTip();
         TaskEditForm taskEditForm = new TaskEditForm();
 
         int m_Find_Result_Day;
         Calendar_Item m_Find_Result_Item;
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public CalendarForm()
         {
             InitializeComponent();
@@ -430,6 +432,9 @@ namespace WellaTodo
                 case WParam.WM_PLAN_ADD:
                     Update_Add_Plan(dc);
                     break;
+                case WParam.WM_TASK_ADD:
+                    Update_Add_Task(dc);
+                    break;
                 default:
                     break;
             }
@@ -482,6 +487,19 @@ namespace WellaTodo
             m_Find_Result_Item.PrimaryText = dc.DC_title;
 
             Send_Log_Message("4>CalendarForm::Update_Modify_Task_Title : " + dc.DC_title);
+        }
+
+        private void Update_Add_Task(CDataCell dc)
+        {
+            if (dc.DC_deadlineType == 0)
+            {
+                Send_Log_Message("4>CalendarForm::Update_Add_Task -> Not Planned Task");
+                return;
+            }
+
+            Update_Add_Plan(dc);
+
+            Send_Log_Message("4>CalendarForm::Update_Add_Task : " + dc.DC_title);
         }
 
         private void Update_Add_Plan(CDataCell dc)
@@ -707,7 +725,7 @@ namespace WellaTodo
             if (taskEditForm.IsTitleChanged)
             {
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
-                if (!m_Controller.Perform_Modify_Task_Title(dc, dc.DC_title))
+                if (!m_Controller.Perform_Modify_Task_Title(dc))
                 {
                     MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
                 }

@@ -111,6 +111,9 @@ namespace WellaTodo
 
         int m_VerticalScroll_Value;
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public MainFrame()
         {
             InitializeComponent();
@@ -1262,9 +1265,6 @@ namespace WellaTodo
             Send_Log_Message("4>MainForm::Update_Print_Data");
         }
 
-        // --------------------------------
-        // Update Menu List
-        // --------------------------------
         private void Update_Menulist_Add(CDataCell dc)
         {
             TwoLineList list = Present_MenuList_Create(dc);
@@ -1325,9 +1325,6 @@ namespace WellaTodo
             Send_Log_Message("4>MainFrame::Update_Menulist_Down -> MenuList move Down Completed!!");
         }
 
-        // --------------------------------
-        // Update Task
-        // --------------------------------
         public void Update_Add_Task(CDataCell dc)
         {
             Present_TodoItem_Create(dc);
@@ -2450,7 +2447,10 @@ namespace WellaTodo
         // --------------------------------------------------------------------------
         private void textBox_Title_Enter(object sender, EventArgs e)
         {
-
+            if (!string.IsNullOrEmpty(textBox_Title.Text))
+            {
+                textBox_Title.Select(textBox_Title.Text.Length, 0);
+            }
         }
 
         private void textBox_Title_Leave(object sender, EventArgs e)

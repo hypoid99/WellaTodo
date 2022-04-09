@@ -27,9 +27,13 @@ namespace WellaTodo
         RoundLabel roundLabel_Planned = new RoundLabel();
         RoundLabel roundLabel_Repeat = new RoundLabel();
 
+        private string[] repeatType = new string[] { "없음", "매일", "평일", "매주", "매월", "매년" };
+
+        // -----------------------------------------
+        // Properties
+        // -----------------------------------------
         private CDataCell m_DataCell;
         public CDataCell TE_DataCell { get => m_DataCell; set => m_DataCell = value; }
-
         private bool isNewTask = false;
         public bool IsNewTask { get => isNewTask; set => isNewTask = value; }
         private bool isCompleteChanged = false;
@@ -51,9 +55,9 @@ namespace WellaTodo
         private bool isDeleted = false;
         public bool IsDeleted { get => isDeleted; set => isDeleted = value; }
 
-
-        private string[] repeatType = new string[]{"없음", "매일", "평일", "매주", "매월", "매년"};
-
+        // -----------------------------------------
+        // Constructor
+        // -----------------------------------------
         public TaskEditForm()
         {
             InitializeComponent();
@@ -61,6 +65,29 @@ namespace WellaTodo
             TE_DataCell = null;
         }
 
+        // -----------------------------------------
+        // Form 이벤트
+        // -----------------------------------------
+        private void TaskEditForm_Load(object sender, EventArgs e)
+        {
+            Initiate();
+        }
+
+        private void TaskEditForm_Paint(object sender, PaintEventArgs e)
+        {
+            textBox_Title.Text = TE_DataCell.DC_title;
+            roundCheckbox.Checked = TE_DataCell.DC_complete;
+            starCheckbox.Checked = TE_DataCell.DC_important;
+        }
+
+        private void TaskEditForm_Resize(object sender, EventArgs e)
+        {
+            Refresh();
+        }
+
+        // -----------------------------------------
+        // 초기화 & Update Display
+        // -----------------------------------------
         private void Initiate()
         {
             Size = new Size(PANEL_WIDTH, PANEL_HEIGHT);
@@ -72,10 +99,11 @@ namespace WellaTodo
             roundCheckbox.BackColor = PSEUDO_BACK_COLOR;
             panel_TaskEdit.Controls.Add(roundCheckbox);
 
-            textBox_Title.MouseDown += new MouseEventHandler(textBox_Title_MouseDown);
+            textBox_Title.Enter += new EventHandler(textBox_Title_Enter);
             textBox_Title.Leave += new EventHandler(textBox_Title_Leave);
             textBox_Title.KeyDown += new KeyEventHandler(textBox_Title_KeyDown);
             textBox_Title.KeyUp += new KeyEventHandler(textBox_Title_KeyUp);
+            textBox_Title.MouseDown += new MouseEventHandler(textBox_Title_MouseDown);
             textBox_Title.Location = new Point(PANEL_SX + 35, 8);
             textBox_Title.Size = new Size(PANEL_WIDTH - 100, 25);
             textBox_Title.BackColor = PSEUDO_TEXTBOX_BACK_COLOR;
@@ -130,23 +158,9 @@ namespace WellaTodo
             button_Delete.Size = new Size(75, 25);
         }
 
-        private void TaskEditForm_Load(object sender, EventArgs e)
-        {
-            Initiate();
-        }
-
-        private void TaskEditForm_Paint(object sender, PaintEventArgs e)
-        {
-            textBox_Title.Text = TE_DataCell.DC_title;
-            roundCheckbox.Checked = TE_DataCell.DC_complete;
-            starCheckbox.Checked = TE_DataCell.DC_important;
-        }
-
-        private void TaskEditForm_Resize(object sender, EventArgs e)
-        {
-            Refresh();
-        }
-
+        // -----------------------------------------
+        // 사용자 입력 처리
+        // -----------------------------------------
         private void button_Close_Click(object sender, EventArgs e)
         {
             if (IsNewTask)
@@ -202,9 +216,36 @@ namespace WellaTodo
             //foreach (Control c in Controls) c.BackColor = BACK_COLOR;
         }
 
-        //
+        // -----------------------------------------
         // 제목창
-        //
+        // -----------------------------------------
+        private void textBox_Title_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_Title_Leave(object sender, EventArgs e)
+        {
+            if (textBox_Title.Text.Trim().Length == 0)
+            {
+                textBox_Title.Text = TE_DataCell.DC_title;
+                return;
+            }
+
+            TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
+
+            if (IsNewTask)
+            {
+                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task is Created");
+                IsCreated = true;
+            }
+            else
+            {
+                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task Title Changed");
+                IsTitleChanged = true;
+            }
+        }
+
         private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -243,28 +284,6 @@ namespace WellaTodo
             }
         }
 
-        private void textBox_Title_Leave(object sender, EventArgs e)
-        {
-            if (textBox_Title.Text.Trim().Length == 0)
-            {
-                textBox_Title.Text = TE_DataCell.DC_title;
-                return;
-            }
-
-            TE_DataCell.DC_title = textBox_Title.Text;  // 입력 사항에 오류가 있는지 체크할 것
-
-            if (IsNewTask)
-            {
-                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task is Created");
-                IsCreated = true;
-            }
-            else
-            {
-                //Console.WriteLine("1>TaskEditForm::textBox_Title_Leave -> Task Title Changed");
-                IsTitleChanged = true;
-            }
-        }
-
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -295,9 +314,9 @@ namespace WellaTodo
         private void OnCutMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Cut(); }
         private void OnPasteMenu_textBox_Title_Click(object sender, EventArgs e) { textBox_Title.Paste(); }
 
-        //
+        // -----------------------------------------
         // 기한 설정
-        //
+        // -----------------------------------------
         private void roundLabel_Planned_MouseEnter(object sender, EventArgs e)
         {
             roundLabel_Planned.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -370,9 +389,9 @@ namespace WellaTodo
             IsPlannedDeleted = true;
         }
 
-        //
+        // -----------------------------------------
         // 반복 메뉴
-        //
+        // -----------------------------------------
         private void roundLabel_Repeat_MouseEnter(object sender, EventArgs e)
         {
             roundLabel_Repeat.BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -437,9 +456,9 @@ namespace WellaTodo
 
         }
 
-        //
+        // -----------------------------------------
         // 메모창
-        //
+        // -----------------------------------------
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
             //Console.WriteLine("1>TaskEditForm::textBox_Memo_Leave -> Memo Changed");

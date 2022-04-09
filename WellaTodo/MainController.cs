@@ -26,6 +26,9 @@ namespace WellaTodo
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
+		// --------------------------------------------------
+		// Constructor
+		// --------------------------------------------------
 		public MainController(MainModel m)
         {
 			m_model = m;
@@ -566,12 +569,32 @@ namespace WellaTodo
 				return false;
 			}
 
+			if (dc.DC_title == title)
+            {
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Title is same!!");
+				return true;
+            }
+
 			dc.DC_title = title;
 
 			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
 			return true;
         }
+
+		public bool Perform_Modify_Task_Title(CDataCell dc)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (dc.DC_title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
+			m_model.Modify_Task_Title(dc);
+			return true;
+		}
 
 		public void Perform_Modify_Task_Memo(CDataCell dc)
 		{
