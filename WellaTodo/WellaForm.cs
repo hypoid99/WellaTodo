@@ -5,6 +5,15 @@
 // Controller : 받은 dc를 유효성검사후 필요한 가공을 한 다음 Model에 전달한다
 // Model : 받은 dc를 DB에 변경하고 View에 통보한다
 
+
+// Static
+// Event
+// Fields
+// Properties
+// Constructor
+// Public Method
+// Private Method
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
