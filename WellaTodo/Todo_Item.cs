@@ -40,6 +40,21 @@ namespace WellaTodo
         static readonly float FONT_SIZE_TITLE = 11.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;
 
+        Label label1 = new Label();
+        Label label2 = new Label();
+        RoundCheckbox roundCheckbox1 = new RoundCheckbox();
+        StarCheckbox starCheckbox1 = new StarCheckbox();
+        PictureBox pictureBox_Bulletin = new PictureBox();
+        PictureBox pictureBox_Notepad = new PictureBox();
+        
+        GraphicsPath outerBorderPath = null;
+        int cornerRadius = 10;
+
+        Point DragStartPoint;
+
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
         CDataCell m_DataCell;
         public CDataCell TD_DataCell { get => m_DataCell; set => m_DataCell = value; }
 
@@ -64,30 +79,28 @@ namespace WellaTodo
         public string TD_infomation { get; set; }
 
         public bool IsCompleteClicked { get; set; } = false;
+
         public bool IsImportantClicked { get; set; } = false;
 
         private bool isItemSelected = false;
-        public bool IsItemSelected 
+        public bool IsItemSelected
+        {
+            get => isItemSelected;
+            set { isItemSelected = value; ChangeItemSelectedColor(); }
+        }
+
+        bool isDragging = false;
+        public bool IsDragging 
         { 
-            get => isItemSelected; 
-            set { isItemSelected = value; ChangeItemSelectedColor(); } 
+            get => isDragging; 
+            set => isDragging = value; 
         }
 
         public int GetItemHeight => TODO_ITEM_HEIGHT;
 
-        Label label1 = new Label();
-        Label label2 = new Label();
-        RoundCheckbox roundCheckbox1 = new RoundCheckbox();
-        StarCheckbox starCheckbox1 = new StarCheckbox();
-        PictureBox pictureBox_Bulletin = new PictureBox();
-        PictureBox pictureBox_Notepad = new PictureBox();
-        
-        GraphicsPath outerBorderPath = null;
-        int cornerRadius = 10;
-
-        bool isDragging = false;
-        Point DragStartPoint;
-
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public Todo_Item(CDataCell dc)
         {
             InitializeComponent();
@@ -161,6 +174,7 @@ namespace WellaTodo
             label1.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
             label1.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
             label1.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
+            label1.MouseUp += new MouseEventHandler(Todo_Item_MouseUp);
             label1.Font = new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular);
             label1.Location = new Point(PRIMARY_LOCATION_X, PRIMARY_LOCATION_Y1);
             label1.ForeColor = PSEUDO_FORE_TEXT_COLOR;
@@ -174,6 +188,7 @@ namespace WellaTodo
             label2.MouseClick += new MouseEventHandler(Todo_Item_MouseClick);
             label2.MouseDown += new MouseEventHandler(Todo_Item_MouseDown);
             label2.MouseMove += new MouseEventHandler(Todo_Item_MouseMove);
+            label2.MouseUp += new MouseEventHandler(Todo_Item_MouseUp);
             label2.Font = new Font(FONT_NAME, FONT_SIZE_INFORMATION, FontStyle.Regular);
             label2.BackColor = PSEUDO_BACK_COLOR;
             label2.ForeColor = PSEUDO_INFORMATION_TEXT_COLOR;
@@ -319,7 +334,7 @@ namespace WellaTodo
 
         private void Todo_Item_MouseClick(object sender, MouseEventArgs e)
         {
-            Todo_Item_Click(sender, e);
+            //Todo_Item_Click(sender, e);
         }
 
         private void Todo_Item_MouseEnter(object sender, EventArgs e)
@@ -379,10 +394,12 @@ namespace WellaTodo
         {
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
+            //Console.WriteLine("Todo_Item_MouseDown -> " + isDragging);
         }
 
         private void Todo_Item_MouseUp(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("Todo_Item_MouseUp -> " + isDragging);
             if (isDragging)
             {
                 //Console.WriteLine("Todo_Item_MouseUp - DragDrop");
@@ -390,6 +407,7 @@ namespace WellaTodo
             else
             {
                 //Console.WriteLine("Todo_Item_MouseUp - Click");
+                Todo_Item_Click(sender, e);
             }
             isDragging = false;
         }
@@ -402,19 +420,28 @@ namespace WellaTodo
             Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
             deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
             deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
-            if (!isDragging)
+
+            if (e.Button != MouseButtons.Left)
             {
-                if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-                {
-                    if ((deltaX < threshold) && (deltaY < threshold))
-                    {
-                        //Console.WriteLine("Todo_Item_MouseMove -> DoDragDrop");
-                        Todo_Item_Click(sender, e);  // click
-                        DoDragDrop(this, DragDropEffects.All);
-                        isDragging = true;
-                        return;
-                    }
-                }
+                return;
+            }
+
+            if (isDragging)
+            {
+                return;
+            }
+
+            if (deltaX >= threshold || deltaY >= threshold)
+            {
+                //Console.WriteLine("Todo_Item_MouseMove -> DoDragDrop");
+
+                // click 호출하면 상세창이 떠 버림!! 안하면 바로전에 선택된 항목이 이동됨
+                // -> click을 호출하고 상세창 뜨는 조건에서 isDragging 확인한다
+
+                isDragging = true;
+                Todo_Item_Click(sender, e);  
+
+                DoDragDrop(this, DragDropEffects.All);
             }
         }
 

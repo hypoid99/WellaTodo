@@ -16,7 +16,7 @@ namespace WellaTodo
 
     public partial class Calendar_Item : UserControl
     {
-        public event Calendar_Item_Event Calendar_Item_Click;
+        public event Calendar_Item_Event Calendar_Item_Clicked;
 
         static readonly int LIST_WIDTH = 100;
         static readonly int LIST_HEIGHT = 40;
@@ -194,6 +194,12 @@ namespace WellaTodo
         //---------------------------------------------------------
         // User control event
         //---------------------------------------------------------
+        private void Calendar_Item_Click(object sender, MouseEventArgs e)
+        {
+            Focus();
+            if (Calendar_Item_Clicked != null) Calendar_Item_Clicked?.Invoke(this, e);
+        }
+
         private void Calendar_Item_MouseEnter(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = HIGHLIGHT_COLOR;
@@ -208,8 +214,9 @@ namespace WellaTodo
 
         private void Calendar_Item_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
-            if (Calendar_Item_Click != null) Calendar_Item_Click?.Invoke(this, e);
+            //Focus();
+            //Console.WriteLine("Calendar_Item_MouseClick");
+            //if (Calendar_Item_Clicked != null) Calendar_Item_Clicked?.Invoke(this, e);
         }
 
         //---------------------------------------------------------
@@ -217,18 +224,52 @@ namespace WellaTodo
         //---------------------------------------------------------
         private void Calendar_Item_MouseDown(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("Calendar_Item_MouseDown" + e.X + "-" + e.Y);
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
         }
 
         private void Calendar_Item_MouseUp(object sender, MouseEventArgs e)
         {
-
+            //Console.WriteLine("Calendar_Item_MouseUp");
+            if (isDragging)
+            {
+                //Console.WriteLine("Calendar_Item_MouseUp - DragDrop");
+            }
+            else
+            {
+                //Console.WriteLine("Calendar_Item_MouseUp - Click");
+                Calendar_Item_Click(sender, e);
+            }
+            isDragging = false;
         }
 
         private void Calendar_Item_MouseMove(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("Calendar_Item_MouseMove" + e.X + "-" + e.Y);
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
+            deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
 
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+
+            if (isDragging)
+            {
+                return;
+            }
+
+            if (deltaX >= threshold || deltaY >= threshold)
+            {
+                //Console.WriteLine("Calendar_Item_MouseMove -> DoDragDrop");
+                isDragging = true;
+                DoDragDrop(this, DragDropEffects.All);
+            }
         }
 
     }

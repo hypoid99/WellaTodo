@@ -181,6 +181,26 @@ namespace WellaTodo
 			m_model.Menulist_Down(target);
 		}
 
+		public bool Perform_Munulist_MoveTo(string source, string target)
+		{
+			if (source == target)
+			{
+				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Same task can't move");
+				return false;
+			}
+
+			if (source == "작업" || target == "작업")
+			{
+				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Can't move 작업 Task");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Source : " + source + " Target : " + target);
+			m_model.Menulist_MoveTo(source, target);
+
+			return true;
+		}
+
 		// -----------------------------------------------------------
 		// Perform Command (Task)
 		// -----------------------------------------------------------

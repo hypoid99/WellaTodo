@@ -1183,6 +1183,9 @@ namespace WellaTodo
                 case WParam.WM_MENULIST_DOWN:
                     Update_Menulist_Down(dc);
                     break;
+                case WParam.WM_MENULIST_MOVETO:
+                    Update_Menulist_MoveTo(dc);
+                    break;
                 case WParam.WM_TRANSFER_TASK:
                     Update_Transfer_Task(dc);
                     break;
@@ -1323,6 +1326,14 @@ namespace WellaTodo
             flowLayoutPanel_Menulist.Controls.SetChildIndex(item, pos + 1);
 
             Send_Log_Message("4>MainFrame::Update_Menulist_Down -> MenuList move Down Completed!!");
+        }
+
+        private void Update_Menulist_MoveTo(CDataCell dc)
+        {
+            int pos = Present_MenuList_Item_Position_Find(dc.DC_listName); // 항목과 위치 찾기
+            flowLayoutPanel_Menulist.Controls.SetChildIndex(m_Selected_Menu, pos);
+
+            Send_Log_Message("4>MainFrame::Update_Menulist_MoveTo -> Source : " + m_Selected_Menu.PrimaryText + " Target : " + dc.DC_listName);
         }
 
         public void Update_Add_Task(CDataCell dc)
@@ -2179,11 +2190,11 @@ namespace WellaTodo
 
             if (m_Pre_Selected_Task.Equals(sd))
             {
-                if (!sd.IsCompleteClicked && !sd.IsImportantClicked)
+                if (!sd.IsCompleteClicked && !sd.IsImportantClicked && !sd.IsDragging)
                 {
-                    if (me.Button == MouseButtons.Left) 
-                    { 
-                        if (isDetailWindowOpen) Close_DetailWindow(); else Open_DetailWindow(); 
+                    if (me.Button == MouseButtons.Left)
+                    {
+                        if (isDetailWindowOpen) Close_DetailWindow(); else Open_DetailWindow();
                     }
                 }
             }
@@ -3061,6 +3072,10 @@ namespace WellaTodo
             {
                 e.Effect = DragDropEffects.Copy;
             }
+            else if(e.Data.GetDataPresent(typeof(TwoLineList)))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
             else
             {
                 e.Effect = DragDropEffects.None;
@@ -3072,16 +3087,31 @@ namespace WellaTodo
             if (e.Data.GetDataPresent(typeof(Todo_Item)))
             {
                 var item = e.Data.GetData(typeof(Todo_Item)) as Todo_Item;
+
+                TwoLineList sd = (TwoLineList)sender;
+
+                Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
+                                 + m_Selected_Task.TD_DataCell.DC_listName
+                                 + " to " + sd.PrimaryText);
+                if (!m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText))
+                {
+                    //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                }
             }
 
-            TwoLineList sd = (TwoLineList)sender;
-
-            Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
-                             + m_Selected_Task.TD_DataCell.DC_listName 
-                             + " to " + sd.PrimaryText);
-            if (!m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText))
+            if (e.Data.GetDataPresent(typeof(TwoLineList)))
             {
-                //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                var item = e.Data.GetData(typeof(TwoLineList)) as TwoLineList;
+
+                TwoLineList sd = (TwoLineList)sender;
+
+                Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer MenuList Click!! : from "
+                                 + item.PrimaryText
+                                 + " to " + sd.PrimaryText);
+                if (!m_Controller.Perform_Munulist_MoveTo(item.PrimaryText, sd.PrimaryText))
+                {
+                    //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                }
             }
         }
 

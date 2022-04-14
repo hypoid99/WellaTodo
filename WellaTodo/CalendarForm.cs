@@ -236,7 +236,7 @@ namespace WellaTodo
                     if (ctr is Calendar_Item)
                     {
                         Calendar_Item list = (Calendar_Item)ctr;
-                        list.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
+                        list.Calendar_Item_Clicked -= new Calendar_Item_Event(Calendar_Item_Click);
                     }
                 }
                 dayPanel[i].Controls.Clear();
@@ -302,8 +302,8 @@ namespace WellaTodo
                 foreach (CDataCell dc in dataset)
                 {
                     Calendar_Item label_planned = new Calendar_Item(dc);
-                    label_planned.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
-                    label_planned.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
+                    label_planned.Calendar_Item_Clicked -= new Calendar_Item_Event(Calendar_Item_Click);
+                    label_planned.Calendar_Item_Clicked += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
                     label_planned.Font = dc.DC_complete
                         ? new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Strikeout)
                         : new Font(FONT_NAME, FONT_SIZE_SMALL, FontStyle.Regular);
@@ -329,8 +329,8 @@ namespace WellaTodo
         private Calendar_Item Create_CalendarItem(CDataCell dc)
         {
             Calendar_Item newItem = new Calendar_Item(dc);
-            newItem.Calendar_Item_Click -= new Calendar_Item_Event(Calendar_Item_Click);
-            newItem.Calendar_Item_Click += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
+            newItem.Calendar_Item_Clicked -= new Calendar_Item_Event(Calendar_Item_Click);
+            newItem.Calendar_Item_Clicked += new Calendar_Item_Event(Calendar_Item_Click); // event 제거할 것
             newItem.AutoSize = false;
 
             newItem.Width = dayPanel[0].Width;

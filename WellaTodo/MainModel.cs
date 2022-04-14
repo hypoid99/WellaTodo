@@ -43,6 +43,7 @@ namespace WellaTodo
 		WM_MENULIST_DELETE,
 		WM_MENULIST_UP,
 		WM_MENULIST_DOWN,
+		WM_MENULIST_MOVETO,
 		WM_TRANSFER_TASK,
 		// NotePad
 		WM_CONVERT_NOTEPAD,
@@ -372,6 +373,27 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::Menulist_Down : " + target);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_DOWN));
+		}
+
+		public void Menulist_MoveTo(string source, string target)
+        {
+			int src_index = 0;
+			int tar_index = 0; ;
+			for (int i = 0; i <= myListNames.Count - 1; i++)
+			{
+				if (source == myListNames[i]) src_index = i;
+				if (target == myListNames[i]) tar_index = i;
+			}
+
+			string temp = myListNames[src_index]; //추출
+			myListNames.RemoveAt(src_index); //삭제
+			myListNames.Insert(tar_index, temp); // 삽입
+
+			CDataCell data = new CDataCell();
+			data.DC_listName = target;
+
+			Notify_Log_Message("3>MainModel::Menulist_MoveTo -> Source : " + source + " Target : " + target);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MENULIST_MOVETO));
 		}
 
 		public bool IsThereSameMenuName(string MenuName)
