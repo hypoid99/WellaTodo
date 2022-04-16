@@ -26,6 +26,9 @@ namespace WellaTodo
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
+		// --------------------------------------------------
+		// Constructor
+		// --------------------------------------------------
 		public MainController(MainModel m)
         {
 			m_model = m;
@@ -178,15 +181,29 @@ namespace WellaTodo
 			m_model.Menulist_Down(target);
 		}
 
+		public bool Perform_Munulist_MoveTo(string source, string target)
+		{
+			if (source == target)
+			{
+				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Same task can't move");
+				return false;
+			}
+
+			if (source == "작업" || target == "작업")
+			{
+				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Can't move 작업 Task");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Source : " + source + " Target : " + target);
+			m_model.Menulist_MoveTo(source, target);
+
+			return true;
+		}
+
 		// -----------------------------------------------------------
 		// Perform Command (Task)
 		// -----------------------------------------------------------
-		public void Perform_Add_Task(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Add_Task : " + dc.DC_title);
-			m_model.Add_Task(dc);
-        }
-
 		public bool Perform_Add_Task_From_MyToday(string title)
         {
 			if (!Check_Input_String(title))
@@ -202,7 +219,7 @@ namespace WellaTodo
 			dc.DC_title = title;
 			dc.DC_myToday = true;
 			dt = dt.AddDays(1);
-			dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+			dc.DC_myTodayTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_MyToday : " + dc.DC_title);
 			m_model.Add_Task(dc);
@@ -243,7 +260,7 @@ namespace WellaTodo
 			dc.DC_title = title;
 			dc.DC_deadlineType = 1;
 			dt = dt.AddDays(1);
-			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 00, 00, 00);
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
 			m_model.Add_Task(dc);
@@ -274,105 +291,12 @@ namespace WellaTodo
 			m_model.Delete_Task(dc);
 		}
 
-		public void Perform_Modify_MyToday(CDataCell dc, bool myToday, DateTime dt)
-		{
-			dc.DC_myToday = myToday;
-			dc.DC_myTodayTime = dt;
-
-			Send_Log_Message("2>MainController::Perform_Modify_MyToday : type [" + myToday + "]" + dc.DC_title);
-			m_model.Modifiy_MyToday(dc);
-		}
-
-		public void Perform_Modify_Remind(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Remind : " + dc.DC_title);
-			m_model.Modifiy_Remind(dc);
-		}
-
-		public void Perform_Modify_Planned(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Planned : type " + dc.DC_title);
-			m_model.Modifiy_Planned(dc);
-		}
-
-		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
-		{
-			dc.DC_repeatType = type;
-			dc.DC_repeatTime = dt;
-
-			Send_Log_Message("2>MainController::Perform_Modify_Repeat : type [" + type + "]" + dc.DC_title);
-			m_model.Modifiy_Repeat(dc);
-		}
-
-		public void Perform_Complete_Process(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
-			m_model.Complete_Process(dc);
-		}
-
-		public void Perform_Important_Process(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
-			m_model.Important_Process(dc);
-		}
-
-		public void Perform_Modify_Task_Title(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
-			m_model.Modify_Task_Title(dc);
-		}
-
-		public void Perform_Modify_Task_Memo(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
-			m_model.Modify_Task_Memo(dc);
-		}
-
-		public void Perform_Task_Move_To(CDataCell source, CDataCell target)
-        {
-			if (source.DC_task_ID == target.DC_task_ID)
-			{
-				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Same task can't move");
-				return;
-			}
-
-			if (source.DC_complete || target.DC_complete)
-			{
-				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Can't move Completed Task");
-				return;
-			}
-
-			Send_Log_Message("2>MainController::Perform_Task_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
-			m_model.Task_Move_To(source, target);
-		}
-
-		public void Perform_Task_Move_Up(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
-			m_model.Task_Move_Up(dc);
-		}
-
-		public void Perform_Task_Move_Down(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
-			m_model.Task_Move_Down(dc);
-		}
-
-		public void Perform_Transfer_Task(CDataCell dc, string target)
-        {
-			if (dc.DC_listName == target)
-			{
-				Send_Log_Message("Warning>MainController::Perform_Transfer_Task -> Can't transfer item as same list");
-				return;
-			}
-			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
-			m_model.Transfer_Task(dc, target);
-        }
-
-		public void Perform_MyToday_Process(CDataCell dc)
+		// --------------------------------------------
+		// 오늘 할 일
+		// --------------------------------------------
+		public void Perform_Modify_MyToday(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
-
 			if (dc.DC_myToday)
 			{
 				dc.DC_myToday = false;  // 해제
@@ -387,6 +311,350 @@ namespace WellaTodo
 			Send_Log_Message("2>MainController::Perform_MyToday_Process : " + dc.DC_title);
 			m_model.Modifiy_MyToday(dc);
 		}
+
+		// --------------------------------------------
+		// 미리 알림
+		// --------------------------------------------
+		public void Perform_Remind_Today(CDataCell dc)
+        {
+			DateTime dt = DateTime.Now;
+            dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
+            dc.DC_remindType = 1;
+            dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_Today : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_Tomorrow(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(1);
+			dc.DC_remindType = 2;
+			dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_Tomorrow : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_NextWeek(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
+			dc.DC_remindType = 3;
+			dc.DC_remindTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Remind_NextWeek : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_Select(CDataCell dc, DateTime dt)
+		{
+			dc.DC_remindType = 4;
+			dc.DC_remindTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		public void Perform_Remind_Delete(CDataCell dc)
+		{
+			dc.DC_remindType = 0;
+			dc.DC_remindTime = default;
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Remind(dc);
+		}
+
+		// --------------------------------------------
+		// 계획된 일정
+		// --------------------------------------------
+		public void Perform_Planned_Today(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dc.DC_deadlineType = 1;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_Today : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Tomorrow(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(1);
+			dc.DC_deadlineType = 2;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_Tomorrow : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_NextWeek(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
+			dc.DC_deadlineType = 3;
+			dc.DC_deadlineTime = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+
+			Send_Log_Message("2>MainController::Perform_Planned_NextWeek : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Select(CDataCell dc, DateTime dt)
+		{
+			if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+			{
+				dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+			}
+
+			dc.DC_deadlineType = 4;
+			dc.DC_deadlineTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Planned_Select : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		public void Perform_Planned_Delete(CDataCell dc)
+		{
+			dc.DC_deadlineType = 0;
+			dc.DC_deadlineTime = default;
+
+			Send_Log_Message("2>MainController::Perform_Planned_Delete : " + dc.DC_title);
+			m_model.Modifiy_Planned(dc);
+		}
+
+		// --------------------------------------------
+		// 반복
+		// --------------------------------------------
+		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
+		{
+			dc.DC_repeatType = type;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Repeat : type [" + type + "]" + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+		}
+
+		public void Perform_Repeat_EveryDay(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(1);
+			dt = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
+			dc.DC_repeatType = 1;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_EveryDay : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+
+			if (dc.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
+			{
+				Perform_Planned_Today(dc);
+			}
+		}
+
+		public void Perform_Repeat_WorkingDay(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			DayOfWeek dw = dt.DayOfWeek;
+			switch (dw)
+			{
+				case DayOfWeek.Monday:
+					dt = dt.AddDays(1);
+					break;
+				case DayOfWeek.Tuesday:
+					dt = dt.AddDays(1);
+					break;
+				case DayOfWeek.Wednesday:
+					dt = dt.AddDays(1);
+					break;
+				case DayOfWeek.Thursday:
+					dt = dt.AddDays(1);
+					break;
+				case DayOfWeek.Friday:
+					dt = dt.AddDays(3);
+					break;
+				case DayOfWeek.Saturday:
+					dt = dt.AddDays(2);
+					break;
+				case DayOfWeek.Sunday:
+					dt = dt.AddDays(1);
+					break;
+			}
+			dt = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
+
+			dc.DC_repeatType = 2;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_WorkingDay : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+
+			if (dc.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
+			{
+				Perform_Planned_Today(dc);
+			}
+		}
+
+		public void Perform_Repeat_EveryWeek(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddDays(7);
+			dt = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
+			dc.DC_repeatType = 3;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_EveryWeek : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+
+			if (dc.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
+			{
+				Perform_Planned_Today(dc);
+			}
+		}
+
+		public void Perform_Repeat_EveryMonth(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddMonths(1); // 매달 말일 계산 필요 - 28/29/30/31일 경우
+			dt = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
+			dc.DC_repeatType = 4;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_EveryMonth : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+
+			if (dc.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
+			{
+				Perform_Planned_Today(dc);
+			}
+		}
+
+		public void Perform_Repeat_EveryYear(CDataCell dc)
+		{
+			DateTime dt = DateTime.Now;
+			dt = dt.AddYears(1);  // 윤년 계산 필요 2월29일
+			dt = new DateTime(dt.Year, dt.Month, dt.Day, 09, 00, 00);
+			dc.DC_repeatType = 5;
+			dc.DC_repeatTime = dt;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_EveryYear : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+
+			if (dc.DC_deadlineType == 0) // 기한설정이 되어 있지 않을때 오늘까지
+			{
+				Perform_Planned_Today(dc);
+			}
+		}
+
+		public void Perform_Repeat_Delete(CDataCell dc)
+		{
+			dc.DC_repeatType = 0;
+			dc.DC_repeatTime = default;
+
+			Send_Log_Message("2>MainController::Perform_Repeat_Delete : " + dc.DC_title);
+			m_model.Modifiy_Repeat(dc);
+		}
+
+		// --------------------------------------------
+		// 완료/중요/제목/메모/이동
+		// --------------------------------------------
+		public void Perform_Complete_Process(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
+			m_model.Complete_Process(dc);
+		}
+
+		public void Perform_Important_Process(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
+			m_model.Important_Process(dc);
+		}
+
+		public bool Perform_Modify_Task_Title(CDataCell dc, string title)
+        {
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			if (dc.DC_title == title)
+            {
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Title is same!!");
+				return true;
+            }
+
+			dc.DC_title = title;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
+			m_model.Modify_Task_Title(dc);
+			return true;
+        }
+
+		public bool Perform_Modify_Task_Title(CDataCell dc)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (dc.DC_title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
+			m_model.Modify_Task_Title(dc);
+			return true;
+		}
+
+		public void Perform_Modify_Task_Memo(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
+			m_model.Modify_Task_Memo(dc);
+		}
+
+		public bool Perform_Task_Move_To(CDataCell source, CDataCell target)
+        {
+			if (source.DC_task_ID == target.DC_task_ID)
+			{
+				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Same task can't move");
+				return false;
+			}
+
+			if (source.DC_complete || target.DC_complete)
+			{
+				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Can't move Completed Task");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Task_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
+			m_model.Task_Move_To(source, target);
+			return true;
+		}
+
+		public void Perform_Task_Move_Up(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
+			m_model.Task_Move_Up(dc);
+		}
+
+		public void Perform_Task_Move_Down(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
+			m_model.Task_Move_Down(dc);
+		}
+
+		public bool Perform_Transfer_Task(CDataCell dc, string target)
+        {
+			if (dc.DC_listName == target)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Transfer_Task -> Can't transfer item as same list");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
+			m_model.Transfer_Task(dc, target);
+			return true;
+        }
 
 		// ----------------------------------------------------------
 		// Perform Command - NotePad 문서편집
@@ -427,6 +695,40 @@ namespace WellaTodo
 			m_model.Add_Memo(dc);
 		}
 
+		public void Perform_Delete_Memo(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Delete_Memo : [" + dc.DC_task_ID + "]" + dc.DC_title);
+			m_model.Delete_Memo(dc);
+		}
+
+		public void Perform_Modify_Memo_Text(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Text : " + dc.DC_title);
+			m_model.Modify_Memo_Text(dc);
+		}
+
+		public bool Perform_Modify_Memo_Title(CDataCell dc, string title)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Memo_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			if (dc.DC_title == title)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Memo_Title -> Title is same!!");
+				return true;
+			}
+
+			dc.DC_title = title;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Title : " + dc.DC_title);
+			m_model.Modify_Memo_Title(dc);
+			return true;
+		}
+
 		public void Perform_Modify_Memo_Archive(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Memo_Archive : " + dc.DC_title);
@@ -443,6 +745,45 @@ namespace WellaTodo
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Memo_Tag : " + dc.DC_title);
 			m_model.Modify_Memo_Tag(dc);
+		}
+
+		public void Perform_Modify_Memo_Alarm(CDataCell dc, DateTime dt)
+		{
+			if (dt == default)
+            {
+				dc.DC_remindType = 0;
+				dc.DC_remindTime = dt;
+			}
+            else
+            {
+				dc.DC_remindType = 4;
+				dc.DC_remindTime = dt;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Memo_Alarm(dc);
+		}
+
+		public void Perform_Modify_Memo_Schedule(CDataCell dc, DateTime dt)
+		{
+			if (dt == default)
+			{
+				dc.DC_deadlineType = 0;
+				dc.DC_deadlineTime = dt;
+			}
+			else
+			{
+				if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+				{
+					dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+				}
+
+				dc.DC_deadlineType = 4;
+				dc.DC_deadlineTime = dt;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Schedule : " + dc.DC_title);
+			m_model.Modifiy_Memo_Schedule(dc);
 		}
 
 		public void Perform_Memo_Move_To(CDataCell source, CDataCell target)
@@ -555,7 +896,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (!dt.DC_archive)
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -565,7 +906,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard_Archive()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (dt.DC_archive)
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -575,7 +916,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard_Tag(int tag)
         {
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (!dt.DC_archive) && dt.DC_memoTag == tag
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -583,6 +924,9 @@ namespace WellaTodo
 			return deepCopy;
 		}
 
+		// ----------------------------------------------------
+		// List Deep Copy
+		// ----------------------------------------------------
 		private List<CDataCell> List_DeepCopy(IEnumerable<CDataCell> dataset)
         {
 			List<CDataCell> deepCopy = new List<CDataCell>();
@@ -591,6 +935,16 @@ namespace WellaTodo
 				//deepCopy.Add((CDataCell)dc.Clone());
 				//deepCopy.Add((CDataCell)DeepClone(dc));
 				deepCopy.Add((CDataCell)SerializableDeepClone(dc));
+			}
+			return deepCopy;
+		}
+
+		private List<CMemoCell> List_DeepCopy(IEnumerable<CMemoCell> dataset)
+		{
+			List<CMemoCell> deepCopy = new List<CMemoCell>();
+			foreach (CMemoCell dc in dataset)
+			{
+				deepCopy.Add((CMemoCell)SerializableDeepClone(dc));
 			}
 			return deepCopy;
 		}

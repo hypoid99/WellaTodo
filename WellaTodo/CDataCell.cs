@@ -9,31 +9,34 @@ namespace WellaTodo
     [Serializable]
     public class CDataCell : ICloneable 
     {
-        private int _task_ID;
-        private string _listName;
-        private string _title;
-        private bool _complete;
-        private bool _important;
-        private string _memo;
-        private DateTime _dateCreated;
+        private int         _task_ID;
+        private string      _listName;
+        private string      _title;
+        private bool        _complete;
+        private bool        _important;
+        private string      _memo;
+        private DateTime    _dateCreated;
 
-        private bool _myToday;
-        private DateTime _myTodayTime;
-        private int _remindType;
-        private DateTime _remindTime;
-        private int _deadlineType;
-        private DateTime _deadlineTime;
-        private int _repeatType;
-        private DateTime _repeatTime;
+        private bool        _myToday;
+        private DateTime    _myTodayTime;
+        private int         _remindType;
+        private DateTime    _remindTime;
+        private int         _deadlineType;
+        private DateTime    _deadlineTime;
+        private int         _repeatType;
+        private DateTime    _repeatTime;
 
-        private bool _bulletin;
-        private bool _archive;
-        private int _memoTag;
-        private string _memoColor;
+        private bool        _bulletin;
+        private bool        _archive;
+        private int         _memoTag;
+        private string      _memoColor;
 
-        private bool _notepad;
-        private string _RTF;
+        private bool        _notepad;
+        private string      _RTF;
 
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
         public int DC_task_ID { get => _task_ID; set => _task_ID = value; }
         public string DC_listName { get => _listName; set => _listName = value; }
         public string DC_title { get => _title; set => _title = value; }
@@ -59,6 +62,9 @@ namespace WellaTodo
         public bool DC_notepad { get => _notepad; set => _notepad = value; }
         public string DC_RTF { get => _RTF; set => _RTF = value; }
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public CDataCell()
         {
             _task_ID = 0;
@@ -113,6 +119,9 @@ namespace WellaTodo
             _RTF = String.Empty;
         }
 
+        // --------------------------------------------------
+        // Method
+        // --------------------------------------------------
         public CDataCell ShallowCopy()
         {
             return (CDataCell)MemberwiseClone();

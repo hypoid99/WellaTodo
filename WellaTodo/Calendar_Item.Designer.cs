@@ -37,9 +37,6 @@ namespace WellaTodo
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "Calendar_Item";
             this.Size = new System.Drawing.Size(150, 50);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Calendar_Item_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Calendar_Item_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Calendar_Item_MouseUp);
             this.ResumeLayout(false);
 
         }

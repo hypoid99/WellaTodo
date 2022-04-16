@@ -37,6 +37,12 @@ namespace WellaTodo
 
         private TextBox textBox_Rename;
 
+        bool isDragging = false;
+        Point DragStartPoint;
+
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
         public Image IconImage
         {
             get => pictureBox_Icon.BackgroundImage;
@@ -88,8 +94,15 @@ namespace WellaTodo
         }
 
         bool isTextboxClicked = false;
-        public bool IsTextboxClicked { get => isTextboxClicked; set => isTextboxClicked = value; }
+        public bool IsTextboxClicked 
+        { 
+            get => isTextboxClicked; 
+            set => isTextboxClicked = value; 
+        }
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public TwoLineList()
         {
             InitializeComponent();
@@ -99,6 +112,8 @@ namespace WellaTodo
             SecondaryText = "";
             MetadataText = "";
             isDivider = true;
+
+            PrimaryText_Renamed = PrimaryText;
 
             Initialize();
         }
@@ -112,6 +127,8 @@ namespace WellaTodo
             SecondaryText = secondaryText;
             MetadataText = metadataText;
             isDivider = false;
+
+            PrimaryText_Renamed = PrimaryText;
 
             Initialize();
         }
@@ -184,14 +201,32 @@ namespace WellaTodo
             DragEnter += new DragEventHandler(List_DragEnter);
             DragOver += new DragEventHandler(List_DragOver);
             DragLeave += new EventHandler(List_DragLeave);
+            MouseEnter += new EventHandler(List_MouseEnter);
+            MouseLeave += new EventHandler(List_MouseLeave);
+            MouseClick += new MouseEventHandler(List_MouseClick);
+            MouseDown += new MouseEventHandler(List_MouseDown);
+            MouseMove += new MouseEventHandler(List_MouseMove);
+            MouseUp += new MouseEventHandler(List_MouseUp);
 
             pictureBox_Icon.Size = new Size(24, 24);
             pictureBox_Icon.Location = new Point(5, 4);
 
+            label_PrimaryText.MouseEnter += new EventHandler(List_MouseEnter);
+            label_PrimaryText.MouseLeave += new EventHandler(List_MouseLeave);
+            label_PrimaryText.MouseClick += new MouseEventHandler(List_MouseClick);
+            label_PrimaryText.MouseDown += new MouseEventHandler(List_MouseDown);
+            label_PrimaryText.MouseMove += new MouseEventHandler(List_MouseMove);
+            label_PrimaryText.MouseUp += new MouseEventHandler(List_MouseUp);
             label_PrimaryText.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
             label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y1);
             label_PrimaryText.BackColor = BACK_COLOR;
 
+            label_SecondaryText.MouseEnter += new EventHandler(List_MouseEnter);
+            label_SecondaryText.MouseLeave += new EventHandler(List_MouseLeave);
+            label_SecondaryText.MouseClick += new MouseEventHandler(List_MouseClick);
+            label_SecondaryText.MouseDown += new MouseEventHandler(List_MouseDown);
+            label_SecondaryText.MouseMove += new MouseEventHandler(List_MouseMove);
+            label_SecondaryText.MouseUp += new MouseEventHandler(List_MouseUp);
             label_SecondaryText.Font = new Font(FONT_NAME, FONT_SIZE_SECONDARY, FontStyle.Regular);
             label_SecondaryText.Location = new Point(30, SECONDARY_LOCATION_Y);
             label_SecondaryText.BackColor = BACK_COLOR;
@@ -208,15 +243,14 @@ namespace WellaTodo
             textBox_Rename.KeyDown += new KeyEventHandler(textBox_Rename_KeyDown);
             textBox_Rename.KeyUp += new KeyEventHandler(textBox_Rename_KeyUp);
             textBox_Rename.Leave += new EventHandler(textBox_Rename_Leave);
-            textBox_Rename.MouseDown += new MouseEventHandler(textBox_Rename_MouseDown);
             textBox_Rename.Visible = false;
             textBox_Rename.Location = new Point(30, PRIMARY_LOCATION_Y1);
             Controls.Add(textBox_Rename);
         }
 
-        // --------------------------------------------
-        // 헬프 메서드
-        // --------------------------------------------
+        //---------------------------------------------------------
+        // Textbox Rename
+        //---------------------------------------------------------
         public void Rename_Process()
         {
             textBox_Rename.Visible = true;
@@ -225,41 +259,17 @@ namespace WellaTodo
             textBox_Rename.Focus();
         }
 
-        //---------------------------------------------------------
-        // 사용자 이벤트 처리 - Control Event
-        //---------------------------------------------------------
-        private void Mouse_Clicked(object sender, MouseEventArgs e)
-        {
-            Focus();
-            if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
-        }
-
-        private void List_MouseEnter(object sender, EventArgs e)
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
-        }
-
-        private void List_MouseLeave(object sender, EventArgs e)
-        {
-            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-        }
-
-        private void List_MouseClick(object sender, MouseEventArgs e)
-        {
-            Mouse_Clicked(sender, e);
-        }
-
-        //---------------------------------------------------------
-        // Textbox Rename
-        //---------------------------------------------------------
         private void List_Rename()
         {
             textBox_Rename.Visible = false;
             label_PrimaryText.Visible = true;
 
             // Change PrimaryText
+            if (PrimaryText_Renamed == textBox_Rename.Text)
+            {
+                //Console.WriteLine("PrimaryText_Renamed == textBox_Rename.Text");
+                return;
+            }
             PrimaryText_Renamed = textBox_Rename.Text;
 
             MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);
@@ -303,14 +313,74 @@ namespace WellaTodo
             IsTextboxClicked = false;
         }
 
-        private void textBox_Rename_MouseDown(object sender, MouseEventArgs e)
+        //---------------------------------------------------------
+        // 사용자 이벤트 처리 & 드래그&드롭
+        //---------------------------------------------------------
+        private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
-
+            Focus();
+            if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
         }
 
-        // ----------------------------------------------------------------------
-        // 드래그앤드롭 Drag & Drop
-        // ----------------------------------------------------------------------
+        private void List_MouseEnter(object sender, EventArgs e)
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : HIGHLIGHT_COLOR;
+        }
+
+        private void List_MouseLeave(object sender, EventArgs e)
+        {
+            BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+        }
+
+        private void List_MouseClick(object sender, MouseEventArgs e)
+        {
+            //Mouse_Clicked(sender, e);
+        }
+
+        private void List_MouseDown(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
+            DragStartPoint = PointToScreen(new Point(e.X, e.Y));
+        }
+
+        private void List_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!isDragging)
+            {
+                Mouse_Clicked(sender, e);
+            }
+            //isDragging = false;
+        }
+
+        private void List_MouseMove(object sender, MouseEventArgs e)
+        {
+            int threshold = 10;
+            int deltaX;
+            int deltaY;
+            Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
+            deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
+            deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
+
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+
+            if (isDragging)
+            {
+                return;
+            }
+
+            if (deltaX >= threshold || deltaY >= threshold)
+            {
+                isDragging = true;
+                Mouse_Clicked(sender, e);
+                DoDragDrop(this, DragDropEffects.All);
+            }
+        }
+
         private void List_DragEnter(object sender, DragEventArgs e)
         {
             //Console.WriteLine("List_DragEnter");

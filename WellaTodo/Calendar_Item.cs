@@ -16,7 +16,7 @@ namespace WellaTodo
 
     public partial class Calendar_Item : UserControl
     {
-        public event Calendar_Item_Event Calendar_Item_Click;
+        public event Calendar_Item_Event Calendar_Item_Clicked;
 
         static readonly int LIST_WIDTH = 100;
         static readonly int LIST_HEIGHT = 40;
@@ -33,11 +33,17 @@ namespace WellaTodo
         private Label label_PrimaryText = new Label();
         ToolTip m_ToolTip = new ToolTip();
 
-        private CDataCell m_DataCell;
-        public CDataCell CD_DataCell { get => m_DataCell; set => m_DataCell = value; }
-
         bool isDragging = false;
         Point DragStartPoint;
+
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
+        private CDataCell m_DataCell;
+        public CDataCell CD_DataCell 
+        { 
+            get => m_DataCell; set => m_DataCell = value; 
+        }
 
         private Font m_Font = DefaultFont;
         public override Font Font
@@ -70,9 +76,16 @@ namespace WellaTodo
         public string PrimaryText
         {
             get => label_PrimaryText.Text;
-            set => label_PrimaryText.Text = value;
+            set
+            {
+                label_PrimaryText.Text = value;
+                SetToolTip(label_PrimaryText.Text);
+            }
         }
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public Calendar_Item()
         {
             InitializeComponent();
@@ -105,6 +118,28 @@ namespace WellaTodo
             Initialize();
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
+        private void Calendar_Item_Paint(object sender, PaintEventArgs pevent)
+        {
+            Graphics g = pevent.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Rectangle rc = ClientRectangle;
+            int x = rc.Left;
+            int y = rc.Top;
+            int w = rc.Width - 2;
+            int h = rc.Height - 1;
+            g.DrawRectangle(new Pen(BORDER_COLOR, 1.0f), x, y, w, h);
+
+            label_PrimaryText.Size = new Size(Size.Width - 3, Size.Height - 2);
+            label_PrimaryText.Location = new Point(1, 1);
+        }
+
+        //---------------------------------------------------------
+        // 초기화 및 Update Display
+        //---------------------------------------------------------
         private void Initialize()
         {
             Size = new Size(LIST_WIDTH, LIST_HEIGHT);
@@ -114,6 +149,9 @@ namespace WellaTodo
             MouseClick += new MouseEventHandler(Calendar_Item_MouseClick);
             MouseEnter += new EventHandler(Calendar_Item_MouseEnter);
             MouseLeave += new EventHandler(Calendar_Item_MouseLeave);
+            MouseDown += new MouseEventHandler(Calendar_Item_MouseDown);
+            MouseUp += new MouseEventHandler(Calendar_Item_MouseUp);
+            MouseMove += new MouseEventHandler(Calendar_Item_MouseMove);
 
             AllowDrop = true;
 
@@ -137,30 +175,31 @@ namespace WellaTodo
             //label_PrimaryText.Location = new Point(0, 0);
             label_PrimaryText.BackColor = BACK_COLOR;
             Controls.Add(label_PrimaryText);
-
-            m_ToolTip.SetToolTip(label_PrimaryText, label_PrimaryText.Text);
-            //m_ToolTip.SetToolTip(this, label_PrimaryText.Text);
         }
 
-        private void Calendar_Item_Paint(object sender, PaintEventArgs pevent)
+        // ========================================================
+        // 메서드 함수
+        // ========================================================
+        private void SetToolTip(string text)
         {
-            Graphics g = pevent.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            Rectangle rc = ClientRectangle;
-            int x = rc.Left;
-            int y = rc.Top;
-            int w = rc.Width - 2;
-            int h = rc.Height - 1;
-            g.DrawRectangle(new Pen(BORDER_COLOR, 1.0f), x, y, w, h);
+            //m_TaskToolTip.IsBalloon = true;
+            //m_TaskToolTip.ToolTipTitle = "Title";
+            //m_TaskToolTip.ToolTipIcon = ToolTipIcon.Info;
+            //m_TaskToolTip.ShowAlways = true;
 
-            label_PrimaryText.Size = new Size(Size.Width - 3, Size.Height - 2);
-            label_PrimaryText.Location = new Point(1, 1);
+            m_ToolTip.SetToolTip(label_PrimaryText, text);
+            m_ToolTip.SetToolTip(this, text);
         }
 
         //---------------------------------------------------------
-        // control event
+        // User control event
         //---------------------------------------------------------
+        private void Calendar_Item_Click(object sender, MouseEventArgs e)
+        {
+            Focus();
+            if (Calendar_Item_Clicked != null) Calendar_Item_Clicked?.Invoke(this, e);
+        }
+
         private void Calendar_Item_MouseEnter(object sender, EventArgs e)
         {
             //foreach (Control c in Controls) c.BackColor = HIGHLIGHT_COLOR;
@@ -175,8 +214,9 @@ namespace WellaTodo
 
         private void Calendar_Item_MouseClick(object sender, MouseEventArgs e)
         {
-            Focus();
-            if (Calendar_Item_Click != null) Calendar_Item_Click?.Invoke(this, e);
+            //Focus();
+            //Console.WriteLine("Calendar_Item_MouseClick");
+            //if (Calendar_Item_Clicked != null) Calendar_Item_Clicked?.Invoke(this, e);
         }
 
         //---------------------------------------------------------
@@ -184,13 +224,14 @@ namespace WellaTodo
         //---------------------------------------------------------
         private void Calendar_Item_MouseDown(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("Calendar_Item_MouseDown" + e.X + "-" + e.Y);
             isDragging = false;
             DragStartPoint = PointToScreen(new Point(e.X, e.Y));
         }
 
         private void Calendar_Item_MouseUp(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Calendar_Item_MouseUp");
+            //Console.WriteLine("Calendar_Item_MouseUp");
             if (isDragging)
             {
                 //Console.WriteLine("Calendar_Item_MouseUp - DragDrop");
@@ -198,30 +239,36 @@ namespace WellaTodo
             else
             {
                 //Console.WriteLine("Calendar_Item_MouseUp - Click");
+                Calendar_Item_Click(sender, e);
             }
             isDragging = false;
         }
 
         private void Calendar_Item_MouseMove(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("Calendar_Item_MouseMove" + e.X + "-" + e.Y);
             int threshold = 10;
             int deltaX;
             int deltaY;
             Point DragCurrentPoint = PointToScreen(new Point(e.X, e.Y));
             deltaX = Math.Abs(DragCurrentPoint.X - DragStartPoint.X);
             deltaY = Math.Abs(DragCurrentPoint.Y - DragStartPoint.Y);
-            if (!isDragging)
+
+            if (e.Button != MouseButtons.Left)
             {
-                if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-                {
-                    if ((deltaX < threshold) && (deltaY < threshold))
-                    {
-                        //Console.WriteLine("Calendar_Item_MouseMove -> DoDragDrop : " + PrimaryText);
-                        DoDragDrop(this, DragDropEffects.All);
-                        isDragging = true;
-                        return;
-                    }
-                }
+                return;
+            }
+
+            if (isDragging)
+            {
+                return;
+            }
+
+            if (deltaX >= threshold || deltaY >= threshold)
+            {
+                //Console.WriteLine("Calendar_Item_MouseMove -> DoDragDrop");
+                isDragging = true;
+                DoDragDrop(this, DragDropEffects.All);
             }
         }
 
