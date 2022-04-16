@@ -48,7 +48,6 @@ namespace WellaTodo
         MainController m_Controller;
 
         MemoForm memoForm = new MemoForm();
-        MemoEditorForm memoEditorForm = new MemoEditorForm();
         MemoMenuList m_Selected_Menu;
         Post_it m_Selected_Memo;
 
