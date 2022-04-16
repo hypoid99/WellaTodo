@@ -806,13 +806,6 @@ namespace WellaTodo
             Send_Log_Message(">BulletinBoardForm::Display_Memo_Menu : ");
         }
 
-        private void Display_Alarm_Menu()
-        {
-            //Add_Alarm_To_BulletinBoard(m_Controller.Query_BulletineBoard_Alarm());
-
-            Send_Log_Message(">BulletinBoardForm::Display_Alarm_Menu : ");
-        }
-
         private void Display_Tag_Menu(int tag)
         {
             Add_Memo_To_BulletinBoard(m_Controller.Query_BulletineBoard_Tag(tag));
