@@ -18,8 +18,18 @@ namespace WellaTodo
 
         Popup popup;
 
+        bool isDragging = false;
+        Point DragStartPoint;
+
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
         CDataCell m_DataCell;
-        public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
+        public CDataCell DataCell 
+        { 
+            get => m_DataCell; 
+            set => m_DataCell = value; 
+        }
 
         private string _memoTitle;
         public string MemoTitle
@@ -115,7 +125,11 @@ namespace WellaTodo
         }
 
         private bool _bulletin;
-        public bool IsBulletin { get => _bulletin; set => _bulletin = value; }
+        public bool IsBulletin 
+        { 
+            get => _bulletin; 
+            set => _bulletin = value; 
+        }
 
         bool isMemoTextChanged = false;
         public bool IsMemoTextChanged
@@ -158,6 +172,9 @@ namespace WellaTodo
             set => isTextbox_Title_Clicked = value; 
         }
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public Post_it(CDataCell dc)
         {
             InitializeComponent();
@@ -176,6 +193,9 @@ namespace WellaTodo
             if (dc.DC_deadlineType > 0) IsScheduleVisible = true;
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
         private void Post_it_Load(object sender, EventArgs e)
         {
             Initiate();
@@ -186,6 +206,9 @@ namespace WellaTodo
             Update_Post_it();
         }
 
+        // --------------------------------------------------
+        // 초기화, Update Display
+        // --------------------------------------------------
         private void Initiate()
         {
             AllowDrop = true;
@@ -310,7 +333,7 @@ namespace WellaTodo
         }
 
         // --------------------------------------------------------------
-        // 툴바 2차 이벤트
+        // POP-UP 메뉴 이벤트
         // --------------------------------------------------------------
         private void button_Alarm_Set_Click(object sender, EventArgs e)
         {
@@ -399,7 +422,7 @@ namespace WellaTodo
         }
 
         // --------------------------------------------------------------
-        // 툴바 이벤트
+        // 사용자 입력 처리
         // --------------------------------------------------------------
         private void pictureBox_Edit_MouseEnter(object sender, EventArgs e)
         {
@@ -679,9 +702,6 @@ namespace WellaTodo
         // ---------------------------------------------------------------------------
         // Post it 드래그앤드롭 Drag & Drop - Source
         // ---------------------------------------------------------------------------
-        bool isDragging = false;
-        Point DragStartPoint;
-
         private void Post_it_MouseDown(object sender, MouseEventArgs e)
         {
             //Console.WriteLine("Post_it_MouseDown");

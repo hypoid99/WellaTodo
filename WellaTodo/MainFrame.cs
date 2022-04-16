@@ -231,6 +231,8 @@ namespace WellaTodo
             splitContainer2.Size = new Size(splitContainer1.Panel2.Width, splitContainer1.Panel2.Height - TAIL_HEIGHT);
             splitContainer2.Panel1.BackColor = PSEUDO_BACK_COLOR;
 
+            splitContainer2.Panel2.AutoScroll = true;
+
             panel_Header.Location = new Point(0, 0);
             panel_Header.Size = new Size(splitContainer2.Panel1.Width, HEADER_HEIGHT);
             panel_Header .BackColor = PSEUDO_HIGHLIGHT_COLOR;
@@ -1193,10 +1195,10 @@ namespace WellaTodo
                     Update_Add_Plan(dc);
                     break;
                 case WParam.WM_MEMO_ADD:  // Bulletin
-                    Update_Add_Memo(dc);
+                    //Update_Add_Memo(dc);
                     break;
                 case WParam.WM_MEMO_MOVE_TO: // Bulletin
-                    Update_Memo_Move_To(dc);
+                    //Update_Memo_Move_To(dc);
                     break;
                 case WParam.WM_CONVERT_NOTEPAD:  // NotePad
                     Update_Convert_NotePad(dc);

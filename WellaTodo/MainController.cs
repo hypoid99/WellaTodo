@@ -705,6 +705,40 @@ namespace WellaTodo
 			m_model.Add_Memo(dc);
 		}
 
+		public void Perform_Delete_Memo(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Delete_Memo : [" + dc.DC_task_ID + "]" + dc.DC_title);
+			m_model.Delete_Memo(dc);
+		}
+
+		public void Perform_Modify_Memo_Text(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Text : " + dc.DC_title);
+			m_model.Modify_Memo_Text(dc);
+		}
+
+		public bool Perform_Modify_Memo_Title(CDataCell dc, string title)
+		{
+			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
+			if (title.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Memo_Title -> Leghth of Title is zero!!");
+				return false;
+			}
+
+			if (dc.DC_title == title)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Modify_Memo_Title -> Title is same!!");
+				return true;
+			}
+
+			dc.DC_title = title;
+
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Title : " + dc.DC_title);
+			m_model.Modify_Memo_Title(dc);
+			return true;
+		}
+
 		public void Perform_Modify_Memo_Archive(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Memo_Archive : " + dc.DC_title);
@@ -721,6 +755,45 @@ namespace WellaTodo
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Memo_Tag : " + dc.DC_title);
 			m_model.Modify_Memo_Tag(dc);
+		}
+
+		public void Perform_Modify_Memo_Alarm(CDataCell dc, DateTime dt)
+		{
+			if (dt == default)
+            {
+				dc.DC_remindType = 0;
+				dc.DC_remindTime = dt;
+			}
+            else
+            {
+				dc.DC_remindType = 4;
+				dc.DC_remindTime = dt;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
+			m_model.Modifiy_Memo_Alarm(dc);
+		}
+
+		public void Perform_Modify_Memo_Schedule(CDataCell dc, DateTime dt)
+		{
+			if (dt == default)
+			{
+				dc.DC_deadlineType = 0;
+				dc.DC_deadlineTime = dt;
+			}
+			else
+			{
+				if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
+				{
+					dt = new DateTime(dt.Year, dt.Month, dt.Day, 22, 00, 00);
+				}
+
+				dc.DC_deadlineType = 4;
+				dc.DC_deadlineTime = dt;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Modify_Memo_Schedule : " + dc.DC_title);
+			m_model.Modifiy_Memo_Schedule(dc);
 		}
 
 		public void Perform_Memo_Move_To(CDataCell source, CDataCell target)
@@ -833,7 +906,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (!dt.DC_archive)
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -843,7 +916,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard_Archive()
 		{
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (dt.DC_archive)
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -853,7 +926,7 @@ namespace WellaTodo
 
 		public IEnumerable<CDataCell> Query_BulletineBoard_Tag(int tag)
         {
-			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetTaskCollection()
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetMemoCollection()
 											 where dt.DC_bulletin && (!dt.DC_archive) && dt.DC_memoTag == tag
 											 select dt;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
@@ -872,6 +945,16 @@ namespace WellaTodo
 				//deepCopy.Add((CDataCell)dc.Clone());
 				//deepCopy.Add((CDataCell)DeepClone(dc));
 				deepCopy.Add((CDataCell)SerializableDeepClone(dc));
+			}
+			return deepCopy;
+		}
+
+		private List<CMemoCell> List_DeepCopy(IEnumerable<CMemoCell> dataset)
+		{
+			List<CMemoCell> deepCopy = new List<CMemoCell>();
+			foreach (CMemoCell dc in dataset)
+			{
+				deepCopy.Add((CMemoCell)SerializableDeepClone(dc));
 			}
 			return deepCopy;
 		}

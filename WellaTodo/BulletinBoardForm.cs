@@ -52,6 +52,9 @@ namespace WellaTodo
         MemoMenuList m_Selected_Menu;
         Post_it m_Selected_Memo;
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public BulletinBoardForm()
         {
             InitializeComponent();
@@ -109,6 +112,8 @@ namespace WellaTodo
             // 저장된 메모가 없을 경우
             if (dataset.Count () == 0)
             {
+                Console.WriteLine("Memo가 없읍니다.");
+                New_Note();
                 return;
             }
             
@@ -117,11 +122,8 @@ namespace WellaTodo
                 Post_it note = new Post_it(dc);
 
                 note.Size = new Size(NOTE_WIDTH, NOTE_HEIGHT);
-                note.Post_it_Click -= new Post_it_Event(Post_it_Click);
                 note.Post_it_Click += new Post_it_Event(Post_it_Click);
-                note.DragEnter -= new DragEventHandler(Post_it_DragEnter);
                 note.DragEnter += new DragEventHandler(Post_it_DragEnter);
-                note.DragDrop -= new DragEventHandler(Post_it_DragDrop);
                 note.DragDrop += new DragEventHandler(Post_it_DragDrop);
 
                 panel_Bulletin.Controls.Add(note);
@@ -208,22 +210,22 @@ namespace WellaTodo
                 case WParam.WM_MEMO_ADD:
                     Update_New_Note(dc);
                     break;
-                case WParam.WM_MODIFY_TASK_TITLE:
-                    Update_Modify_Memo_Title(dc);
-                    break;
-                case WParam.WM_MODIFY_TASK_MEMO:
-                    Update_Modify_Memo(dc);
-                    break;
-                case WParam.WM_TASK_DELETE:
+                case WParam.WM_MEMO_DELETE:
                     Update_Delete_Memo(dc);
                     break;
-                case WParam.WM_MODIFY_REMIND:
+                case WParam.WM_MODIFY_MEMO_TEXT:
+                    Update_Modify_Memo_Text(dc);
+                    break;
+                case WParam.WM_MODIFY_MEMO_TITLE:
+                    Update_Modify_Memo_Title(dc);
+                    break;
+                case WParam.WM_MODIFY_MEMO_ALARM:
                     Update_Modify_Memo_Alarm(dc);
                     break;
-                case WParam.WM_MODIFY_PLANNED:
+                case WParam.WM_MODIFY_MEMO_SCHEDULE:
                     Update_Modify_Memo_Schedule(dc);
                     break;
-                case WParam.WM_COMPLETE_PROCESS:
+                case WParam.WM_MODIFY_MEMO_ARCHIVE:
                     Update_Modify_Memo_Archive(dc);
                     break;
                 case WParam.WM_MODIFY_MEMO_COLOR:
@@ -392,7 +394,7 @@ namespace WellaTodo
             Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Archive : -> Completed" + dc.DC_title);
         }
 
-        private void Update_Modify_Memo(CDataCell dc)
+        private void Update_Modify_Memo_Text(CDataCell dc)
         {
             int counter = 0;
             foreach (Post_it note in panel_Bulletin.Controls)
@@ -408,10 +410,10 @@ namespace WellaTodo
 
             if (counter == 0)
             {
-                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo -> No matching Data!!");
+                Send_Log_Message("Warning>BulletinBoardForm::Update_Modify_Memo_Text -> No matching Data!!");
             }
 
-            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo : -> Completed " + dc.DC_title);
+            Send_Log_Message("4>BulletinBoardForm::Update_Modify_Memo_Text : -> Completed " + dc.DC_title);
         }
 
         private void Update_Modify_Memo_Color(CDataCell dc)
@@ -568,7 +570,7 @@ namespace WellaTodo
                     Change_Title(note);
                     break;
                 case "Changed":
-                    Change_Memo(note);
+                    Change_Note(note);
                     break;
             }
         }
@@ -629,19 +631,20 @@ namespace WellaTodo
 
             note.MemoText = memoForm.TextBoxString;
 
-            //메모 내용에 변경이 있는지 확인(?)
-            note.DataCell.DC_memo = note.MemoText;  // 입력 사항에 오류가 있는지 체크할 것
+            //메모 내용에 변경이 있는지 확인 및 입력 사항에 오류가 있는지 체크할 것
+            note.DataCell.DC_memo = note.MemoText;  
 
             Send_Log_Message("1>BulletinBoardForm::Edit_Note -> Memo Changed :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Memo(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Text(note.DataCell);
         }
 
-        private void Change_Memo(Post_it note)
+        private void Change_Note(Post_it note)
         {
+            //메모 내용에 변경이 있는지 확인 및 입력 사항에 오류가 있는지 체크할 것
             note.DataCell.DC_memo = note.MemoText;
 
-            Send_Log_Message("1>BulletinBoardForm::Change_Memo -> Memo Changed :" + note.DataCell.DC_title);
-            m_Controller.Perform_Modify_Task_Memo(note.DataCell);
+            Send_Log_Message("1>BulletinBoardForm::Change_Note -> Memo Changed :" + note.DataCell.DC_title);
+            m_Controller.Perform_Modify_Memo_Text(note.DataCell);
         }
 
         private void Set_Alarm_Note(Post_it note)
@@ -666,15 +669,17 @@ namespace WellaTodo
             note.IsAlarmVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Alarm_Note");
-            m_Controller.Perform_Remind_Select(note.DataCell, dt);
+            m_Controller.Perform_Modify_Memo_Alarm(note.DataCell, dt);
         }
 
         private void Reset_Alarm_Note(Post_it note)
         {
+            DateTime dt = default;
+
             note.IsAlarmVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Alarm_Note");
-            m_Controller.Perform_Remind_Delete(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Alarm(note.DataCell, dt);
         }
 
         private void Set_Schedule_Note(Post_it note)
@@ -691,15 +696,17 @@ namespace WellaTodo
             note.IsScheduleVisible = true;
 
             Send_Log_Message("1>BulletinBoardForm::Set_Schedule_Note");
-            m_Controller.Perform_Planned_Select(note.DataCell, calendar.SelectedDateTime);
+            m_Controller.Perform_Modify_Memo_Schedule(note.DataCell, calendar.SelectedDateTime);
         }
 
         private void Reset_Schedule_Note(Post_it note)
         {
+            DateTime dt = default;
+
             note.IsScheduleVisible = false;
 
             Send_Log_Message("1>BulletinBoardForm::Reset_Schedule_Note");
-            m_Controller.Perform_Planned_Delete(note.DataCell);
+            m_Controller.Perform_Modify_Memo_Schedule(note.DataCell, dt);
         }
 
         private void Delete_Note(Post_it note)
@@ -714,7 +721,7 @@ namespace WellaTodo
             }
 
             Send_Log_Message("1>BulletinBoardForm::Delete_Note : " + note.DataCell.DC_title);
-            m_Controller.Perform_Delete_Task(note.DataCell);
+            m_Controller.Perform_Delete_Memo(note.DataCell);
 
             if (panel_Bulletin.Controls.Count == 0) // BulletinBoard에 메모가 없을시 한개 추가
             {
@@ -727,7 +734,7 @@ namespace WellaTodo
             note.DataCell.DC_title = note.MemoTitle;
 
             Send_Log_Message("1>BulletinBoardForm::Change_Title -> Title is Changed : " + note.DataCell.DC_title);
-            if (!m_Controller.Perform_Modify_Task_Title(note.DataCell, note.MemoTitle))
+            if (!m_Controller.Perform_Modify_Memo_Title(note.DataCell, note.MemoTitle))
             {
                 note.MemoTitle = note.DataCell.DC_title;
                 MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
@@ -738,7 +745,7 @@ namespace WellaTodo
         {
             if (note.IsMemoTextChanged)
             {
-                Change_Memo(note);
+                Change_Note(note);
             }
 
             note.DataCell.DC_memoColor = note.BackColor.Name;
@@ -751,7 +758,7 @@ namespace WellaTodo
         {
             if (note.IsMemoTextChanged)
             {
-                Change_Memo(note);
+                Change_Note(note);
             }
 
             note.DataCell.DC_memoTag = note.MemoTag;
@@ -764,7 +771,7 @@ namespace WellaTodo
         {
             if (note.IsMemoTextChanged)
             {
-                Change_Memo(note);
+                Change_Note(note);
             }
 
             if (note.IsArchive == false && note.Memo_TextLength == 0) // 보관처리시 메모에 내용이 없으면 보관처리하지 말고 리턴

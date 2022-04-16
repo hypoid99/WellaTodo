@@ -12,8 +12,15 @@ namespace WellaTodo
 {
     public partial class MemoForm : Form
     {
+        // --------------------------------------------------
+        // Properties
+        // --------------------------------------------------
         private string _textBoxString;
-        public string TextBoxString { get => _textBoxString; set => _textBoxString = value; }
+        public string TextBoxString 
+        { 
+            get => _textBoxString; 
+            set => _textBoxString = value; 
+        }
 
         bool isTextBoxChanged = false;
         public bool IsTextBoxChanged
@@ -22,11 +29,17 @@ namespace WellaTodo
             set => isTextBoxChanged = value;
         }
 
+        // --------------------------------------------------
+        // Constructor
+        // --------------------------------------------------
         public MemoForm()
         {
             InitializeComponent();
         }
 
+        // --------------------------------------------------
+        // Form 이벤트
+        // --------------------------------------------------
         private void MemoForm_Load(object sender, EventArgs e)
         {
             textBox1.Text = TextBoxString;
@@ -38,8 +51,6 @@ namespace WellaTodo
 
         private void MemoForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            IsTextBoxChanged = false;
-
             TextBoxString = textBox1.Text;
         }
 
@@ -57,6 +68,9 @@ namespace WellaTodo
             button1.Size = new Size(60, 30);
         }
 
+        // --------------------------------------------------------------
+        // 사용자 입력 처리
+        // --------------------------------------------------------------
         private void button1_Click(object sender, EventArgs e)
         {
             Close();

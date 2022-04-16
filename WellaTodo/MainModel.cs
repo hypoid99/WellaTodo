@@ -53,8 +53,14 @@ namespace WellaTodo
 		WM_PLAN_ADD,
 		// BulletinBoard
 		WM_MEMO_ADD,
+		WM_MEMO_DELETE,
+		WM_MODIFY_MEMO_TEXT,
+		WM_MODIFY_MEMO_TITLE,
 		WM_MODIFY_MEMO_COLOR,
 		WM_MODIFY_MEMO_TAG,
+		WM_MODIFY_MEMO_ARCHIVE,
+		WM_MODIFY_MEMO_ALARM,
+		WM_MODIFY_MEMO_SCHEDULE,
 		WM_MEMO_MOVE_TO,
 		// DataCell
 		WM_DATACELL
@@ -64,10 +70,14 @@ namespace WellaTodo
 	{
 		public event ModelHandler<MainModel> Update_View;
 
+		string m_FileName = "task.dat";
+
 		List<CDataCell> myTaskItems = new List<CDataCell>();
 		List<string> myListNames = new List<string>();
 		int m_Task_ID_Num = 0;
-		string m_FileName = "task.dat";
+
+		List<CDataCell> myMemoItems = new List<CDataCell>();
+		int m_Memo_ID_Num = 0;
 
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
 
@@ -132,6 +142,17 @@ namespace WellaTodo
 			myListNames = list_collections;
 		}
 
+		public List<CDataCell> GetMemoCollection()
+		{
+			return myMemoItems;
+		}
+
+		private void SetMemoCollection(List<CDataCell> memo_collections)
+		{
+			// 중요 데이터 set
+			myMemoItems = memo_collections;
+		}
+
 		// --------------------------------------------------------
 		// Load/Save/Open/Print 메서드
 		// --------------------------------------------------------
@@ -139,6 +160,7 @@ namespace WellaTodo
         {
 			List<CDataCell> todo_data = new List<CDataCell>();
 			List<string> list_name = new List<string>();
+			List<CDataCell> memo_data = new List<CDataCell>();
 
 			// Loading Task File
 			if (File.Exists(m_FileName))
@@ -150,6 +172,7 @@ namespace WellaTodo
 
 					todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
 					list_name = (List<string>)deserializer.Deserialize(rs);
+					memo_data = (List<CDataCell>)deserializer.Deserialize(rs);
 
 					rs.Close();
 				}
@@ -159,6 +182,7 @@ namespace WellaTodo
 				}
 			}
 
+			// TASK DATA 저장
 			m_Task_ID_Num = todo_data.Count - 1;
 
 			int pos = 0;
@@ -170,6 +194,18 @@ namespace WellaTodo
 
 			SetTaskCollection(todo_data); // deep copy로 변경할 것
 			SetListCollection(list_name);
+
+			// MEMO DATA 저장
+			m_Memo_ID_Num = memo_data.Count - 1;
+
+			pos = 0;
+			for (int i = m_Memo_ID_Num; i >= 0; i--)
+			{
+				memo_data[i].DC_task_ID = pos;
+				pos++;
+			}
+
+			SetMemoCollection(memo_data); // deep copy로 변경할 것
 
 			Notify_Log_Message("3>MainModel::Load_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
@@ -183,6 +219,7 @@ namespace WellaTodo
 
 			serializer.Serialize(ws, GetTaskCollection());
 			serializer.Serialize(ws, GetListCollection());
+			serializer.Serialize(ws, GetMemoCollection());
 
 			ws.Close();
 
@@ -847,20 +884,76 @@ namespace WellaTodo
 		{
 			CDataCell data = (CDataCell)dc.Clone();
 
-			m_Task_ID_Num++;
+			m_Memo_ID_Num++;
 
-			data.DC_task_ID = m_Task_ID_Num;
+			data.DC_task_ID = m_Memo_ID_Num;
 			data.DC_dateCreated = DateTime.Now;
 
-			myTaskItems.Insert(0, data);
+			myMemoItems.Insert(0, data);
 
 			Notify_Log_Message("3>MainModel::Add_Memo -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MEMO_ADD));  // deep copy 할 것!
 		}
 
+		public bool Delete_Memo(CDataCell dc)
+		{
+			CDataCell data = Find_Memo(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Delete_Memo -> Find() Not Found Item!!");
+				return false;
+			}
+
+			if (myMemoItems.Remove(data))
+			{
+				Notify_Log_Message("3>MainModel::Delete_Memo -> Data is Deleted!! [" + data.DC_task_ID + "]" + data.DC_title);
+			}
+			else
+			{
+				Notify_Log_Message("Warning>MainModel::Delete_Memo -> Remove() Not Found Item!!");
+				return false;
+			}
+
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MEMO_DELETE));
+			return true;
+		}
+
+		public void Modify_Memo_Text(CDataCell dc)
+		{
+			CDataCell data = Find_Memo(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Memo_Text -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_memo = dc.DC_memo;
+
+			Notify_Log_Message("3>MainModel::Modify_Memo_Text : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_TEXT));
+		}
+
+		public void Modify_Memo_Title(CDataCell dc)
+		{
+			CDataCell data = Find_Memo(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Memo_Title -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_title = dc.DC_title;
+
+			Notify_Log_Message("3>MainModel::Modify_Memo_Title : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_TITLE));
+		}
+
 		public void Modify_Memo_Archive(CDataCell dc)
         {
-			CDataCell data = Find(dc);
+			CDataCell data = Find_Memo(dc);
 
 			if (data == null)
 			{
@@ -872,23 +965,23 @@ namespace WellaTodo
 
 			if (data.DC_complete)  // 완료시 맨밑으로, 해제시는 맨위로 보내기
 			{
-				myTaskItems.Remove(data);
-				myTaskItems.Insert(myTaskItems.Count, data);
+				myMemoItems.Remove(data);
+				myMemoItems.Insert(myMemoItems.Count, data);
 			}
 			else
 			{
-				myTaskItems.Remove(data);
-				myTaskItems.Insert(0, data);
+				myMemoItems.Remove(data);
+				myMemoItems.Insert(0, data);
 			}
 
 			Notify_Log_Message("3>MainModel::Modify_Memo_Archive -> Modify Archive [" + data.DC_task_ID + "]" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_COMPLETE_PROCESS));  // deep copy 할 것!
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_ARCHIVE));  // deep copy 할 것!
 
 		}
 
 		public void Modify_Memo_Color(CDataCell dc)
 		{
-			CDataCell data = Find(dc);
+			CDataCell data = Find_Memo(dc);
 
 			if (data == null)
 			{
@@ -904,7 +997,7 @@ namespace WellaTodo
 
 		public void Modify_Memo_Tag(CDataCell dc)
 		{
-			CDataCell data = Find(dc);
+			CDataCell data = Find_Memo(dc);
 
 			if (data == null)
 			{
@@ -918,22 +1011,56 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_TAG));  // deep copy 할 것!
 		}
 
+		public void Modifiy_Memo_Alarm(CDataCell dc)
+		{
+			CDataCell data = Find_Memo(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_Memo_Alarm -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_remindType = dc.DC_remindType;
+			data.DC_remindTime = dc.DC_remindTime;
+
+			Notify_Log_Message("3>MainModel::Modifiy_Memo_Alarm : type " + data.DC_remindType);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_ALARM));
+		}
+
+		public void Modifiy_Memo_Schedule(CDataCell dc)
+		{
+			CDataCell data = Find_Memo(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modifiy_Memo_Schedule -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_deadlineType = dc.DC_deadlineType;
+			data.DC_deadlineTime = dc.DC_deadlineTime;
+
+			Notify_Log_Message("3>MainModel::Modifiy_Memo_Schedule : type " + data.DC_deadlineType);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_MEMO_SCHEDULE));
+		}
+
 		public void Memo_Move_To(CDataCell source, CDataCell target)
 		{
-			CDataCell src = Find(source);
-			CDataCell tgt = Find(target);
+			CDataCell src = Find_Memo(source);
+			CDataCell tgt = Find_Memo(target);
 
 			int src_index = 0;
 			int tar_index = 0; ;
-			for (int i = 0; i <= myTaskItems.Count - 1; i++)
+			for (int i = 0; i <= myMemoItems.Count - 1; i++)
 			{
-				if (source.DC_task_ID == myTaskItems[i].DC_task_ID) src_index = i;
-				if (target.DC_task_ID == myTaskItems[i].DC_task_ID) tar_index = i;
+				if (source.DC_task_ID == myMemoItems[i].DC_task_ID) src_index = i;
+				if (target.DC_task_ID == myMemoItems[i].DC_task_ID) tar_index = i;
 			}
 
-			CDataCell temp = myTaskItems[src_index]; //추출
-			myTaskItems.RemoveAt(src_index); //삭제
-			myTaskItems.Insert(tar_index, temp); // 삽입
+			CDataCell temp = myMemoItems[src_index]; //추출
+			myMemoItems.RemoveAt(src_index); //삭제
+			myMemoItems.Insert(tar_index, temp); // 삽입
 
 			Notify_Log_Message("3>MainModel::Memo_Move_To -> Source : " + src.DC_title + " Target : " + tgt.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(target), WParam.WM_MEMO_MOVE_TO));
@@ -950,6 +1077,20 @@ namespace WellaTodo
 			if (dataset.Count() != 1)
 			{
 				Notify_Log_Message("Error>MainModel::Find -> Not Found Item!!");  // 에러 출력
+				return null;
+			}
+			return dataset.First();
+		}
+
+		private CDataCell Find_Memo(CDataCell dc)
+		{
+			int memo_ID = dc.DC_task_ID;
+			IEnumerable<CDataCell> dataset = from CDataCell data in myMemoItems
+											 where data.DC_task_ID == memo_ID
+											 select data;
+			if (dataset.Count() != 1)
+			{
+				Notify_Log_Message("Error>MainModel::Find_Memo -> Not Found Item!!");  // 에러 출력
 				return null;
 			}
 			return dataset.First();
