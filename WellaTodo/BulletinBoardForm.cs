@@ -51,8 +51,6 @@ namespace WellaTodo
         MemoMenuList m_Selected_Menu;
         Post_it m_Selected_Memo;
 
-        int x;
-
         // --------------------------------------------------
         // Constructor
         // --------------------------------------------------
