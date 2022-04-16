@@ -111,6 +111,8 @@ namespace WellaTodo
 
         int m_VerticalScroll_Value;
 
+        int dummy_20220412;
+
         // --------------------------------------------------
         // Constructor
         // --------------------------------------------------

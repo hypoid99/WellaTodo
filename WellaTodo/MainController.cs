@@ -26,6 +26,8 @@ namespace WellaTodo
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
+		int dummy_20220412;
+
 		// --------------------------------------------------
 		// Constructor
 		// --------------------------------------------------
@@ -939,16 +941,6 @@ namespace WellaTodo
 			return deepCopy;
 		}
 
-		private List<CMemoCell> List_DeepCopy(IEnumerable<CMemoCell> dataset)
-		{
-			List<CMemoCell> deepCopy = new List<CMemoCell>();
-			foreach (CMemoCell dc in dataset)
-			{
-				deepCopy.Add((CMemoCell)SerializableDeepClone(dc));
-			}
-			return deepCopy;
-		}
-
 		// ----------------------------------------------------
 		// 메서드
 		// ----------------------------------------------------
@@ -969,9 +961,6 @@ namespace WellaTodo
 
 			return true;
 		}
-
-
-
 
 		// ----------------------------------------------------
 		// Serializable 객체에 대한  Deep Clone 구현

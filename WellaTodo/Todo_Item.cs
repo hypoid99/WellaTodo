@@ -217,27 +217,29 @@ namespace WellaTodo
             roundCheckbox1.Checked = TD_DataCell.DC_complete;
             starCheckbox1.Checked = TD_DataCell.DC_important;
 
+            /*
             if (TD_DataCell.DC_bulletin)
             {
                 roundCheckbox1.Visible = false;
                 starCheckbox1.Visible = false;
-                pictureBox_Bulletin.Visible = true;
-                pictureBox_Notepad.Visible = false;
+                //pictureBox_Bulletin.Visible = true;
+                //pictureBox_Notepad.Visible = false;
             }
             else if (TD_DataCell.DC_notepad)
             {
                 roundCheckbox1.Visible = false;
                 starCheckbox1.Visible = false;
-                pictureBox_Bulletin.Visible = false;
-                pictureBox_Notepad.Visible = true;
+                //pictureBox_Bulletin.Visible = false;
+                //pictureBox_Notepad.Visible = true;
             }
             else
             {
                 roundCheckbox1.Visible = true;
                 starCheckbox1.Visible = true;
-                pictureBox_Bulletin.Visible = false;
-                pictureBox_Notepad.Visible = false;
+                //pictureBox_Bulletin.Visible = false;
+                //pictureBox_Notepad.Visible = false;
             }
+            */
 
             if (TD_infomation.Length == 0) // 가운데
             {
@@ -280,7 +282,7 @@ namespace WellaTodo
         }
 
         // --------------------------------------------
-        // 헬프 메서드
+        // 메서드
         // --------------------------------------------
         private void SetPathOuterBorder()
         {

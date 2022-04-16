@@ -37,30 +37,30 @@ namespace WellaTodo
         // --------------------------------------------------
         // Properties
         // --------------------------------------------------
-        public int DC_task_ID { get => _task_ID; set => _task_ID = value; }
-        public string DC_listName { get => _listName; set => _listName = value; }
-        public string DC_title { get => _title; set => _title = value; }
-        public bool DC_complete { get => _complete; set => _complete = value; }
-        public bool DC_important { get => _important; set => _important = value; }
-        public string DC_memo { get => _memo; set => _memo = value; }
-        public DateTime DC_dateCreated { get => _dateCreated; set => _dateCreated = value; }
+        public int          DC_task_ID      { get => _task_ID; set => _task_ID = value; }
+        public string       DC_listName     { get => _listName; set => _listName = value; }
+        public string       DC_title        { get => _title; set => _title = value; }
+        public bool         DC_complete     { get => _complete; set => _complete = value; }
+        public bool         DC_important    { get => _important; set => _important = value; }
+        public string       DC_memo         { get => _memo; set => _memo = value; }
+        public DateTime     DC_dateCreated  { get => _dateCreated; set => _dateCreated = value; }
 
-        public bool DC_myToday { get => _myToday; set => _myToday = value; }
-        public DateTime DC_myTodayTime { get => _myTodayTime; set => _myTodayTime = value; }
-        public int DC_remindType { get => _remindType; set => _remindType = value; }
-        public DateTime DC_remindTime { get => _remindTime; set => _remindTime = value; }
-        public int DC_deadlineType { get => _deadlineType; set => _deadlineType = value; }
-        public DateTime DC_deadlineTime { get => _deadlineTime; set => _deadlineTime = value; }
-        public int DC_repeatType { get => _repeatType; set => _repeatType = value; }
-        public DateTime DC_repeatTime { get => _repeatTime; set => _repeatTime = value; }
+        public bool         DC_myToday      { get => _myToday; set => _myToday = value; }
+        public DateTime     DC_myTodayTime  { get => _myTodayTime; set => _myTodayTime = value; }
+        public int          DC_remindType   { get => _remindType; set => _remindType = value; }
+        public DateTime     DC_remindTime   { get => _remindTime; set => _remindTime = value; }
+        public int          DC_deadlineType { get => _deadlineType; set => _deadlineType = value; }
+        public DateTime     DC_deadlineTime { get => _deadlineTime; set => _deadlineTime = value; }
+        public int          DC_repeatType   { get => _repeatType; set => _repeatType = value; }
+        public DateTime     DC_repeatTime   { get => _repeatTime; set => _repeatTime = value; }
 
-        public bool DC_bulletin { get => _bulletin; set => _bulletin = value; }
-        public bool DC_archive { get => _archive; set => _archive = value; }
-        public int DC_memoTag { get => _memoTag; set => _memoTag = value; }
-        public string DC_memoColor { get => _memoColor; set => _memoColor = value; }
+        public bool         DC_bulletin     { get => _bulletin; set => _bulletin = value; }
+        public bool         DC_archive      { get => _archive; set => _archive = value; }
+        public int          DC_memoTag      { get => _memoTag; set => _memoTag = value; }
+        public string       DC_memoColor    { get => _memoColor; set => _memoColor = value; }
 
-        public bool DC_notepad { get => _notepad; set => _notepad = value; }
-        public string DC_RTF { get => _RTF; set => _RTF = value; }
+        public bool         DC_notepad      { get => _notepad; set => _notepad = value; }
+        public string       DC_RTF          { get => _RTF; set => _RTF = value; }
 
         // --------------------------------------------------
         // Constructor
@@ -74,6 +74,7 @@ namespace WellaTodo
             _important = false;
             _memo = "메모추가";
             _dateCreated = DateTime.Now;
+
             _myToday = false;
             _myTodayTime = default;
             _remindType = 0;
@@ -101,6 +102,7 @@ namespace WellaTodo
             _important = false;
             _memo = "메모추가";
             _dateCreated = DateTime.Now;
+
             _myToday = false;
             _myTodayTime = default;
             _remindType = 0;
