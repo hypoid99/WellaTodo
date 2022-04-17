@@ -23,8 +23,6 @@ namespace WellaTodo
 
     public partial class MainFrame : Form, IView, IModelObserver
     {
-        public event ViewHandler<IView> View_Changed_Event;
-
         static readonly string WINDOW_CAPTION = "Wella Todo v0.95";
         static readonly int WINDOW_WIDTH = 1200;
         static readonly int WINDOW_HEIGHT = 700;
@@ -111,7 +109,7 @@ namespace WellaTodo
 
         int m_VerticalScroll_Value;
 
-        int dummy_20220412;
+        int dummy_20220417;
 
         // --------------------------------------------------
         // Constructor
@@ -120,6 +118,9 @@ namespace WellaTodo
         {
             InitializeComponent();
         }
+
+        // Interface - IView
+        public event ViewHandler<IView> View_Changed_Event;
 
         public void SetController(MainController controller)
         {
@@ -1103,7 +1104,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // Model 이벤트
+        // Model 이벤트 - Interface IModelObserver
         //--------------------------------------------------------------
         public void ModelObserver_Event_method(IModel m, ModelEventArgs e)
         {

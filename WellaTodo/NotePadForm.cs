@@ -54,6 +54,9 @@ namespace WellaTodo
         int m_linesPrinted;
         string[] m_Printlines;
 
+        // --------------------------------------------------------------------
+        // Constructor
+        // --------------------------------------------------------------------
         public NotePadForm()
         {
             InitializeComponent();
