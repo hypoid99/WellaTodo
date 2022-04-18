@@ -139,6 +139,12 @@
     <Compile Include="MemoForm.Designer.cs">
       <DependentUpon>MemoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NotePadEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotePadEditorForm.Designer.cs">
+      <DependentUpon>NotePadEditorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NotePadForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +253,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MemoForm.resx">
       <DependentUpon>MemoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NotePadEditorForm.resx">
+      <DependentUpon>NotePadEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NotePadForm.resx">
       <DependentUpon>NotePadForm.cs</DependentUpon>

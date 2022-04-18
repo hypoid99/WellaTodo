@@ -213,7 +213,17 @@ namespace WellaTodo
 
         private void Update_Display()
         {
-            label1.Text = TD_DataCell.DC_title;
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(new Bitmap(1, 1)))
+            {
+                SizeF size = g.MeasureString(TD_DataCell.DC_title, new Font(FONT_NAME, FONT_SIZE_TITLE, FontStyle.Regular));
+                int pixel_per_font = (int)size.Width / TD_DataCell.DC_title.Length;
+                int span = starCheckbox1.Location.X - PRIMARY_LOCATION_X - 20;
+                int cut_length = span / pixel_per_font;
+
+                label1.Text = TruncateString(TD_DataCell.DC_title, cut_length);
+            }
+            //label1.Text = TD_DataCell.DC_title;
+
             roundCheckbox1.Checked = TD_DataCell.DC_complete;
             starCheckbox1.Checked = TD_DataCell.DC_important;
 
@@ -323,6 +333,26 @@ namespace WellaTodo
                     Console.WriteLine(TD_DataCell.DC_title + "-" + d.Method.ToString());
                 }
             }
+        }
+
+        private string TruncateForDisplay(string text, int length)
+        {
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            string returnValue = text;
+            if (text.Length > length)
+            {
+                var tmp = text.Substring(0, length);
+                if (tmp.LastIndexOf(' ') > 0)
+                    returnValue = tmp.Substring(0, tmp.LastIndexOf(' ')) + " ...";
+            }
+            return returnValue;
+        }
+
+        public string TruncateString(string text, int length)
+        {
+            if (text.Length > length)
+                return text.Substring(0, length) + "...";
+            return text;
         }
 
         //---------------------------------------------------------
