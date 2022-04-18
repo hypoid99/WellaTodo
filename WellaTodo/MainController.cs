@@ -26,7 +26,7 @@ namespace WellaTodo
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
-		int dummy_20220412;
+		int dummy_20220417;
 
 		// --------------------------------------------------
 		// Constructor
