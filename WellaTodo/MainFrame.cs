@@ -730,7 +730,7 @@ namespace WellaTodo
             list.DragDrop -= new DragEventHandler(TwoLineList_DragDrop);
             list.DragDrop += new DragEventHandler(TwoLineList_DragDrop);
 
-            flowLayoutPanel_Menulist.Controls.Add(list); // 판넬 컨렉션에 저장
+            flowLayoutPanel_Menulist.Controls.Add(list); // 판넬 컨렉션에 저장 -> SRP 위배!
 
             return list;
         }

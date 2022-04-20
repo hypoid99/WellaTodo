@@ -13,10 +13,8 @@ using System.IO;
 
 namespace WellaTodo
 {
-    public partial class NotePadEditorForm : Form, IView, IModelObserver
+    public partial class NotePadEditorForm : Form
     {
-        public event ViewHandler<IView> View_Changed_Event;
-
         static readonly Color BACK_COLOR = Color.White;
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
@@ -24,8 +22,6 @@ namespace WellaTodo
         static readonly string FONT_NAME = "맑은 고딕";
         static readonly float FONT_SIZE_TEXT = 14.0f;
         static readonly int MAX_COUNT_FONT_SIZE = 16;
-
-        MainController m_Controller;
 
         List<string> m_FontName = new List<string>();
         List<float> m_FontSize = new List<float>();
@@ -62,11 +58,6 @@ namespace WellaTodo
             InitializeComponent();
         }
 
-        public void SetController(MainController controller)
-        {
-            m_Controller = controller;
-        }
-
         // --------------------------------------------------------------------
         // Form 이벤트
         // --------------------------------------------------------------------
@@ -79,7 +70,7 @@ namespace WellaTodo
         {
             if (IsUnsaved)
             {
-                DialogResult savePrompt = MessageBox.Show("저장할까요?", "NotePad", MessageBoxButtons.YesNoCancel);
+                DialogResult savePrompt = MessageBox.Show("저장할까요?", "NotePad Editor", MessageBoxButtons.YesNoCancel);
 
                 switch (savePrompt)
                 {
@@ -92,14 +83,6 @@ namespace WellaTodo
                         Save_File();
                         break;
                 }
-            }
-
-            New_File();
-
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                Hide();
             }
         }
 
@@ -127,12 +110,15 @@ namespace WellaTodo
             */
             comboBox_FontSelect.DataSource = m_FontName;
 
+            Console.WriteLine("m_FontName.Count : " + m_FontName.Count);
+
             int cnt = 0;
             for (int i = 0; i < m_FontName.Count; i++)
             {
                 if (m_FontName[i] == FONT_NAME)
                 {
                     // 초기화 폰트가 있는지 확인한다
+                    Console.WriteLine("Init font : " + i);
                     comboBox_FontSelect.SelectedIndex = i;
                     cnt++;
                 }
@@ -190,45 +176,10 @@ namespace WellaTodo
         //--------------------------------------------------------------
         // Model 이벤트
         //--------------------------------------------------------------
-        public void Update_View(IModel m, ModelEventArgs e)
-        {
-            CDataCell dc = e.Item;
-            WParam param = e.Param;
-
-            switch (param)
-            {
-                case WParam.WM_CONVERT_NOTEPAD:
-                    Update_Convert_NotePad(dc);
-                    break;
-                case WParam.WM_TRANSFER_RTF_NOTEPAD:
-                    Update_Transfer_RTF_Data(dc);
-                    break;
-                case WParam.WM_SAVE_RTF_NOTEPAD:
-                    Update_Save_RTF_Data(dc);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void Send_Log_Message(string msg)
-        {
-            try
-            {
-                View_Changed_Event.Invoke(this, new ViewEventArgs(msg));
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Please enter a valid number");
-            }
-        }
-
         private void Update_Save_RTF_Data(CDataCell dc)
         {
             IsUnsaved = false;
             UpdatePath();
-
-            Send_Log_Message("4>NotePadForm::Update_Save_RTF_Data : " + dc.DC_title);
         }
 
         private void Update_Convert_NotePad(CDataCell dc)
@@ -253,8 +204,6 @@ namespace WellaTodo
 
             IsUnsaved = false;
             UpdatePath();
-
-            Send_Log_Message("4>NotePadForm::Update_Convert_NotePad : " + dc.DC_title);
         }
 
         private void Update_Transfer_RTF_Data(CDataCell dc)
@@ -272,12 +221,10 @@ namespace WellaTodo
                 IsUnsaved = false;
                 UpdatePath();
             }
-
-            Send_Log_Message("4>NotePadForm::Update_Transfer_RTF_Data : " + dc.DC_title);
         }
 
         //--------------------------------------------------------------
-        // 명령 처리
+        // Command 처리
         //--------------------------------------------------------------
         private void New_File()
         {
@@ -430,146 +377,6 @@ namespace WellaTodo
 
             IsUnsaved = false;
             UpdatePath();
-
-            Send_Log_Message("1>NotePadForm::Save_Data");
-            m_Controller.Perform_Save_RTF_Data(DataCell);
-        }
-
-        // ------------------------------------------------------------
-        // 메뉴 처리
-        // ------------------------------------------------------------
-        private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            New_File();
-        }
-
-        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Open_File();
-        }
-
-        private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (DataCell.DC_notepad)
-            {
-                Save_Data();
-            }
-            else
-            {
-                Save_File();
-            }
-        }
-
-        private void 다른이름으로저장ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!DataCell.DC_notepad)
-            {
-                Save_As_File();
-            }
-        }
-
-        private void 인쇄ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            printDialog1.Document = printDocument1;
-            if (printDialog1.ShowDialog() == DialogResult.OK)
-            {
-                printDocument1.Print();
-            }
-        }
-
-        private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            printPreviewDialog1.StartPosition = FormStartPosition.CenterParent;
-            printPreviewDialog1.Document = printDocument1;
-            //printPreviewDialog1.ClientSize = new Size(this.Width, this.Height);
-            printPreviewDialog1.MinimumSize = new Size(800, 600);
-            printPreviewDialog1.UseAntiAlias = true;
-
-            printPreviewDialog1.ShowDialog();
-        }
-
-        private void printDocument1_BeginPrint_1(object sender, PrintEventArgs e)
-        {
-            char[] param = { '\n' };
-            if (printDocument1.PrinterSettings.PrintRange == PrintRange.Selection)
-            {
-                m_Printlines = richTextBox.SelectedText.Split(param);
-            }
-            else
-            {
-                m_Printlines = richTextBox.Text.Split(param);
-            }
-            int i = 0;
-            char[] trimParam = { '\r' };
-            foreach (string s in m_Printlines)
-            {
-                m_Printlines[i++] = s.TrimEnd(trimParam);
-            }
-        }
-
-        private void printDocument1_PrintPage_1(object sender, PrintPageEventArgs e)
-        {
-            int x = e.MarginBounds.Left;
-            int y = e.MarginBounds.Top;
-            Brush brush = new SolidBrush(richTextBox.ForeColor);
-
-            while (m_linesPrinted < m_Printlines.Length)
-            {
-                e.Graphics.DrawString(m_Printlines[m_linesPrinted++],
-                    richTextBox.Font, brush, x, y);
-                y += 15;
-                if (y >= e.MarginBounds.Bottom)
-                {
-                    e.HasMorePages = true;
-                    return;
-                }
-            }
-
-            m_linesPrinted = 0;
-            e.HasMorePages = false;
-        }
-
-        private void 취소ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            richTextBox.Undo();
-        }
-
-        private void 다시실행ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (richTextBox.CanRedo == true && richTextBox.RedoActionName != "Delete")
-            {
-                richTextBox.Redo();
-            }
-        }
-
-        private void 잘라내기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (richTextBox.SelectionLength > 0) richTextBox.Cut();
-        }
-
-        private void 복사ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (richTextBox.SelectionLength > 0) richTextBox.Copy();
-        }
-
-        private void 붙여넣기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Clipboard.GetDataObject().GetDataPresent(DataFormats.Text)) richTextBox.Paste();
-        }
-
-        private void 모두선택ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            richTextBox.SelectAll();
-        }
-
-        private void 정보ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
         }
 
         // ------------------------------------------------------------
@@ -892,10 +699,64 @@ namespace WellaTodo
         {
             if (isUnsaved)
             {
-                Send_Log_Message(">NotePadForm::richTextBox_Leave -> Save Data");
                 Save_Data();
             }
             isUnsaved = false;
+        }
+
+        // ------------------------------------------------------------
+        // 프린트 처리
+        // ------------------------------------------------------------
+        private void 미리보기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            printPreviewDialog1.StartPosition = FormStartPosition.CenterParent;
+            printPreviewDialog1.Document = printDocument1;
+            //printPreviewDialog1.ClientSize = new Size(this.Width, this.Height);
+            printPreviewDialog1.MinimumSize = new Size(800, 600);
+            printPreviewDialog1.UseAntiAlias = true;
+
+            printPreviewDialog1.ShowDialog();
+        }
+
+        private void printDocument1_BeginPrint_1(object sender, PrintEventArgs e)
+        {
+            char[] param = { '\n' };
+            if (printDocument1.PrinterSettings.PrintRange == PrintRange.Selection)
+            {
+                m_Printlines = richTextBox.SelectedText.Split(param);
+            }
+            else
+            {
+                m_Printlines = richTextBox.Text.Split(param);
+            }
+            int i = 0;
+            char[] trimParam = { '\r' };
+            foreach (string s in m_Printlines)
+            {
+                m_Printlines[i++] = s.TrimEnd(trimParam);
+            }
+        }
+
+        private void printDocument1_PrintPage_1(object sender, PrintPageEventArgs e)
+        {
+            int x = e.MarginBounds.Left;
+            int y = e.MarginBounds.Top;
+            Brush brush = new SolidBrush(richTextBox.ForeColor);
+
+            while (m_linesPrinted < m_Printlines.Length)
+            {
+                e.Graphics.DrawString(m_Printlines[m_linesPrinted++],
+                    richTextBox.Font, brush, x, y);
+                y += 15;
+                if (y >= e.MarginBounds.Bottom)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+            }
+
+            m_linesPrinted = 0;
+            e.HasMorePages = false;
         }
     }
 }

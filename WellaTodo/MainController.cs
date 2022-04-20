@@ -661,6 +661,12 @@ namespace WellaTodo
 		// ----------------------------------------------------------
 		// Perform Command - NotePad 문서편집
 		// ----------------------------------------------------------
+		public void Perform_Add_Note(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Add_Note : " + dc.DC_title);
+			m_model.Add_Note(dc);
+		}
+
 		public void Perform_Convert_NotePad(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Convert_NotePad : " + dc.DC_title);

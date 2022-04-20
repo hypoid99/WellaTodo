@@ -17,6 +17,7 @@ namespace WellaTodo
     public partial class TwoLineList : UserControl
     {
         public event TwoLineList_Event TwoLineList_Click;
+        public event TwoLineList_Event TwoLineList_DoubleClick;
 
         static readonly int LIST_WIDTH = 250;
         static readonly int LIST_HEIGHT = 32;
@@ -207,6 +208,7 @@ namespace WellaTodo
             MouseDown += new MouseEventHandler(List_MouseDown);
             MouseMove += new MouseEventHandler(List_MouseMove);
             MouseUp += new MouseEventHandler(List_MouseUp);
+            MouseDoubleClick += new MouseEventHandler(List_MouseDoubleClick);
 
             pictureBox_Icon.Size = new Size(24, 24);
             pictureBox_Icon.Location = new Point(5, 4);
@@ -217,6 +219,7 @@ namespace WellaTodo
             label_PrimaryText.MouseDown += new MouseEventHandler(List_MouseDown);
             label_PrimaryText.MouseMove += new MouseEventHandler(List_MouseMove);
             label_PrimaryText.MouseUp += new MouseEventHandler(List_MouseUp);
+            label_PrimaryText.MouseDoubleClick += new MouseEventHandler(List_MouseDoubleClick);
             label_PrimaryText.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
             label_PrimaryText.Location = new Point(30, PRIMARY_LOCATION_Y1);
             label_PrimaryText.BackColor = BACK_COLOR;
@@ -227,6 +230,7 @@ namespace WellaTodo
             label_SecondaryText.MouseDown += new MouseEventHandler(List_MouseDown);
             label_SecondaryText.MouseMove += new MouseEventHandler(List_MouseMove);
             label_SecondaryText.MouseUp += new MouseEventHandler(List_MouseUp);
+            label_SecondaryText.MouseDoubleClick += new MouseEventHandler(List_MouseDoubleClick);
             label_SecondaryText.Font = new Font(FONT_NAME, FONT_SIZE_SECONDARY, FontStyle.Regular);
             label_SecondaryText.Location = new Point(30, SECONDARY_LOCATION_Y);
             label_SecondaryText.BackColor = BACK_COLOR;
@@ -319,7 +323,14 @@ namespace WellaTodo
         private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
             Focus();
+            Console.WriteLine("Mouse_Clicked");
             if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
+        }
+
+        private void Mouse_DoubleClicked(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Mouse_DoubleClicked");
+            if (TwoLineList_DoubleClick != null) TwoLineList_DoubleClick?.Invoke(this, e);
         }
 
         private void List_MouseEnter(object sender, EventArgs e)
@@ -337,6 +348,11 @@ namespace WellaTodo
         private void List_MouseClick(object sender, MouseEventArgs e)
         {
             //Mouse_Clicked(sender, e);
+        }
+
+        private void List_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Mouse_DoubleClicked(sender, e);
         }
 
         private void List_MouseDown(object sender, MouseEventArgs e)

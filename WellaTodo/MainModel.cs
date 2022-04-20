@@ -46,6 +46,7 @@ namespace WellaTodo
 		WM_MENULIST_MOVETO,
 		WM_TRANSFER_TASK,
 		// NotePad
+		WM_NOTE_ADD,
 		WM_CONVERT_NOTEPAD,
 		WM_TRANSFER_RTF_NOTEPAD,
 		WM_SAVE_RTF_NOTEPAD,
@@ -78,6 +79,9 @@ namespace WellaTodo
 
 		List<CDataCell> myMemoItems = new List<CDataCell>();
 		int m_Memo_ID_Num = 0;
+
+		List<CDataCell> myNoteItems = new List<CDataCell>();
+		int m_Note_ID_Num = 0;
 
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
 
@@ -806,6 +810,21 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// NotePad 문서편집
 		// -----------------------------------------------------------
+		public void Add_Note(CDataCell dc)
+		{
+			CDataCell data = (CDataCell)dc.Clone();
+
+			m_Note_ID_Num++;
+
+			data.DC_task_ID = m_Note_ID_Num;
+			data.DC_dateCreated = DateTime.Now;
+
+			myNoteItems.Insert(0, data);
+
+			Notify_Log_Message("3>MainModel::Add_Noyr -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_NOTE_ADD));  // deep copy 할 것!
+		}
+
 		public void Convert_NotePad(CDataCell dc)
         {
 			CDataCell data = Find(dc);

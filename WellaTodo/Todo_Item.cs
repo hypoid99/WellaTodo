@@ -36,6 +36,7 @@ namespace WellaTodo
         static readonly Color PSEUDO_COMPLETE_TEXT_COLOR = Color.Gray;
         static readonly float PSEUDO_PEN_THICKNESS = 1.0f;
 
+        //static readonly string FONT_NAME = "G마켓 산스 TTF Medium";
         static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_TITLE = 11.0f;
         static readonly float FONT_SIZE_INFORMATION = 8.0f;

@@ -207,7 +207,7 @@ namespace WellaTodo
             switch (param)
             {
                 case WParam.WM_MEMO_ADD:
-                    Update_New_Note(dc);
+                    Update_New_Memo(dc);
                     break;
                 case WParam.WM_MEMO_DELETE:
                     Update_Delete_Memo(dc);
@@ -241,7 +241,7 @@ namespace WellaTodo
             }
         }
 
-        private void Update_New_Note(CDataCell dc)
+        private void Update_New_Memo(CDataCell dc)
         {
             Post_it note = new Post_it(dc);
 

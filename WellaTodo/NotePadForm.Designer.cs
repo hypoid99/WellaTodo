@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel_List = new System.Windows.Forms.FlowLayoutPanel();
             this.panel_Header = new System.Windows.Forms.Panel();
+            this.label_Add_Note = new System.Windows.Forms.Label();
             this.label_Menu = new System.Windows.Forms.Label();
             this.label_Title = new System.Windows.Forms.Label();
-            this.label_Add_Note = new System.Windows.Forms.Label();
             this.panel_Header.SuspendLayout();
             this.SuspendLayout();
             // 
-            // flowLayoutPanel1
+            // flowLayoutPanel_List
             // 
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 54);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(800, 396);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.flowLayoutPanel_List.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel_List.Location = new System.Drawing.Point(0, 54);
+            this.flowLayoutPanel_List.Name = "flowLayoutPanel_List";
+            this.flowLayoutPanel_List.Size = new System.Drawing.Size(800, 396);
+            this.flowLayoutPanel_List.TabIndex = 0;
             // 
             // panel_Header
             // 
@@ -55,6 +55,16 @@
             this.panel_Header.Name = "panel_Header";
             this.panel_Header.Size = new System.Drawing.Size(800, 48);
             this.panel_Header.TabIndex = 1;
+            // 
+            // label_Add_Note
+            // 
+            this.label_Add_Note.Image = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
+            this.label_Add_Note.Location = new System.Drawing.Point(756, 8);
+            this.label_Add_Note.Margin = new System.Windows.Forms.Padding(0);
+            this.label_Add_Note.Name = "label_Add_Note";
+            this.label_Add_Note.Size = new System.Drawing.Size(32, 32);
+            this.label_Add_Note.TabIndex = 4;
+            this.label_Add_Note.Click += new System.EventHandler(this.label_Add_Note_Click);
             // 
             // label_Menu
             // 
@@ -76,26 +86,18 @@
             this.label_Title.Text = "NotePad";
             this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label_Add_Note
-            // 
-            this.label_Add_Note.Image = global::WellaTodo.Properties.Resources.outline_add_circle_outline_black_24dp;
-            this.label_Add_Note.Location = new System.Drawing.Point(756, 8);
-            this.label_Add_Note.Margin = new System.Windows.Forms.Padding(0);
-            this.label_Add_Note.Name = "label_Add_Note";
-            this.label_Add_Note.Size = new System.Drawing.Size(32, 32);
-            this.label_Add_Note.TabIndex = 4;
-            // 
             // NotePadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panel_Header);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.flowLayoutPanel_List);
             this.Name = "NotePadForm";
             this.Text = "NotePadForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NotePadForm_FormClosing);
             this.Load += new System.EventHandler(this.NotePadForm_Load);
+            this.Resize += new System.EventHandler(this.NotePadForm_Resize);
             this.panel_Header.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -103,7 +105,7 @@
 
         #endregion
 
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_List;
         private System.Windows.Forms.Panel panel_Header;
         private System.Windows.Forms.Label label_Menu;
         private System.Windows.Forms.Label label_Title;
