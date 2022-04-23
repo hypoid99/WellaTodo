@@ -33,15 +33,18 @@
             this.label_Add_Note = new System.Windows.Forms.Label();
             this.label_Menu = new System.Windows.Forms.Label();
             this.label_Title = new System.Windows.Forms.Label();
+            this.panel_Footer = new System.Windows.Forms.Panel();
+            this.textBox_New_Note = new System.Windows.Forms.TextBox();
             this.panel_Header.SuspendLayout();
+            this.panel_Footer.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanel_List
             // 
-            this.flowLayoutPanel_List.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel_List.Location = new System.Drawing.Point(0, 54);
+            this.flowLayoutPanel_List.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel_List.Location = new System.Drawing.Point(0, 53);
             this.flowLayoutPanel_List.Name = "flowLayoutPanel_List";
-            this.flowLayoutPanel_List.Size = new System.Drawing.Size(800, 396);
+            this.flowLayoutPanel_List.Size = new System.Drawing.Size(800, 332);
             this.flowLayoutPanel_List.TabIndex = 0;
             // 
             // panel_Header
@@ -86,11 +89,29 @@
             this.label_Title.Text = "NotePad";
             this.label_Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // panel_Footer
+            // 
+            this.panel_Footer.Controls.Add(this.textBox_New_Note);
+            this.panel_Footer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel_Footer.Location = new System.Drawing.Point(0, 390);
+            this.panel_Footer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.panel_Footer.Name = "panel_Footer";
+            this.panel_Footer.Size = new System.Drawing.Size(800, 60);
+            this.panel_Footer.TabIndex = 2;
+            // 
+            // textBox_New_Note
+            // 
+            this.textBox_New_Note.Location = new System.Drawing.Point(11, 10);
+            this.textBox_New_Note.Name = "textBox_New_Note";
+            this.textBox_New_Note.Size = new System.Drawing.Size(777, 25);
+            this.textBox_New_Note.TabIndex = 0;
+            // 
             // NotePadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.panel_Footer);
             this.Controls.Add(this.panel_Header);
             this.Controls.Add(this.flowLayoutPanel_List);
             this.Name = "NotePadForm";
@@ -99,6 +120,8 @@
             this.Load += new System.EventHandler(this.NotePadForm_Load);
             this.Resize += new System.EventHandler(this.NotePadForm_Resize);
             this.panel_Header.ResumeLayout(false);
+            this.panel_Footer.ResumeLayout(false);
+            this.panel_Footer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -110,5 +133,7 @@
         private System.Windows.Forms.Label label_Menu;
         private System.Windows.Forms.Label label_Title;
         private System.Windows.Forms.Label label_Add_Note;
+        private System.Windows.Forms.Panel panel_Footer;
+        private System.Windows.Forms.TextBox textBox_New_Note;
     }
 }

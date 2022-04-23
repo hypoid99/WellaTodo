@@ -26,15 +26,27 @@ namespace WellaTodo
         List<string> m_FontName = new List<string>();
         List<float> m_FontSize = new List<float>();
 
-        CDataCell m_DataCell;
-        public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
-
         private string m_FileName;
+
+        int m_linesPrinted;
+        string[] m_Printlines;
+
         private string OpenedDocumentPath { get; set; } = "NoName";
         //public string DefaultSaveDirectory { get; set; } = "c:\\";
         public string DefaultSaveDirectory { get; set; }
 
-        public bool IsOpened { get; set; } = false;
+        // --------------------------------------------------------------------
+        // Properties
+        // --------------------------------------------------------------------
+        private CDataCell _DataCell;
+        public CDataCell DataCell { get => _DataCell; set => _DataCell = value; }
+
+        private string _note_RTF;
+        public string Note_RTF 
+        { 
+            get => _note_RTF; 
+            set => richTextBox.Rtf = _note_RTF = value; 
+        }
 
         private bool isUnsaved = false;
         public bool IsUnsaved
@@ -47,8 +59,7 @@ namespace WellaTodo
             }
         }
 
-        int m_linesPrinted;
-        string[] m_Printlines;
+        public bool IsOpened { get; set; } = false;
 
         // --------------------------------------------------------------------
         // Constructor
@@ -78,9 +89,10 @@ namespace WellaTodo
                         e.Cancel = true;
                         return;
                     case DialogResult.No:
+                        Note_RTF = string.Empty;
                         break;
                     case DialogResult.Yes:
-                        Save_File();
+                        Note_RTF = richTextBox.Rtf;
                         break;
                 }
             }
@@ -110,15 +122,12 @@ namespace WellaTodo
             */
             comboBox_FontSelect.DataSource = m_FontName;
 
-            Console.WriteLine("m_FontName.Count : " + m_FontName.Count);
-
             int cnt = 0;
             for (int i = 0; i < m_FontName.Count; i++)
             {
                 if (m_FontName[i] == FONT_NAME)
                 {
                     // 초기화 폰트가 있는지 확인한다
-                    Console.WriteLine("Init font : " + i);
                     comboBox_FontSelect.SelectedIndex = i;
                     cnt++;
                 }
@@ -377,6 +386,11 @@ namespace WellaTodo
 
             IsUnsaved = false;
             UpdatePath();
+        }
+
+        private void Save_RTF_Data()
+        {
+            Note_RTF = richTextBox.Rtf;
         }
 
         // ------------------------------------------------------------

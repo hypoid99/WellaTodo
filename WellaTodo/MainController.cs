@@ -667,6 +667,12 @@ namespace WellaTodo
 			m_model.Add_Note(dc);
 		}
 
+		public void Perform_Modify_Note_Text(CDataCell dc)
+        {
+			Send_Log_Message("2>MainController::Perform_Modify_Note_Text : " + dc.DC_title);
+			m_model.Modify_Note_Text(dc);
+		}
+
 		public void Perform_Convert_NotePad(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Convert_NotePad : " + dc.DC_title);
@@ -899,6 +905,15 @@ namespace WellaTodo
 											 select dc;
 			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			//Send_Log_Message("2>MainController::Query_All_Task -> Counter : " + deepCopy.Count);
+			return deepCopy;
+		}
+
+		public IEnumerable<CDataCell> Query_NoteFile()
+		{
+			IEnumerable<CDataCell> dataset = from CDataCell dt in m_model.GetNoteCollection()
+											 where true
+											 select dt;
+			List<CDataCell> deepCopy = List_DeepCopy(dataset);
 			return deepCopy;
 		}
 

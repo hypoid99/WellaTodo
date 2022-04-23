@@ -21,6 +21,7 @@ namespace WellaTodo
         static readonly Color BACK_COLOR = Color.White;
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
+        static readonly Color TEXTBOX_BACK_COLOR = Color.LightCyan;
 
         static readonly string FONT_NAME = "맑은 고딕";
         static readonly float FONT_SIZE_TEXT = 14.0f;
@@ -28,7 +29,7 @@ namespace WellaTodo
 
         MainController m_Controller;
 
-        //NotePadEditorForm editorForm = new NotePadEditorForm();
+        bool isTextbox_New_Note_Clicked = false;
 
         // --------------------------------------------------
         // Properties
@@ -76,6 +77,8 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Initiate()
         {
+            panel_Header.Width = Width;
+
             flowLayoutPanel_List.AutoScroll = false;
             flowLayoutPanel_List.HorizontalScroll.Maximum = 0;
             flowLayoutPanel_List.HorizontalScroll.Enabled = false;
@@ -92,6 +95,25 @@ namespace WellaTodo
             //flowLayoutPanel_List.Location = new Point(labelUserName.Location.X, labelUserName.Height);
             //flowLayoutPanel_List.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT);
 
+            panel_Footer.Width = Width;
+
+            textBox_New_Note.MouseEnter += TextBox_New_Note_MouseEnter;
+            textBox_New_Note.MouseLeave += TextBox_New_Note_MouseLeave;
+            textBox_New_Note.KeyDown += TextBox_New_Note_KeyDown;
+            textBox_New_Note.KeyUp += TextBox_New_Note_KeyUp;
+            textBox_New_Note.MouseDown += TextBox_New_Note_MouseDown;
+            textBox_New_Note.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
+            textBox_New_Note.Location = new Point(10, 8);
+            textBox_New_Note.Size = new Size(Width - 20, 25);
+            textBox_New_Note.BackColor = TEXTBOX_BACK_COLOR;
+            textBox_New_Note.Text = "+ 새 노트 추가";
+
+            foreach (CDataCell data in m_Controller.Query_NoteFile()) // 노트 파일 리스트를 등록한다
+            {
+                NoteFileList list = CreateNoteFileList(data);
+                flowLayoutPanel_List.Controls.Add(list);
+            }
+
             Update_Display();
         }
 
@@ -107,20 +129,20 @@ namespace WellaTodo
         {
             panel_Header.Width = Width;
             label_Add_Note.Location = new Point(Width - 60, 9);
-            foreach (TwoLineList item in flowLayoutPanel_List.Controls)
+            foreach (NoteFileList item in flowLayoutPanel_List.Controls)
             {
                 item.Width = flowLayoutPanel_List.Width - LIST_WIDTH_GAP;
-                //item.Width = flowLayoutPanel2.VerticalScroll.Visible
-                //    ? flowLayoutPanel2.Width - 8 - SystemInformation.VerticalScrollBarWidth
-                //    : flowLayoutPanel2.Width - 8;
             }
         }
 
-        private TwoLineList CreateTwoLineList(CDataCell dc)
+        private NoteFileList CreateNoteFileList(CDataCell dc)
         {
-            TwoLineList list = new TwoLineList(new Bitmap(ICON_LIST), dc.DC_title, "", "");
-            list.TwoLineList_Click += new TwoLineList_Event(TwoLineList_Click);
-            list.TwoLineList_DoubleClick += new TwoLineList_Event(TwoLineList_DoubleClick);
+            NoteFileList list = new NoteFileList(dc);
+
+            list.NoteFileList_ClickEvent += List_MouseClick;
+            list.FileName = dc.DC_title;
+            list.Image = new Bitmap(ICON_LIST);
+
             return list;
         }
 
@@ -136,6 +158,9 @@ namespace WellaTodo
             {
                 case WParam.WM_NOTE_ADD:
                     Update_Add_Note(dc);
+                    break;
+                case WParam.WM_MODIFY_NOTE_TEXT:
+                    Update_Modify_Note(dc);
                     break;
                 case WParam.WM_CONVERT_NOTEPAD:
 
@@ -153,13 +178,17 @@ namespace WellaTodo
 
         private void Update_Add_Note(CDataCell dc)
         {
-            TwoLineList list = CreateTwoLineList(dc);
-
+            NoteFileList list = CreateNoteFileList(dc);
             flowLayoutPanel_List.Controls.Add(list); // 판넬 컨렉션에 저장
 
             Update_List_Width();
 
             Send_Log_Message("4>NotePadForm::Update_Add_Note -> Add Note : " + dc.DC_title);
+        }
+
+        private void Update_Modify_Note(CDataCell dc)
+        {
+            Send_Log_Message("4>NotePadForm::Update_Modify_Note -> Modify Note : " + dc.DC_title);
         }
 
         private void Send_Log_Message(string msg)
@@ -188,58 +217,59 @@ namespace WellaTodo
             m_Controller.Perform_Add_Note(dc);
         }
 
-        private void Open_NotePadForm(TwoLineList list)
+        private void Add_Note(string title)
+        {
+            CDataCell dc = new CDataCell();
+
+            dc.DC_title = title;
+            dc.DC_notepad = true;
+
+            Send_Log_Message("1>NotePadForm::Add_Note -> Add Note : " + dc.DC_title);
+            m_Controller.Perform_Add_Note(dc);
+        }
+
+        private void Open_NotePadForm(NoteFileList list)
         {
             NotePadEditorForm editorForm = new NotePadEditorForm();
 
             editorForm.StartPosition = FormStartPosition.CenterParent;
+            editorForm.Note_RTF = list.DataCell.DC_RTF;
 
             editorForm.ShowDialog();
 
-            Send_Log_Message("1>NotePadForm::Open_NotePadForm -> NotePad contents Changed");
-            //m_Controller.Perform_Modify_Memo_Text(note.DataCell);
+            if (editorForm.IsUnsaved)
+            {
+
+            }
+
+            if (editorForm.Note_RTF == String.Empty)
+            {
+                Send_Log_Message("1>NotePadForm::Open_NotePadForm -> NotePad contents is Empty");
+            }
+
+            list.DataCell.DC_RTF = editorForm.Note_RTF;
+
+            Send_Log_Message("1>NotePadForm::Open_NotePadForm -> NotePad contents is changed");
+            m_Controller.Perform_Modify_Note_Text(list.DataCell);
         }
 
         // ----------------------------------------------------------
         // 사용자 입력 처리
         // ----------------------------------------------------------
-        private void TwoLineList_Click(object sender, EventArgs e)
+        private void List_MouseClick(object sender, UserCommandEventArgs e)
         {
-            TwoLineList sd = (TwoLineList)sender;
-            MouseEventArgs me = (MouseEventArgs)e;
+            NoteFileList sd = (NoteFileList)sender;
 
-            switch (me.Button)
+            // 클릭시 데이타 내용 확인하기
+            m_Controller.Verify_DataCell(sd.DataCell);
+
+            switch (e.CommandName)
             {
-                case MouseButtons.Left:
-                    Send_Log_Message(">NotePadForm::TwoLineList_Click -> Left Button");
-                    break;
-                case MouseButtons.Right:
-                    Send_Log_Message(">NotePadForm::TwoLineList_Click -> Right Button");
-                    //MenuList_Right_Click_ContextMenu();  // 컨텍스트 메뉴
-                    break;
-                case MouseButtons.Middle:
-                    Send_Log_Message(">NotePadForm::TwoLineList_Click -> Middle Button");
-                    break;
-            }
-        }
+                case "Click":
 
-        private void TwoLineList_DoubleClick(object sender, EventArgs e)
-        {
-            TwoLineList sd = (TwoLineList)sender;
-            MouseEventArgs me = (MouseEventArgs)e;
-
-            switch (me.Button)
-            {
-                case MouseButtons.Left:
-                    Send_Log_Message(">NotePadForm::TwoLineList_DoubleClick -> Left Button");
+                    break;
+                case "DoubleClick":
                     Open_NotePadForm(sd);
-                    break;
-                case MouseButtons.Right:
-                    Send_Log_Message(">NotePadForm::TwoLineList_DoubleClick -> Right Button");
-                    //MenuList_Right_Click_ContextMenu();  // 컨텍스트 메뉴
-                    break;
-                case MouseButtons.Middle:
-                    Send_Log_Message(">NotePadForm::TwoLineList_DoubleClick -> Middle Button");
                     break;
             }
         }
@@ -248,5 +278,70 @@ namespace WellaTodo
         {
             New_Note();
         }
+
+        // -----------------------------------------------------------
+        // 노트 생성 및 입력 처리 부분
+        // -----------------------------------------------------------
+        private void TextBox_New_Note_MouseEnter(object sender, EventArgs e)
+        {
+            if (!isTextbox_New_Note_Clicked) textBox_New_Note.Text = "";
+            isTextbox_New_Note_Clicked = true;
+        }
+
+        private void TextBox_New_Note_MouseLeave(object sender, EventArgs e)
+        {
+            textBox_New_Note.Text = "+ 새 노트 추가";
+            isTextbox_New_Note_Clicked = false;
+        }
+
+        private void TextBox_New_Note_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void TextBox_New_Note_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
+
+            Send_Log_Message("1-1>NotePadForm::TextBox_New_Note_KeyUp -> Add New Note : " + textBox_New_Note.Text);
+            Add_Note(textBox_New_Note.Text);
+            textBox_New_Note.Text = "";
+        }
+
+        private void TextBox_New_Note_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu textboxMenu = new ContextMenu();
+                MenuItem copyMenu = new MenuItem("복사", new EventHandler(OnCopyMenu_textBox_New_Note_Click));
+                MenuItem cutMenu = new MenuItem("잘라내기", new EventHandler(OnCutMenu_textBox_New_Note_Click));
+                MenuItem pasteMenu = new MenuItem("붙여넣기", new EventHandler(OnPasteMenu_textBox_New_Note_Click));
+
+                textboxMenu.Popup += new EventHandler(OnPopupEvent_textBox_New_Note);
+                textboxMenu.MenuItems.Add(copyMenu);
+                textboxMenu.MenuItems.Add(cutMenu);
+                textboxMenu.MenuItems.Add(pasteMenu);
+                textBox_New_Note.ContextMenu = textboxMenu;
+
+                textBox_New_Note.ContextMenu.Show(textBox_New_Note, new Point(e.X, e.Y));
+            }
+        }
+
+        private void OnPopupEvent_textBox_New_Note(object sender, EventArgs e)
+        {
+            ContextMenu ctm = (ContextMenu)sender;
+            ctm.MenuItems[0].Enabled = textBox_New_Note.SelectedText.Length != 0; // copy
+            ctm.MenuItems[1].Enabled = textBox_New_Note.SelectedText.Length != 0; // cut
+            ctm.MenuItems[2].Enabled = Clipboard.ContainsText(); // paste
+        }
+        private void OnCopyMenu_textBox_New_Note_Click(object sender, EventArgs e) { textBox_New_Note.Copy(); }
+        private void OnCutMenu_textBox_New_Note_Click(object sender, EventArgs e) { textBox_New_Note.Cut(); }
+        private void OnPasteMenu_textBox_New_Note_Click(object sender, EventArgs e) { textBox_New_Note.Paste(); }
     }
 }

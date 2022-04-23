@@ -82,7 +82,7 @@ namespace WellaTodo
             textBox_Memo_Color.Text = dc.DC_memoColor;
 
             textBox_NotePad.Text = dc.DC_notepad ? "true" : "false";
-            richTextBox.Text = dc.DC_RTF;
+            richTextBox.Rtf = dc.DC_RTF;
         }
 
         private void CDataCellForm_FormClosing(object sender, FormClosingEventArgs e)

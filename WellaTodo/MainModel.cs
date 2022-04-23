@@ -47,6 +47,7 @@ namespace WellaTodo
 		WM_TRANSFER_TASK,
 		// NotePad
 		WM_NOTE_ADD,
+		WM_MODIFY_NOTE_TEXT,
 		WM_CONVERT_NOTEPAD,
 		WM_TRANSFER_RTF_NOTEPAD,
 		WM_SAVE_RTF_NOTEPAD,
@@ -73,8 +74,9 @@ namespace WellaTodo
 
 		string m_FileName = "task.dat";
 
-		List<CDataCell> myTaskItems = new List<CDataCell>();
 		List<string> myListNames = new List<string>();
+
+		List<CDataCell> myTaskItems = new List<CDataCell>();
 		int m_Task_ID_Num = 0;
 
 		List<CDataCell> myMemoItems = new List<CDataCell>();
@@ -159,6 +161,17 @@ namespace WellaTodo
 			myMemoItems = memo_collections;
 		}
 
+		public List<CDataCell> GetNoteCollection()
+		{
+			return myNoteItems;
+		}
+
+		private void SetNoteCollection(List<CDataCell> note_collections)
+		{
+			// 중요 데이터 set
+			myNoteItems = note_collections;
+		}
+
 		// --------------------------------------------------------
 		// Load/Save/Open/Print 메서드
 		// --------------------------------------------------------
@@ -167,6 +180,7 @@ namespace WellaTodo
 			List<CDataCell> todo_data = new List<CDataCell>();
 			List<string> list_name = new List<string>();
 			List<CDataCell> memo_data = new List<CDataCell>();
+			List<CDataCell> note_data = new List<CDataCell>();
 
 			// Loading Task File
 			if (File.Exists(m_FileName))
@@ -179,6 +193,7 @@ namespace WellaTodo
 					todo_data = (List<CDataCell>)deserializer.Deserialize(rs);
 					list_name = (List<string>)deserializer.Deserialize(rs);
 					memo_data = (List<CDataCell>)deserializer.Deserialize(rs);
+					note_data = (List<CDataCell>)deserializer.Deserialize(rs);
 
 					rs.Close();
 				}
@@ -190,28 +205,34 @@ namespace WellaTodo
 
 			// TASK DATA 저장
 			m_Task_ID_Num = todo_data.Count - 1;
-
 			int pos = 0;
 			for (int i = m_Task_ID_Num; i >= 0; i--)
 			{
 				todo_data[i].DC_task_ID = pos;
 				pos++;
 			}
-
 			SetTaskCollection(todo_data); // deep copy로 변경할 것
 			SetListCollection(list_name);
 
 			// MEMO DATA 저장
 			m_Memo_ID_Num = memo_data.Count - 1;
-
 			pos = 0;
 			for (int i = m_Memo_ID_Num; i >= 0; i--)
 			{
 				memo_data[i].DC_task_ID = pos;
 				pos++;
 			}
-
 			SetMemoCollection(memo_data); // deep copy로 변경할 것
+
+			// NOTE DATA 저장
+			m_Note_ID_Num = note_data.Count - 1;
+			pos = 0;
+			for (int i = m_Note_ID_Num; i >= 0; i--)
+			{
+				note_data[i].DC_task_ID = pos;
+				pos++;
+			}
+			SetNoteCollection(note_data); // deep copy로 변경할 것
 
 			Notify_Log_Message("3>MainModel::Load_Data -> " + m_FileName + "[" + m_Task_ID_Num + "]");
 			Update_View.Invoke(this, new ModelEventArgs(WParam.WM_LOAD_DATA));
@@ -226,6 +247,7 @@ namespace WellaTodo
 			serializer.Serialize(ws, GetTaskCollection());
 			serializer.Serialize(ws, GetListCollection());
 			serializer.Serialize(ws, GetMemoCollection());
+			serializer.Serialize(ws, GetNoteCollection());
 
 			ws.Close();
 
@@ -818,11 +840,30 @@ namespace WellaTodo
 
 			data.DC_task_ID = m_Note_ID_Num;
 			data.DC_dateCreated = DateTime.Now;
+			data.DC_title = dc.DC_title;
+			data.DC_notepad = dc.DC_notepad;
+			data.DC_RTF = dc.DC_RTF;
 
 			myNoteItems.Insert(0, data);
 
-			Notify_Log_Message("3>MainModel::Add_Noyr -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
+			Notify_Log_Message("3>MainModel::Add_Note -> Created New CDataCell [" + data.DC_task_ID + "]" + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_NOTE_ADD));  // deep copy 할 것!
+		}
+
+		public void Modify_Note_Text(CDataCell dc)
+        {
+			CDataCell data = Find_Note(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Note_Text -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_RTF = dc.DC_RTF;
+
+			Notify_Log_Message("3>MainModel::Modify_Task_Memo : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_NOTE_TEXT));
 		}
 
 		public void Convert_NotePad(CDataCell dc)
@@ -1112,6 +1153,20 @@ namespace WellaTodo
 			if (dataset.Count() != 1)
 			{
 				Notify_Log_Message("Error>MainModel::Find_Memo -> Not Found Item!!");  // 에러 출력
+				return null;
+			}
+			return dataset.First();
+		}
+
+		private CDataCell Find_Note(CDataCell dc)
+		{
+			int note_ID = dc.DC_task_ID;
+			IEnumerable<CDataCell> dataset = from CDataCell data in myNoteItems
+											 where data.DC_task_ID == note_ID
+											 select data;
+			if (dataset.Count() != 1)
+			{
+				Notify_Log_Message("Error>MainModel::Find_Note -> Not Found Item!!");  // 에러 출력
 				return null;
 			}
 			return dataset.First();

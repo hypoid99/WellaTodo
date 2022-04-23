@@ -1757,8 +1757,8 @@ namespace WellaTodo
         private void Display_Selected_Menu()
         {
             Send_Log_Message(">MainFrame::Display_Selected_Menu -> Display Task of Selected Menu : " + m_Selected_Menu.PrimaryText);
-
-            switch (m_Selected_Menu.PrimaryText)  // 알고리즘 맞음 (메뉴 선택후 Enum_Selected_Menu 상태 설정됨)
+            // 알고리즘 맞음 (메뉴 선택후 Enum_Selected_Menu 상태 설정됨) -> TwoLineList에는 데이타 저장이나 ID가 없음
+            switch (m_Selected_Menu.PrimaryText)  
             {
                 case "오늘 할 일":
                     Menu_MyToday();
@@ -1779,7 +1779,6 @@ namespace WellaTodo
                     Menu_List();
                     break;
             }
-
         }
 
         private void Menulist_ScrollDown()

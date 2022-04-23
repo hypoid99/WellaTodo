@@ -323,13 +323,13 @@ namespace WellaTodo
         private void Mouse_Clicked(object sender, MouseEventArgs e)
         {
             Focus();
-            Console.WriteLine("Mouse_Clicked");
+            //Console.WriteLine("Mouse_Clicked");
             if (TwoLineList_Click != null) TwoLineList_Click?.Invoke(this, e);
         }
 
         private void Mouse_DoubleClicked(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Mouse_DoubleClicked");
+            //Console.WriteLine("Mouse_DoubleClicked");
             if (TwoLineList_DoubleClick != null) TwoLineList_DoubleClick?.Invoke(this, e);
         }
 
