@@ -41,6 +41,7 @@
             // 
             // flowLayoutPanel_List
             // 
+            this.flowLayoutPanel_List.AutoScroll = true;
             this.flowLayoutPanel_List.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel_List.Location = new System.Drawing.Point(0, 53);
             this.flowLayoutPanel_List.Name = "flowLayoutPanel_List";

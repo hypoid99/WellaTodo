@@ -98,7 +98,7 @@
             this.panel_Header.Location = new System.Drawing.Point(0, 0);
             this.panel_Header.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(1153, 36);
+            this.panel_Header.Size = new System.Drawing.Size(882, 36);
             this.panel_Header.TabIndex = 2;
             // 
             // checkBox_AlignRight
@@ -491,7 +491,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 36);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1153, 414);
+            this.panel1.Size = new System.Drawing.Size(882, 917);
             this.panel1.TabIndex = 3;
             // 
             // richTextBox
@@ -504,7 +504,7 @@
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(1153, 414);
+            this.richTextBox.Size = new System.Drawing.Size(882, 917);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             this.richTextBox.WordWrap = false;
@@ -536,7 +536,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1153, 450);
+            this.ClientSize = new System.Drawing.Size(882, 953);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel_Header);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);

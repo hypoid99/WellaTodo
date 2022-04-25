@@ -15,6 +15,8 @@ namespace WellaTodo
         public event ViewHandler<IView> View_Changed_Event;
 
         static readonly int LIST_WIDTH_GAP = 25;
+        static readonly int HEADER_HEIGHT = 50;
+        static readonly int TAIL_HEIGHT = 50;
 
         static readonly Image ICON_LIST = Properties.Resources.outline_list_black_24dp;
 
@@ -28,6 +30,9 @@ namespace WellaTodo
         static readonly int MAX_COUNT_FONT_SIZE = 16;
 
         MainController m_Controller;
+
+        NoteFileList m_Pre_Selected_List;
+        NoteFileList m_Selected_List;
 
         bool isTextbox_New_Note_Clicked = false;
 
@@ -77,8 +82,6 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Initiate()
         {
-            panel_Header.Width = Width;
-
             flowLayoutPanel_List.AutoScroll = false;
             flowLayoutPanel_List.HorizontalScroll.Maximum = 0;
             flowLayoutPanel_List.HorizontalScroll.Enabled = false;
@@ -91,20 +94,13 @@ namespace WellaTodo
             flowLayoutPanel_List.Margin = new Padding(0);
             flowLayoutPanel_List.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel_List.WrapContents = false;
-            flowLayoutPanel_List.Width = Width;
-            //flowLayoutPanel_List.Location = new Point(labelUserName.Location.X, labelUserName.Height);
-            //flowLayoutPanel_List.Size = new Size(splitContainer1.SplitterDistance, splitContainer1.Panel1.Height - labelUserName.Height - TAIL_HEIGHT);
 
-            panel_Footer.Width = Width;
-
-            textBox_New_Note.MouseEnter += TextBox_New_Note_MouseEnter;
-            textBox_New_Note.MouseLeave += TextBox_New_Note_MouseLeave;
+            textBox_New_Note.Enter += TextBox_New_Note_Enter;
+            textBox_New_Note.Leave += TextBox_New_Note_Leave;
             textBox_New_Note.KeyDown += TextBox_New_Note_KeyDown;
             textBox_New_Note.KeyUp += TextBox_New_Note_KeyUp;
             textBox_New_Note.MouseDown += TextBox_New_Note_MouseDown;
             textBox_New_Note.Font = new Font(FONT_NAME, FONT_SIZE_TEXT);
-            textBox_New_Note.Location = new Point(10, 8);
-            textBox_New_Note.Size = new Size(Width - 20, 25);
             textBox_New_Note.BackColor = TEXTBOX_BACK_COLOR;
             textBox_New_Note.Text = "+ 새 노트 추가";
 
@@ -127,8 +123,20 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Update_List_Width()
         {
-            panel_Header.Width = Width;
+            panel_Header.Location = new Point(0, 0);
+            panel_Header.Size = new Size(Width, HEADER_HEIGHT);
+
+            flowLayoutPanel_List.Location = new Point(0, HEADER_HEIGHT);
+            flowLayoutPanel_List.Size = new Size(Width - LIST_WIDTH_GAP, Height - HEADER_HEIGHT - TAIL_HEIGHT);
+
+            panel_Footer.Location = new Point(0, HEADER_HEIGHT + flowLayoutPanel_List.Height);
+            panel_Footer.Size = new Size(Width, TAIL_HEIGHT);
+
             label_Add_Note.Location = new Point(Width - 60, 9);
+
+            textBox_New_Note.Location = new Point(10, 8);
+            textBox_New_Note.Size = new Size(Width - LIST_WIDTH_GAP - 10, 25);
+
             foreach (NoteFileList item in flowLayoutPanel_List.Controls)
             {
                 item.Width = flowLayoutPanel_List.Width - LIST_WIDTH_GAP;
@@ -260,6 +268,17 @@ namespace WellaTodo
         {
             NoteFileList sd = (NoteFileList)sender;
 
+            if (m_Pre_Selected_List == null) m_Pre_Selected_List = sd;
+
+            if (!m_Pre_Selected_List.Equals(sd))
+            {
+                m_Pre_Selected_List.IsSelected = false;
+            }
+
+            m_Selected_List = sd;
+            m_Selected_List.IsSelected = true;
+            m_Pre_Selected_List = m_Selected_List;
+
             // 클릭시 데이타 내용 확인하기
             m_Controller.Verify_DataCell(sd.DataCell);
 
@@ -282,13 +301,13 @@ namespace WellaTodo
         // -----------------------------------------------------------
         // 노트 생성 및 입력 처리 부분
         // -----------------------------------------------------------
-        private void TextBox_New_Note_MouseEnter(object sender, EventArgs e)
+        private void TextBox_New_Note_Enter(object sender, EventArgs e)
         {
             if (!isTextbox_New_Note_Clicked) textBox_New_Note.Text = "";
             isTextbox_New_Note_Clicked = true;
         }
 
-        private void TextBox_New_Note_MouseLeave(object sender, EventArgs e)
+        private void TextBox_New_Note_Leave(object sender, EventArgs e)
         {
             textBox_New_Note.Text = "+ 새 노트 추가";
             isTextbox_New_Note_Clicked = false;
