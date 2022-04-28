@@ -117,6 +117,8 @@
             this.Controls.Add(this.flowLayoutPanel_List);
             this.Name = "NotePadForm";
             this.Text = "NotePadForm";
+            this.Activated += new System.EventHandler(this.NotePadForm_Activated);
+            this.Deactivate += new System.EventHandler(this.NotePadForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NotePadForm_FormClosing);
             this.Load += new System.EventHandler(this.NotePadForm_Load);
             this.Resize += new System.EventHandler(this.NotePadForm_Resize);

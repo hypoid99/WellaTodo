@@ -509,3 +509,16 @@ namespace WellaTodo
     }
 }
 
+/*
+private void AttachClickEvents(Control Control)
+{
+    Control.Click += new EventHandler(Control_Click);
+    if (Control.Controls != null)
+    {
+        foreach (Control C in Control.Controls)
+        {
+            AttachClickEvents(C);
+        }
+    }
+}
+*/

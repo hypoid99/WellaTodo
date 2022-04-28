@@ -47,7 +47,8 @@ namespace WellaTodo
 		WM_TRANSFER_TASK,
 		// NotePad
 		WM_NOTE_ADD,
-		WM_MODIFY_NOTE_TEXT,
+		WM_NOTE_DELETE,
+		WM_MODIFY_NOTE,
 		WM_CONVERT_NOTEPAD,
 		WM_TRANSFER_RTF_NOTEPAD,
 		WM_SAVE_RTF_NOTEPAD,
@@ -850,20 +851,43 @@ namespace WellaTodo
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_NOTE_ADD));  // deep copy 할 것!
 		}
 
-		public void Modify_Note_Text(CDataCell dc)
+		public void Modify_Note(CDataCell dc)
         {
 			CDataCell data = Find_Note(dc);
 
 			if (data == null)
 			{
-				Notify_Log_Message("Warning>MainModel::Modify_Note_Text -> Find() Not Found Item!!");
+				Notify_Log_Message("Warning>MainModel::Modify_Note -> Find() Not Found Item!!");
 				return;
 			}
 
 			data.DC_RTF = dc.DC_RTF;
 
-			Notify_Log_Message("3>MainModel::Modify_Task_Memo : " + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_NOTE_TEXT));
+			Notify_Log_Message("3>MainModel::Modify_Note : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MODIFY_NOTE));
+		}
+
+		public void Delete_Note(CDataCell dc)
+		{
+			CDataCell data = Find_Note(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Delete_Note -> Find() Not Found Item!!");
+				return;
+			}
+
+			if (myNoteItems.Remove(data))
+			{
+				Notify_Log_Message("3>MainModel::Delete_Note -> Data is Deleted!! [" + data.DC_task_ID + "]" + data.DC_title);
+			}
+			else
+			{
+				Notify_Log_Message("Warning>MainModel::Delete_Note -> Remove() Not Found Item!!");
+				return;
+			}
+			Notify_Log_Message("3>MainModel::Delete_Note : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_NOTE_DELETE));
 		}
 
 		public void Convert_NotePad(CDataCell dc)

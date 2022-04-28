@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Drawing.Drawing2D;
+
 namespace WellaTodo
 {
     public delegate void NoteFileList_Event(object sender, UserCommandEventArgs e);
@@ -24,6 +26,7 @@ namespace WellaTodo
         static readonly Color HIGHLIGHT_COLOR = Color.LightCyan;
         static readonly Color SELECTED_COLOR = Color.Cyan;
         static readonly Color BORDER_COLOR = Color.LightGray;
+        static readonly float PEN_THICKNESS = 1.0f;
 
         static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_PRIMARY = 11.0f;
@@ -97,6 +100,25 @@ namespace WellaTodo
             Update_Display();
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            Update_Display();
+
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            Rectangle rc = ClientRectangle;
+            int x1 = rc.Left;
+            int y1 = rc.Top;
+            int x2 = rc.Left + rc.Width - 1;
+            int y2 = rc.Top + rc.Height - 1;
+            g.FillRectangle(new SolidBrush(BackColor), x1 - 1, y1 - 1, rc.Width + 1, rc.Height + 1);
+            g.DrawLine(new Pen(BORDER_COLOR, PEN_THICKNESS), x1, y2, x2, y2);
+        }
+
         // --------------------------------------------------
         // 초기화 및 Update Display
         // --------------------------------------------------
@@ -113,15 +135,11 @@ namespace WellaTodo
             MouseEnter += NoteFileList_MouseEnter;
             MouseLeave += NoteFileList_MouseLeave;
 
-            pictureBox_Icon.Size = new Size(24, 24);
-            pictureBox_Icon.Location = new Point(5, 4);
-
             label_FileName.MouseEnter += NoteFileList_MouseEnter;
             label_FileName.MouseLeave += NoteFileList_MouseLeave;
             label_FileName.MouseClick += NoteFileList_MouseClick;
             label_FileName.MouseDoubleClick += NoteFileList_MouseDoubleClick;
             label_FileName.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
-            label_FileName.Location = new Point(30, LOCATION_Y);
             label_FileName.BackColor = BACK_COLOR;
 
             label_ModifiedDate.MouseEnter += NoteFileList_MouseEnter;
@@ -129,7 +147,6 @@ namespace WellaTodo
             label_ModifiedDate.MouseClick += NoteFileList_MouseClick;
             label_ModifiedDate.MouseDoubleClick += NoteFileList_MouseDoubleClick;
             label_ModifiedDate.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
-            label_ModifiedDate.Location = new Point(130, LOCATION_Y);
             label_ModifiedDate.BackColor = BACK_COLOR;
 
             label_CreatedDate.MouseEnter += NoteFileList_MouseEnter;
@@ -137,7 +154,6 @@ namespace WellaTodo
             label_CreatedDate.MouseClick += NoteFileList_MouseClick;
             label_CreatedDate.MouseDoubleClick += NoteFileList_MouseDoubleClick;
             label_CreatedDate.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
-            label_CreatedDate.Location = new Point(230, LOCATION_Y);
             label_CreatedDate.BackColor = BACK_COLOR;
 
             label_FileSize.MouseEnter += NoteFileList_MouseEnter;
@@ -145,13 +161,21 @@ namespace WellaTodo
             label_FileSize.MouseClick += NoteFileList_MouseClick;
             label_FileSize.MouseDoubleClick += NoteFileList_MouseDoubleClick;
             label_FileSize.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
-            label_FileSize.Location = new Point(330, LOCATION_Y);
             label_FileSize.BackColor = BACK_COLOR;
         }
 
         private void Update_Display()
         {
+            pictureBox_Icon.Size = new Size(24, 24);
+            pictureBox_Icon.Location = new Point(5, 4);
 
+            label_FileName.Location = new Point(30, LOCATION_Y);
+
+            label_ModifiedDate.Location = new Point(330, LOCATION_Y);
+
+            label_CreatedDate.Location = new Point(430, LOCATION_Y);
+
+            label_FileSize.Location = new Point(530, LOCATION_Y);
         }
 
         // --------------------------------------------------
@@ -159,7 +183,18 @@ namespace WellaTodo
         // --------------------------------------------------
         private void NoteFileList_MouseClick(object sender, MouseEventArgs e)
         {
-            if (NoteFileList_ClickEvent != null) NoteFileList_ClickEvent?.Invoke(this, new UserCommandEventArgs("Click"));
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    if (NoteFileList_ClickEvent != null) NoteFileList_ClickEvent?.Invoke(this, new UserCommandEventArgs("Click"));
+                    break;
+                case MouseButtons.Right:
+                    if (NoteFileList_ClickEvent != null) NoteFileList_ClickEvent?.Invoke(this, new UserCommandEventArgs("ContextMenu"));
+                    break;
+                case MouseButtons.Middle:
+                    if (NoteFileList_ClickEvent != null) NoteFileList_ClickEvent?.Invoke(this, new UserCommandEventArgs("Middle"));
+                    break;
+            }
         }
 
         private void NoteFileList_MouseDoubleClick(object sender, MouseEventArgs e)

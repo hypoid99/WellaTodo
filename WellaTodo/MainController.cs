@@ -667,10 +667,16 @@ namespace WellaTodo
 			m_model.Add_Note(dc);
 		}
 
-		public void Perform_Modify_Note_Text(CDataCell dc)
+		public void Perform_Modify_Note(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Modify_Note_Text : " + dc.DC_title);
-			m_model.Modify_Note_Text(dc);
+			m_model.Modify_Note(dc);
+		}
+
+		public void Perform_Delete_Note(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Delete_Note : " + dc.DC_title);
+			m_model.Delete_Note(dc);
 		}
 
 		public void Perform_Convert_NotePad(CDataCell dc)

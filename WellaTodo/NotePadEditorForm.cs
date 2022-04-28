@@ -55,7 +55,7 @@ namespace WellaTodo
             set
             {
                 isUnsaved = value;
-                UpdatePath();
+                Update_Status();
             }
         }
 
@@ -89,10 +89,11 @@ namespace WellaTodo
                         e.Cancel = true;
                         return;
                     case DialogResult.No:
-                        Note_RTF = string.Empty;
+                        this.DialogResult = DialogResult.No;
                         break;
                     case DialogResult.Yes:
                         Note_RTF = richTextBox.Rtf;
+                        this.DialogResult = DialogResult.Yes;
                         break;
                 }
             }
@@ -174,12 +175,26 @@ namespace WellaTodo
 
             // IME(입력기) 및 아시아 언어 지원
             richTextBox.LanguageOption = 0;
+
+            Update_Status();
         }
 
         private void UpdatePath()
         {
             m_FileName = $"NotePad - {(IsUnsaved ? "*" : "")}{OpenedDocumentPath}";
             Text = m_FileName;
+        }
+
+        private void Update_Status()
+        {
+            if (IsUnsaved)
+            {
+                Text = "NotePad - Unsaved";
+            }
+            else
+            {
+                Text = "NotePad";
+            }
         }
 
         //--------------------------------------------------------------
@@ -711,11 +726,13 @@ namespace WellaTodo
 
         private void richTextBox_Leave(object sender, EventArgs e)
         {
+            /*
             if (isUnsaved)
             {
                 Save_Data();
             }
             isUnsaved = false;
+            */
         }
 
         // ------------------------------------------------------------
