@@ -34,7 +34,6 @@ namespace WellaTodo
         NoteFileList m_Pre_Selected_List;
         NoteFileList m_Selected_List;
 
-        bool isActivated = false;
         bool isTextbox_New_Note_Clicked = false;
 
         // --------------------------------------------------
@@ -42,6 +41,9 @@ namespace WellaTodo
         // --------------------------------------------------
         CDataCell m_DataCell;
         public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
+
+        bool isActivated;
+        public bool IsActivated { get => isActivated; set => isActivated = value; }
 
         // --------------------------------------------------------------------
         // Constructor
@@ -80,13 +82,13 @@ namespace WellaTodo
 
         private void NotePadForm_Activated(object sender, EventArgs e)
         {
-            isActivated = true;
+            IsActivated = true;
             Update_Display();
         }
 
         private void NotePadForm_Deactivate(object sender, EventArgs e)
         {
-            isActivated = false;
+            IsActivated = false;
         }
 
         //--------------------------------------------------------------
@@ -174,6 +176,36 @@ namespace WellaTodo
             return rtBox.Text;
         }
 
+        private NoteFileList Find_Item(CDataCell dc)
+        {
+            NoteFileList list_item = null;
+            foreach (NoteFileList item in flowLayoutPanel_List.Controls)
+            {
+                if (item.DataCell.DC_task_ID == dc.DC_task_ID)
+                {
+                    list_item = item;
+                    break;
+                }
+            }
+            return list_item;
+        }
+
+        private int Find_Item_Position(CDataCell dc)
+        {
+            int i = -1;
+            int pos = 0;
+            foreach (NoteFileList item in flowLayoutPanel_List.Controls)
+            {
+                if (item.DataCell.DC_task_ID == dc.DC_task_ID)
+                {
+                    i = pos;
+                    break;
+                }
+                pos++;
+            }
+            return i;
+        }
+
         //--------------------------------------------------------------
         // Model 이벤트
         //--------------------------------------------------------------
@@ -193,14 +225,23 @@ namespace WellaTodo
                 case WParam.WM_MODIFY_NOTE:
                     Update_Modify_Note(dc);
                     break;
+                case WParam.WM_DUPLICATE_NOTE:
+                    Update_Duplicate_Note(dc);
+                    break;
+                case WParam.WM_RENAME_NOTE:
+                    Update_Rename_Note(dc);
+                    break;
+                case WParam.WM_MOVEUP_NOTE:
+                    Update_MoveUp_Note(dc);
+                    break;
+                case WParam.WM_MOVEDOWN_NOTE:
+                    Update_MoveDown_Note(dc);
+                    break;
                 case WParam.WM_CONVERT_NOTEPAD:
-
                     break;
                 case WParam.WM_TRANSFER_RTF_NOTEPAD:
-
                     break;
                 case WParam.WM_SAVE_RTF_NOTEPAD:
-
                     break;
                 default:
                     break;
@@ -247,6 +288,55 @@ namespace WellaTodo
             Send_Log_Message("4>NotePadForm::Update_Modify_Note -> Modify Note : " + dc.DC_title);
         }
 
+        private void Update_Duplicate_Note(CDataCell dc)
+        {
+            NoteFileList list = CreateNoteFileList(dc);
+            flowLayoutPanel_List.Controls.Add(list); // 판넬 컨렉션에 저장
+            flowLayoutPanel_List.Controls.SetChildIndex(list, 0);
+
+            m_TaskToolTip.SetToolTip(list, ConvertRichTextToString(list.DataCell.DC_RTF));
+
+            Update_List_Width();
+
+            Send_Log_Message("4>NotePadForm::Update_Duplicate_Note -> Duplicate Note : " + dc.DC_title);
+        }
+
+        private void Update_Rename_Note(CDataCell dc)
+        {
+            NoteFileList list = null;
+            foreach (NoteFileList item in flowLayoutPanel_List.Controls)  // dc로 찾기
+            {
+                if (dc.DC_task_ID == item.DataCell.DC_task_ID)
+                {
+                    list = item;
+                    break;
+                }
+            }
+
+            list.DataCell.DC_title = dc.DC_title;
+            list.FileName = dc.DC_title;
+
+            Send_Log_Message("4>NotePadForm::Update_Rename_Note -> Rename Completed!");
+        }
+
+        private void Update_MoveUp_Note(CDataCell dc)
+        {
+            NoteFileList item = Find_Item(dc); // 항목과 위치 찾기
+            int pos = Find_Item_Position(dc);
+            flowLayoutPanel_List.Controls.SetChildIndex(item, pos - 1);
+
+            Send_Log_Message("4>NotePadForm::Update_MoveUp_Note -> Move Up Completed!!");
+        }
+
+        private void Update_MoveDown_Note(CDataCell dc)
+        {
+            NoteFileList item = Find_Item(dc); // 항목과 위치 찾기
+            int pos = Find_Item_Position(dc);
+            flowLayoutPanel_List.Controls.SetChildIndex(item, pos + 1);
+
+            Send_Log_Message("4>NotePadForm::Update_MoveDown_Note -> Move Down Completed!!");
+        }
+
         private void Send_Log_Message(string msg)
         {
             try
@@ -284,9 +374,9 @@ namespace WellaTodo
             m_Controller.Perform_Add_Note(dc);
         }
 
-        private void Open_Note(NoteFileList list)
+        private void Modify_Note(NoteFileList list)
         {
-            Send_Log_Message("1-1>NotePadForm::Open_Note -> Open NotePad Editor");
+            Send_Log_Message("1-1>NotePadForm::Modify_Note -> Open NotePad Editor");
 
             NotePadEditorForm editorForm = new NotePadEditorForm();
 
@@ -318,13 +408,45 @@ namespace WellaTodo
             m_Controller.Perform_Delete_Note(list.DataCell);
         }
 
+        private void Duplicate_Note(NoteFileList list)
+        {
+            Send_Log_Message("1>NotePadForm::Duplicate_Note : " + list.DataCell.DC_title);
+            m_Controller.Perform_Duplicate_Note(list.DataCell);
+        }
+
+        private void Rename_Note_1st(NoteFileList list)
+        {
+            Send_Log_Message("1-1>MainFrame::Rename_Note_1st -> Show TextBox for Rename Menu List");
+            list.Rename_1st_Process();
+        }
+
+        private void Rename_Note_2nd(NoteFileList list)
+        {
+            Send_Log_Message("1-2>MainFrame::Rename_Note_2nd -> Rename from " + list.FileName + " to " + list.FileName_Renamed);
+            if (!m_Controller.Perform_Rename_Note(list.DataCell, list.FileName_Renamed))
+            {
+                MessageBox.Show("목록 이름 변경시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.", "Warning");
+            }
+        }
+
+        private void MoveUp_Note(NoteFileList list)
+        {
+            Send_Log_Message("1>NotePadForm::MoveUp_Note");
+            m_Controller.Perform_MoveUp_Note(list.DataCell);
+        }
+
+        private void MoveDown_Note(NoteFileList list)
+        {
+            Send_Log_Message("1>NotePadForm::MoveDown_Note");
+            m_Controller.Perform_MoveDown_Note(list.DataCell);
+        }
+
         // ----------------------------------------------------------
         // 사용자 입력 처리
         // ----------------------------------------------------------
         private void List_MouseClick(object sender, UserCommandEventArgs e)
         {
             NoteFileList sd = (NoteFileList)sender;
-            Console.WriteLine("List_MouseClick : "+sd.DataCell.DC_title);
 
             if (m_Pre_Selected_List == null) m_Pre_Selected_List = sd;
 
@@ -343,18 +465,17 @@ namespace WellaTodo
             switch (e.CommandName)
             {
                 case "Click":
-                    Console.WriteLine("Click : " + sd.DataCell.DC_title);
                     break;
                 case "DoubleClick":
-                    Console.WriteLine("DoubleClick : " + sd.DataCell.DC_title);
-                    Open_Note(sd);
+                    Modify_Note(sd);
                     break;
                 case "ContextMenu":
-                    Console.WriteLine("ContextMenu : " + sd.DataCell.DC_title);
                     Execute_ContextMenu();
                     break;
+                case "Rename":
+                    Rename_Note_2nd(sd);
+                    break;
                 case "Middle":
-                    Console.WriteLine("Middle : " + sd.DataCell.DC_title);
                     break;
             }
         }
@@ -395,17 +516,17 @@ namespace WellaTodo
 
         private void OnOpenMenu_Click(object sender, EventArgs e)
         {
-            Open_Note(m_Selected_List);
+            Modify_Note(m_Selected_List);
         }
 
         private void OnDuplicateMenu_Click(object sender, EventArgs e)
         {
-
+            Duplicate_Note(m_Selected_List);
         }
 
         private void OnRenameMenu_Click(object sender, EventArgs e)
         {
-
+            Rename_Note_1st(m_Selected_List);
         }
 
         private void OnDeleteMenu_Click(object sender, EventArgs e)
@@ -415,12 +536,12 @@ namespace WellaTodo
 
         private void OnMoveUpMenu_Click(object sender, EventArgs e)
         {
-
+            MoveUp_Note(m_Selected_List);
         }
 
         private void OnMoveDownMenu_Click(object sender, EventArgs e)
         {
-
+            MoveDown_Note(m_Selected_List);
         }
 
         // -----------------------------------------------------------

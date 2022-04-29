@@ -33,6 +33,8 @@ namespace WellaTodo
         static readonly float FONT_SIZE_SECONDARY = 8.0f;
         static readonly float FONT_SIZE_METADATA = 8.0f;
 
+        private TextBox textBox_Rename;
+
         // --------------------------------------------------
         // Properties
         // --------------------------------------------------
@@ -47,7 +49,11 @@ namespace WellaTodo
         }
 
         private string _fileName;
-        public string FileName { get => _fileName; set => _fileName = value; }
+        public string FileName 
+        { 
+            get => _fileName; 
+            set => _fileName = label_FileName.Text = value; 
+        }
 
         private DateTime _modifiedDate;
         public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
@@ -65,6 +71,20 @@ namespace WellaTodo
                 BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
                 foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
             }
+        }
+
+        private string fileName_Renamed;
+        public string FileName_Renamed
+        {
+            get => fileName_Renamed;
+            set => fileName_Renamed = value;
+        }
+
+        bool isTextboxClicked = false;
+        public bool IsTextboxClicked
+        {
+            get => isTextboxClicked;
+            set => isTextboxClicked = value;
         }
 
         // --------------------------------------------------
@@ -162,6 +182,15 @@ namespace WellaTodo
             label_FileSize.MouseDoubleClick += NoteFileList_MouseDoubleClick;
             label_FileSize.Font = new Font(FONT_NAME, FONT_SIZE_PRIMARY, FontStyle.Regular);
             label_FileSize.BackColor = BACK_COLOR;
+
+            textBox_Rename = new TextBox();
+            textBox_Rename.Enter += new EventHandler(textBox_Rename_Enter);
+            textBox_Rename.KeyDown += new KeyEventHandler(textBox_Rename_KeyDown);
+            textBox_Rename.KeyUp += new KeyEventHandler(textBox_Rename_KeyUp);
+            textBox_Rename.Leave += new EventHandler(textBox_Rename_Leave);
+            textBox_Rename.Visible = false;
+            textBox_Rename.Location = new Point(30, LOCATION_Y);
+            Controls.Add(textBox_Rename);
         }
 
         private void Update_Display()
@@ -176,6 +205,68 @@ namespace WellaTodo
             label_CreatedDate.Location = new Point(430, LOCATION_Y);
 
             label_FileSize.Location = new Point(530, LOCATION_Y);
+        }
+
+        //---------------------------------------------------------
+        // Textbox Rename
+        //---------------------------------------------------------
+        public void Rename_1st_Process()
+        {
+            textBox_Rename.Visible = true;
+            label_FileName.Visible = false;
+            textBox_Rename.Text = FileName;
+            textBox_Rename.Focus();
+        }
+
+        private void Rename_2nd_Process()
+        {
+            textBox_Rename.Visible = false;
+            label_FileName.Visible = true;
+
+            if (FileName_Renamed == textBox_Rename.Text)
+            {
+                return;
+            }
+            FileName_Renamed = textBox_Rename.Text;
+
+            if (NoteFileList_ClickEvent != null) NoteFileList_ClickEvent?.Invoke(this, new UserCommandEventArgs("Rename"));
+        }
+
+        private void textBox_Rename_Enter(object sender, EventArgs e)
+        {
+            IsTextboxClicked = true;
+        }
+
+        private void textBox_Rename_Leave(object sender, EventArgs e)
+        {
+            Rename_2nd_Process();
+            IsTextboxClicked = false;
+        }
+
+        private void textBox_Rename_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                textBox_Rename.Visible = false;
+                label_FileName.Visible = true;
+                return;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void textBox_Rename_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = false;
+            e.SuppressKeyPress = false;
+
+            Rename_2nd_Process();
+            IsTextboxClicked = false;
         }
 
         // --------------------------------------------------

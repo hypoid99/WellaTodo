@@ -679,6 +679,43 @@ namespace WellaTodo
 			m_model.Delete_Note(dc);
 		}
 
+		public void Perform_Duplicate_Note(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_Duplicate_Note : " + dc.DC_title);
+			m_model.Duplicate_Note(dc);
+		}
+
+		public bool Perform_Rename_Note(CDataCell dc, string renameText)
+		{
+			if (renameText == dc.DC_title)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Rename_Note -> Before & After Name is same!!");
+				return false;
+			}
+
+			if (renameText.Length == 0)
+			{
+				Send_Log_Message("Warning>MainController::Perform_Rename_Note -> Leghth of Menu Name is zero!!");
+				return false;
+			}
+
+			Send_Log_Message("2>MainController::Perform_Rename_Note : from " + dc.DC_title + " to " + renameText);
+			m_model.Rename_Note(dc, renameText);
+			return true;
+		}
+
+		public void Perform_MoveUp_Note(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_MoveUp_Note : " + dc.DC_title);
+			m_model.MoveUp_Note(dc);
+		}
+
+		public void Perform_MoveDown_Note(CDataCell dc)
+		{
+			Send_Log_Message("2>MainController::Perform_MoveDown_Note : " + dc.DC_title);
+			m_model.MoveDown_Note(dc);
+		}
+
 		public void Perform_Convert_NotePad(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Convert_NotePad : " + dc.DC_title);

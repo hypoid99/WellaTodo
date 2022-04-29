@@ -49,6 +49,10 @@ namespace WellaTodo
 		WM_NOTE_ADD,
 		WM_NOTE_DELETE,
 		WM_MODIFY_NOTE,
+		WM_RENAME_NOTE,
+		WM_DUPLICATE_NOTE,
+		WM_MOVEUP_NOTE,
+		WM_MOVEDOWN_NOTE,
 		WM_CONVERT_NOTEPAD,
 		WM_TRANSFER_RTF_NOTEPAD,
 		WM_SAVE_RTF_NOTEPAD,
@@ -888,6 +892,99 @@ namespace WellaTodo
 			}
 			Notify_Log_Message("3>MainModel::Delete_Note : " + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_NOTE_DELETE));
+		}
+
+		public void Duplicate_Note(CDataCell dc)
+		{
+			CDataCell data = Find_Note(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Modify_Note -> Find() Not Found Item!!");
+				return;
+			}
+
+			CDataCell duplicate = new CDataCell();
+			duplicate = (CDataCell)data.Clone();
+
+			m_Note_ID_Num++;
+
+			duplicate.DC_task_ID = m_Note_ID_Num;
+			duplicate.DC_dateCreated = DateTime.Now;
+			duplicate.DC_title = dc.DC_title;
+			duplicate.DC_notepad = dc.DC_notepad;
+			duplicate.DC_RTF = dc.DC_RTF;
+
+			myNoteItems.Insert(0, duplicate);
+
+			Notify_Log_Message("3>MainModel::Duplicate_Note : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(duplicate), WParam.WM_DUPLICATE_NOTE));
+		}
+
+		public void Rename_Note(CDataCell dc, string renameText)
+		{
+			CDataCell data = Find_Note(dc);
+
+			if (data == null)
+			{
+				Notify_Log_Message("Warning>MainModel::Rename_Note -> Find() Not Found Item!!");
+				return;
+			}
+
+			data.DC_title = renameText;
+
+			Notify_Log_Message("3>MainModel::Rename_Note : from " + dc.DC_title + " to " + renameText);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_RENAME_NOTE));
+		}
+
+		public void MoveUp_Note(CDataCell dc)
+		{
+			int pos = 0;
+			for (int i = 0; i < myNoteItems.Count; i++)
+			{
+				if (myNoteItems[i].DC_task_ID == dc.DC_task_ID)
+				{
+					pos = i;
+				}
+			}
+
+			if (pos == 0)  // 작업 메뉴 위로 UP 불가
+			{
+				Notify_Log_Message("Warning>MainModel::MoveUp_Note -> Can't move Up");
+				return;
+			}
+
+			CDataCell data = myNoteItems[pos]; //추출
+			myNoteItems.RemoveAt(pos); //삭제
+			myNoteItems.Insert(pos - 1, data); // 삽입
+
+			Notify_Log_Message("3>MainModel::MoveUp_Note : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MOVEUP_NOTE));
+		}
+
+		public void MoveDown_Note(CDataCell dc)
+		{
+			int pos = 0;
+			for (int i = 0; i < myNoteItems.Count; i++)
+			{
+				if (myNoteItems[i].DC_task_ID == dc.DC_task_ID)
+				{
+					pos = i;
+				}
+			}
+
+			if (pos == myNoteItems.Count - 1)
+			{
+				Notify_Log_Message("Warning>MainModel::MoveDown_Note -> Can't move Down");
+				return;
+			}
+
+			CDataCell data = myNoteItems[pos]; //추출
+			myNoteItems.RemoveAt(pos); //삭제  
+			myNoteItems.Insert(pos + 1, data); // 삽입
+
+			Notify_Log_Message("3>MainModel::MoveDown_Note : " + data.DC_title);
+			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MOVEDOWN_NOTE));
 		}
 
 		public void Convert_NotePad(CDataCell dc)
