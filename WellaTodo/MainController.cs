@@ -26,8 +26,6 @@ namespace WellaTodo
 		List<IView> m_viewList = new List<IView>();
 		MainModel m_model;
 
-		int dummy_20220418;
-
 		// --------------------------------------------------
 		// Constructor
 		// --------------------------------------------------
@@ -293,9 +291,6 @@ namespace WellaTodo
 			m_model.Delete_Task(dc);
 		}
 
-		// --------------------------------------------
-		// 오늘 할 일
-		// --------------------------------------------
 		public void Perform_Modify_MyToday(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
@@ -314,9 +309,6 @@ namespace WellaTodo
 			m_model.Modifiy_MyToday(dc);
 		}
 
-		// --------------------------------------------
-		// 미리 알림
-		// --------------------------------------------
 		public void Perform_Remind_Today(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
@@ -368,9 +360,6 @@ namespace WellaTodo
 			m_model.Modifiy_Remind(dc);
 		}
 
-		// --------------------------------------------
-		// 계획된 일정
-		// --------------------------------------------
 		public void Perform_Planned_Today(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
@@ -426,9 +415,6 @@ namespace WellaTodo
 			m_model.Modifiy_Planned(dc);
 		}
 
-		// --------------------------------------------
-		// 반복
-		// --------------------------------------------
 		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
 		{
 			dc.DC_repeatType = type;
@@ -557,9 +543,6 @@ namespace WellaTodo
 			m_model.Modifiy_Repeat(dc);
 		}
 
-		// --------------------------------------------
-		// 완료/중요/제목/메모/이동
-		// --------------------------------------------
 		public void Perform_Complete_Process(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
@@ -714,24 +697,6 @@ namespace WellaTodo
 		{
 			Send_Log_Message("2>MainController::Perform_MoveDown_Note : " + dc.DC_title);
 			m_model.MoveDown_Note(dc);
-		}
-
-		public void Perform_Convert_NotePad(CDataCell dc)
-        {
-			Send_Log_Message("2>MainController::Perform_Convert_NotePad : " + dc.DC_title);
-			m_model.Convert_NotePad(dc);
-		}
-
-		public void Perform_Transfer_RTF_Data(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Transfer_RTF_Data : " + dc.DC_title);
-			m_model.Transfer_RTF_Data(dc);
-		}
-
-		public void Perform_Save_RTF_Data(CDataCell dc)
-		{
-			Send_Log_Message("2>MainController::Perform_Save_RTF_Data : " + dc.DC_title);
-			m_model.Save_RTF_Data(dc);
 		}
 
 		// ----------------------------------------------------------

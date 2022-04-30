@@ -29,7 +29,6 @@ namespace WellaTodo
         static readonly float FONT_SIZE_TEXT = 14.0f;
 
         MainController m_Controller;
-        ToolTip m_TaskToolTip = new ToolTip();
 
         NoteFileList m_Pre_Selected_List;
         NoteFileList m_Selected_List;
@@ -39,9 +38,6 @@ namespace WellaTodo
         // --------------------------------------------------
         // Properties
         // --------------------------------------------------
-        CDataCell m_DataCell;
-        public CDataCell DataCell { get => m_DataCell; set => m_DataCell = value; }
-
         bool isActivated;
         public bool IsActivated { get => isActivated; set => isActivated = value; }
 
@@ -121,7 +117,7 @@ namespace WellaTodo
             foreach (CDataCell data in m_Controller.Query_NoteFile()) // 노트 파일 리스트를 등록한다
             {
                 NoteFileList list = CreateNoteFileList(data);
-                m_TaskToolTip.SetToolTip(list, ConvertRichTextToString(list.DataCell.DC_RTF)) ;
+                list.ToolTipText = ConvertRichTextToString(list.DataCell.DC_RTF);
                 flowLayoutPanel_List.Controls.Add(list);
             }
 
@@ -165,15 +161,10 @@ namespace WellaTodo
             list.NoteFileList_ClickEvent += List_MouseClick;
             list.FileName = dc.DC_title;
             list.Image = new Bitmap(ICON_LIST);
+            list.DataCell.DC_RTF = dc.DC_RTF;
+            list.ToolTipText = ConvertRichTextToString(list.DataCell.DC_RTF);
 
             return list;
-        }
-
-        private string ConvertRichTextToString(string rtf)
-        {
-            RichTextBox rtBox = new RichTextBox();
-            rtBox.Rtf = rtf;
-            return rtBox.Text;
         }
 
         private NoteFileList Find_Item(CDataCell dc)
@@ -204,6 +195,13 @@ namespace WellaTodo
                 pos++;
             }
             return i;
+        }
+
+        private string ConvertRichTextToString(string rtf)
+        {
+            RichTextBox rtBox = new RichTextBox();
+            rtBox.Rtf = rtf;
+            return rtBox.Text;
         }
 
         //--------------------------------------------------------------
@@ -237,12 +235,6 @@ namespace WellaTodo
                 case WParam.WM_MOVEDOWN_NOTE:
                     Update_MoveDown_Note(dc);
                     break;
-                case WParam.WM_CONVERT_NOTEPAD:
-                    break;
-                case WParam.WM_TRANSFER_RTF_NOTEPAD:
-                    break;
-                case WParam.WM_SAVE_RTF_NOTEPAD:
-                    break;
                 default:
                     break;
             }
@@ -253,8 +245,6 @@ namespace WellaTodo
             NoteFileList list = CreateNoteFileList(dc);
             flowLayoutPanel_List.Controls.Add(list); // 판넬 컨렉션에 저장
             flowLayoutPanel_List.Controls.SetChildIndex(list, 0);
-
-            m_TaskToolTip.SetToolTip(list, ConvertRichTextToString(list.DataCell.DC_RTF));
 
             Update_List_Width();
 
@@ -283,7 +273,7 @@ namespace WellaTodo
 
         private void Update_Modify_Note(CDataCell dc)
         {
-            m_TaskToolTip.SetToolTip(m_Selected_List, ConvertRichTextToString(m_Selected_List.DataCell.DC_RTF));
+            m_Selected_List.ToolTipText = ConvertRichTextToString(m_Selected_List.DataCell.DC_RTF);
 
             Send_Log_Message("4>NotePadForm::Update_Modify_Note -> Modify Note : " + dc.DC_title);
         }
@@ -293,8 +283,6 @@ namespace WellaTodo
             NoteFileList list = CreateNoteFileList(dc);
             flowLayoutPanel_List.Controls.Add(list); // 판넬 컨렉션에 저장
             flowLayoutPanel_List.Controls.SetChildIndex(list, 0);
-
-            m_TaskToolTip.SetToolTip(list, ConvertRichTextToString(list.DataCell.DC_RTF));
 
             Update_List_Width();
 

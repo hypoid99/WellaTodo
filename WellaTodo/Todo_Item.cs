@@ -45,6 +45,9 @@ namespace WellaTodo
         Label label2 = new Label();
         RoundCheckbox roundCheckbox1 = new RoundCheckbox();
         StarCheckbox starCheckbox1 = new StarCheckbox();
+
+        ToolTip m_ToolTip = new ToolTip();
+
         PictureBox pictureBox_Bulletin = new PictureBox();
         PictureBox pictureBox_Notepad = new PictureBox();
         
@@ -88,6 +91,22 @@ namespace WellaTodo
         {
             get => isItemSelected;
             set { isItemSelected = value; ChangeItemSelectedColor(); }
+        }
+
+        private string _toolTipText;
+        public string ToolTipText
+        {
+            get => _toolTipText;
+            set
+            {
+                _toolTipText = value;
+                m_ToolTip.SetToolTip(this, _toolTipText);
+                foreach (Control c in Controls)
+                {
+                    //Console.WriteLine(c.ToString() + "-" + _toolTipText);
+                    m_ToolTip.SetToolTip(c, _toolTipText);
+                }
+            }
         }
 
         bool isDragging = false;

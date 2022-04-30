@@ -68,7 +68,6 @@ namespace WellaTodo
         MainController m_Controller;
 
         List<Todo_Item> m_Task = new List<Todo_Item>();
-        ToolTip m_TaskToolTip = new ToolTip();
 
         LoginSettingForm loginSettingForm = new LoginSettingForm();
         MemoForm memoForm = new MemoForm();
@@ -108,8 +107,6 @@ namespace WellaTodo
         int m_printPageNo = 1;
 
         int m_VerticalScroll_Value;
-
-        int dummy_20220418;
 
         // --------------------------------------------------
         // Constructor
@@ -1203,9 +1200,6 @@ namespace WellaTodo
                 case WParam.WM_MEMO_MOVE_TO: // Bulletin
                     //Update_Memo_Move_To(dc);
                     break;
-                case WParam.WM_CONVERT_NOTEPAD:  // NotePad
-                    Update_Convert_NotePad(dc);
-                    break;
                 default:
                     break;
             }
@@ -1520,21 +1514,6 @@ namespace WellaTodo
             Send_Log_Message("4>MainFrame::Update_Important_Process -> Completed!");
         }
 
-        private void Update_Convert_NotePad(CDataCell dc)
-        {
-            Todo_Item item = Present_TodoItem_Find(dc);
-            if (item == null)
-            {
-                Send_Log_Message("Warning>MainFrame::Update_Convert_NotePad -> No matching Data!!");
-                return;
-            }
-
-            item.TD_DataCell.DC_notepad = dc.DC_notepad;
-            item.Refresh();
-
-            Send_Log_Message("4>MainFrame::Update_Convert_NotePad -> Completed!!" + dc.DC_title + "-" + dc.DC_notepad);
-        }
-
         private void Update_Transfer_Task(CDataCell dc)
         {
             Todo_Item item = Present_TodoItem_Find(dc);
@@ -1579,7 +1558,7 @@ namespace WellaTodo
             }
 
             item.TD_DataCell.DC_memo = dc.DC_memo;
-            m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
+            item.ToolTipText = dc.DC_memo;
             item.Refresh();
 
             Update_DetailWindow(dc);
@@ -2036,7 +2015,8 @@ namespace WellaTodo
                 item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
 
                 item.TD_infomation = Make_Task_Infomation(data);
-                m_TaskToolTip.SetToolTip(item, item.TD_DataCell.DC_memo);
+                Console.WriteLine(item.TD_DataCell.DC_memo);
+                item.ToolTipText = item.TD_DataCell.DC_memo;
                 m_Task.Add(item);
             }
 
@@ -2235,11 +2215,6 @@ namespace WellaTodo
                         Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Important :" + m_Selected_Task.TD_important);
                         m_Controller.Perform_Important_Process(m_Selected_Task.TD_DataCell);
                     }
-                    if (m_Selected_Task.TD_DataCell.DC_notepad)
-                    {
-                        Send_Log_Message("1>MainFrame::TodoItem_UserControl_Click -> Transfer RTF Data :" + m_Selected_Task.TD_title);
-                        m_Controller.Perform_Transfer_RTF_Data(m_Selected_Task.TD_DataCell);
-                    }
                     break;
                 case MouseButtons.Right:
                     Task_ContextMenu();
@@ -2264,8 +2239,7 @@ namespace WellaTodo
             MenuItem tomorrowDeadlineItem = new MenuItem("내일까지", new EventHandler(OnTomorrowDeadline_Click)); // 재활용
             MenuItem selectDayItem = new MenuItem("날짜 선택", new EventHandler(OnSelectDeadline_Click)); // 재활용
             MenuItem deleteDeadlineItem = new MenuItem("기한 제거", new EventHandler(OnDeleteDeadline_Click)); // 재활용
-            MenuItem menuEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
-            MenuItem notepadItem = new MenuItem("노트패트로 전환", new EventHandler(OnNotePadMenuItem_Click));
+            MenuItem memoEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
             MenuItem moveItem = new MenuItem("항목 이동");
             MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteItem_Click));
 
@@ -2278,9 +2252,7 @@ namespace WellaTodo
             todoItemContextMenu.MenuItems.Add(selectDayItem);
             todoItemContextMenu.MenuItems.Add(deleteDeadlineItem);
             todoItemContextMenu.MenuItems.Add("-");
-            todoItemContextMenu.MenuItems.Add(menuEditItem);
-            todoItemContextMenu.MenuItems.Add(notepadItem);
-            todoItemContextMenu.MenuItems.Add("-");
+            todoItemContextMenu.MenuItems.Add(memoEditItem);
             todoItemContextMenu.MenuItems.Add(moveItem);
             todoItemContextMenu.MenuItems.Add(deleteItem);
 
@@ -2303,8 +2275,6 @@ namespace WellaTodo
             ctm.MenuItems[4].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 1;
             ctm.MenuItems[5].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 2;
             ctm.MenuItems[7].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType > 0;
-
-            ctm.MenuItems[10].Text = m_Selected_Task.TD_DataCell.DC_notepad ? "할 일로 전환" : "노트패드로 전환";
         }
 
         private void OnMyToday_Click(object sender, EventArgs e)
@@ -2334,12 +2304,6 @@ namespace WellaTodo
         private void OnMemoEditMenuItem_Click(object sender, EventArgs e)
         {
             Edit_Task_Memo();
-        }
-
-        private void OnNotePadMenuItem_Click(object sender, EventArgs e)
-        {
-            Send_Log_Message("1>MainFrame::OnNotePadMenuItem_Click : " + m_Selected_Task.TD_DataCell.DC_title);
-            m_Controller.Perform_Convert_NotePad(m_Selected_Task.TD_DataCell);
         }
 
         private void OnTransferItem_Click(object sender, EventArgs e)

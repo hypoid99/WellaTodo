@@ -20,6 +20,7 @@ namespace WellaTodo
 {
 	public enum WParam
 	{
+		// -----------< Task 
 		WM_LOG_MESSAGE,
 		WM_LOAD_DATA,
 		WM_SAVE_DATA,
@@ -45,7 +46,7 @@ namespace WellaTodo
 		WM_MENULIST_DOWN,
 		WM_MENULIST_MOVETO,
 		WM_TRANSFER_TASK,
-		// NotePad
+		// -----------< NotePad
 		WM_NOTE_ADD,
 		WM_NOTE_DELETE,
 		WM_MODIFY_NOTE,
@@ -53,12 +54,9 @@ namespace WellaTodo
 		WM_DUPLICATE_NOTE,
 		WM_MOVEUP_NOTE,
 		WM_MOVEDOWN_NOTE,
-		WM_CONVERT_NOTEPAD,
-		WM_TRANSFER_RTF_NOTEPAD,
-		WM_SAVE_RTF_NOTEPAD,
-		// Calendar
+		// -----------< Calendar 
 		WM_PLAN_ADD,
-		// BulletinBoard
+		// -----------< BulletinBoard 
 		WM_MEMO_ADD,
 		WM_MEMO_DELETE,
 		WM_MODIFY_MEMO_TEXT,
@@ -69,7 +67,7 @@ namespace WellaTodo
 		WM_MODIFY_MEMO_ALARM,
 		WM_MODIFY_MEMO_SCHEDULE,
 		WM_MEMO_MOVE_TO,
-		// DataCell
+		// -----------< DataCell
 		WM_DATACELL
 	}
 
@@ -91,8 +89,6 @@ namespace WellaTodo
 		int m_Note_ID_Num = 0;
 
 		List<IModelObserver> ObserverList = new List<IModelObserver>();
-
-		int dummy_20220418;
 
 		// --------------------------------------------------
 		// Constructor
@@ -985,61 +981,6 @@ namespace WellaTodo
 
 			Notify_Log_Message("3>MainModel::MoveDown_Note : " + data.DC_title);
 			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_MOVEDOWN_NOTE));
-		}
-
-		public void Convert_NotePad(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Convert_NotePad -> Find() Not Found Item!!");
-				return;
-			}
-
-			if (data.DC_notepad)
-            {
-				data.DC_notepad = false;
-				data.DC_bulletin = false;
-			}
-			else
-            {
-				data.DC_notepad = true;
-				data.DC_bulletin = false;
-			}
-
-			Notify_Log_Message("3>MainModel::Convert_NotePad" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_CONVERT_NOTEPAD));
-		}
-
-		public void Transfer_RTF_Data(CDataCell dc)
-        {
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Transfer_RTF_Data -> Find() Not Found Item!!");
-				return;
-			}
-
-			Notify_Log_Message("3>MainModel::Transfer_RTF_Data" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_TRANSFER_RTF_NOTEPAD));
-		}
-
-		public void Save_RTF_Data(CDataCell dc)
-		{
-			CDataCell data = Find(dc);
-
-			if (data == null)
-			{
-				Notify_Log_Message("Warning>MainModel::Save_RTF_Data -> Find() Not Found Item!!");
-				return;
-			}
-
-			data.DC_RTF = dc.DC_RTF;
-
-			Notify_Log_Message("3>MainModel::Save_RTF_Data" + data.DC_title);
-			Update_View.Invoke(this, new ModelEventArgs((CDataCell)SerializableDeepClone(data), WParam.WM_SAVE_RTF_NOTEPAD));
 		}
 
 		// -----------------------------------------------------------

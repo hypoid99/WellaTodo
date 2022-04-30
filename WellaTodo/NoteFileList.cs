@@ -30,10 +30,11 @@ namespace WellaTodo
 
         static readonly string FONT_NAME = "돋움";
         static readonly float FONT_SIZE_PRIMARY = 11.0f;
-        static readonly float FONT_SIZE_SECONDARY = 8.0f;
-        static readonly float FONT_SIZE_METADATA = 8.0f;
+        //static readonly float FONT_SIZE_SECONDARY = 8.0f;
+        //static readonly float FONT_SIZE_METADATA = 8.0f;
 
         private TextBox textBox_Rename;
+        ToolTip m_ToolTip = new ToolTip();
 
         // --------------------------------------------------
         // Properties
@@ -85,6 +86,21 @@ namespace WellaTodo
         {
             get => isTextboxClicked;
             set => isTextboxClicked = value;
+        }
+
+        private string _toolTipText;
+        public string ToolTipText
+        {
+            get => _toolTipText;
+            set 
+            { 
+                _toolTipText = value;
+                m_ToolTip.SetToolTip(this, _toolTipText);
+                foreach (Control c in Controls) 
+                {
+                    m_ToolTip.SetToolTip(c, _toolTipText);
+                }
+            } 
         }
 
         // --------------------------------------------------
