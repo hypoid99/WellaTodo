@@ -101,9 +101,8 @@ namespace WellaTodo
             {
                 _toolTipText = value;
                 m_ToolTip.SetToolTip(this, _toolTipText);
-                foreach (Control c in Controls)
+                foreach (Control c in this.Controls)
                 {
-                    //Console.WriteLine(c.ToString() + "-" + _toolTipText);
                     m_ToolTip.SetToolTip(c, _toolTipText);
                 }
             }
@@ -125,6 +124,8 @@ namespace WellaTodo
         {
             InitializeComponent();
 
+            Initiate_View();
+
             TD_DataCell = dc;
             TD_infomation = "";
         }
@@ -134,7 +135,6 @@ namespace WellaTodo
         // --------------------------------------------------
         private void Todo_Item_Load(object sender, EventArgs e)
         {
-            Initiate_View();
         }
 
         private void Todo_Item_Resize(object sender, EventArgs e)

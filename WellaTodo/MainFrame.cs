@@ -2007,15 +2007,11 @@ namespace WellaTodo
             {
                 Todo_Item item = new Todo_Item(data);
 
-                item.UserControl_Click -= new TodoItemList_Event(TodoItem_UserControl_Click);
                 item.UserControl_Click += new TodoItemList_Event(TodoItem_UserControl_Click); // 이벤트 재구독 확인할 것
-                item.DragEnter -= new DragEventHandler(TodoItem_DragEnter);
                 item.DragEnter += new DragEventHandler(TodoItem_DragEnter);
-                item.DragDrop -= new DragEventHandler(TodoItem_DragDrop);
                 item.DragDrop += new DragEventHandler(TodoItem_DragDrop);
 
                 item.TD_infomation = Make_Task_Infomation(data);
-                Console.WriteLine(item.TD_DataCell.DC_memo);
                 item.ToolTipText = item.TD_DataCell.DC_memo;
                 m_Task.Add(item);
             }
