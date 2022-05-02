@@ -14,6 +14,7 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> View_Changed_Event;
 
+        static readonly string WINDOW_CAPTION = "NotePad";
         static readonly int LIST_WIDTH_GAP = 25;
         static readonly int HEADER_HEIGHT = 50;
         static readonly int TAIL_HEIGHT = 50;
@@ -364,6 +365,7 @@ namespace WellaTodo
 
         private void Modify_Note(NoteFileList list)
         {
+            //Console.WriteLine("1-1>NotePadForm::Modify_Note -> Open NotePad Editor");
             Send_Log_Message("1-1>NotePadForm::Modify_Note -> Open NotePad Editor");
 
             NotePadEditorForm editorForm = new NotePadEditorForm();
@@ -392,6 +394,11 @@ namespace WellaTodo
 
         private void Delete_Note(NoteFileList list)
         {
+            string txt = "선택 항목을 삭제할까요? [" + list.DataCell.DC_title + "]";
+            if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
             Send_Log_Message("1>NotePadForm::Delete_Note : " + list.DataCell.DC_title);
             m_Controller.Perform_Delete_Note(list.DataCell);
         }
@@ -404,13 +411,13 @@ namespace WellaTodo
 
         private void Rename_Note_1st(NoteFileList list)
         {
-            Send_Log_Message("1-1>MainFrame::Rename_Note_1st -> Show TextBox for Rename Menu List");
+            Send_Log_Message("1-1>NotePadForm::Rename_Note_1st -> Show TextBox for Rename Menu List");
             list.Rename_1st_Process();
         }
 
         private void Rename_Note_2nd(NoteFileList list)
         {
-            Send_Log_Message("1-2>MainFrame::Rename_Note_2nd -> Rename from " + list.FileName + " to " + list.FileName_Renamed);
+            Send_Log_Message("1-2>NotePadForm::Rename_Note_2nd -> Rename from " + list.FileName + " to " + list.FileName_Renamed);
             if (!m_Controller.Perform_Rename_Note(list.DataCell, list.FileName_Renamed))
             {
                 MessageBox.Show("목록 이름 변경시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.", "Warning");
@@ -455,6 +462,7 @@ namespace WellaTodo
                 case "Click":
                     break;
                 case "DoubleClick":
+                    //Send_Log_Message(">NotePadForm::List_MouseClick -> DoubleClick");
                     Modify_Note(sd);
                     break;
                 case "ContextMenu":
@@ -504,6 +512,7 @@ namespace WellaTodo
 
         private void OnOpenMenu_Click(object sender, EventArgs e)
         {
+            //Send_Log_Message(">NotePadForm::OnOpenMenu_Click -> Modify Note");
             Modify_Note(m_Selected_List);
         }
 

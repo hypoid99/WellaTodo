@@ -38,9 +38,6 @@ namespace WellaTodo
         // --------------------------------------------------------------------
         // Properties
         // --------------------------------------------------------------------
-        private CDataCell _DataCell;
-        public CDataCell DataCell { get => _DataCell; set => _DataCell = value; }
-
         private string _note_RTF;
         public string Note_RTF 
         { 
@@ -104,8 +101,6 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Initiate()
         {
-            DataCell = new CDataCell();
-
             richTextBox.WordWrap = false;
             //richTextBox.SelectionCharOffset = 0;
 
@@ -181,7 +176,7 @@ namespace WellaTodo
 
         private void UpdatePath()
         {
-            m_FileName = $"NotePad - {(IsUnsaved ? "*" : "")}{OpenedDocumentPath}";
+            m_FileName = $"NotePad - {(IsUnsaved ? "Unsaved -" : "")}{OpenedDocumentPath}";
             Text = m_FileName;
         }
 
@@ -198,115 +193,32 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // Model 이벤트
-        //--------------------------------------------------------------
-        private void Update_Save_RTF_Data(CDataCell dc)
-        {
-            IsUnsaved = false;
-            UpdatePath();
-        }
-
-        private void Update_Convert_NotePad(CDataCell dc)
-        {
-            richTextBox.Clear();
-            richTextBox.Text = String.Empty;
-
-            // 편집 초기화
-            if (dc.DC_notepad)
-            {
-                DataCell = dc;
-
-                OpenedDocumentPath = dc.DC_title;
-
-                IsOpened = true;
-                richTextBox.Rtf = dc.DC_RTF;
-            }
-            else
-            {
-                New_File();
-            }
-
-            IsUnsaved = false;
-            UpdatePath();
-        }
-
-        private void Update_Transfer_RTF_Data(CDataCell dc)
-        {
-            richTextBox.Clear();
-            richTextBox.Text = String.Empty;
-
-            if (dc.DC_notepad)
-            {
-                DataCell = dc;
-
-                OpenedDocumentPath = dc.DC_title;
-                richTextBox.Rtf = dc.DC_RTF;
-
-                IsUnsaved = false;
-                UpdatePath();
-            }
-        }
-
-        //--------------------------------------------------------------
         // Command 처리
         //--------------------------------------------------------------
-        private void New_File()
-        {
-            DataCell.DC_notepad = false;
-
-            IsOpened = false;
-            richTextBox.Text = String.Empty;
-            OpenedDocumentPath = "NoName";
-
-            UpdatePath();
-        }
-
         private void Open_File()
         {
-            DataCell.DC_notepad = false;
-
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = DefaultSaveDirectory;
-                openFileDialog.Filter = "Documentation (*.rtf;*.pdf;*.txt)|*.rtf;*.pdf;*.txt|All files (*.*)|*.*";
+                openFileDialog.Filter = "Documentation (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK &&
-                    openFileDialog.FileName.Length > 0)
+                if (openFileDialog.ShowDialog() == DialogResult.OK && openFileDialog.FileName.Length > 0)
                 {
                     OpenedDocumentPath = openFileDialog.FileName;
-                    IsOpened = true;
-                    UpdatePath();
-
                     try
                     {
                         if (OpenedDocumentPath.EndsWith(".rtf"))
                         {
-                            Console.WriteLine("Open RTF File");
                             richTextBox.LoadFile(OpenedDocumentPath);
-                            IsUnsaved = false;
-                            UpdatePath();
-                        }
-                        else if (OpenedDocumentPath.EndsWith(".pdf"))
-                        {
-                            MessageBox.Show("PDF is not supported");
-
-                            IsOpened = false;
-                            richTextBox.Text = String.Empty;
-                            OpenedDocumentPath = "NoName";
-                            IsUnsaved = false;
-                            UpdatePath();
                         }
                         else
                         {
                             var fileStream = openFileDialog.OpenFile();
                             using (StreamReader reader = new StreamReader(fileStream))
                             {
-                                Console.WriteLine("Open Common File");
                                 richTextBox.Text = reader.ReadToEnd();
-                                IsUnsaved = false;
-                                UpdatePath();
                             }
                         }
                     }
@@ -386,53 +298,33 @@ namespace WellaTodo
                         saveFileDialog.FileName.EndsWith(".rtf") ? RichTextBoxStreamType.RichText : RichTextBoxStreamType.PlainText);
 
                     OpenedDocumentPath = saveFileDialog.FileName;
-                    IsOpened = true;
-                    IsUnsaved = false;
-                    UpdatePath();
                 }
             }
         }
 
         private void Save_Data()
         {
-            if (!DataCell.DC_notepad) return;
 
-            DataCell.DC_RTF = richTextBox.Rtf;
-
-            IsUnsaved = false;
-            UpdatePath();
-        }
-
-        private void Save_RTF_Data()
-        {
-            Note_RTF = richTextBox.Rtf;
         }
 
         // ------------------------------------------------------------
         // 툴바
         // ------------------------------------------------------------
-        private void button_New_Click(object sender, EventArgs e)
-        {
-            New_File();
-        }
-
-        private void button_Open_Click(object sender, EventArgs e)
-        {
-            Open_File();
-        }
-
         private void button_Save_Click(object sender, EventArgs e)
         {
-            if (DataCell.DC_notepad)
-            {
-                //Console.WriteLine("button_Save_Click -> notepad");
-                Save_Data();
-            }
-            else
-            {
-                //Console.WriteLine("button_Save_Click -> savefile");
-                Save_File();
-            }
+            Save_Data();
+        }
+
+        private void button_Open_File_Click(object sender, EventArgs e)
+        {
+            Open_File();
+            IsUnsaved = true;
+        }
+
+        private void button_Save_File_Click(object sender, EventArgs e)
+        {
+            Save_As_File();
+            IsUnsaved = true;
         }
 
         private void button_Print_Click(object sender, EventArgs e)

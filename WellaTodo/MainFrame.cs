@@ -852,7 +852,7 @@ namespace WellaTodo
             Todo_Item item = Present_TodoItem_Find(dc);
             if (item == null)
             {
-                Send_Log_Message("Warning>MainFrame::Present_TodoItem_Update -> No matching Data!!");
+                //Send_Log_Message("Warning>MainFrame::Present_TodoItem_Update -> No matching Data!!");
                 return;
             }
 

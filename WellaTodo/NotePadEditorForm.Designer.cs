@@ -406,7 +406,7 @@
             this.button_Save.Size = new System.Drawing.Size(32, 32);
             this.button_Save.TabIndex = 0;
             this.button_Save.UseVisualStyleBackColor = true;
-            this.button_Save.Click += new System.EventHandler(this.button_Save_Click);
+            this.button_Save.Click += new System.EventHandler(this.button_Save_File_Click);
             // 
             // button_Open
             // 
@@ -421,7 +421,7 @@
             this.button_Open.Size = new System.Drawing.Size(32, 32);
             this.button_Open.TabIndex = 0;
             this.button_Open.UseVisualStyleBackColor = true;
-            this.button_Open.Click += new System.EventHandler(this.button_Open_Click);
+            this.button_Open.Click += new System.EventHandler(this.button_Open_File_Click);
             // 
             // button_New
             // 
@@ -436,7 +436,7 @@
             this.button_New.Size = new System.Drawing.Size(32, 32);
             this.button_New.TabIndex = 0;
             this.button_New.UseVisualStyleBackColor = true;
-            this.button_New.Click += new System.EventHandler(this.button_New_Click);
+            this.button_New.Click += new System.EventHandler(this.button_Save_Click);
             // 
             // button_Print
             // 
