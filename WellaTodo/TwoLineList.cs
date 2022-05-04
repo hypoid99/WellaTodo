@@ -267,13 +267,12 @@ namespace WellaTodo
         {
             textBox_Rename.Visible = false;
             label_PrimaryText.Visible = true;
-
-            // Change PrimaryText
+            /*
             if (PrimaryText_Renamed == textBox_Rename.Text)
             {
-                //Console.WriteLine("PrimaryText_Renamed == textBox_Rename.Text");
                 return;
             }
+            */
             PrimaryText_Renamed = textBox_Rename.Text;
 
             MouseEventArgs me = new MouseEventArgs(MouseButtons.Middle, 1, 42, 42, 1);

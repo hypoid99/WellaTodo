@@ -713,6 +713,25 @@ namespace WellaTodo
             return infoText;
         }
 
+        private void ShowControllerResultMessage(ControllerResult result)
+        {
+            switch (result)
+            {
+                case ControllerResult.CM_SAME_TEXT_EXIST:
+                    MessageBox.Show("목록 추가시 동일한 목록이 있읍니다.", "Warning");
+                    break;
+                case ControllerResult.CM_RESERVED_MENU:
+                    MessageBox.Show("목록 추가시 예약된 목록은 추가할 수 없읍니다.", "Warning");
+                    break;
+                case ControllerResult.CM_TEXT_LENGTH_ZERO:
+                    MessageBox.Show("목록 추가시 공백은 목록으로 추가할 수 없읍니다", "Warning");
+                    break;
+                default:
+                    MessageBox.Show("리턴값에 ERROR가 있읍니다.", "Warning");
+                    break;
+            }
+        }
+
         // -----------------------------------------
         // MenuList 처리
         // -----------------------------------------
@@ -1785,9 +1804,12 @@ namespace WellaTodo
         private void MenuList_Rename(string source, string target)
         {
             Send_Log_Message("1-2>MainFrame::Menulist_Rename -> Rename from " + source + " to " + target);
-            if (!m_Controller.Perform_Menulist_Rename(source, target))
+
+            ControllerResult result = m_Controller.Perform_Menulist_Rename(source, target);
+
+            if (result != ControllerResult.CM_OK)
             {
-                MessageBox.Show("목록 이름 변경시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.", "Warning");
+                ShowControllerResultMessage(result);
             }
         }
 
@@ -1873,13 +1895,21 @@ namespace WellaTodo
         private void OnMenuListUp_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListUp_Click -> Menulist UP : " + m_Selected_Menu.PrimaryText);
-            m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText);
+            ControllerResult result = m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText);
+            if (result != ControllerResult.CM_OK)
+            {
+                ShowControllerResultMessage(result);
+            }
         }
 
         private void OnMenuListDown_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListDown_Click -> Menulist DOWN : " + m_Selected_Menu.PrimaryText);
-            m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText);
+            ControllerResult result = m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText);
+            if (result != ControllerResult.CM_OK)
+            {
+                ShowControllerResultMessage(result);
+            }
         }
 
         private void OnRenameMenuList_Click(object sender, EventArgs e)
@@ -1893,7 +1923,11 @@ namespace WellaTodo
             if (MessageBox.Show("목록을 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
             Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + m_Selected_Menu.PrimaryText);
-            m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
+            ControllerResult result = m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
+            if (result != ControllerResult.CM_OK)
+            {
+                ShowControllerResultMessage(result);
+            }
         }
 
         //--------------------------------------------------------------
@@ -2120,10 +2154,12 @@ namespace WellaTodo
             if (e.KeyCode != Keys.Enter) return;
 
             Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add New List Menu : " + textBox_AddList.Text);
-            
-            if (!m_Controller.Perform_Menulist_Add(textBox_AddList.Text))
+
+            ControllerResult result = m_Controller.Perform_Menulist_Add(textBox_AddList.Text);
+
+            if (result != ControllerResult.CM_OK)
             {
-                MessageBox.Show("목록 추가시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.","Warning");
+                ShowControllerResultMessage(result);
             }
 
             textBox_AddList.Text = "";
@@ -3072,9 +3108,12 @@ namespace WellaTodo
                 Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer MenuList Click!! : from "
                                  + item.PrimaryText
                                  + " to " + sd.PrimaryText);
-                if (!m_Controller.Perform_Munulist_MoveTo(item.PrimaryText, sd.PrimaryText))
+
+                ControllerResult result = m_Controller.Perform_Munulist_MoveTo(item.PrimaryText, sd.PrimaryText);
+
+                if (result != ControllerResult.CM_OK)
                 {
-                    //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                    ShowControllerResultMessage(result);
                 }
             }
         }

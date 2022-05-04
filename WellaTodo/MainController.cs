@@ -20,6 +20,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace WellaTodo
 {
+	public enum ControllerResult
+	{
+		CM_OK,
+		CM_TEXT_LENGTH_ZERO,
+		CM_RESERVED_MENU,
+		CM_SAME_TEXT_EXIST,
+		CM_ERROR
+	}
+
 	public class MainController : IController
 	{
 		IView m_view;
@@ -107,98 +116,101 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// Perform Command (Menulist) - Add/Delete/Rename/Up/Down
 		// -----------------------------------------------------------
-		public bool Perform_Menulist_Add(string MenuName)
+		public ControllerResult Perform_Menulist_Add(string MenuName)
         {
 			if (MenuName.Length == 0)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Leghth of Menu Name is zero!!");
-				return false;
+				return ControllerResult.CM_TEXT_LENGTH_ZERO;
 			}
 
 			if (MenuName == "오늘 할 일" || MenuName == "중요" || MenuName == "계획된 일정" || MenuName == "완료됨" || MenuName == "작업")
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Can't Add MenuList for Reserved Menu!!");
-				return false;
+				return ControllerResult.CM_RESERVED_MENU;
 			}
 
 			if (m_model.IsThereSameMenuName(MenuName))
             {
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Add -> Can't Add MenuList for Same menu name exist!!");
-				return false;
+				return ControllerResult.CM_SAME_TEXT_EXIST;
 			}
 
 			Send_Log_Message("2>MainController::Perform_Menulist_Add : " + MenuName);
 			m_model.Menulist_Add(MenuName);
-			return true;
+			return ControllerResult.CM_OK;
 		}
 
-		public bool Perform_Menulist_Rename(string source, string target)
+		public ControllerResult Perform_Menulist_Rename(string source, string target)
         {
 			if (target == source)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Rename -> Before & After Name is same!!");
-				return false;
+				return ControllerResult.CM_SAME_TEXT_EXIST;
 			}
 
 			if (target.Length == 0)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Rename -> Leghth of Menu Name is zero!!");
-				return false;
+				return ControllerResult.CM_TEXT_LENGTH_ZERO;
 			}
 
 			if (target == "오늘 할 일" || target == "중요" || target == "계획된 일정" || target == "완료됨" || target == "작업")
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Rename -> Can't Add MenuList for Reserved Menu!!");
-				return false;
+				return ControllerResult.CM_RESERVED_MENU;
 			}
 
 			if (m_model.IsThereSameMenuName(target))
 			{
 				Send_Log_Message("Warning>MainController::Perform_Menulist_Rename -> Can't Add MenuList for Same menu name exist!!");
-				return false;
+				return ControllerResult.CM_SAME_TEXT_EXIST;
 			}
 
 			Send_Log_Message("2>MainController::Perform_Menulist_Rename : from " + source + " to " + target);
 			m_model.Menulist_Rename(source, target);
-			return true;
+			return ControllerResult.CM_OK;
         }
 		
-		public void Perform_Menulist_Delete(string target)
+		public ControllerResult Perform_Menulist_Delete(string target)
         {
 			Send_Log_Message("2>MainController::Perform_Menulist_Delete : " + target);
 			m_model.Menulist_Delete(target);
+			return ControllerResult.CM_OK;
 		}
 
-		public void Perform_Menulist_Up(string target)
+		public ControllerResult Perform_Menulist_Up(string target)
 		{
 			Send_Log_Message("2>MainController::Perform_Menulist_Up : " + target);
 			m_model.Menulist_Up(target);
+			return ControllerResult.CM_OK;
 		}
 
-		public void Perform_Menulist_Down(string target)
+		public ControllerResult Perform_Menulist_Down(string target)
         {
 			Send_Log_Message("2>MainController::Perform_Menulist_Down : " + target);
 			m_model.Menulist_Down(target);
+			return ControllerResult.CM_OK;
 		}
 
-		public bool Perform_Munulist_MoveTo(string source, string target)
+		public ControllerResult Perform_Munulist_MoveTo(string source, string target)
 		{
 			if (source == target)
 			{
 				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Same task can't move");
-				return false;
+				return ControllerResult.CM_SAME_TEXT_EXIST;
 			}
 
 			if (source == "작업" || target == "작업")
 			{
 				Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Can't move 작업 Task");
-				return false;
+				return ControllerResult.CM_RESERVED_MENU;
 			}
 
 			Send_Log_Message("2>MainController::Perform_Munulist_MoveTo -> Source : " + source + " Target : " + target);
 			m_model.Menulist_MoveTo(source, target);
 
-			return true;
+			return ControllerResult.CM_OK;
 		}
 
 		// -----------------------------------------------------------
