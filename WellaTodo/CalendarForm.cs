@@ -725,9 +725,11 @@ namespace WellaTodo
             if (taskEditForm.IsTitleChanged)
             {
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Title Changed : " + dc.DC_title);
-                if (!m_Controller.Perform_Modify_Task_Title(dc))
+
+                ActionResult result = m_Controller.Perform_Modify_Task_Title(dc);
+                if (result.ErrCode != ErrorCode.S_OK)
                 {
-                    MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
+                    MessageBox.Show(result.Msg, "Warning");
                 }
                 taskEditForm.IsTitleChanged = false;
             }

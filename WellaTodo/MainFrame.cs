@@ -91,6 +91,7 @@ namespace WellaTodo
         bool isDetailWindowOpen = false;
         bool isTextbox_Task_Clicked = false;
         bool isTextbox_List_Clicked = false;
+        bool isTextbox_Title_Changed = false;
         bool isTextbox_Memo_Changed = false;
 
         Todo_Item m_Pre_Selected_Task;
@@ -558,6 +559,8 @@ namespace WellaTodo
             textBox_Memo.Text = dc.DC_memo;
             textBox_Memo.SelectionStart = textBox_Memo.Text.Length;
 
+            // TextBox 초기화
+            isTextbox_Title_Changed = false;
             isTextbox_Memo_Changed = false;
 
             if (dc.DC_myToday)
@@ -715,6 +718,8 @@ namespace WellaTodo
 
         private void ShowControllerResultMessage(ControllerResult result)
         {
+            if (result == ControllerResult.CM_OK) return;
+
             switch (result)
             {
                 case ControllerResult.CM_SAME_TEXT_EXIST:
@@ -1804,13 +1809,7 @@ namespace WellaTodo
         private void MenuList_Rename(string source, string target)
         {
             Send_Log_Message("1-2>MainFrame::Menulist_Rename -> Rename from " + source + " to " + target);
-
-            ControllerResult result = m_Controller.Perform_Menulist_Rename(source, target);
-
-            if (result != ControllerResult.CM_OK)
-            {
-                ShowControllerResultMessage(result);
-            }
+            ShowControllerResultMessage(m_Controller.Perform_Menulist_Rename(source, target));
         }
 
         private void MenuList_Right_Click_ContextMenu()
@@ -1895,21 +1894,13 @@ namespace WellaTodo
         private void OnMenuListUp_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListUp_Click -> Menulist UP : " + m_Selected_Menu.PrimaryText);
-            ControllerResult result = m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText);
-            if (result != ControllerResult.CM_OK)
-            {
-                ShowControllerResultMessage(result);
-            }
+            ShowControllerResultMessage(m_Controller.Perform_Menulist_Up(m_Selected_Menu.PrimaryText));
         }
 
         private void OnMenuListDown_Click(object sender, EventArgs e)
         {
             Send_Log_Message("1>MainFrame::OnMenuListDown_Click -> Menulist DOWN : " + m_Selected_Menu.PrimaryText);
-            ControllerResult result = m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText);
-            if (result != ControllerResult.CM_OK)
-            {
-                ShowControllerResultMessage(result);
-            }
+            ShowControllerResultMessage(m_Controller.Perform_Menulist_Down(m_Selected_Menu.PrimaryText));
         }
 
         private void OnRenameMenuList_Click(object sender, EventArgs e)
@@ -1923,11 +1914,7 @@ namespace WellaTodo
             if (MessageBox.Show("목록을 삭제할까요?", WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No) return;
 
             Send_Log_Message("1>MainFrame::OnDeleteMenuList_Click -> m_ListName Delete : " + m_Selected_Menu.PrimaryText);
-            ControllerResult result = m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText);
-            if (result != ControllerResult.CM_OK)
-            {
-                ShowControllerResultMessage(result);
-            }
+            ShowControllerResultMessage(m_Controller.Perform_Menulist_Delete(m_Selected_Menu.PrimaryText));
         }
 
         //--------------------------------------------------------------
@@ -2154,14 +2141,7 @@ namespace WellaTodo
             if (e.KeyCode != Keys.Enter) return;
 
             Send_Log_Message("1>MainFrame::textBox_AddList_KeyUp -> Add New List Menu : " + textBox_AddList.Text);
-
-            ControllerResult result = m_Controller.Perform_Menulist_Add(textBox_AddList.Text);
-
-            if (result != ControllerResult.CM_OK)
-            {
-                ShowControllerResultMessage(result);
-            }
-
+            ShowControllerResultMessage(m_Controller.Perform_Menulist_Add(textBox_AddList.Text));
             textBox_AddList.Text = "";
         }
 
@@ -2341,8 +2321,15 @@ namespace WellaTodo
         private void OnTransferItem_Click(object sender, EventArgs e)
         {
             MenuItem list = (MenuItem)sender;
+
             Send_Log_Message("1>MainFrame::OnTransferItem_Click -> Transfer Item Click!! : from " + m_Selected_Task.TD_DataCell.DC_listName + " to " + list.Text);      
-            m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, list.Text);
+            
+            ActionResult result = m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, list.Text);
+            if (result.ErrCode != ErrorCode.S_OK)
+            {
+                MessageBox.Show(result.Msg, "Warning");
+                return;
+            }
         }
 
         private void OnDeleteItem_Click(object sender, EventArgs e)
@@ -2456,6 +2443,22 @@ namespace WellaTodo
         // --------------------------------------------------------------------------
         // 상세창 처리 부분 (제목 / 완료 / 중요 / 메모 / 위아래 / 닫기 / 삭제)
         // --------------------------------------------------------------------------
+        // 제목 편집
+        private void Modify_Task_Title(CDataCell dc, string title)
+        {
+            Send_Log_Message("1-2>MainFrame::Modify_Task_Title -> Title :" + dc.DC_title);
+            ActionResult result = m_Controller.Perform_Modify_Task_Title(dc, title);
+            if (result.ErrCode != ErrorCode.S_OK)
+            {
+                MessageBox.Show(result.Msg, "Warning");
+                if (result.ErrCode == ErrorCode.E_TEXT_IS_EMPTY)
+                {
+                    textBox_Title.Text = dc.DC_title;
+                    isTextbox_Title_Changed = false;
+                }
+            }
+        }
+
         private void textBox_Title_Enter(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textBox_Title.Text))
@@ -2466,12 +2469,16 @@ namespace WellaTodo
 
         private void textBox_Title_Leave(object sender, EventArgs e)
         {
-            Send_Log_Message("1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
-            if (!m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text))
-            {
-                textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
-                MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
-            }
+            if (!isTextbox_Title_Changed) return;
+            isTextbox_Title_Changed = false;
+
+            Send_Log_Message("1-1>MainFrame::textBox_Title_Leave -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text);
+        }
+
+        private void textBox_Title_TextChanged(object sender, EventArgs e)
+        {
+            isTextbox_Title_Changed = true;
         }
 
         private void textBox_Title_KeyDown(object sender, KeyEventArgs e)
@@ -2489,12 +2496,11 @@ namespace WellaTodo
             e.Handled = false;
             e.SuppressKeyPress = false;
 
-            Send_Log_Message("1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
-            if (!m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text))
-            {
-                textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
-                MessageBox.Show("제목 입력시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
-            }
+            if (!isTextbox_Title_Changed) return;
+            isTextbox_Title_Changed = false;
+
+            Send_Log_Message("1-1>MainFrame::textBox_Title_KeyUp -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            Modify_Task_Title(m_Selected_Task.TD_DataCell, textBox_Title.Text);
         }
 
         private void textBox_Title_MouseDown(object sender, MouseEventArgs e)
@@ -2547,12 +2553,9 @@ namespace WellaTodo
             m_Controller.Perform_Modify_Task_Memo(m_Selected_Task.TD_DataCell);
         }
 
-        // 상세창 메모 커서 벗어남
         private void textBox_Memo_Leave(object sender, EventArgs e)
         {
-            //메모 내용에 변경이 있는지 확인(?)
             if (!isTextbox_Memo_Changed) return;
-
             isTextbox_Memo_Changed = false;
 
             m_Selected_Task.TD_DataCell.DC_memo = textBox_Memo.Text;  // 입력 사항에 오류가 있는지 체크할 것
@@ -2567,7 +2570,6 @@ namespace WellaTodo
             isTextbox_Memo_Changed = true;
         }
 
-        // 상세창 메모 컨텍스트 메뉴
         private void textBox_Memo_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -3056,9 +3058,12 @@ namespace WellaTodo
             Todo_Item target = (Todo_Item)flowLayoutPanel2.GetChildAtPoint(p);
 
             Send_Log_Message("1>MainFrame::TodoItem_DragDrop -> Source : " + source.TD_DataCell.DC_title + " Target : " + target.TD_DataCell.DC_title);
-            if (!m_Controller.Perform_Task_Move_To(source.TD_DataCell, target.TD_DataCell))
+
+            ActionResult result = m_Controller.Perform_Task_Move_To(source.TD_DataCell, target.TD_DataCell);
+            if (result.ErrCode != ErrorCode.S_OK)
             {
-                //MessageBox.Show("항목 이동시 완료된 항목이나 동일 항목으로 이동할 수 없읍니다", "Warning");
+                MessageBox.Show(result.Msg, "Warning");
+                return;
             }
         }
 
@@ -3093,9 +3098,12 @@ namespace WellaTodo
                 Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer Item Click!! : from "
                                  + m_Selected_Task.TD_DataCell.DC_listName
                                  + " to " + sd.PrimaryText);
-                if (!m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText))
+
+                ActionResult result = m_Controller.Perform_Transfer_Task(m_Selected_Task.TD_DataCell, sd.PrimaryText);
+                if (result.ErrCode != ErrorCode.S_OK)
                 {
-                    //MessageBox.Show("항목 이동시 동일 목록으로 이동할 수 없읍니다", "Warning");
+                    MessageBox.Show(result.Msg, "Warning");
+                    return;
                 }
             }
 
@@ -3108,13 +3116,7 @@ namespace WellaTodo
                 Send_Log_Message("1>MainFrame::TwoLineList_DragDrop -> Transfer MenuList Click!! : from "
                                  + item.PrimaryText
                                  + " to " + sd.PrimaryText);
-
-                ControllerResult result = m_Controller.Perform_Munulist_MoveTo(item.PrimaryText, sd.PrimaryText);
-
-                if (result != ControllerResult.CM_OK)
-                {
-                    ShowControllerResultMessage(result);
-                }
+                ShowControllerResultMessage(m_Controller.Perform_Munulist_MoveTo(item.PrimaryText, sd.PrimaryText));
             }
         }
 
@@ -3217,7 +3219,6 @@ namespace WellaTodo
             }
             return;
         }
-
     }
 }
 

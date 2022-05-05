@@ -567,90 +567,93 @@ namespace WellaTodo
 			m_model.Important_Process(dc);
 		}
 
-		public bool Perform_Modify_Task_Title(CDataCell dc, string title)
-        {
+		public ActionResult Perform_Modify_Task_Title(CDataCell dc, string title) // MainForm에서 실행됨
+		{
 			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
 			if (title.Length == 0)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
-				return false;
+				return ActionResult.Fail(ErrorCode.E_TEXT_IS_EMPTY, "입력한 제목이 공백이기 때문에 항목의 제목을 수정할 수 없읍니다.");
 			}
 
 			if (dc.DC_title == title)
             {
 				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Title is same!!");
-				return true;
-            }
+				return ActionResult.Fail("입력한 제목이 기존 제목과 동일하여 수정할 수 없읍니다.");
+			}
 
 			dc.DC_title = title;
 
 			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
-			return true;
-        }
+			return ActionResult.Ok();
+		}
 
-		public bool Perform_Modify_Task_Title(CDataCell dc)
+		public ActionResult Perform_Modify_Task_Title(CDataCell dc) // CalendarForm에서 실행됨
 		{
 			// 입력 사항에 오류 및 특수문자("&")가 있는지 체크할 것
 			if (dc.DC_title.Length == 0)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Modify_Task_Title -> Leghth of Title is zero!!");
-				return false;
+				return ActionResult.Fail("입력한 제목이 공백이기 때문에 항목의 제목을 수정할 수 없읍니다.");
 			}
 
 			Send_Log_Message("2>MainController::Perform_Modify_Task_Title : " + dc.DC_title);
 			m_model.Modify_Task_Title(dc);
-			return true;
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Modify_Task_Memo(CDataCell dc)
+		public ActionResult Perform_Modify_Task_Memo(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Modify_Task_Memo : " + dc.DC_title);
 			m_model.Modify_Task_Memo(dc);
+			return ActionResult.Ok();
 		}
 
-		public bool Perform_Task_Move_To(CDataCell source, CDataCell target)
+		public ActionResult Perform_Task_Move_To(CDataCell source, CDataCell target)
         {
 			if (source.DC_task_ID == target.DC_task_ID)
 			{
 				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Same task can't move");
-				return false;
+				return ActionResult.Fail("대상 항목을 동일할 경우에는 이동할 수 없읍니다.");
 			}
 
 			if (source.DC_complete || target.DC_complete)
 			{
 				Send_Log_Message("2>MainController::Perform_Task_Move_To -> Can't move Completed Task");
-				return false;
+				return ActionResult.Fail("완료된 항목은 이동할 수 없읍니다.");
 			}
 
 			Send_Log_Message("2>MainController::Perform_Task_Move_To -> Source : " + source.DC_title + " Target : " + target.DC_title);
 			m_model.Task_Move_To(source, target);
-			return true;
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Task_Move_Up(CDataCell dc)
+		public ActionResult Perform_Task_Move_Up(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Task_Move_Up : " + dc.DC_title);
 			m_model.Task_Move_Up(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Task_Move_Down(CDataCell dc)
+		public ActionResult Perform_Task_Move_Down(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Task_Move_Down : " + dc.DC_title);
 			m_model.Task_Move_Down(dc);
+			return ActionResult.Ok();
 		}
 
-		public bool Perform_Transfer_Task(CDataCell dc, string target)
+		public ActionResult Perform_Transfer_Task(CDataCell dc, string target)
         {
 			if (dc.DC_listName == target)
 			{
 				Send_Log_Message("Warning>MainController::Perform_Transfer_Task -> Can't transfer item as same list");
-				return false;
+				return ActionResult.Fail("대상 항목을 동일한 목록으로 이동할 수 없읍니다.");
 			}
 
 			Send_Log_Message("2>MainController::Perform_Trasnfer_Task : from " + dc.DC_listName + " to " + target);
 			m_model.Transfer_Task(dc, target);
-			return true;
+			return ActionResult.Ok();
         }
 
 		// ----------------------------------------------------------

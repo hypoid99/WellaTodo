@@ -79,8 +79,8 @@
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel2.Controls.Add(this.textBox_Task);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(939, 322);
-            this.splitContainer1.SplitterDistance = 218;
+            this.splitContainer1.Size = new System.Drawing.Size(1073, 402);
+            this.splitContainer1.SplitterDistance = 249;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_MouseDown);
@@ -92,20 +92,20 @@
             this.flowLayoutPanel_Menulist.AllowDrop = true;
             this.flowLayoutPanel_Menulist.AutoScroll = true;
             this.flowLayoutPanel_Menulist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 34);
+            this.flowLayoutPanel_Menulist.Location = new System.Drawing.Point(3, 42);
             this.flowLayoutPanel_Menulist.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.flowLayoutPanel_Menulist.Name = "flowLayoutPanel_Menulist";
-            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(214, 263);
+            this.flowLayoutPanel_Menulist.Size = new System.Drawing.Size(245, 329);
             this.flowLayoutPanel_Menulist.TabIndex = 3;
             this.flowLayoutPanel_Menulist.WrapContents = false;
             this.flowLayoutPanel_Menulist.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel_Menulist_Scroll);
             // 
             // textBox_AddList
             // 
-            this.textBox_AddList.Location = new System.Drawing.Point(0, 302);
+            this.textBox_AddList.Location = new System.Drawing.Point(0, 378);
             this.textBox_AddList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_AddList.Name = "textBox_AddList";
-            this.textBox_AddList.Size = new System.Drawing.Size(217, 21);
+            this.textBox_AddList.Size = new System.Drawing.Size(247, 25);
             this.textBox_AddList.TabIndex = 5;
             this.textBox_AddList.Enter += new System.EventHandler(this.textBox_AddList_Enter);
             this.textBox_AddList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_AddList_KeyDown);
@@ -115,9 +115,9 @@
             // 
             // labelUserName
             // 
-            this.labelUserName.Location = new System.Drawing.Point(3, 7);
+            this.labelUserName.Location = new System.Drawing.Point(3, 9);
             this.labelUserName.Name = "labelUserName";
-            this.labelUserName.Size = new System.Drawing.Size(214, 25);
+            this.labelUserName.Size = new System.Drawing.Size(245, 31);
             this.labelUserName.TabIndex = 1;
             this.labelUserName.Text = "      계정";
             this.labelUserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -127,10 +127,10 @@
             // 
             // textBox_Task
             // 
-            this.textBox_Task.Location = new System.Drawing.Point(9, 283);
+            this.textBox_Task.Location = new System.Drawing.Point(10, 354);
             this.textBox_Task.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Task.Name = "textBox_Task";
-            this.textBox_Task.Size = new System.Drawing.Size(694, 21);
+            this.textBox_Task.Size = new System.Drawing.Size(793, 25);
             this.textBox_Task.TabIndex = 0;
             this.textBox_Task.Enter += new System.EventHandler(this.textBox_Task_Enter);
             this.textBox_Task.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Task_KeyDown);
@@ -140,7 +140,7 @@
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Location = new System.Drawing.Point(9, 8);
+            this.splitContainer2.Location = new System.Drawing.Point(10, 10);
             this.splitContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.splitContainer2.Name = "splitContainer2";
             // 
@@ -156,26 +156,26 @@
             this.splitContainer2.Panel2.Controls.Add(this.textBox_Title);
             this.splitContainer2.Panel2.Controls.Add(this.textBox_Memo);
             this.splitContainer2.Panel2MinSize = 0;
-            this.splitContainer2.Size = new System.Drawing.Size(694, 272);
-            this.splitContainer2.SplitterDistance = 437;
+            this.splitContainer2.Size = new System.Drawing.Size(793, 340);
+            this.splitContainer2.SplitterDistance = 499;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 3;
             // 
             // panel_Header
             // 
             this.panel_Header.Controls.Add(this.label_ListName);
-            this.panel_Header.Location = new System.Drawing.Point(10, 9);
+            this.panel_Header.Location = new System.Drawing.Point(11, 11);
             this.panel_Header.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(414, 44);
+            this.panel_Header.Size = new System.Drawing.Size(473, 55);
             this.panel_Header.TabIndex = 2;
             // 
             // label_ListName
             // 
             this.label_ListName.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label_ListName.Location = new System.Drawing.Point(17, 14);
+            this.label_ListName.Location = new System.Drawing.Point(19, 18);
             this.label_ListName.Name = "label_ListName";
-            this.label_ListName.Size = new System.Drawing.Size(88, 18);
+            this.label_ListName.Size = new System.Drawing.Size(101, 22);
             this.label_ListName.TabIndex = 1;
             this.label_ListName.Text = "ListName";
             this.label_ListName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -184,20 +184,20 @@
             // 
             this.flowLayoutPanel2.AutoScroll = true;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(10, 55);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(11, 69);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(414, 205);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(473, 256);
             this.flowLayoutPanel2.TabIndex = 0;
             this.flowLayoutPanel2.WrapContents = false;
             this.flowLayoutPanel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.flowLayoutPanel2_Scroll);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(175, 236);
+            this.button2.Location = new System.Drawing.Point(200, 295);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(66, 24);
+            this.button2.Size = new System.Drawing.Size(75, 30);
             this.button2.TabIndex = 9;
             this.button2.Text = "삭제";
             this.button2.UseVisualStyleBackColor = true;
@@ -205,10 +205,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(13, 236);
+            this.button1.Location = new System.Drawing.Point(15, 295);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(66, 24);
+            this.button1.Size = new System.Drawing.Size(75, 30);
             this.button1.TabIndex = 8;
             this.button1.Text = "닫기";
             this.button1.UseVisualStyleBackColor = true;
@@ -216,11 +216,12 @@
             // 
             // textBox_Title
             // 
-            this.textBox_Title.Location = new System.Drawing.Point(35, 9);
+            this.textBox_Title.Location = new System.Drawing.Point(40, 11);
             this.textBox_Title.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Title.Name = "textBox_Title";
-            this.textBox_Title.Size = new System.Drawing.Size(185, 21);
+            this.textBox_Title.Size = new System.Drawing.Size(211, 25);
             this.textBox_Title.TabIndex = 7;
+            this.textBox_Title.TextChanged += new System.EventHandler(this.textBox_Title_TextChanged);
             this.textBox_Title.Enter += new System.EventHandler(this.textBox_Title_Enter);
             this.textBox_Title.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyDown);
             this.textBox_Title.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_Title_KeyUp);
@@ -229,12 +230,12 @@
             // 
             // textBox_Memo
             // 
-            this.textBox_Memo.Location = new System.Drawing.Point(13, 138);
+            this.textBox_Memo.Location = new System.Drawing.Point(15, 172);
             this.textBox_Memo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_Memo.Multiline = true;
             this.textBox_Memo.Name = "textBox_Memo";
             this.textBox_Memo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_Memo.Size = new System.Drawing.Size(228, 95);
+            this.textBox_Memo.Size = new System.Drawing.Size(260, 118);
             this.textBox_Memo.TabIndex = 6;
             this.textBox_Memo.TextChanged += new System.EventHandler(this.textBox_Memo_TextChanged);
             this.textBox_Memo.Leave += new System.EventHandler(this.textBox_Memo_Leave);
@@ -269,12 +270,12 @@
             // 
             // MainFrame
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(939, 322);
+            this.ClientSize = new System.Drawing.Size(1073, 402);
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MinimumSize = new System.Drawing.Size(352, 45);
+            this.MinimumSize = new System.Drawing.Size(400, 47);
             this.Name = "MainFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WellaTodo v0.15";
