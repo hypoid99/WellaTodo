@@ -2348,33 +2348,44 @@ namespace WellaTodo
         // -----------------------------------------------------------
         private void Add_Task(string text)
         {
-            bool Result = true;
+            ActionResult result;
             switch (Enum_Selected_Menu)
             {
                 case MenuList.MYTODAY_MENU:     // 오늘 할 일 메뉴에서 입력됨
                     Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in MyToday Menu : " + text);
-                    Result = m_Controller.Perform_Add_Task_From_MyToday(text);
+                    result = m_Controller.Perform_Add_Task_From_MyToday(text);
+                    if (result.ErrCode != ErrorCode.S_OK)
+                    {
+                        MessageBox.Show(result.Msg, "Warning");
+                    }
                     break;
                 case MenuList.IMPORTANT_MENU:     // 중요 메뉴에서 입력됨
                     Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Important Menu : " + text);
-                    Result = m_Controller.Perform_Add_Task_From_Important(text);
+                    result = m_Controller.Perform_Add_Task_From_Important(text);
+                    if (result.ErrCode != ErrorCode.S_OK)
+                    {
+                        MessageBox.Show(result.Msg, "Warning");
+                    }
                     break;
                 case MenuList.DEADLINE_MENU:     // 계획된 일정 메뉴에서 입력됨
                     Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Planned Menu : " + text);
-                    Result = m_Controller.Perform_Add_Task_From_Planned(text);
+                    result = m_Controller.Perform_Add_Task_From_Planned(text);
+                    if (result.ErrCode != ErrorCode.S_OK)
+                    {
+                        MessageBox.Show(result.Msg, "Warning");
+                    }
                     break;
                 case MenuList.COMPLETE_MENU:     // 완료됨 메뉴에서 입력됨 -> 할일 추가 불가함
                     Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Complete Menu -> Can't Add Task!");
                     break;
                 default:
                     Send_Log_Message("1-2>MainFrame::Add_Task -> Add Task in Task or List Menu : " + text);
-                    Result = m_Controller.Perform_Add_Task_From_List(m_Selected_Menu.PrimaryText, text);
+                    result = m_Controller.Perform_Add_Task_From_List(m_Selected_Menu.PrimaryText, text);
+                    if (result.ErrCode != ErrorCode.S_OK)
+                    {
+                        MessageBox.Show(result.Msg, "Warning");
+                    }
                     break;
-            }
-
-            if (!Result)
-            {
-                MessageBox.Show("할 일 추가시 공백이나 특수문자가 포함되어 있읍니다.", "Warning");
             }
         }
 

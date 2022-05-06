@@ -41,8 +41,8 @@ namespace WellaTodo
         private string _note_RTF;
         public string Note_RTF 
         { 
-            get => _note_RTF; 
-            set => richTextBox.Rtf = _note_RTF = value; 
+            get => _note_RTF = richTextBox.Rtf;
+            set => richTextBox.Rtf = _note_RTF = value;
         }
 
         private bool isUnsaved = false;
@@ -89,7 +89,6 @@ namespace WellaTodo
                         this.DialogResult = DialogResult.No;
                         break;
                     case DialogResult.Yes:
-                        Note_RTF = richTextBox.Rtf;
                         this.DialogResult = DialogResult.Yes;
                         break;
                 }
@@ -101,8 +100,13 @@ namespace WellaTodo
         //--------------------------------------------------------------
         private void Initiate()
         {
+            // IME(입력기) 및 아시아 언어 지원
+            //richTextBox.LanguageOption = RichTextBoxLanguageOptions.UIFonts;
+            richTextBox.LanguageOption = 0;
             richTextBox.WordWrap = false;
             //richTextBox.SelectionCharOffset = 0;
+
+            if (m_FontName.Count > 0) return;
 
             foreach (FontFamily font in System.Drawing.FontFamily.Families)
             {
@@ -167,9 +171,6 @@ namespace WellaTodo
                                  | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
 
             richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
-
-            // IME(입력기) 및 아시아 언어 지원
-            richTextBox.LanguageOption = 0;
 
             Update_Status();
         }
@@ -574,11 +575,13 @@ namespace WellaTodo
         // ------------------------------------------------------------
         // RichTextBox
         // ------------------------------------------------------------
-        private void richTextBox_SelectionChanged(object sender, EventArgs e)
+        // 버튼의 상태를 나타내기 위함 (볼드,이탤릭 등)
+        private void richTextBox_SelectionChanged(object sender, EventArgs e) 
         {
             if (richTextBox.SelectionFont == null)
             {
                 // If the current text selection has more than one font specified, this property is null
+                //Console.WriteLine("richTextBox.SelectionFont == null");
                 return;
             }
 
@@ -618,13 +621,7 @@ namespace WellaTodo
 
         private void richTextBox_Leave(object sender, EventArgs e)
         {
-            /*
-            if (isUnsaved)
-            {
-                Save_Data();
-            }
-            isUnsaved = false;
-            */
+
         }
 
         // ------------------------------------------------------------

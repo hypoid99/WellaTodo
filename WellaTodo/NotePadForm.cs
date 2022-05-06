@@ -388,6 +388,24 @@ namespace WellaTodo
 
             list.DataCell.DC_RTF = editorForm.Note_RTF;
 
+            /*
+            //editorForm.Note_RTF = list.DataCell.DC_RTF;
+            //temp_RTF = list.DataCell.DC_RTF;
+            editorForm.IsUnsaved = false;
+
+            result = editorForm.ShowDialog();
+
+            if (result != DialogResult.Yes)
+            {
+                list.DataCell.DC_RTF = temp_RTF;
+
+                Send_Log_Message("1-2>NotePadForm::Open_Note -> NotePad is not saved");
+                return;
+            }
+
+            list.DataCell.DC_RTF = editorForm.Note_RTF;
+            */
+
             Send_Log_Message("1-2>NotePadForm::Open_Note -> NotePad is modified");
             m_Controller.Perform_Modify_Note(list.DataCell);
         }

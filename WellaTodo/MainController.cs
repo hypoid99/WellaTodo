@@ -216,12 +216,12 @@ namespace WellaTodo
 		// -----------------------------------------------------------
 		// Perform Command (Task)
 		// -----------------------------------------------------------
-		public bool Perform_Add_Task_From_MyToday(string title)
+		public ActionResult Perform_Add_Task_From_MyToday(string title)
         {
 			if (!Check_Input_String(title))
 			{
 				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_MyToday -> Check Input String");
-				return false;
+				return ActionResult.Fail("항목 입력시 공백이나 특수문자가 포함되어 있읍니다.");
 			}
 
 			CDataCell dc = new CDataCell();
@@ -235,15 +235,16 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_MyToday : " + dc.DC_title);
 			m_model.Add_Task(dc);
-			return true;
+
+			return ActionResult.Ok();
 		}
 
-		public bool Perform_Add_Task_From_Important(string title)
+		public ActionResult Perform_Add_Task_From_Important(string title)
 		{
 			if (!Check_Input_String(title))
 			{
 				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Important -> Check Input String");
-				return false;
+				return ActionResult.Fail("항목 입력시 공백이나 특수문자가 포함되어 있읍니다.");
 			}
 
 			CDataCell dc = new CDataCell();
@@ -254,15 +255,16 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_Important : " + dc.DC_title);
 			m_model.Add_Task(dc);
-			return true;
+
+			return ActionResult.Ok();
 		}
 
-		public bool Perform_Add_Task_From_Planned(string title)
+		public ActionResult Perform_Add_Task_From_Planned(string title)
 		{
 			if (!Check_Input_String(title))
 			{
 				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_Planned -> Check Input String");
-				return false;
+				return ActionResult.Fail("항목 입력시 공백이나 특수문자가 포함되어 있읍니다.");
 			}
 
 			CDataCell dc = new CDataCell();
@@ -276,15 +278,15 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
 			m_model.Add_Task(dc);
-			return true;
+			return ActionResult.Ok();
 		}
 
-		public bool Perform_Add_Task_From_List(string listName, string title)
+		public ActionResult Perform_Add_Task_From_List(string listName, string title)
 		{
 			if (!Check_Input_String(title))
 			{
 				Send_Log_Message("Warning>MainController::Perform_Add_Task_From_List -> Check Input String");
-				return false;
+				return ActionResult.Fail("항목 입력시 공백이나 특수문자가 포함되어 있읍니다.");
 			}
 
 			CDataCell dc = new CDataCell();
@@ -294,16 +296,17 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Add_Task_From_Planned : " + dc.DC_title);
 			m_model.Add_Task(dc);
-			return true;
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Delete_Task(CDataCell dc)
+		public ActionResult Perform_Delete_Task(CDataCell dc)
         {
 			Send_Log_Message("2>MainController::Perform_Delete_Task : [" + dc.DC_task_ID + "]" + dc.DC_title);
 			m_model.Delete_Task(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Modify_MyToday(CDataCell dc)
+		public ActionResult Perform_Modify_MyToday(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
 			if (dc.DC_myToday)
@@ -319,9 +322,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_MyToday_Process : " + dc.DC_title);
 			m_model.Modifiy_MyToday(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Remind_Today(CDataCell dc)
+		public ActionResult Perform_Remind_Today(CDataCell dc)
         {
 			DateTime dt = DateTime.Now;
             dt = dt.Minute < 30 ? dt.AddHours(3) : dt.AddHours(4);
@@ -330,9 +334,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Remind_Today : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Remind_Tomorrow(CDataCell dc)
+		public ActionResult Perform_Remind_Tomorrow(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(1);
@@ -341,9 +346,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Remind_Tomorrow : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Remind_NextWeek(CDataCell dc)
+		public ActionResult Perform_Remind_NextWeek(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
@@ -352,27 +358,30 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Remind_NextWeek : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Remind_Select(CDataCell dc, DateTime dt)
+		public ActionResult Perform_Remind_Select(CDataCell dc, DateTime dt)
 		{
 			dc.DC_remindType = 4;
 			dc.DC_remindTime = dt;
 
 			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Remind_Delete(CDataCell dc)
+		public ActionResult Perform_Remind_Delete(CDataCell dc)
 		{
 			dc.DC_remindType = 0;
 			dc.DC_remindTime = default;
 
 			Send_Log_Message("2>MainController::Perform_Remind_Select : " + dc.DC_title);
 			m_model.Modifiy_Remind(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Planned_Today(CDataCell dc)
+		public ActionResult Perform_Planned_Today(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dc.DC_deadlineType = 1;
@@ -380,9 +389,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Planned_Today : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Planned_Tomorrow(CDataCell dc)
+		public ActionResult Perform_Planned_Tomorrow(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(1);
@@ -391,9 +401,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Planned_Tomorrow : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Planned_NextWeek(CDataCell dc)
+		public ActionResult Perform_Planned_NextWeek(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(8 - (int)dt.DayOfWeek);
@@ -402,9 +413,10 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Planned_NextWeek : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Planned_Select(CDataCell dc, DateTime dt)
+		public ActionResult Perform_Planned_Select(CDataCell dc, DateTime dt)
 		{
 			if (dt.Hour == 0 && dt.Minute == 0 && dt.Second == 0) // 시간을 입력하지 않을때
 			{
@@ -416,27 +428,30 @@ namespace WellaTodo
 
 			Send_Log_Message("2>MainController::Perform_Planned_Select : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Planned_Delete(CDataCell dc)
+		public ActionResult Perform_Planned_Delete(CDataCell dc)
 		{
 			dc.DC_deadlineType = 0;
 			dc.DC_deadlineTime = default;
 
 			Send_Log_Message("2>MainController::Perform_Planned_Delete : " + dc.DC_title);
 			m_model.Modifiy_Planned(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
+		public ActionResult Perform_Modify_Repeat(CDataCell dc, int type, DateTime dt)
 		{
 			dc.DC_repeatType = type;
 			dc.DC_repeatTime = dt;
 
 			Send_Log_Message("2>MainController::Perform_Modify_Repeat : type [" + type + "]" + dc.DC_title);
 			m_model.Modifiy_Repeat(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_EveryDay(CDataCell dc)
+		public ActionResult Perform_Repeat_EveryDay(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(1);
@@ -451,9 +466,10 @@ namespace WellaTodo
 			{
 				Perform_Planned_Today(dc);
 			}
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_WorkingDay(CDataCell dc)
+		public ActionResult Perform_Repeat_WorkingDay(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			DayOfWeek dw = dt.DayOfWeek;
@@ -493,9 +509,10 @@ namespace WellaTodo
 			{
 				Perform_Planned_Today(dc);
 			}
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_EveryWeek(CDataCell dc)
+		public ActionResult Perform_Repeat_EveryWeek(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddDays(7);
@@ -510,9 +527,10 @@ namespace WellaTodo
 			{
 				Perform_Planned_Today(dc);
 			}
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_EveryMonth(CDataCell dc)
+		public ActionResult Perform_Repeat_EveryMonth(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddMonths(1); // 매달 말일 계산 필요 - 28/29/30/31일 경우
@@ -527,9 +545,10 @@ namespace WellaTodo
 			{
 				Perform_Planned_Today(dc);
 			}
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_EveryYear(CDataCell dc)
+		public ActionResult Perform_Repeat_EveryYear(CDataCell dc)
 		{
 			DateTime dt = DateTime.Now;
 			dt = dt.AddYears(1);  // 윤년 계산 필요 2월29일
@@ -544,27 +563,31 @@ namespace WellaTodo
 			{
 				Perform_Planned_Today(dc);
 			}
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Repeat_Delete(CDataCell dc)
+		public ActionResult Perform_Repeat_Delete(CDataCell dc)
 		{
 			dc.DC_repeatType = 0;
 			dc.DC_repeatTime = default;
 
 			Send_Log_Message("2>MainController::Perform_Repeat_Delete : " + dc.DC_title);
 			m_model.Modifiy_Repeat(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Complete_Process(CDataCell dc)
+		public ActionResult Perform_Complete_Process(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Complete_Process : " + dc.DC_complete);
 			m_model.Complete_Process(dc);
+			return ActionResult.Ok();
 		}
 
-		public void Perform_Important_Process(CDataCell dc)
+		public ActionResult Perform_Important_Process(CDataCell dc)
 		{
 			Send_Log_Message("2>MainController::Perform_Important_Process : " + dc.DC_important);
 			m_model.Important_Process(dc);
+			return ActionResult.Ok();
 		}
 
 		public ActionResult Perform_Modify_Task_Title(CDataCell dc, string title) // MainForm에서 실행됨
