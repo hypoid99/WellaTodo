@@ -2244,6 +2244,7 @@ namespace WellaTodo
             ContextMenu todoItemContextMenu = new ContextMenu();
             todoItemContextMenu.Popup += new EventHandler(OnTodoItemPopupEvent);
 
+            MenuItem modifyTaskTitle = new MenuItem("제목 수정", new EventHandler(OnModifyTaskTitle_Click));
             MenuItem myTodayItem = new MenuItem("나의 하루에 추가", new EventHandler(OnMyToday_Click)); // 재활용
             MenuItem importantItem = new MenuItem("중요로 표시", new EventHandler(OnImportantMenuItem_Click));
             MenuItem completeItem = new MenuItem("완료됨으로 표시", new EventHandler(OnCompleteMenuItem_Click));
@@ -2254,7 +2255,9 @@ namespace WellaTodo
             MenuItem memoEditItem = new MenuItem("메모 확장", new EventHandler(OnMemoEditMenuItem_Click));
             MenuItem moveItem = new MenuItem("항목 이동");
             MenuItem deleteItem = new MenuItem("항목 삭제", new EventHandler(OnDeleteItem_Click));
-
+            
+            todoItemContextMenu.MenuItems.Add(modifyTaskTitle);
+            todoItemContextMenu.MenuItems.Add("-");
             todoItemContextMenu.MenuItems.Add(myTodayItem);
             todoItemContextMenu.MenuItems.Add(importantItem);
             todoItemContextMenu.MenuItems.Add(completeItem);
@@ -2281,12 +2284,41 @@ namespace WellaTodo
         {
             ContextMenu ctm = (ContextMenu)sender;
             
-            ctm.MenuItems[0].Text = m_Selected_Task.TD_DataCell.DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
-            ctm.MenuItems[1].Text = m_Selected_Task.TD_DataCell.DC_important ? "중요도 제거" : "중요로 표시";
-            ctm.MenuItems[2].Text = m_Selected_Task.TD_DataCell.DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
-            ctm.MenuItems[4].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 1;
-            ctm.MenuItems[5].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 2;
-            ctm.MenuItems[7].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType > 0;
+            ctm.MenuItems[2].Text = m_Selected_Task.TD_DataCell.DC_myToday ? "나의 하루에서 제거" : "나의 하루에 추가";
+            ctm.MenuItems[3].Text = m_Selected_Task.TD_DataCell.DC_important ? "중요도 제거" : "중요로 표시";
+            ctm.MenuItems[4].Text = m_Selected_Task.TD_DataCell.DC_complete ? "완료되지 않음으로 표시" : "완료됨으로 표시";
+            ctm.MenuItems[6].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 1;
+            ctm.MenuItems[7].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType != 2;
+            ctm.MenuItems[9].Enabled = m_Selected_Task.TD_DataCell.DC_deadlineType > 0;
+        }
+
+        private void OnModifyTaskTitle_Click(object sender, EventArgs e)
+        {
+            TaskTitleForm taskTitleForm = new TaskTitleForm();
+            taskTitleForm.StartPosition = FormStartPosition.CenterParent;
+
+            taskTitleForm.TextBoxString = m_Selected_Task.TD_DataCell.DC_title;
+            taskTitleForm.IsTextBoxChanged = false;
+
+            taskTitleForm.ShowDialog();
+
+            if (!taskTitleForm.IsTextBoxChanged)
+            {
+                Send_Log_Message("1>MainFrame::OnModifyTaskTitle_Click -> Task Title is not changed!");
+                return;
+            }
+            taskTitleForm.IsTextBoxChanged = false;
+
+            Send_Log_Message("1>MainFrame::OnModifyTaskTitle_Click -> Title :" + m_Selected_Task.TD_DataCell.DC_title);
+            ActionResult result = m_Controller.Perform_Modify_Task_Title(m_Selected_Task.TD_DataCell, taskTitleForm.TextBoxString);
+            if (result.ErrCode != ErrorCode.S_OK)
+            {
+                MessageBox.Show(result.Msg, "Warning");
+                if (result.ErrCode == ErrorCode.E_TEXT_IS_EMPTY)
+                {
+                    textBox_Title.Text = m_Selected_Task.TD_DataCell.DC_title;
+                }
+            }
         }
 
         private void OnMyToday_Click(object sender, EventArgs e)

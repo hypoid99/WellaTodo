@@ -65,32 +65,11 @@ namespace WellaTodo
         // --------------------------------------------------
         // Constructor
         // --------------------------------------------------
-        public CDataCell()
+        public CDataCell() : this(0, "작업", "입력하세요")
         {
-            _task_ID = 0;
-            _listName = "작업";
-            _title = "입력하세요";
-            _complete = false;
-            _important = false;
-            _memo = "메모추가";
-            _dateCreated = DateTime.Now;
-
-            _myToday = false;
-            _myTodayTime = default;
-            _remindType = 0;
-            _remindTime = default(DateTime);   // 1/1/0001 12:00:00 AM.
-            _deadlineType = 0;
-            _deadlineTime = DateTime.MinValue; // 1/1/0001 12:00:00 AM.
-            _repeatType = 0;
-            _repeatTime = default;
-
-            _bulletin = false;
-            _archive = false;
-            _memoTag = 0;
-            _memoColor = "";
-
-            _notepad = false;
-            _RTF = String.Empty;
+            //_task_ID = 0;
+            //_listName = "작업";
+            //_title = "입력하세요";
         }
 
         public CDataCell(int id, string list, string title)
@@ -98,6 +77,7 @@ namespace WellaTodo
             _task_ID = id;
             _listName = list.Length == 0 ? "작업" : list;
             _title = title;
+
             _complete = false;
             _important = false;
             _memo = "메모추가";
@@ -124,17 +104,17 @@ namespace WellaTodo
         // --------------------------------------------------
         // Method
         // --------------------------------------------------
-        public CDataCell ShallowCopy()
-        {
-            return (CDataCell)MemberwiseClone();
-        }
+        //public CDataCell ShallowCopy()
+        //{
+        //    return (CDataCell)MemberwiseClone();
+        //}
 
-        public CDataCell DeepCopy()
-        {
-            CDataCell deepCopy = new CDataCell();
-            deepCopy.DC_listName = "작업";
-            return deepCopy;
-        }
+        //public CDataCell DeepCopy()
+        //{
+        //    CDataCell deepCopy = new CDataCell();
+        //    deepCopy.DC_listName = "작업";
+        //    return deepCopy;
+        //}
 
         public object Clone()
         {

@@ -207,6 +207,12 @@
     <Compile Include="TaskEditForm.Designer.cs">
       <DependentUpon>TaskEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskTitleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskTitleForm.Designer.cs">
+      <DependentUpon>TaskTitleForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Todo_Item.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -291,6 +297,9 @@
     </Compile>
     <EmbeddedResource Include="TaskEditForm.resx">
       <DependentUpon>TaskEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskTitleForm.resx">
+      <DependentUpon>TaskTitleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Todo_Item.resx">
       <DependentUpon>Todo_Item.cs</DependentUpon>

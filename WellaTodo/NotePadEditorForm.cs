@@ -101,25 +101,18 @@ namespace WellaTodo
         private void Initiate()
         {
             // IME(입력기) 및 아시아 언어 지원
-            //richTextBox.LanguageOption = RichTextBoxLanguageOptions.UIFonts;
             richTextBox.LanguageOption = 0;
+            richTextBox.SelectionCharOffset = 0;
             richTextBox.WordWrap = false;
-            //richTextBox.SelectionCharOffset = 0;
 
+            // 폰트를 등록한다
             if (m_FontName.Count > 0) return;
 
-            foreach (FontFamily font in System.Drawing.FontFamily.Families)
+            foreach (FontFamily font in FontFamily.Families)
             {
                 m_FontName.Add(font.Name);
             }
 
-            /*
-            FontFamily[] fontList = new System.Drawing.Text.InstalledFontCollection().Families;
-            foreach (var item in fontList)
-            {
-                m_FontName.Add(item.Name);
-            }
-            */
             comboBox_FontSelect.DataSource = m_FontName;
 
             int cnt = 0;
@@ -127,17 +120,18 @@ namespace WellaTodo
             {
                 if (m_FontName[i] == FONT_NAME)
                 {
-                    // 초기화 폰트가 있는지 확인한다
+                    // Default 폰트가 있는지 확인한다
                     comboBox_FontSelect.SelectedIndex = i;
                     cnt++;
                 }
             }
             if (cnt == 0)
             {
-                // 초기화 폰트가 없으면 2번째를 선택한다
+                // Default 폰트가 없으면 2번째를 선택한다
                 comboBox_FontSelect.SelectedIndex = 2;
             }
 
+            // 폰트가 사이즈를 등록한다
             m_FontSize.Add(6);
             m_FontSize.Add(8);
             m_FontSize.Add(9);
@@ -185,7 +179,7 @@ namespace WellaTodo
         {
             if (IsUnsaved)
             {
-                Text = "NotePad - Unsaved";
+                Text = "NotePad - 저장안됨";
             }
             else
             {
@@ -385,6 +379,7 @@ namespace WellaTodo
                                  | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
 
             richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
+            //Console.WriteLine("Font Name : " + fontName);
         }
 
         private void comboBox_FontSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -397,6 +392,7 @@ namespace WellaTodo
                                  | (checkBox_Strike.Checked ? FontStyle.Strikeout : 0);
 
             richTextBox.SelectionFont = new Font(fontName, fontSize, fontStyle);
+            //Console.WriteLine("Font Name : " + fontName);
         }
 
         private void button_FontSizeUp_Click(object sender, EventArgs e)
