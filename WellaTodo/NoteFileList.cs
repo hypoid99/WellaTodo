@@ -69,8 +69,8 @@ namespace WellaTodo
             set
             {
                 _isSelected = value;
-                BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
-                foreach (Control c in Controls) c.BackColor = IsSelected ? SELECTED_COLOR : BACK_COLOR;
+                BackColor = _isSelected ? SELECTED_COLOR : BACK_COLOR;
+                foreach (Control c in Controls) c.BackColor = _isSelected ? SELECTED_COLOR : BACK_COLOR;
             }
         }
 

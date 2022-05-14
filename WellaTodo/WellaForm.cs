@@ -47,6 +47,7 @@ namespace WellaTodo
         {
             // Controller를 통해 Model의 Observer로 View를 등록한다
             controller = new MainController(model);
+
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
             controller.Add_View(bulletinBoard);

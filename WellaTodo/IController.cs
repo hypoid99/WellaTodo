@@ -10,16 +10,47 @@ namespace WellaTodo
     {
         //IView View { get; set; }
         //void Update_Model();
+
+        //void Execute(RequestContext requestContext);
+        void Execute();
     }
 
-    public class ControllerBase : IController
+    public abstract class ControllerBase : IController
     {
-        private IView view;
+        private IView _view;
 
         public virtual IView View
         {
-            get { return view; }
-            set { view = value; }
+            get { return _view; }
+            set { _view = value; }
+        }
+
+        protected virtual void Execute()
+        {
+            Initialize();
+            ExecuteCore();
+        }
+
+        protected abstract void ExecuteCore();
+
+        protected virtual void Initialize()
+        {
+            //ControllerContext = new ControllerContext(requestContext, this);
+        }
+
+        void IController.Execute()
+        {
+            //Execute(requestContext);
+            Execute();
+        }
+    }
+
+    public class MyCustomController : ControllerBase
+    {
+        protected override void ExecuteCore()
+        {
+            string controllername = "controller".ToString();
+            string actionName = "action".ToString();
         }
     }
 }

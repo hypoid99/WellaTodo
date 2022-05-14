@@ -36,7 +36,7 @@ namespace WellaTodo
 		MainModel m_model;
 
 		// --------------------------------------------------
-		// Constructor
+		// Constructor & Interface
 		// --------------------------------------------------
 		public MainController(MainModel m)
         {
@@ -53,6 +53,11 @@ namespace WellaTodo
 		{
 			m_view = v;
 			m_model = m;
+		}
+
+		public void Execute()
+		{
+
 		}
 
 		// ----------------------------------------------------
@@ -1114,7 +1119,7 @@ namespace WellaTodo
 				throw new ArgumentException("Unknown type");
 			}
 		}
-	}
+    }
 }
 
 

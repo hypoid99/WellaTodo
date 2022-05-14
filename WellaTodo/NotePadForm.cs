@@ -30,6 +30,7 @@ namespace WellaTodo
         static readonly float FONT_SIZE_TEXT = 14.0f;
 
         MainController m_Controller;
+        IController _controller;
 
         NoteFileList m_Pre_Selected_List;
         NoteFileList m_Selected_List;
@@ -43,7 +44,7 @@ namespace WellaTodo
         public bool IsActivated { get => isActivated; set => isActivated = value; }
 
         // --------------------------------------------------------------------
-        // Constructor
+        // Constructor & Interface
         // --------------------------------------------------------------------
         public NotePadForm()
         {
@@ -53,6 +54,11 @@ namespace WellaTodo
         public void SetController(MainController controller)
         {
             m_Controller = controller;
+        }
+
+        public void SetController(IController controller)
+        {
+            _controller = controller;
         }
 
         // --------------------------------------------------------------------
@@ -206,7 +212,7 @@ namespace WellaTodo
         }
 
         //--------------------------------------------------------------
-        // Model 이벤트
+        // Model 이벤트 - Model Observer
         //--------------------------------------------------------------
         public void Update_View(IModel m, ModelEventArgs e)
         {
@@ -440,6 +446,7 @@ namespace WellaTodo
             {
                 MessageBox.Show("목록 이름 변경시 예약된 목록 또는 공백이나 동일한 목록이 있읍니다.", "Warning");
             }
+
         }
 
         private void MoveUp_Note(NoteFileList list)

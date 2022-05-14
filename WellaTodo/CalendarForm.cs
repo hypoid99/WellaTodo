@@ -17,6 +17,7 @@ namespace WellaTodo
     {
         public event ViewHandler<IView> View_Changed_Event;
 
+        static readonly string WINDOW_CAPTION = "CalendarForm";
         static readonly int CALENDAR_HEADER_HEIGHT = 50;
         static readonly int CALENDAR_WEEK_HEIGHT = 30;
         static readonly int CALENDAR_TASK_TEXT_HEIGHT = 15;
@@ -696,14 +697,13 @@ namespace WellaTodo
         private void Calendar_Item_Click(object sender, EventArgs e)
         {
             Calendar_Item sd = (Calendar_Item)sender;
-
-            taskEditForm.StartPosition = FormStartPosition.CenterParent;
+            Send_Log_Message(">CalendarForm::Calendar_Item_Click : " + sd.CD_DataCell.DC_title);
 
             IEnumerable<CDataCell> dataset = m_Controller.Query_Task_Calendar(sd.CD_DataCell);
             CDataCell dc = dataset.First();
-
             taskEditForm.TE_DataCell = (CDataCell)dc.Clone();
 
+            taskEditForm.StartPosition = FormStartPosition.CenterParent;
             taskEditForm.ShowDialog();
 
             dc = taskEditForm.TE_DataCell;
@@ -743,6 +743,12 @@ namespace WellaTodo
 
             if (taskEditForm.IsDeleted) // 목록 삭제
             {
+                string txt = "선택 항목을 삭제할까요? [" + dc.DC_title + "]";
+                if (MessageBox.Show(txt, WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
+
                 Send_Log_Message("1>CalendarForm::Calendar_Item_Click -> Task Delete");
                 m_Controller.Perform_Delete_Task(dc);
                 taskEditForm.IsDeleted = false;
