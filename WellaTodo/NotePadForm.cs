@@ -487,7 +487,7 @@ namespace WellaTodo
                 case "Click":
                     break;
                 case "DoubleClick":
-                    //Send_Log_Message(">NotePadForm::List_MouseClick -> DoubleClick");
+                    Send_Log_Message(">NotePadForm::List_MouseClick -> DoubleClick");
                     Modify_Note(sd);
                     break;
                 case "ContextMenu":
@@ -537,7 +537,7 @@ namespace WellaTodo
 
         private void OnOpenMenu_Click(object sender, EventArgs e)
         {
-            //Send_Log_Message(">NotePadForm::OnOpenMenu_Click -> Modify Note");
+            Send_Log_Message(">NotePadForm::OnOpenMenu_Click -> Modify Note");
             Modify_Note(m_Selected_List);
         }
 

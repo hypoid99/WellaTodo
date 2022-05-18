@@ -98,7 +98,7 @@
             this.panel_Header.Location = new System.Drawing.Point(0, 0);
             this.panel_Header.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_Header.Name = "panel_Header";
-            this.panel_Header.Size = new System.Drawing.Size(882, 36);
+            this.panel_Header.Size = new System.Drawing.Size(1082, 36);
             this.panel_Header.TabIndex = 2;
             // 
             // checkBox_AlignRight
@@ -491,7 +491,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 36);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(882, 917);
+            this.panel1.Size = new System.Drawing.Size(1082, 917);
             this.panel1.TabIndex = 3;
             // 
             // richTextBox
@@ -504,7 +504,7 @@
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(882, 917);
+            this.richTextBox.Size = new System.Drawing.Size(1082, 917);
             this.richTextBox.TabIndex = 0;
             this.richTextBox.Text = "";
             this.richTextBox.WordWrap = false;
@@ -529,6 +529,7 @@
             // printDocument1
             // 
             this.printDocument1.BeginPrint += new System.Drawing.Printing.PrintEventHandler(this.printDocument1_BeginPrint_1);
+            this.printDocument1.EndPrint += new System.Drawing.Printing.PrintEventHandler(this.printDocument1_EndPrint_1);
             this.printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage_1);
             // 
             // NotePadEditorForm
@@ -536,7 +537,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(882, 953);
+            this.ClientSize = new System.Drawing.Size(1082, 953);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel_Header);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
