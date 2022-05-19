@@ -369,51 +369,29 @@ namespace WellaTodo
             m_Controller.Perform_Add_Note(dc);
         }
 
+        public void Modify_Note(string rtf)
+        {
+            m_Selected_List.DataCell.DC_RTF = rtf;
+
+            Send_Log_Message("1-2>NotePadForm::Modify_Note -> NotePad is modified (Public)");
+            m_Controller.Perform_Modify_Note(m_Selected_List.DataCell);
+        }
+
         private void Modify_Note(NoteFileList list)
         {
-            //Console.WriteLine("1-1>NotePadForm::Modify_Note -> Open NotePad Editor");
             Send_Log_Message("1-1>NotePadForm::Modify_Note -> Open NotePad Editor");
 
-            NotePadEditorForm editorForm = new NotePadEditorForm();
+            NotePadEditorForm editorForm = new NotePadEditorForm(this, list.DataCell.DC_RTF);
 
             editorForm.StartPosition = FormStartPosition.CenterParent;
-  
-            editorForm.Note_RTF = list.DataCell.DC_RTF;
-            string temp_RTF = list.DataCell.DC_RTF;
-            editorForm.IsUnsaved = false;
 
             DialogResult result = editorForm.ShowDialog();
 
             if (result != DialogResult.Yes)
             {
-                list.DataCell.DC_RTF = temp_RTF;
-
-                Send_Log_Message("1-2>NotePadForm::Open_Note -> NotePad is not saved");
+                Send_Log_Message("1-2>NotePadForm::Modify_Note -> NotePad is not saved");
                 return;
             }
-
-            list.DataCell.DC_RTF = editorForm.Note_RTF;
-
-            /*
-            //editorForm.Note_RTF = list.DataCell.DC_RTF;
-            //temp_RTF = list.DataCell.DC_RTF;
-            editorForm.IsUnsaved = false;
-
-            result = editorForm.ShowDialog();
-
-            if (result != DialogResult.Yes)
-            {
-                list.DataCell.DC_RTF = temp_RTF;
-
-                Send_Log_Message("1-2>NotePadForm::Open_Note -> NotePad is not saved");
-                return;
-            }
-
-            list.DataCell.DC_RTF = editorForm.Note_RTF;
-            */
-
-            Send_Log_Message("1-2>NotePadForm::Open_Note -> NotePad is modified");
-            m_Controller.Perform_Modify_Note(list.DataCell);
         }
 
         private void Delete_Note(NoteFileList list)

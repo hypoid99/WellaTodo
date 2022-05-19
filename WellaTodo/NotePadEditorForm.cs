@@ -39,6 +39,8 @@ namespace WellaTodo
 
         RichTextBoxEx richTextBoxEx1 = new RichTextBoxEx();
 
+        private NotePadForm _notePadForm;
+
         // --------------------------------------------------------------------
         // Properties
         // --------------------------------------------------------------------
@@ -70,6 +72,13 @@ namespace WellaTodo
             InitializeComponent();
         }
 
+        public NotePadEditorForm(NotePadForm form, string rtf) : this()
+        {
+            _notePadForm = form;
+            Note_RTF = rtf;
+            IsUnsaved = false;
+        }
+
         // --------------------------------------------------------------------
         // Form 이벤트
         // --------------------------------------------------------------------
@@ -94,6 +103,8 @@ namespace WellaTodo
                         break;
                     case DialogResult.Yes:
                         this.DialogResult = DialogResult.Yes;
+                        IsUnsaved = false;
+                        _notePadForm.Modify_Note(Note_RTF);
                         break;
                 }
             }
@@ -303,7 +314,20 @@ namespace WellaTodo
 
         private void Save_Data()
         {
+            if (IsUnsaved)
+            {
+                DialogResult savePrompt = MessageBox.Show("저장할까요?", "NotePad Editor", MessageBoxButtons.OKCancel);
 
+                switch (savePrompt)
+                {
+                    case DialogResult.Cancel:
+                        break;
+                    case DialogResult.OK:
+                        IsUnsaved = false;
+                        _notePadForm.Modify_Note(Note_RTF);
+                        break;
+                }
+            }
         }
 
         // ------------------------------------------------------------
