@@ -51,7 +51,7 @@ namespace WellaTodo
             controller.Add_View(toDoList);
             controller.Add_View(calendar);
             controller.Add_View(bulletinBoard);
-            controller.Add_View(notePad );
+            controller.Add_View(notePad);
             controller.Add_View(output);
             controller.Add_View(datacell);
 
@@ -386,7 +386,7 @@ namespace WellaTodo
         }
         private void 저장ToolStripButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes) 
+            if (MessageBox.Show("저장할까요?", WM_WINDOW_CAPTION, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 controller.Save_Data_File();
             }
@@ -462,6 +462,32 @@ namespace WellaTodo
             LoginSettingForm info = new LoginSettingForm();
             info.StartPosition = FormStartPosition.CenterParent;
             info.ShowDialog();
+        }
+    }
+
+    public class Person
+    {
+        string name;
+
+        public Person(string name)
+        {
+            this.name = name;
+        }
+
+        public static void doStudy()
+        {
+            StudyEnglish();
+            StudyJava();
+        }
+
+        private static void StudyEnglish()
+        {
+            Console.WriteLine("StudyEnglish");
+        }
+
+        private static void StudyJava()
+        {
+            Console.WriteLine("StudyJava");
         }
     }
 }

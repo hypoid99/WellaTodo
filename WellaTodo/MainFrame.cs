@@ -162,14 +162,11 @@ namespace WellaTodo
 
         private void MainFrame_Paint(object sender, PaintEventArgs e)
         {
-            //Console.WriteLine("MainFrame_Paint");
             Update_Display();
         }
 
         private void MainFrame_Resize(object sender, EventArgs e)
         {
-            //Console.WriteLine("MainFrame_Resize");
-            splitContainer1.SplitterDistance = Calc_SplitterDistance();
             Update_Display();
         }
 
