@@ -221,6 +221,9 @@ namespace WellaTodo
             label_CreatedDate.Location = new Point(430, LOCATION_Y);
 
             label_FileSize.Location = new Point(530, LOCATION_Y);
+
+            BackColor = _isSelected ? SELECTED_COLOR : BACK_COLOR;
+            foreach (Control c in Controls) c.BackColor = _isSelected ? SELECTED_COLOR : BACK_COLOR;
         }
 
         //---------------------------------------------------------

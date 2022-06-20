@@ -630,7 +630,12 @@ namespace WellaTodo
                         cnt = m_Controller.Query_Task("작업").Count();
                         break;
                     default:
-                        cnt = m_Controller.Query_Task(item.PrimaryText).Count();
+                        IEnumerable<CDataCell> dataset = m_Controller.Query_Task(item.PrimaryText);
+                        cnt = 0;
+                        foreach (CDataCell data in dataset)
+                        {
+                            if (!data.DC_complete) cnt++;
+                        }
                         break;
                 }
 
